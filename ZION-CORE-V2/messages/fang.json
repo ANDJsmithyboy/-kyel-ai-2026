@@ -1,0 +1,113 @@
+{
+  "common": {
+    "loading": "A bè nge...",
+    "error": "Ening a bé",
+    "retry": "Wule bise",
+    "cancel": "Tè",
+    "save": "Biang",
+    "delete": "Dzo",
+    "edit": "Yene",
+    "close": "Kang",
+    "back": "Wule",
+    "next": "Mam mé ndzang",
+    "previous": "Mam mé bé",
+    "search": "Zik...",
+    "noResults": "Aning a bé",
+    "confirm": "Enying",
+    "yes": "Ee",
+    "no": "Aah",
+    "copy": "Kop",
+    "copied": "A kop é !",
+    "share": "Bane",
+    "download": "Ndzang na si",
+    "upload": "Ndzang na yop",
+    "settings": "Mam mè bé",
+    "profile": "Nkwèl wa mè",
+    "logout": "Biki",
+    "login": "Ke nda",
+    "signup": "Tilè dzam"
+  },
+  "chat": {
+    "placeholder": "Biè Gaboma AI nkwèl wa wé...",
+    "send": "Tom",
+    "regenerate": "Wule bè",
+    "stopGenerating": "Fè tè",
+    "newConversation": "Nkwèl é fam",
+    "thinking": "Gaboma AI a yèm...",
+    "searching": "A zik...",
+    "webSearch": "Zik na Internet",
+    "ragSearch": "Zik na bèkalat",
+    "feedbackThanks": "Akiba ngè !",
+    "feedbackQuestion": "Mam man a yèng wé ?",
+    "copyResponse": "Kop nkwèl",
+    "shareResponse": "Bane nkwèl man"
+  },
+  "modes": {
+    "flash": "Flash",
+    "flashDesc": "Nkwèl dzing mia dzing",
+    "pro": "Pro",
+    "proDesc": "Nkwèl mia mfîng",
+    "blackPanther": "Ngui Nzé",
+    "blackPantherDesc": "Môd agent — zik mia yèm mfîng"
+  },
+  "sidebar": {
+    "conversations": "Minkwèl",
+    "today": "Anè",
+    "yesterday": "Ézok",
+    "thisWeek": "Dzome man",
+    "older": "Mam mé kala",
+    "noConversations": "Nkwèl aning",
+    "deleteConversation": "Dzo nkwèl man",
+    "archiveConversation": "Biang na nda"
+  },
+  "settings": {
+    "title": "Mam mè bé",
+    "appearance": "Biyene",
+    "theme": "Ayène",
+    "language": "Énung",
+    "fontSize": "Ntilè é nène",
+    "small": "Fî",
+    "medium": "Abiè biè",
+    "large": "Nène",
+    "darkMode": "Élung",
+    "account": "Akong wa mè",
+    "credits": "Bètsing mè bè",
+    "plan": "Plan anè",
+    "upgrade": "Ke na Pro",
+    "notifications": "Mam mé fam",
+    "privacy": "Mam mè biang",
+    "about": "Mam mè yèm",
+    "version": "Version"
+  },
+  "errors": {
+    "network": "Ening Internet. Talè Internet wa wé.",
+    "rateLimit": "Nkwèl minè minè. Dzogô kîkî.",
+    "unauthorized": "Akong a biki. Wule ke nda.",
+    "serverError": "Ening serveur. Wule bise.",
+    "inputTooLong": "Nkwèl wa wé a nènè minè.",
+    "creditsExhausted": "Bètsing a man. Ke na Pro.",
+    "modelUnavailable": "Modèle a bé anè."
+  },
+  "feedback": {
+    "thumbsUp": "Nkwèl é bè",
+    "thumbsDown": "Nkwèl é bé bè",
+    "reportHallucination": "Nsèm é bé melu",
+    "wrongLanguage": "Énung é bé bè",
+    "tooSlow": "A dzing minè",
+    "badTone": "Ayène é bé bè",
+    "comment": "Nsèm (a bè mvôl)",
+    "submit": "Tom nsèm"
+  },
+  "welcome": {
+    "title": "Mbolo ! 🇬🇦",
+    "subtitle": "Mè ne Gaboma AI, nnom wa wé é yèm wa Gabon",
+    "suggestion1": "Yene mè loi bèkî wa Gabon",
+    "suggestion2": "Kale « mbolo » na fang, punu mia mpongwé",
+    "suggestion3": "Byane mam ma Gabon na 5 mam",
+    "suggestion4": "Minkî mi Gabon bia bé ne ?"
+  },
+  "meta": {
+    "title": "GabomaGPT — IA é Mvôl wa Gabon",
+    "description": "IA é mvôl wa Gabon — SmartANDJ AI Technologies"
+  }
+}

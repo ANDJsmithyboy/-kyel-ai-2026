@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="black-panther">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Gaboma AI — Hors ligne</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Sora', system-ui, sans-serif;
+      background: #020304;
+      color: #EDEAE3;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100dvh;
+      text-align: center;
+      padding: 24px;
+    }
+    .container {
+      max-width: 400px;
+    }
+    .icon {
+      font-size: 64px;
+      margin-bottom: 20px;
+      animation: breathe 3s ease-in-out infinite;
+    }
+    h1 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: #C5A059;
+    }
+    p {
+      font-size: 14px;
+      color: #8A8378;
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+    button {
+      padding: 10px 28px;
+      border-radius: 9999px;
+      background: rgba(197, 160, 89, 0.1);
+      border: 1px solid rgba(197, 160, 89, 0.2);
+      color: #C5A059;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.18s ease;
+    }
+    button:hover {
+      background: rgba(197, 160, 89, 0.2);
+      transform: scale(1.02);
+    }
+    @keyframes breathe {
+      0%, 100% { opacity: 0.6; transform: scale(1); }
+      50% { opacity: 1; transform: scale(1.05); }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="icon">🌍</div>
+    <h1>Hors connexion</h1>
+    <p>
+      Gaboma AI a besoin d'Internet pour fonctionner.
+      Vérifie ta connexion et réessaie.
+    </p>
+    <button onclick="location.reload()">Réessayer</button>
+  </div>
+</body>
+</html>

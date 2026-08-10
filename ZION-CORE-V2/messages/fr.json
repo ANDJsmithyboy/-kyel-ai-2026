@@ -1,0 +1,113 @@
+{
+  "common": {
+    "loading": "Chargement...",
+    "error": "Une erreur est survenue",
+    "retry": "Réessayer",
+    "cancel": "Annuler",
+    "save": "Enregistrer",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "close": "Fermer",
+    "back": "Retour",
+    "next": "Suivant",
+    "previous": "Précédent",
+    "search": "Rechercher...",
+    "noResults": "Aucun résultat",
+    "confirm": "Confirmer",
+    "yes": "Oui",
+    "no": "Non",
+    "copy": "Copier",
+    "copied": "Copié !",
+    "share": "Partager",
+    "download": "Télécharger",
+    "upload": "Importer un fichier",
+    "settings": "Paramètres",
+    "profile": "Profil",
+    "logout": "Se déconnecter",
+    "login": "Se connecter",
+    "signup": "S'inscrire"
+  },
+  "chat": {
+    "placeholder": "Posez votre question à Gaboma AI...",
+    "send": "Envoyer",
+    "regenerate": "Régénérer la réponse",
+    "stopGenerating": "Arrêter la génération",
+    "newConversation": "Nouvelle conversation",
+    "thinking": "Gaboma AI réfléchit...",
+    "searching": "Recherche en cours...",
+    "webSearch": "Recherche web",
+    "ragSearch": "Recherche dans les documents",
+    "feedbackThanks": "Merci pour votre retour !",
+    "feedbackQuestion": "Cette réponse vous a-t-elle été utile ?",
+    "copyResponse": "Copier la réponse",
+    "shareResponse": "Partager cette réponse"
+  },
+  "modes": {
+    "flash": "Flash",
+    "flashDesc": "Réponses rapides et concises",
+    "pro": "Pro",
+    "proDesc": "Analyses approfondies et créatives",
+    "blackPanther": "Black Panther",
+    "blackPantherDesc": "Mode agent — recherche et raisonnement avancé"
+  },
+  "sidebar": {
+    "conversations": "Conversations",
+    "today": "Aujourd'hui",
+    "yesterday": "Hier",
+    "thisWeek": "Cette semaine",
+    "older": "Plus ancien",
+    "noConversations": "Aucune conversation",
+    "deleteConversation": "Supprimer cette conversation",
+    "archiveConversation": "Archiver"
+  },
+  "settings": {
+    "title": "Paramètres",
+    "appearance": "Apparence",
+    "theme": "Thème",
+    "language": "Langue",
+    "fontSize": "Taille du texte",
+    "small": "Petit",
+    "medium": "Moyen",
+    "large": "Grand",
+    "darkMode": "Mode sombre",
+    "account": "Compte",
+    "credits": "Crédits restants",
+    "plan": "Plan actuel",
+    "upgrade": "Passer à Pro",
+    "notifications": "Notifications",
+    "privacy": "Confidentialité",
+    "about": "À propos",
+    "version": "Version"
+  },
+  "errors": {
+    "network": "Erreur de connexion. Vérifiez votre internet.",
+    "rateLimit": "Trop de requêtes. Attendez un moment.",
+    "unauthorized": "Session expirée. Reconnectez-vous.",
+    "serverError": "Erreur serveur. Réessayez plus tard.",
+    "inputTooLong": "Votre message est trop long.",
+    "creditsExhausted": "Plus de crédits. Passez à Pro ou attendez demain.",
+    "modelUnavailable": "Le modèle est temporairement indisponible."
+  },
+  "feedback": {
+    "thumbsUp": "Bonne réponse",
+    "thumbsDown": "Mauvaise réponse",
+    "reportHallucination": "Signaler une hallucination",
+    "wrongLanguage": "Mauvaise langue",
+    "tooSlow": "Trop lent",
+    "badTone": "Ton inapproprié",
+    "comment": "Commentaire (optionnel)",
+    "submit": "Envoyer le retour"
+  },
+  "welcome": {
+    "title": "Mbolo ! 🇬🇦",
+    "subtitle": "Je suis Gaboma AI, votre assistant intelligent du Gabon",
+    "suggestion1": "Explique-moi le code forestier du Gabon",
+    "suggestion2": "Traduis « bonjour » en fang, punu et mpongwé",
+    "suggestion3": "Résume l'histoire du Gabon en 5 points",
+    "suggestion4": "Quels sont les parcs nationaux du Gabon ?"
+  },
+  "meta": {
+    "title": "GabomaGPT — IA Souveraine du Gabon",
+    "description": "L'intelligence artificielle souveraine du Gabon par SmartANDJ AI Technologies"
+  }
+}

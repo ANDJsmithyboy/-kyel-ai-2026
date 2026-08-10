@@ -1,0 +1,45 @@
+# GabomaAI x DeerFlow 2.0 Configuration
+# F:\Gabomagpt-2026\ZION-CORE-V2\backend\config.yaml
+
+sandbox:
+  use: deerflow.sandbox.local:LocalSandboxProvider
+  workspace_dir: ./.gaboma-sandbox
+  enable_bash: true
+  enable_docker: false
+
+models:
+  - name: onyx-core
+    display_name: ONYX Core (Llama 3 70B Groq)
+    use: langchain_groq:ChatGroq
+    model: llama3-70b-8192
+    api_key: $GROQ_API_KEY
+    max_tokens: 4096
+
+  - name: black-panther-core
+    display_name: Black Panther (Llama 3 8B Groq)
+    use: langchain_groq:ChatGroq
+    model: llama3-8b-8192
+    api_key: $GROQ_API_KEY
+    max_tokens: 4096
+
+search:
+  enabled: true
+  use: deerflow.skills.search.tavily:TavilySearchProvider
+  api_key: $TAVILY_API_KEY
+
+agents:
+  lead_agent:
+    default_model: onyx-core
+    system_prompt: |
+      Vous êtes ONYX, l'agent super-intelligent de GabomaAI, conçu par SmartANDJ AI Technologies.
+      Votre but est de réaliser toutes les tâches complexes pour l'utilisateur, en générant des fichiers (rapports, code, présentations) via le bac à sable.
+
+  black_panther:
+    default_model: black-panther-core
+    system_prompt: |
+      Vous êtes BLACK PANTHER, le mode expérimental rapide et agressif de GabomaAI.
+      Agissez avec précision, concision, et créez tout type de code et de rapport sans hésitation.
+
+memory:
+  enabled: true
+  dir: ./.gaboma-memory

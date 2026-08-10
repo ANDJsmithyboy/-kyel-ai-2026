@@ -1,0 +1,75 @@
+{
+  "common": {
+    "loading": "U gha bongane...",
+    "error": "Moubi u ghè bè",
+    "retry": "Duwane bisi",
+    "cancel": "Lighe",
+    "save": "Bombe",
+    "delete": "Yake",
+    "edit": "Tumbe",
+    "close": "Tsighe",
+    "back": "Vighe vene",
+    "next": "Bi bè vane",
+    "previous": "Bi bè vighe",
+    "search": "Punghe...",
+    "noResults": "Tsine bi bè",
+    "confirm": "Dimbe",
+    "yes": "Inghe",
+    "no": "Abe",
+    "copy": "Kope",
+    "copied": "Bi kope be !",
+    "share": "Ghabe",
+    "download": "Tsige na ngule",
+    "upload": "Pambe file",
+    "settings": "Bi bè tsombe",
+    "profile": "Mughedi wu me",
+    "logout": "Vighe na pene",
+    "login": "Yone na nde",
+    "signup": "Tile dzame"
+  },
+  "chat": {
+    "placeholder": "Biele Gaboma AI nkuele wu we...",
+    "send": "Tume",
+    "regenerate": "Duwane bisi",
+    "stopGenerating": "Tsighe",
+    "newConversation": "Nkuele u fumu",
+    "thinking": "Gaboma AI u bongane...",
+    "searching": "U punghe...",
+    "webSearch": "Punghe na Internet",
+    "ragSearch": "Punghe na bikale",
+    "feedbackThanks": "Bivule bi me !",
+    "feedbackQuestion": "Nkuele mane u bè mbote ?",
+    "copyResponse": "Kope nkuele",
+    "shareResponse": "Ghabe nkuele mane"
+  },
+  "modes": {
+    "flash": "Flash",
+    "flashDesc": "Nkuele ya nkenghe",
+    "pro": "Pro",
+    "proDesc": "Nkuele ya mbote minè",
+    "blackPanther": "Ngui Nzè",
+    "blackPantherDesc": "Mode agent — punghe ya mbote minè"
+  },
+  "sidebar": {
+    "conversations": "Minkuele",
+    "today": "Na mboghe",
+    "yesterday": "Na mune",
+    "thisWeek": "Na monde mane",
+    "older": "Bi bè kale",
+    "noConversations": "Nkuele tsine",
+    "deleteConversation": "Yake nkuele mane",
+    "archiveConversation": "Bombe"
+  },
+  "welcome": {
+    "title": "Mbolo ! 🇬🇦",
+    "subtitle": "Me ne Gaboma AI, mughale wu we u yone wu Gabon",
+    "suggestion1": "Yene me loi bikî bi Gabon",
+    "suggestion2": "Kale « mbolo » na fang, punu tsi mpongwé",
+    "suggestion3": "Tsombe mame ma Gabon na 5 mame",
+    "suggestion4": "Bikî bi Gabon bi bè nghe ?"
+  },
+  "meta": {
+    "title": "GabomaGPT — IA yi Yombe yi Gabon",
+    "description": "IA yi yombe yi Gabon — SmartANDJ AI Technologies"
+  }
+}
