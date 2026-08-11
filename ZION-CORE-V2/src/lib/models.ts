@@ -1,33 +1,32 @@
 /**
- * GabomaAI · Types & Modèles
+ * Ñkyel AI · Types & Modèles
  * SmartANDJ AI Technologies
  * TypeScript strict — Taxonomie Officielle V3
  */
 
 // ── Modèles IA ────────────────────────────────
-export type GabomaModel = 'AURATA' | 'NKYEL' | 'ONYXGRIS' | 'WANDANA' | 'BLACK_PANTHER' | 'BLUE_PANTHER';
+export type NkyelModel = 'NKYEL_CHUI' | 'NKYEL_TAI' | 'NKYEL_RADI' | 'RECHERCHE_WEB' | 'BLUE_PANTHER';
 
-export const MODEL_META: Record<GabomaModel, { label: string; icon: string; desc: string; credits: number; tier: number }> = {
-  AURATA:        { label: 'AURATA',        icon: '🐈', desc: 'Réponses rapides',         credits: 1,  tier: 0 },
-  NKYEL:         { label: 'ÑKYEL',         icon: '🧠', desc: 'Modèle intelligent',     credits: 5,  tier: 0 },
-  ONYXGRIS:      { label: 'ONYXGRIS',      icon: '🦜', desc: 'Langues gabonaises & agent',credits: 10, tier: 1 },
-  WANDANA:       { label: 'WANDANA',       icon: '🐘', desc: 'Recherche web & deep research', credits: 15, tier: 1 },
-  BLACK_PANTHER: { label: 'BLACK PANTHER', icon: '🐾', desc: 'Orchestrateur multi-agents',credits: 40, tier: 2 },
-  BLUE_PANTHER: { label: 'BLUE PANTHER', icon: '💎', desc: 'Mode Créateur Illimité', credits: 0, tier: 999 },
+export const MODEL_META: Record<NkyelModel, { label: string; icon: string; desc: string; credits: number; tier: number }> = {
+  NKYEL_CHUI:    { label: 'Nkyel Chui',    icon: '⚡', desc: 'Réponses rapides & efficaces',       credits: 1,  tier: 0 },
+  NKYEL_TAI:     { label: 'Nkyel Tai',     icon: '🧠', desc: 'Raisonnement profond & multimodal', credits: 5,  tier: 1 },
+  NKYEL_RADI:    { label: 'Nkyel Radi',    icon: '🌍', desc: 'Langues gabonaises & tâches légères', credits: 3, tier: 0 },
+  RECHERCHE_WEB: { label: 'Recherche Web', icon: '🔍', desc: 'Recherche web & deep research',     credits: 15, tier: 1 },
+  BLUE_PANTHER:  { label: 'Blue Panther',  icon: '💎', desc: 'Mode Créateur Illimité',            credits: 0,  tier: 999 },
 };
 
 // ── Messages ──────────────────────────────────
-export interface GabomaMessage {
+export interface NkyelMessage {
   id: string;
   role: 'user' | 'assistant' | 'system';
   content: string;
-  model?: GabomaModel;
-  sources?: GabomaSource[];
-  rendu?: GabomaRendu;
+  model?: NkyelModel;
+  sources?: NkyelSource[];
+  rendu?: NkyelRendu;
   created_at: number;
 }
 
-export interface GabomaSource {
+export interface NkyelSource {
   url: string;
   title: string;
   snippet?: string;
@@ -36,11 +35,11 @@ export interface GabomaSource {
 }
 
 // ── Conversations ─────────────────────────────
-export interface GabomaConversation {
+export interface NkyelConversation {
   id: string;
   title: string;
-  model: GabomaModel;
-  messages: GabomaMessage[];
+  model: NkyelModel;
+  messages: NkyelMessage[];
   created_at: number;
   updated_at: number;
 }
@@ -48,7 +47,7 @@ export interface GabomaConversation {
 // ── Rendus (Artefacts) ────────────────────────
 export type RenduType = 'markdown' | 'html' | 'pdf' | 'csv' | 'excel' | 'word' | 'code' | 'chart' | 'website';
 
-export interface GabomaRendu {
+export interface NkyelRendu {
   id: string;
   type: RenduType;
   title: string;
@@ -82,11 +81,11 @@ export interface AgentFile {
 }
 
 // ── Utilisateur ───────────────────────────────
-export interface GabomaUser {
+export interface NkyelUser {
   id: string;
   email: string;
   display_name: string;
-  tier: GabomaModel;
+  tier: NkyelModel;
   credits_used: number;
   credits_total: number;
   is_pioneer: boolean;

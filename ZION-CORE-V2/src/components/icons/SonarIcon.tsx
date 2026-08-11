@@ -1,5 +1,5 @@
 /**
- * Gaboma AI · SonarIcon / NkyelIcon — Dauphin 🐬
+ * Ñkyel AI · SonarIcon / NkyelIcon — Dauphin 🐬
  * SmartANDJ AI Technologies
  * Ñkyel — Mode avancé — Dauphin complet avec nageoire dorsale, rostre, œil, caudale
  */

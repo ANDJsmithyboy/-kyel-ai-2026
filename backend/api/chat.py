@@ -1,5 +1,5 @@
 """
-GabomaGPT — Chat API Streaming · SmartANDJ AI Technologies
+Ñkyel AI — Chat API Streaming · SmartANDJ AI Technologies
 SSE streaming via Groq (Flash/Pro) et Kimi K2 (Black Panther).
 """
 
@@ -21,7 +21,7 @@ from db.models import (
     User,
     Conversation,
     Message,
-    GabomaMode,
+    NkyelMode,
     MessageRole,
 )
 from db.session import get_db
@@ -46,22 +46,22 @@ class ChatRequest(BaseModel):
     web_search: bool = False
 
 
-# ── Prompt système GabomaGPT ────────────────────────────────
-SYSTEM_PROMPT = """Tu es GabomaGPT, l'intelligence artificielle souveraine du Gabon.
-Développée par SmartANDJ AI Technologies, fondée par Daniel Jonathan ANDJ à Libreville.
+# ── Prompt système Ñkyel AI ────────────────────────────────
+SYSTEM_PROMPT = """Tu es Ñkyel AI, l'intelligence artificielle souveraine d'Afrique.
+Développée par SmartANDJ AI Technologies, fondée par Daniel Jonathan ANDJ.
 
-Tu es fier d'être gabonais. Tu connais le Gabon profondément : sa culture, ses langues
-(Fang, Mpongwè, Punu, Nzébi, Téké...), son histoire, sa géographie, son économie,
-sa politique, sa musique, sa cuisine, ses traditions Bwiti et Mvet.
+Tu représentes l'excellence technologique africaine. Tu connais l'Afrique profondément :
+ses cultures, ses langues, son histoire, sa géographie, son économie,
+sa politique, sa musique, sa cuisine, ses traditions.
 
 Tu parles français par défaut, mais tu peux répondre en Fang, Mpongwè ou Punu si demandé.
 Tu es respectueux, intelligent, précis et utile.
 
-Si on te demande qui tu es : "Je suis GabomaGPT, la première IA souveraine d'Afrique Centrale,
-créée au Gabon par SmartANDJ AI Technologies."
+Si on te demande qui tu es : "Je suis Ñkyel AI, une IA souveraine africaine,
+créée par SmartANDJ AI Technologies."
 
 Tu ne dis jamais que tu es ChatGPT, Claude, Gemini ou un autre modèle.
-Tu es GabomaGPT. Point final."""
+Tu es Ñkyel AI. Point final."""
 
 
 def _get_model_for_mode(mode: str) -> str:
@@ -186,7 +186,7 @@ async def chat_stream(
         conversation = Conversation(
             user_id=uuid.UUID(user_id),
             title=body.message[:100],
-            mode=GabomaMode(body.mode),
+            mode=NkyelMode(body.mode),
         )
         db.add(conversation)
         await db.flush()
@@ -197,7 +197,7 @@ async def chat_stream(
         conversation_id=conversation_id,
         role=MessageRole.user,
         content=body.message,
-        mode=GabomaMode(body.mode),
+        mode=NkyelMode(body.mode),
     )
     db.add(user_message)
     await db.flush()
@@ -247,7 +247,7 @@ async def chat_stream(
                     conversation_id=conversation_id,
                     role=MessageRole.assistant,
                     content=full_response,
-                    mode=GabomaMode(body.mode),
+                    mode=NkyelMode(body.mode),
                 )
                 db.add(assistant_message)
                 await db.flush()

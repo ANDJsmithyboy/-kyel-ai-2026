@@ -1,10 +1,10 @@
 /**
- * GabomaAI · Agent Stream Adapter (Vercel AI SDK)
+ * Ñkyel AI · Agent Stream Adapter (Vercel AI SDK)
  * Transforme le flux SSE (Server-Sent Events) brut de FastAPI 
  * en Data Stream Protocol compatible avec le Vercel AI SDK (`useChat`).
  */
 
-export const gabomaFetchAdapter = async (input: RequestInfo | URL, init?: RequestInit): Promise<Response> => {
+export const nkyelFetchAdapter = async (input: RequestInfo | URL, init?: RequestInit): Promise<Response> => {
   // 1. Ajouter l'authentification (Clerk token si présent dans init.headers)
   // Le token Clerk est généralement passé par le client.
   const response = await fetch(input, init);

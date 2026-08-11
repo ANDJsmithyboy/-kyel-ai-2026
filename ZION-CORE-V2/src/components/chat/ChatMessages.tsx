@@ -51,8 +51,8 @@ export default function ChatMessages({ messages, isLoading, error, onRegenerate 
         {messages.length === 0 && !isLoading && !error && (
           <div className="flex flex-col items-center justify-center h-[60vh] text-[var(--text-primary)] space-y-6">
             <img 
-              src="/gabomagpt-logo.jpeg" 
-              alt="GabomaGPT Logo" 
+              src="/Ñkyel AI-logo.jpeg" 
+              alt="Ñkyel AI Logo" 
               className="w-28 h-28 rounded-3xl object-cover shadow-[var(--shadow-accent)] animate-pulse" 
             />
             <div className="text-center space-y-2">

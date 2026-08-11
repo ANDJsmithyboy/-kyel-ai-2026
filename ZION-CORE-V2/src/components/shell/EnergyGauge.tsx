@@ -1,5 +1,5 @@
 /**
- * GabomaAI · EnergyGauge (Énergie Quotidienne)
+ * Ñkyel AI · EnergyGauge (Énergie Quotidienne)
  * SmartANDJ AI Technologies
  */
 

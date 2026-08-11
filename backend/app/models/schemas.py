@@ -1,5 +1,5 @@
 """
-GabomaAI · Pydantic Schemas
+Ñkyel AI · Pydantic Schemas
 Modèles de données pour les requêtes et réponses API.
 """
 

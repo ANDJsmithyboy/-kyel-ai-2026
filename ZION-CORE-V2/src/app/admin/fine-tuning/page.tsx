@@ -1,4 +1,4 @@
-/* GabomaGPT · Fine-tuning Jobs · SmartANDJ AI Technologies */
+/* Ñkyel AI · Fine-tuning Jobs · SmartANDJ AI Technologies */
 'use client';
 import { SectionHeader, DataTable, StatusBadge, KPICard } from '@/components/admin/AdminComponents';
 
@@ -10,10 +10,10 @@ const ftKpis = [
 ];
 
 const jobs = [
-  { id: 'ft-018', model: 'Qwen2.5-7B', type: 'LoRA', dataset: 'gaboma_agent_v3', examples: 247, epochs: 5, lr: '2e-4', status: 'running', loss: 0.38, progress: '68%', started: '18/06 20:00' },
-  { id: 'ft-017', model: 'Qwen2.5-7B', type: 'SFT', dataset: 'gaboma_chat_v5', examples: 3200, epochs: 3, lr: '1e-4', status: 'completed', loss: 0.31, progress: '100%', started: '17/06 14:00' },
-  { id: 'ft-016', model: 'Llama-3.3-8B', type: 'LoRA', dataset: 'gaboma_rag_v2', examples: 890, epochs: 3, lr: '2e-4', status: 'completed', loss: 0.44, progress: '100%', started: '16/06 10:00' },
-  { id: 'ft-015', model: 'Qwen2.5-7B', type: 'SFT', dataset: 'gaboma_multilang_v1', examples: 1200, epochs: 5, lr: '5e-5', status: 'failed', loss: 2.1, progress: '23%', started: '15/06 08:00' },
+  { id: 'ft-018', model: 'Qwen2.5-7B', type: 'LoRA', dataset: 'nkyel_agent_v3', examples: 247, epochs: 5, lr: '2e-4', status: 'running', loss: 0.38, progress: '68%', started: '18/06 20:00' },
+  { id: 'ft-017', model: 'Qwen2.5-7B', type: 'SFT', dataset: 'nkyel_chat_v5', examples: 3200, epochs: 3, lr: '1e-4', status: 'completed', loss: 0.31, progress: '100%', started: '17/06 14:00' },
+  { id: 'ft-016', model: 'Llama-3.3-8B', type: 'LoRA', dataset: 'nkyel_rag_v2', examples: 890, epochs: 3, lr: '2e-4', status: 'completed', loss: 0.44, progress: '100%', started: '16/06 10:00' },
+  { id: 'ft-015', model: 'Qwen2.5-7B', type: 'SFT', dataset: 'nkyel_multilang_v1', examples: 1200, epochs: 5, lr: '5e-5', status: 'failed', loss: 2.1, progress: '23%', started: '15/06 08:00' },
 ];
 
 const cols = [

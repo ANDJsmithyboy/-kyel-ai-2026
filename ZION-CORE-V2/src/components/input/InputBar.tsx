@@ -1,7 +1,7 @@
 /**
- * GabomaAI · InputBar V3
+ * Ñkyel AI · InputBar V3
  * SmartANDJ AI Technologies
- * Glassmorphism, GabomaSeer Live, placeholder rotatif
+ * Glassmorphism, ÑkyelVision Live, placeholder rotatif
  */
 
 'use client';
@@ -9,7 +9,7 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowUp, Stop, Microphone, Plus } from '@phosphor-icons/react';
-import type { GabomaModel } from '@/lib/models';
+import type { NkyelModel } from '@/lib/models';
 import { MODEL_META } from '@/lib/models';
 import AttachmentSheet from './AttachmentSheet';
 import ModelBadge from '../chat/ModelBadge';
@@ -23,32 +23,28 @@ interface InputBarProps {
   onSend: (content: string) => void;
   onStop?: () => void;
   isStreaming: boolean;
-  model: GabomaModel;
-  onModelChange: (m: GabomaModel) => void;
+  model: NkyelModel;
+  onModelChange: (m: NkyelModel) => void;
 }
 
-const getModelColor = (m: GabomaModel) => {
-  switch (m) {
-    case 'AURATA': return '#C9A84C';
-    case 'WANDANA': return '#00D4AA';
-    case 'ONYXGRIS': return '#7A42C8';
-    case 'BLACK_PANTHER': return '#636573';
-    case 'BLUE_PANTHER': return '#0070F3';
-    case 'NKYEL': return '#E2E4E9';
+const getTierAccent = (tier: string) => {
+  switch (tier) {
+    case 'NKYEL_CHUI': return '#C9A84C';
+    case 'RECHERCHE_WEB': return '#00D4AA';
+    case 'NKYEL_RADI': return '#EAEAEA';
+    case 'NKYEL_TAI': return '#60A5FA';
     default: return '#C9A84C';
   }
 };
 
-const getModelIcon = (m: GabomaModel, size: string = 'w-4 h-4') => {
-  const props = { className: size };
-  switch (m) {
-    case 'AURATA': return <IconAurata {...props} />;
-    case 'NKYEL': return <IconNkyel {...props} />;
-    case 'ONYXGRIS': return <IconOnyxGris {...props} />;
-    case 'WANDANA': return <IconWandana {...props} />;
-    case 'BLACK_PANTHER': return <IconBlackPanther {...props} />;
-    case 'BLUE_PANTHER': return <IconBlackPanther {...props} style={{ color: '#0070F3' }} />;
-    default: return <IconAurata {...props} />;
+const getTierIcon = (tier: string) => {
+  const props = { width: 14, height: 14 };
+  switch (tier) {
+    case 'NKYEL_CHUI': return <IconAurata {...props} />;
+    case 'NKYEL_RADI': return <IconOnyxGris {...props} />;
+    case 'NKYEL_TAI': return <IconNkyel {...props} />;
+    case 'RECHERCHE_WEB': return <IconWandana {...props} />;
+    default: return null;
   }
 };
 
@@ -104,7 +100,7 @@ export default function InputBar({
     el.style.height = Math.min(el.scrollHeight, 160) + 'px';
   };
 
-  const handleModelChange = (m: GabomaModel) => {
+  const handleModelChange = (m: NkyelModel) => {
     onModelChange(m);
     setShowBadge(true);
     setTimeout(() => setShowBadge(false), 4000);
@@ -125,7 +121,7 @@ export default function InputBar({
         onDismiss={() => setShowBadge(false)}
       />
 
-      {/* Overlay Live GabomaSeer */}
+      {/* Overlay Live ÑkyelVision */}
       <AnimatePresence>
         {isLiveActive && (
           <motion.div
@@ -148,13 +144,13 @@ export default function InputBar({
                 className="text-sm font-semibold"
                 style={{ color: 'var(--text-primary, #EDEAE3)' }}
               >
-                GabomaSeer regarde…
+                ÑkyelVision regarde…
               </span>
             </div>
             <button
               onClick={toggleLive}
               className="text-[#8A8378] hover:text-[#E0584B] transition-colors"
-              aria-label="Arrêter GabomaSeer"
+              aria-label="Arrêter ÑkyelVision"
             >
               <Stop size={22} weight="fill" />
             </button>

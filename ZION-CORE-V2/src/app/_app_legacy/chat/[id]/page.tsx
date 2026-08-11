@@ -3,7 +3,7 @@
 import { use, useEffect } from 'react';
 import { useSettingsStore } from '@/stores/settings.store';
 import { useChat } from '@/hooks/useChat';
-import type { GabomaModel } from '@/lib/models';
+import type { NkyelModel } from '@/lib/models';
 import InputBar from '@/components/input/InputBar';
 import ConversationStream from '@/components/chat/ConversationStream';
 
@@ -13,7 +13,7 @@ export default function ExistingChatPage({ params }: { params: Promise<{ id: str
   
   const { messages, isStreaming, error, sendMessage, stop } = useChat({
     conversationId: resolvedParams.id,
-    model: isBlackPanther ? 'BLACK_PANTHER' : 'AURATA',
+    model: isBlackPanther ? 'BLACK_PANTHER' : 'NKYEL_CHUI',
     initialMessages: [], // TODO: Load actual messages from backend based on ID
   });
 
@@ -33,7 +33,7 @@ export default function ExistingChatPage({ params }: { params: Promise<{ id: str
 
       <div className="absolute bottom-0 left-0 w-full bg-gradient-to-t from-[var(--zc-background)] via-[var(--zc-background)] to-transparent pt-10 pb-4">
         <InputBar 
-          model={isBlackPanther ? 'BLACK_PANTHER' : 'AURATA'}
+          model={isBlackPanther ? 'BLACK_PANTHER' : 'NKYEL_CHUI'}
           setModel={(m) => { /* TODO */ }}
           onSend={handleSend} 
           onStop={stop} 

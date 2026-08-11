@@ -1,7 +1,7 @@
 'use client';
 
 import { motion, AnimatePresence } from 'framer-motion';
-import type { GabomaModel } from '@/lib/models';
+import type { NkyelModel } from '@/lib/models';
 import { MODEL_META } from '@/lib/models';
 import { Camera, Image, FileText, ToggleLeft, ToggleRight, X } from '@phosphor-icons/react';
 import { IconAurata } from '../icons/IconAurata';
@@ -13,8 +13,8 @@ import { IconBlackPanther } from '../icons/IconBlackPanther';
 interface AttachmentSheetProps {
   isOpen: boolean;
   onClose: () => void;
-  model: GabomaModel;
-  onModelSelect: (m: GabomaModel) => void;
+  model: NkyelModel;
+  onModelSelect: (m: NkyelModel) => void;
   wandanaEnabled: boolean;
   onToggleWandana: () => void;
 }
@@ -29,18 +29,18 @@ export default function AttachmentSheet({
 }: AttachmentSheetProps) {
   if (!isOpen) return null;
 
-  const handleSelectModel = (m: GabomaModel) => {
+  const handleSelectModel = (m: NkyelModel) => {
     onModelSelect(m);
     onClose();
   };
 
-  const getModelIcon = (m: GabomaModel, isActive: boolean) => {
+  const getModelIcon = (m: NkyelModel, isActive: boolean) => {
     const props = { className: `w-5 h-5 ${isActive ? 'text-[var(--accent)]' : 'text-[var(--text-secondary)]'}` };
     switch(m) {
-      case 'AURATA': return <IconAurata {...props} />;
-      case 'NKYEL': return <IconNkyel {...props} />;
-      case 'ONYXGRIS': return <IconOnyxGris {...props} />;
-      case 'WANDANA': return <IconWandana {...props} />;
+      case 'NKYEL_CHUI': return <IconAurata {...props} />;
+      case 'NKYEL_TAI': return <IconNkyel {...props} />;
+      case 'NKYEL_RADI': return <IconOnyxGris {...props} />;
+      case 'RECHERCHE_WEB': return <IconWandana {...props} />;
       case 'BLACK_PANTHER': return <IconBlackPanther {...props} />;
       case 'BLUE_PANTHER': return <IconBlackPanther {...props} style={{ color: '#0070F3' }} />;
       default: return <IconAurata {...props} />;
@@ -86,7 +86,7 @@ export default function AttachmentSheet({
         {/* 2. Vecteur de Force (Modèles) */}
         <div className="p-2 border-b border-[var(--border)]">
           <div className="px-2 py-1.5 text-[11px] font-bold text-[var(--text-tertiary)] uppercase tracking-wider mb-1">Vecteur de force</div>
-          {(Object.keys(MODEL_META) as GabomaModel[]).map((m) => {
+          {(Object.keys(MODEL_META) as NkyelModel[]).map((m) => {
             const meta = MODEL_META[m];
             const isActive = m === model;
             return (

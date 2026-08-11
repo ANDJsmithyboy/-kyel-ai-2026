@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Lightning, Brain, Robot, Cat, MagnifyingGlass, Plus, Paperclip, Microphone, Waveform, Stop, ArrowUp } from '@phosphor-icons/react';
 
-// Gaboma Lexicon Models
+// Ñkyel Lexicon Models
 const MODELS = [
   { id: 'aurata', name: 'Aurata', description: 'Mode Flash — rapide, exécution quotidienne', icon: <Lightning weight="duotone" size={20} className="text-primary" /> },
   { id: 'nkyel', name: 'Ñkyel', description: 'Mode Pro — raisonnement logique profond', icon: <Brain weight="duotone" size={20} className="text-primary" /> },

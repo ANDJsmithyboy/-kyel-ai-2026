@@ -1,4 +1,4 @@
-/* GabomaGPT · Admin Shared Components · SmartANDJ AI Technologies
+/* Ñkyel AI · Admin Shared Components · SmartANDJ AI Technologies
    Apple/Vercel-inspired glassmorphism components
    Fondateur : Daniel Jonathan ANDJ */
 

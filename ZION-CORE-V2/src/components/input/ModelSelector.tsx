@@ -1,5 +1,5 @@
 /**
- * GabomaAI · ModelSelector (Vecteur de Force)
+ * Ñkyel AI · ModelSelector (Vecteur de Force)
  * SmartANDJ AI Technologies
  */
 
@@ -7,11 +7,11 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MODEL_META, type GabomaModel } from '@/lib/models';
+import { MODEL_META, type NkyelModel } from '@/lib/models';
 
 interface ModelSelectorProps {
-  value: GabomaModel;
-  onChange: (model: GabomaModel) => void;
+  value: NkyelModel;
+  onChange: (model: NkyelModel) => void;
   isPioneer?: boolean;
 }
 
@@ -65,7 +65,7 @@ export default function ModelSelector({ value, onChange, isPioneer = false }: Mo
             <p className="px-2 py-1 text-[10px] font-semibold uppercase tracking-widest" style={{ color: '#525258' }}>
               Vecteur de Force
             </p>
-            {(Object.entries(MODEL_META) as [GabomaModel, typeof MODEL_META[GabomaModel]][]).map(([key, m]) => {
+            {(Object.entries(MODEL_META) as [NkyelModel, typeof MODEL_META[NkyelModel]][]).map(([key, m]) => {
               const locked = m.tier > 0 && !isPioneer;
               return (
                 <motion.button

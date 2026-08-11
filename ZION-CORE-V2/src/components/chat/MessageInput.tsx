@@ -1,4 +1,4 @@
-/* GabomaGPT · MessageInput.tsx · SmartANDJ AI Technologies · Constitution Zion Core
+/* Ñkyel AI · MessageInput.tsx · SmartANDJ AI Technologies · Constitution Zion Core
    Fondateur : Daniel Jonathan ANDJ
    Zone de saisie du chat avec token gating
    Migré depuis MessageInput.svelte */
@@ -9,7 +9,7 @@ import TextareaAutosize from 'react-textarea-autosize';
 import { Send } from 'lucide-react';
 import { toast } from 'sonner';
 import { useModeStore, MODEL_MAP } from '@/stores/mode';
-import { useGabomaStore } from '@/stores/gabomagpt';
+import { useGabomaStore } from '@/stores/nkyelgpt';
 import ModeSelector from './ModeSelector';
 
 interface MessageInputProps {

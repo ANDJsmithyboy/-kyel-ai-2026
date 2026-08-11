@@ -1,5 +1,5 @@
 /**
- * GabomaAI · MessageUser
+ * Ñkyel AI · MessageUser
  * SmartANDJ AI Technologies
  * Task 7 — Bulle utilisateur alignée droite
  */
@@ -7,10 +7,10 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import type { GabomaMessage } from '@/lib/models';
+import type { NkyelMessage } from '@/lib/models';
 
 interface MessageUserProps {
-  message: GabomaMessage;
+  message: NkyelMessage;
 }
 
 export default function MessageUser({ message }: MessageUserProps) {

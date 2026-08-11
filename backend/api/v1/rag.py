@@ -1,5 +1,5 @@
 """
-GabomaAI — API v1 RAG Query · SmartANDJ AI Technologies
+Ñkyel AI — API v1 RAG Query · SmartANDJ AI Technologies
 Recherche vectorielle Qdrant (LOXO)
 Protégé par Clerk JWKS.
 Fondateur : Daniel Jonathan ANDJ
@@ -16,7 +16,7 @@ router = APIRouter(prefix="/v1", tags=["RAG v1"])
 
 class RAGQueryRequest(BaseModel):
     query: str = Field(..., min_length=1, max_length=2000)
-    collection: str = Field(default="gaboma_loxo")
+    collection: str = Field(default="nkyel_knowledge")
     top_k: int = Field(default=5, ge=1, le=20)
 
 

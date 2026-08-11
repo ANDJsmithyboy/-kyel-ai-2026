@@ -1,5 +1,5 @@
 /**
- * GabomaAI · useAgentBrowserWS Hook
+ * Ñkyel AI · useAgentBrowserWS Hook
  * SmartANDJ AI Technologies
  * WebSocket binaire — reçoit les frames JPEG du screencast CDP
  * et les dessine via un Blob → Image → requestAnimationFrame.

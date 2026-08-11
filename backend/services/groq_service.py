@@ -1,5 +1,5 @@
 """
-GabomaAI — Service Groq · SmartANDJ AI Technologies
+Ñkyel AI — Service Groq · SmartANDJ AI Technologies
 Streaming SSE vers Groq (AURATA / SONAR).
 Fondateur : Daniel Jonathan ANDJ
 """
@@ -20,14 +20,14 @@ _MODEL_MAP = {
 }
 
 # ── System prompt national ───────────────────────────────────
-GABOMA_SYSTEM_PROMPT = (
-    "Tu es GabomaGPT, l'intelligence artificielle souveraine du Gabon, "
+NKYEL_SYSTEM_PROMPT = (
+    "Tu es Ñkyel AI, l'intelligence artificielle souveraine d'Afrique, "
     "développée par SmartANDJ AI Technologies sous la direction de Daniel Jonathan ANDJ, CEO. "
     "Tu réponds en français par défaut, et tu maîtrises le fang, le mpongwé et le punu. "
-    "Tu es expert sur le Gabon : culture, histoire, économie, droit, géographie, santé, éducation. "
+    "Tu es expert sur l'Afrique : culture, histoire, économie, droit, géographie, santé, éducation. "
     "Tu es précis, clair, respectueux, et utile. "
     "Tu ne mentionnes JAMAIS le nom de ton modèle réel (LLaMA, Groq, etc.). "
-    "Tu es GabomaGPT, point final."
+    "Tu es Ñkyel AI, point final."
 )
 
 
@@ -48,7 +48,7 @@ async def stream_groq(
     completion_id = f"chatcmpl-{uuid.uuid4().hex[:12]}"
 
     # Construire le prompt système
-    system_content = GABOMA_SYSTEM_PROMPT
+    system_content = NKYEL_SYSTEM_PROMPT
     if loxo_context:
         system_content += f"\n\n--- CONTEXTE LOXO (sources web) ---\n{loxo_context}\n--- FIN CONTEXTE ---"
 

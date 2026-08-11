@@ -1,4 +1,4 @@
-/* GabomaGPT · layout.tsx · SmartANDJ AI Technologies · Constitution Zion Core
+/* Ñkyel AI · layout.tsx · SmartANDJ AI Technologies · Constitution Zion Core
    Fondateur : Daniel Jonathan ANDJ
    Root layout Next.js 15 — Clerk + PostHog + Sentry + Splash screen + thème Zion Core V3 */
 
@@ -33,8 +33,8 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'GabomaGPT — IA Souveraine du Gabon',
-  description: 'GabomaGPT par SmartANDJ AI Technologies — IA souveraine du Gabon',
+  title: 'Ñkyel AI — IA Souveraine du Gabon',
+  description: 'Ñkyel AI par SmartANDJ AI Technologies — IA souveraine du Gabon',
   icons: { icon: '/favicon.png' },
   robots: 'noindex,nofollow',
 };
@@ -80,7 +80,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             id="fouc-prevention"
             strategy="beforeInteractive"
             dangerouslySetInnerHTML={{
-              __html: `(function(){try{var t=localStorage.getItem('gabomagpt_theme')||'black-panther';var a=localStorage.getItem('gabomagpt_accent')||'foret';var bp=localStorage.getItem('gabomagpt_bp')==='true';var theme=bp?'black-panther':t;var ok=['black-panther','nuit-lope','aurore-ogoue','bleu-nuit','violette-mandrille','neo-blanc'];if(ok.indexOf(theme)===-1)theme='black-panther';var lt=theme==='aurore-ogoue'||theme==='neo-blanc';document.documentElement.className=lt?'light':'dark';document.documentElement.setAttribute('data-theme',theme);document.documentElement.setAttribute('data-accent',a);var mc={'black-panther':'#020304','nuit-lope':'#050507','aurore-ogoue':'#F8F8F4','bleu-nuit':'#060A14','violette-mandrille':'#08060F','neo-blanc':'#FAFAF8'};var meta=document.querySelector('meta[name="theme-color"]');if(meta)meta.setAttribute('content',mc[theme]||'#020304');var fs=localStorage.getItem('gabomagpt_fontSize');if(fs){var sc=fs==='small'?0.9:fs==='large'?1.1:1;document.documentElement.style.setProperty('--app-text-scale',String(sc))}}catch(e){}})();`,
+              __html: `(function(){try{var t=localStorage.getItem('Ñkyel AI_theme')||'black-panther';var a=localStorage.getItem('Ñkyel AI_accent')||'foret';var bp=localStorage.getItem('Ñkyel AI_bp')==='true';var theme=bp?'black-panther':t;var ok=['black-panther','nuit-lope','aurore-ogoue','bleu-nuit','violette-mandrille','neo-blanc'];if(ok.indexOf(theme)===-1)theme='black-panther';var lt=theme==='aurore-ogoue'||theme==='neo-blanc';document.documentElement.className=lt?'light':'dark';document.documentElement.setAttribute('data-theme',theme);document.documentElement.setAttribute('data-accent',a);var mc={'black-panther':'#020304','nuit-lope':'#050507','aurore-ogoue':'#F8F8F4','bleu-nuit':'#060A14','violette-mandrille':'#08060F','neo-blanc':'#FAFAF8'};var meta=document.querySelector('meta[name="theme-color"]');if(meta)meta.setAttribute('content',mc[theme]||'#020304');var fs=localStorage.getItem('Ñkyel AI_fontSize');if(fs){var sc=fs==='small'?0.9:fs==='large'?1.1:1;document.documentElement.style.setProperty('--app-text-scale',String(sc))}}catch(e){}})();`,
             }}
           />
         </head>

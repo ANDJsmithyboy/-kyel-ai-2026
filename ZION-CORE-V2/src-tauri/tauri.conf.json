@@ -6,7 +6,7 @@
     "distDir": "../out"
   },
   "package": {
-    "productName": "Gaboma AI",
+    "productName": "Ñkyel AI",
     "version": "2.0.0"
   },
   "tauri": {
@@ -20,7 +20,7 @@
     "bundle": {
       "active": true,
       "targets": "all",
-      "identifier": "com.smartandj.gaboma.desktop",
+      "identifier": "com.smartandj.nkyel.desktop",
       "icon": [
         "icons/32x32.png",
         "icons/128x128.png",
@@ -37,8 +37,8 @@
         "infoPlist": {
           "CFBundleURLTypes": [
             {
-              "CFBundleURLName": "Gaboma AI Deep Link",
-              "CFBundleURLSchemes": ["gaboma"]
+              "CFBundleURLName": "Ñkyel AI Deep Link",
+              "CFBundleURLSchemes": ["nkyel"]
             }
           ]
         }
@@ -51,7 +51,7 @@
       {
         "fullscreen": false,
         "resizable": true,
-        "title": "Gaboma AI",
+        "title": "Ñkyel AI",
         "width": 1280,
         "height": 800,
         "minWidth": 800,

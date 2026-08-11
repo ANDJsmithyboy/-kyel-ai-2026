@@ -1,5 +1,5 @@
 """
-GabomaGPT — Authentification API · SmartANDJ AI Technologies
+Ñkyel AI — Authentification API · SmartANDJ AI Technologies
 Register, Login, Me — JWT Bearer tokens.
 """
 

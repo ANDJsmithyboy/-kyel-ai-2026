@@ -1,5 +1,5 @@
 /**
- * Gaboma AI · L'Antre · page.tsx · Server Component
+ * Ñkyel AI · L'Antre · page.tsx · Server Component
  * SmartANDJ AI Technologies
  * Page de paramètres — shell UI uniquement, zéro API.
  */
@@ -51,10 +51,10 @@ const user = {
 };
 
 const TIER_LABELS: Record<string, string> = {
-  FREE: 'AURATA',
+  FREE: 'NKYEL_CHUI',
   NYEL: 'ÑKYEL',
-  WANDANA: 'WANDANA',
-  ONYX: 'ONYXGRIS',
+  WANDANA: 'RECHERCHE_WEB',
+  ONYX: 'NKYEL_RADI',
   BLACK_PANTHER: 'BLACK PANTHER',
   BLUE_PANTHER: 'BLUE PANTHER',
 };
@@ -63,9 +63,9 @@ const getTierIcon = (tier: string) => {
   const props = { width: 20, height: 20 };
   switch (tier) {
     case 'FREE': return <IconAurata {...props} />;
-    case 'NYEL': return <IconNkyel {...props} />;
-    case 'WANDANA': return <IconWandana {...props} />;
-    case 'ONYX': return <IconOnyxGris {...props} />;
+    case 'NKYEL_TAI': return <IconNkyel {...props} />;
+    case 'RECHERCHE_WEB': return <IconWandana {...props} />;
+    case 'NKYEL_RADI': return <IconOnyxGris {...props} />;
     case 'BLACK_PANTHER': return <IconBlackPanther {...props} />;
     case 'BLUE_PANTHER': return <IconBluePanther {...props} />;
     default: return <UserIcon />;
@@ -142,9 +142,9 @@ export default function AntrePage() {
 
         {/* REJOINDRE LA MEUTE */}
         <SettingsSection title="REJOINDRE LA MEUTE">
-          <SettingsRow icon={<SendIcon />} label="Telegram" action="arrow" href="https://t.me/gabomaai" />
-          <SettingsRow icon={<ChatIcon />} label="WhatsApp" action="arrow" href="https://wa.me/gabomaai" />
-          <SettingsRow icon={<GlobeIcon />} label="X / Twitter" action="arrow" href="https://x.com/gabomaai" />
+          <SettingsRow icon={<SendIcon />} label="Telegram" action="arrow" href="https://t.me/Ñkyel AI" />
+          <SettingsRow icon={<ChatIcon />} label="WhatsApp" action="arrow" href="https://wa.me/Ñkyel AI" />
+          <SettingsRow icon={<GlobeIcon />} label="X / Twitter" action="arrow" href="https://x.com/Ñkyel AI" />
           <SettingsRow icon={<BriefIcon />} label="LinkedIn" action="arrow" href="https://linkedin.com/company/smartandj" isLast />
         </SettingsSection>
 

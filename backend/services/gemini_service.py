@@ -2,8 +2,12 @@
 Ñkyel AI — Gemini Service · SmartANDJ AI Technologies
 Google Gemini integration for the Ñkyel agent runtime.
 
-This service wraps Google's Generative AI SDK to provide
-planning, analysis, and synthesis capabilities.
+Features:
+- Retry with exponential backoff (3 attempts)
+- Structured JSON output mode
+- Per-call cost tracking
+- Timeout handling
+- Detailed call metrics
 
 Fondateur : Daniel Jonathan ANDJ
 """
@@ -11,8 +15,121 @@ Fondateur : Daniel Jonathan ANDJ
 import os
 import time
 import json
-from typing import Optional
+import logging
+from typing import Optional, Any
 
+logger = logging.getLogger(__name__)
+
+
+# ─── Cost Tracker ────────────────────────────────────────
+
+class GeminiCostTracker:
+    """Tracks cumulative token usage and estimated cost."""
+
+    # Approximate pricing per 1M tokens (USD)
+    PRICING = {
+        # Gemini 3.x generation
+        "gemini-3.1-pro":       {"input": 2.50, "output": 10.00},
+        "gemini-3.6-flash":     {"input": 0.15, "output": 0.60},
+        "gemini-3.5-flash-lite":{"input": 0.05, "output": 0.20},
+        "gemini-3-flash":       {"input": 0.10, "output": 0.40},
+        # Gemini 2.x generation (legacy)
+        "gemini-2.5-flash":     {"input": 0.15, "output": 0.60},
+        "gemini-2.5-pro":       {"input": 1.25, "output": 5.00},
+        "gemini-2.0-flash":     {"input": 0.10, "output": 0.40},
+    }
+
+    def __init__(self):
+        self.total_input_tokens = 0
+        self.total_output_tokens = 0
+        self.total_calls = 0
+        self.total_cost_usd = 0.0
+        self.total_latency_ms = 0
+        self.call_history: list[dict] = []
+
+    def record(self, model: str, input_tokens: int, output_tokens: int, latency_ms: int):
+        """Record a Gemini call."""
+        pricing = self.PRICING.get(model, self.PRICING["gemini-2.5-flash"])
+        cost = (input_tokens * pricing["input"] + output_tokens * pricing["output"]) / 1_000_000
+
+        self.total_input_tokens += input_tokens
+        self.total_output_tokens += output_tokens
+        self.total_calls += 1
+        self.total_cost_usd += cost
+        self.total_latency_ms += latency_ms
+
+        entry = {
+            "model": model,
+            "input_tokens": input_tokens,
+            "output_tokens": output_tokens,
+            "cost_usd": round(cost, 6),
+            "latency_ms": latency_ms,
+            "timestamp": time.time(),
+        }
+        self.call_history.append(entry)
+        return entry
+
+    def summary(self) -> dict:
+        return {
+            "total_calls": self.total_calls,
+            "total_input_tokens": self.total_input_tokens,
+            "total_output_tokens": self.total_output_tokens,
+            "total_cost_usd": round(self.total_cost_usd, 6),
+            "total_latency_ms": self.total_latency_ms,
+            "avg_latency_ms": round(self.total_latency_ms / max(1, self.total_calls)),
+        }
+
+
+# Singleton
+cost_tracker = GeminiCostTracker()
+
+
+# ─── Ñkyel → Gemini Model Map ───────────────────────────
+# Maps each Ñkyel public model name to the actual Gemini model ID.
+NKYEL_MODEL_MAP = {
+    "nkyel-chui":       "gemini-3.6-flash",       # Rapide, efficace
+    "nkyel-tai":        "gemini-3.1-pro",          # Raisonnement profond
+    "nkyel-radi":       "gemini-3.5-flash-lite",   # Langues gabonaises, léger
+    "recherche-web":    "gemini-3.6-flash",        # Recherche web
+    "blue-panther":     "gemini-3.1-pro",          # Mode Créateur
+    # Fallback direct Gemini model names
+    "gemini-3.1-pro":       "gemini-3.1-pro",
+    "gemini-3.6-flash":     "gemini-3.6-flash",
+    "gemini-3.5-flash-lite":"gemini-3.5-flash-lite",
+    "gemini-3-flash":       "gemini-3-flash",
+}
+
+
+def resolve_model(nkyel_name: str) -> str:
+    """Resolve a Ñkyel model name to the actual Gemini model ID."""
+    return NKYEL_MODEL_MAP.get(nkyel_name, nkyel_name)
+
+
+# ─── Retry Logic ─────────────────────────────────────────
+
+MAX_RETRIES = 3
+RETRY_BASE_DELAY = 1.0  # seconds
+RETRY_MAX_DELAY = 8.0
+
+
+def _retry_with_backoff(fn, *args, **kwargs) -> Any:
+    """Call fn with exponential backoff on failure."""
+    last_error = None
+    for attempt in range(MAX_RETRIES):
+        try:
+            return fn(*args, **kwargs)
+        except Exception as e:
+            last_error = e
+            if attempt < MAX_RETRIES - 1:
+                delay = min(RETRY_BASE_DELAY * (2 ** attempt), RETRY_MAX_DELAY)
+                logger.warning(f"Gemini call failed (attempt {attempt + 1}/{MAX_RETRIES}): {e}. Retrying in {delay}s...")
+                time.sleep(delay)
+            else:
+                logger.error(f"Gemini call failed after {MAX_RETRIES} attempts: {e}")
+    raise last_error
+
+
+# ─── Client Init ─────────────────────────────────────────
 
 def _get_gemini_client():
     """Lazily initialize the Gemini client."""
@@ -28,21 +145,44 @@ def _get_gemini_client():
         return None
 
 
-def _call_gemini(prompt: str, model_name: Optional[str] = None) -> dict:
+# ─── Core Call ───────────────────────────────────────────
+
+def _call_gemini_once(
+    prompt: str,
+    model_name: Optional[str] = None,
+    response_mime_type: Optional[str] = None,
+    temperature: float = 0.7,
+    timeout: float = 60.0,
+) -> dict:
     """
-    Call Gemini via the official SDK or the OpenAI-compatible endpoint.
-    Returns {"text": str, "model": str, "latency_ms": int}.
+    Single Gemini call (no retry).
+    Returns {"text": str, "model": str, "provider": str, "latency_ms": int,
+             "input_tokens": int, "output_tokens": int, "cost_usd": float}.
     """
-    model_name = model_name or os.getenv("NKYEL_PRIMARY_MODEL", "gemini-2.5-flash")
+    model_name = model_name or os.getenv("NKYEL_PRIMARY_MODEL", "gemini-3.6-flash")
+    # Resolve Ñkyel name → real Gemini model ID
+    model_name = resolve_model(model_name)
     start = time.time()
 
     genai = _get_gemini_client()
+    input_tokens = 0
+    output_tokens = 0
 
     if genai is not None:
         # Official SDK path
-        model = genai.GenerativeModel(model_name)
+        generation_config = {"temperature": temperature}
+        if response_mime_type:
+            generation_config["response_mime_type"] = response_mime_type
+
+        model = genai.GenerativeModel(model_name, generation_config=generation_config)
         response = model.generate_content(prompt)
         text = response.text
+
+        # Extract token counts if available
+        if hasattr(response, "usage_metadata"):
+            usage = response.usage_metadata
+            input_tokens = getattr(usage, "prompt_token_count", 0) or 0
+            output_tokens = getattr(usage, "candidates_token_count", 0) or 0
     else:
         # Fallback: OpenAI-compatible endpoint
         import httpx
@@ -51,46 +191,97 @@ def _call_gemini(prompt: str, model_name: Optional[str] = None) -> dict:
             "NKYEL_GEMINI_BASE_URL",
             "https://generativelanguage.googleapis.com/v1beta/openai/"
         )
-        client = httpx.Client(timeout=60.0)
-        resp = client.post(
-            f"{base_url}chat/completions",
-            headers={"Authorization": f"Bearer {api_key}"},
-            json={
+        with httpx.Client(timeout=timeout) as client:
+            body: dict = {
                 "model": model_name,
                 "messages": [{"role": "user", "content": prompt}],
-                "temperature": 0.7,
-            },
-        )
-        resp.raise_for_status()
-        data = resp.json()
-        text = data.get("choices", [{}])[0].get("message", {}).get("content", "")
+                "temperature": temperature,
+            }
+            if response_mime_type == "application/json":
+                body["response_format"] = {"type": "json_object"}
+
+            resp = client.post(
+                f"{base_url}chat/completions",
+                headers={"Authorization": f"Bearer {api_key}"},
+                json=body,
+            )
+            resp.raise_for_status()
+            data = resp.json()
+            text = data.get("choices", [{}])[0].get("message", {}).get("content", "")
+
+            # Extract token counts
+            usage_data = data.get("usage", {})
+            input_tokens = usage_data.get("prompt_tokens", 0)
+            output_tokens = usage_data.get("completion_tokens", 0)
 
     latency = int((time.time() - start) * 1000)
+
+    # Estimate tokens if not provided
+    if input_tokens == 0:
+        input_tokens = len(prompt) // 4  # rough estimate
+    if output_tokens == 0:
+        output_tokens = len(text) // 4
+
+    # Record cost
+    cost_entry = cost_tracker.record(model_name, input_tokens, output_tokens, latency)
 
     return {
         "text": text,
         "model": model_name,
         "provider": "google",
         "latency_ms": latency,
+        "input_tokens": input_tokens,
+        "output_tokens": output_tokens,
+        "cost_usd": cost_entry["cost_usd"],
     }
 
 
+def _call_gemini(
+    prompt: str,
+    model_name: Optional[str] = None,
+    json_mode: bool = False,
+    temperature: float = 0.7,
+    timeout: float = 60.0,
+) -> dict:
+    """
+    Call Gemini with retry and optional structured JSON output.
+    Returns {"text": str, "model": str, "latency_ms": int, ...}.
+    """
+    mime_type = "application/json" if json_mode else None
+
+    return _retry_with_backoff(
+        _call_gemini_once,
+        prompt,
+        model_name=model_name,
+        response_mime_type=mime_type,
+        temperature=temperature,
+        timeout=timeout,
+    )
+
+
+# ─── Public API ──────────────────────────────────────────
+
 def gemini_plan(prompt: str) -> dict:
-    """Use Gemini for planning tasks."""
-    model = os.getenv("NKYEL_PLANNING_MODEL", "gemini-2.5-flash")
-    return _call_gemini(prompt, model)
+    """Use Gemini for planning tasks (structured JSON output)."""
+    model = os.getenv("NKYEL_PLANNING_MODEL", "gemini-3.6-flash")
+    return _call_gemini(prompt, model, json_mode=True, temperature=0.4)
 
 
 def gemini_analyze(prompt: str) -> dict:
-    """Use Gemini for analysis tasks."""
-    return _call_gemini(prompt)
+    """Use Gemini for analysis tasks (structured JSON output)."""
+    return _call_gemini(prompt, json_mode=True, temperature=0.5)
 
 
 def gemini_synthesize(prompt: str) -> dict:
-    """Use Gemini for synthesis tasks."""
-    return _call_gemini(prompt)
+    """Use Gemini for synthesis tasks (natural language output)."""
+    return _call_gemini(prompt, temperature=0.7)
 
 
 def gemini_critique(prompt: str) -> dict:
     """Use Gemini for critique/verification tasks."""
-    return _call_gemini(prompt)
+    return _call_gemini(prompt, json_mode=True, temperature=0.3)
+
+
+def get_cost_summary() -> dict:
+    """Return cumulative cost/usage summary."""
+    return cost_tracker.summary()

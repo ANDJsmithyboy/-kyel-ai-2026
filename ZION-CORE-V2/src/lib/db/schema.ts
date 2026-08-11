@@ -1,4 +1,4 @@
-/* GabomaGPT · Database Schema · SmartANDJ AI Technologies
+/* Ñkyel AI · Database Schema · SmartANDJ AI Technologies
    Drizzle ORM schema for Neon PostgreSQL
    Fondateur : Daniel Jonathan ANDJ
 */
@@ -13,7 +13,7 @@ export const users = pgTable("users", {
   email: text("email").notNull(),
   fullName: text("full_name"),
   avatarUrl: text("avatar_url"),
-  tier: text("tier").default('AURATA').notNull(),
+  tier: text("tier").default('NKYEL_CHUI').notNull(),
   credits: integer("credits").default(100).notNull(),
   creditsUsed: integer("credits_used").default(0).notNull(),
   isAdmin: boolean("is_admin").default(false).notNull(),
@@ -31,7 +31,7 @@ export const users = pgTable("users", {
   index("idx_users_email").using("btree", table.email),
   unique("users_clerk_id_key").on(table.clerkId),
   unique("users_email_key").on(table.email),
-  check("users_tier_check", sql`tier = ANY (ARRAY['AURATA'::text, 'SONAR'::text, 'ONYX'::text, 'BLACK_PANTHER'::text, 'BLUE_PANTHER'::text])`),
+  check("users_tier_check", sql`tier = ANY (ARRAY['NKYEL_CHUI'::text, 'SONAR'::text, 'NKYEL_RADI'::text, 'BLACK_PANTHER'::text, 'BLUE_PANTHER'::text])`),
 ]);
 
 // ── Conversations ───────────────────────────────────────
@@ -39,7 +39,7 @@ export const conversations = pgTable("conversations", {
   id: uuid("id").default(sql`uuid_generate_v4()`).primaryKey().notNull(),
   userId: uuid("user_id").notNull(),
   title: text("title").default('Nouvelle piste').notNull(),
-  model: text("model").default('AURATA').notNull(),
+  model: text("model").default('NKYEL_CHUI').notNull(),
   mode: text("mode").default('chat').notNull(),
   loxoEnabled: boolean("loxo_enabled").default(false).notNull(),
   isArchived: boolean("is_archived").default(false).notNull(),
@@ -54,7 +54,7 @@ export const conversations = pgTable("conversations", {
     foreignColumns: [users.id],
     name: "conversations_user_id_fkey"
   }).onDelete("cascade"),
-  check("conversations_model_check", sql`model = ANY (ARRAY['AURATA'::text, 'SONAR'::text, 'ONYX'::text, 'BLACK_PANTHER'::text, 'BLUE_PANTHER'::text])`),
+  check("conversations_model_check", sql`model = ANY (ARRAY['NKYEL_CHUI'::text, 'SONAR'::text, 'NKYEL_RADI'::text, 'BLACK_PANTHER'::text, 'BLUE_PANTHER'::text])`),
   check("conversations_mode_check", sql`mode = ANY (ARRAY['chat'::text, 'agent'::text])`),
 ]);
 

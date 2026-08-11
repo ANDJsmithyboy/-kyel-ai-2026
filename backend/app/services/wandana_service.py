@@ -1,5 +1,5 @@
 """
-GabomaAI · WANDANA Service
+Ñkyel AI · WANDANA Service
 Recherche web via Tavily API + Google Scraper (Perplexity-style) + Qdrant Cloud pour le mode WANDANA (Deep Research).
 """
 

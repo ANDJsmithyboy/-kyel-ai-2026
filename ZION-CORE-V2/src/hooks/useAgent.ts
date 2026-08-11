@@ -1,5 +1,5 @@
 /**
- * GabomaAI · useAgent Hook
+ * Ñkyel AI · useAgent Hook
  * SmartANDJ AI Technologies
  * Task 8 — SSE streaming agent (ONYX / BLACK PANTHER)
  */
@@ -7,7 +7,7 @@
 'use client';
 
 import { useState, useCallback, useRef } from 'react';
-import type { GabomaModel, GabomaRendu, AgentEvent, AgentFile, AgentPhase } from '@/lib/models';
+import type { NkyelModel, NkyelRendu, AgentEvent, AgentFile, AgentPhase } from '@/lib/models';
 import { resolveEventLabel } from '@/lib/agentEvents';
 import { useRenduPanel } from '@/hooks/useRenduPanel';
 
@@ -19,11 +19,11 @@ interface UseAgentReturn {
   phase: AgentPhase;
   currentUrl: string;
   files: AgentFile[];
-  artifacts: GabomaRendu[];
+  artifacts: NkyelRendu[];
   streamedText: string;
   isStreaming: boolean;
   error: string | null;
-  startAgent: (prompt: string, model: GabomaModel) => Promise<void>;
+  startAgent: (prompt: string, model: NkyelModel) => Promise<void>;
   stop: () => void;
 }
 
@@ -32,7 +32,7 @@ export function useAgent(): UseAgentReturn {
   const [phase, setPhase] = useState<AgentPhase>('idle');
   const [currentUrl, setCurrentUrl] = useState('');
   const [files, setFiles] = useState<AgentFile[]>([]);
-  const [artifacts, setArtifacts] = useState<GabomaRendu[]>([]);
+  const [artifacts, setArtifacts] = useState<NkyelRendu[]>([]);
   const [streamedText, setStreamedText] = useState('');
   const [isStreaming, setIsStreaming] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -46,7 +46,7 @@ export function useAgent(): UseAgentReturn {
     setPhase('done');
   }, []);
 
-  const startAgent = useCallback(async (prompt: string, model: GabomaModel) => {
+  const startAgent = useCallback(async (prompt: string, model: NkyelModel) => {
     setEvents([]);
     setPhase('planning');
     setCurrentUrl('');
@@ -194,9 +194,9 @@ export function useAgent(): UseAgentReturn {
           break;
 
         case 'artifact': {
-          const rendu: GabomaRendu = {
+          const rendu: NkyelRendu = {
             id: `rendu-${Date.now()}`,
-            type: (evt.artifact_type as GabomaRendu['type']) ?? 'code',
+            type: (evt.artifact_type as NkyelRendu['type']) ?? 'code',
             title: evt.title as string ?? 'Le Rendu',
             content: evt.content as string,
             url: evt.url as string | undefined,

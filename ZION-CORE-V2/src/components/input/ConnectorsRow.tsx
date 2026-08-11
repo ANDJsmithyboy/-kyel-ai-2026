@@ -1,5 +1,5 @@
 /**
- * GabomaAI · ConnectorsRow
+ * Ñkyel AI · ConnectorsRow
  * Pills horizontaux scrollables pour les connecteurs.
  */
 

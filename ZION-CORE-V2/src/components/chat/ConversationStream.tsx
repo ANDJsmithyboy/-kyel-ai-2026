@@ -1,5 +1,5 @@
 /**
- * GabomaAI · ConversationStream
+ * Ñkyel AI · ConversationStream
  * SmartANDJ AI Technologies
  * Task 7 — Liste des messages avec auto-scroll et curseur streaming
  */
@@ -8,12 +8,12 @@
 
 import { useEffect, useRef } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import type { GabomaMessage } from '@/lib/models';
+import type { NkyelMessage } from '@/lib/models';
 import MessageUser from '@/components/chat/MessageUser';
 import MessageAssistant from '@/components/chat/MessageAssistant';
 
 interface ConversationStreamProps {
-  messages: GabomaMessage[];
+  messages: NkyelMessage[];
   isStreaming: boolean;
 }
 

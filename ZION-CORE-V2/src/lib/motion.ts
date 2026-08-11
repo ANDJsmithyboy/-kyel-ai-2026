@@ -1,4 +1,4 @@
-/* GabomaGPT · motion.ts · SmartANDJ AI Technologies
+/* Ñkyel AI · motion.ts · SmartANDJ AI Technologies
    Shared motion constants — single source of truth for all animations
    Both platforms (Next.js + Kotlin) must use identical values.
    Fondateur : Daniel Jonathan ANDJ */

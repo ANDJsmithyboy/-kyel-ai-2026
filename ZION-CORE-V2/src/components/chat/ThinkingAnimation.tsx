@@ -1,4 +1,4 @@
-/* GabomaGPT · ThinkingAnimation.tsx · SmartANDJ AI Technologies · Constitution Zion Core
+/* Ñkyel AI · ThinkingAnimation.tsx · SmartANDJ AI Technologies · Constitution Zion Core
    Fondateur : Daniel Jonathan ANDJ
    Animation de réflexion — 5 arcs rotatifs (couleurs du logo) + logo pulsant */
 'use client';
@@ -52,8 +52,8 @@ export default function ThinkingAnimation({ size = 48, showLogo = true }: Thinki
 
       {showLogo && (
         <img
-          src="/gabomagpt-logo.jpeg"
-          alt="GabomaGPT"
+          src="/Ñkyel AI-logo.jpeg"
+          alt="Ñkyel AI"
           className="relative z-10 rounded-xl object-cover"
           style={{
             width: size * 0.38,

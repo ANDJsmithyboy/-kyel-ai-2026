@@ -1,5 +1,5 @@
 /**
- * GabomaAI · WandanaToggle
+ * Ñkyel AI · WandanaToggle
  * Toggle standalone WANDANA — réutilisable.
  */
 

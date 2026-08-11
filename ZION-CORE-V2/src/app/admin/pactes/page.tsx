@@ -1,4 +1,4 @@
-/* GabomaGPT · Billing & Credits · SmartANDJ AI Technologies */
+/* Ñkyel AI · Billing & Credits · SmartANDJ AI Technologies */
 'use client';
 import { KPICard, SectionHeader, DataTable, StatusBadge, ChartCard } from '@/components/admin/AdminComponents';
 

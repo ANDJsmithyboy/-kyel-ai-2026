@@ -1,5 +1,5 @@
 """
-GabomaAI · DeerFlow Service
+Ñkyel AI · DeerFlow Service
 Orchestration d'agents via DeerFlow 2.0 (librairie Python).
 Limité à 1 agent concurrent sur RunPod CPU free tier.
 """
@@ -127,7 +127,7 @@ class DeerFlowService:
 
         # Si des outils vision sont disponibles et pertinents, les appeler
         for tool in tools:
-            if hasattr(tool, "name") and tool.name == "gaboma_vision":
+            if hasattr(tool, "name") and tool.name == "nkyel_vision":
                 # L'outil sera appelé par l'agent si nécessaire
                 pass
 
@@ -136,7 +136,7 @@ class DeerFlowService:
     def _build_system_prompt(self, model_id: str, tools: List[Any]) -> str:
         """Construit le prompt système selon le modèle et les outils."""
         base = (
-            "Tu es GabomaAI, une intelligence artificielle souveraine du Gabon. "
+            "Tu es Ñkyel AI, une intelligence artificielle souveraine du Gabon. "
             "Tu réponds en français sauf si l'utilisateur parle une autre langue. "
             "Tu es précis, utile et bienveillant."
         )

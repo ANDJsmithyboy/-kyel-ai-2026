@@ -1,10 +1,10 @@
 'use client';
 
-import type { GabomaRendu } from '@/lib/models';
-import GabomaMarkdown from '../markdown/GabomaMarkdown';
+import type { NkyelRendu } from '@/lib/models';
+import NkyelMarkdown from '../markdown/NkyelMarkdown';
 
 interface RenduViewerProps {
-  rendu: GabomaRendu;
+  rendu: NkyelRendu;
 }
 
 export default function RenduViewer({ rendu }: RenduViewerProps) {
@@ -29,7 +29,7 @@ export default function RenduViewer({ rendu }: RenduViewerProps) {
   // default: doc, table, chart (often markdown or specialized view)
   return (
     <div className="w-full h-full p-6 overflow-auto bg-[var(--bg-card)]">
-      <GabomaMarkdown content={rendu.content || ''} />
+      <NkyelMarkdown content={rendu.content || ''} />
     </div>
   );
 }

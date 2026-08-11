@@ -1,4 +1,4 @@
-/* GabomaGPT · Upstash Redis Client · SmartANDJ AI Technologies
+/* Ñkyel AI · Upstash Redis Client · SmartANDJ AI Technologies
    Cache, rate limiting, queues, token counting
    Fondateur : Daniel Jonathan ANDJ */
 
@@ -24,13 +24,13 @@ export function getRedis(): Redis {
 /** Cache a value with TTL (seconds) */
 export async function cacheSet(key: string, value: unknown, ttlSeconds = 3600): Promise<void> {
   const r = getRedis();
-  await r.set(`gaboma:${key}`, JSON.stringify(value), { ex: ttlSeconds });
+  await r.set(`nkyel:${key}`, JSON.stringify(value), { ex: ttlSeconds });
 }
 
 /** Get a cached value */
 export async function cacheGet<T = unknown>(key: string): Promise<T | null> {
   const r = getRedis();
-  const val = await r.get(`gaboma:${key}`);
+  const val = await r.get(`nkyel:${key}`);
   if (val === null) return null;
   return (typeof val === 'string' ? JSON.parse(val) : val) as T;
 }
@@ -38,7 +38,7 @@ export async function cacheGet<T = unknown>(key: string): Promise<T | null> {
 /** Invalidate a cache key */
 export async function cacheInvalidate(key: string): Promise<void> {
   const r = getRedis();
-  await r.del(`gaboma:${key}`);
+  await r.del(`nkyel:${key}`);
 }
 
 // ══════════════════════════════════════════════════════════
@@ -48,7 +48,7 @@ export async function cacheInvalidate(key: string): Promise<void> {
 /** Increment user token count */
 export async function incrementTokens(userId: string, tokens: number): Promise<number> {
   const r = getRedis();
-  const key = `gaboma:tokens:${userId}:${new Date().toISOString().slice(0, 10)}`;
+  const key = `nkyel:tokens:${userId}:${new Date().toISOString().slice(0, 10)}`;
   const newVal = await r.incrby(key, tokens);
   // Auto-expire daily counters after 48h
   await r.expire(key, 172800);
@@ -58,7 +58,7 @@ export async function incrementTokens(userId: string, tokens: number): Promise<n
 /** Get user's daily token count */
 export async function getDailyTokens(userId: string): Promise<number> {
   const r = getRedis();
-  const key = `gaboma:tokens:${userId}:${new Date().toISOString().slice(0, 10)}`;
+  const key = `nkyel:tokens:${userId}:${new Date().toISOString().slice(0, 10)}`;
   return (await r.get<number>(key)) ?? 0;
 }
 
@@ -69,13 +69,13 @@ export async function getDailyTokens(userId: string): Promise<number> {
 /** Store temporary session state */
 export async function setSessionState(sessionId: string, state: unknown, ttlSeconds = 1800): Promise<void> {
   const r = getRedis();
-  await r.set(`gaboma:session:${sessionId}`, JSON.stringify(state), { ex: ttlSeconds });
+  await r.set(`nkyel:session:${sessionId}`, JSON.stringify(state), { ex: ttlSeconds });
 }
 
 /** Get session state */
 export async function getSessionState<T = unknown>(sessionId: string): Promise<T | null> {
   const r = getRedis();
-  const val = await r.get(`gaboma:session:${sessionId}`);
+  const val = await r.get(`nkyel:session:${sessionId}`);
   if (val === null) return null;
   return (typeof val === 'string' ? JSON.parse(val) : val) as T;
 }

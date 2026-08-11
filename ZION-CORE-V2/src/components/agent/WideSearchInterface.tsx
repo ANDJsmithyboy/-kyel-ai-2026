@@ -6,7 +6,7 @@ import { useAuth } from '@clerk/nextjs';
 import { Send, Sparkles, Command } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-import { gabomaFetchAdapter } from '@/lib/agentStreamAdapter';
+import { nkyelFetchAdapter } from '@/lib/agentStreamAdapter';
 import WandanaSearchNode from './nodes/WandanaSearchNode';
 import E2BSandboxNode from './nodes/E2BSandboxNode';
 import ThoughtBlock from './nodes/ThoughtBlock';
@@ -34,7 +34,7 @@ export default function WideSearchInterface() {
         },
       };
       // Utilisation de notre adaptateur SSE custom
-      return gabomaFetchAdapter(input, secureInit);
+      return nkyelFetchAdapter(input, secureInit);
     },
     onError: (err) => {
       console.error('Erreur du stream agent:', err);
@@ -216,8 +216,8 @@ export default function WideSearchInterface() {
             <div className="flex gap-2">
               <button 
                 type="button"
-                onClick={() => setSelectedModel('ONYXGRIS')}
-                className={`px-3 py-1.5 rounded-lg border transition-colors ${selectedModel === 'ONYXGRIS' ? 'border-[var(--accent)] text-[var(--accent)] bg-[var(--accent-10)]' : 'border-[var(--border)] hover:bg-[var(--accent-06)]'}`}
+                onClick={() => setSelectedModel('NKYEL_RADI')}
+                className={`px-3 py-1.5 rounded-lg border transition-colors ${selectedModel === 'NKYEL_RADI' ? 'border-[var(--accent)] text-[var(--accent)] bg-[var(--accent-10)]' : 'border-[var(--border)] hover:bg-[var(--accent-06)]'}`}
               >
                 ONYXGRIS (Agent IA)
               </button>

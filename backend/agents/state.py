@@ -1,6 +1,6 @@
 """
-GabomaGPT — État du graphe LangGraph · SmartANDJ AI Technologies
-TypedDict décrivant l'état qui circule entre les nœuds du StateGraph.
+Ñkyel AI — État du graphe LangGraph (legacy) · SmartANDJ AI Technologies
+TypedDict décrivant l'état qui circule entre les nœuds du StateGraph legacy.
 Fondateur : Daniel Jonathan ANDJ
 """
 
@@ -10,8 +10,8 @@ from typing import Literal, Optional
 from typing_extensions import TypedDict
 
 
-class GabomaState(TypedDict, total=False):
-    """État partagé entre tous les nœuds du graphe GabomaGPT."""
+class NkyelLegacyState(TypedDict, total=False):
+    """État partagé entre tous les nœuds du graphe legacy Ñkyel AI."""
 
     # ── Entrée utilisateur ────────────────────────────────
     user_message: str

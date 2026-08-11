@@ -1,5 +1,5 @@
 """
-GabomaAI — API v1 Chat Completions · SmartANDJ AI Technologies
+Ñkyel AI — API v1 Chat Completions · SmartANDJ AI Technologies
 Streaming SSE via Groq + LOXO RAG + Sauvegarde en DB Neon.
 Protégé par Clerk JWKS.
 Fondateur : Daniel Jonathan ANDJ
@@ -91,7 +91,7 @@ async def stream_chat_response(
     ):
         if event["type"] == "token":
             full_content += event["text"]
-            # Format SSE compatible OpenAI/Gaboma
+            # Format SSE compatible OpenAI/Ñkyel
             yield f"data: {json.dumps({'type': 'token', 'content': event['text']})}\n\n"
             
         elif event["type"] == "usage":

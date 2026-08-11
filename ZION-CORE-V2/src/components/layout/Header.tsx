@@ -1,4 +1,4 @@
-/* GabomaGPT · Header.tsx · SmartANDJ AI Technologies · Constitution Zion Core
+/* Ñkyel AI · Header.tsx · SmartANDJ AI Technologies · Constitution Zion Core
    Fondateur : Daniel Jonathan ANDJ
    En-tête chat — sélecteur de modèle + contrôles + toggle sidebar mobile */
 'use client';
@@ -12,7 +12,7 @@ import { useSidebarStore } from '@/stores/sidebar';
 import { useSettingsStore, getDisplayModelName } from '@/stores/settings.store';
 import { useAuthStore } from '@/stores/auth.store';
 import { cn } from '@/lib/utils';
-import { IconAurata, IconNkyel, IconWandana, GabomaAILogo } from '@/components/icons';
+import { IconAurata, IconNkyel, IconWandana, Ñkyel AILogo } from '@/components/icons';
 
 /* ── Modèles disponibles ── */
 const MODELS = [
@@ -40,11 +40,11 @@ export default function Header({ currentModel, onModelChange }: HeaderProps) {
 
   return (
     <header className="sticky top-0 z-30 flex items-center gap-2 px-3 py-2 navbar-glass border-b border-[var(--border)]">
-      {/* Logo Gaboma AI + Toggle (visible quand sidebar fermée ou mobile) */}
+      {/* Logo Ñkyel AI + Toggle (visible quand sidebar fermée ou mobile) */}
       {(isMobile || !isOpen) && (
         <div className="group flex items-center gap-1.5 mr-2">
           <div className="flex h-8 w-8 items-center justify-center">
-            <GabomaAILogo width={22} height={22} />
+            <Ñkyel AILogo width={22} height={22} />
           </div>
           <button
             onClick={toggle}

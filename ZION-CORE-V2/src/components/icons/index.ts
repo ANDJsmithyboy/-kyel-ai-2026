@@ -8,7 +8,7 @@ export { IconEnPiste } from './IconEnPiste';
 export * from './RenduIcon';
 export * from './JonathanDanielIcon';
 export * from './SmartAndJTechIcon';
-export * from './GabomaAILogo';
+export * from './Ñkyel AILogo';
 export * from './ProjetIcon';
 export { SonarIcon, NkyelIcon } from './SonarIcon';
 export { IbogaAiIcon } from './IbogaAiIcon';
@@ -19,7 +19,7 @@ export { OnyxFaceIcon } from './OnyxFaceIcon';
 export {
   NouvellePisteIcon,
   AurataIcon,
-  NkyelIcon as NkyelGabomaIcon,
+  NkyelIcon as NkyelIcon,
   OnyxGrisIcon,
-  GabomaAgentIcon,
-} from './GabomaIcons';
+  NkyelAgentIcon,
+} from './NkyelIcons';

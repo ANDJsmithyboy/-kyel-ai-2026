@@ -1,5 +1,5 @@
 """
-GabomaAI · Configuration
+Ñkyel AI · Configuration
 Pydantic BaseSettings — charge les variables depuis .env
 """
 
@@ -11,15 +11,15 @@ class Settings(BaseSettings):
     # ── App ──
     app_env: str = "development"
     app_secret: str = "change-me-in-production"
-    cors_origins: str = "http://localhost:3000,https://gabomaai.vercel.app"
+    cors_origins: str = "http://localhost:3000,https://nkyelai.vercel.app"
 
     # ── LLM (Groq) ──
     groq_api_key: str = ""
 
-    # ── GabomaSeer (Vision) ──
+    # ── NkyelSeer (Vision) ──
     hf_api_key: str = ""
-    gabomaseer_mode: str = "hf_api"
-    gabomaseer_url: str = "https://api-inference.huggingface.co/models/THUdyh/Oryx-1.5-32B"
+    nkyelseer_mode: str = "hf_api"
+    nkyelseer_url: str = "https://api-inference.huggingface.co/models/THUdyh/Oryx-1.5-32B"
 
     # ── WANDANA (Recherche web) ──
     tavily_api_key: str = ""

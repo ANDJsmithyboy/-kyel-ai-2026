@@ -1,4 +1,4 @@
-/* GabomaGPT · admin/models/page.tsx · SmartANDJ AI Technologies · Constitution Zion Core
+/* Ñkyel AI · admin/models/page.tsx · SmartANDJ AI Technologies · Constitution Zion Core
    Fondateur : Daniel Jonathan ANDJ
    Gestion des modèles et clés API */
 'use client';
@@ -51,7 +51,7 @@ export default function AdminModelsPage() {
           Masquage des modèles
         </h3>
         <p className="text-xs text-[var(--text-tertiary)] mb-4">
-          Les utilisateurs normaux voient des noms GabomaGPT au lieu des vrais noms de modèles.
+          Les utilisateurs normaux voient des noms Ñkyel AI au lieu des vrais noms de modèles.
         </p>
         <div className="space-y-2">
           {Object.entries(MODEL_DISPLAY_NAMES).map(([real, display]) => (

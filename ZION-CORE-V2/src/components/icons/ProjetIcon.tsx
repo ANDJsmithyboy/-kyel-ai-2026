@@ -1,5 +1,5 @@
 /**
- * Gaboma AI · ProjetIcon — Dossier Projet ★
+ * Ñkyel AI · ProjetIcon — Dossier Projet ★
  * SmartANDJ AI Technologies
  * Icône "Projet" — dossier avec étoile (style Claude Projects)
  */

@@ -1,4 +1,4 @@
-/* GabomaGPT · RAG Monitor · SmartANDJ AI Technologies */
+/* Ñkyel AI · RAG Monitor · SmartANDJ AI Technologies */
 'use client';
 import { KPICard, SectionHeader, DataTable, StatusBadge } from '@/components/admin/AdminComponents';
 

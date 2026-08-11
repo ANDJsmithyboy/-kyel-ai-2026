@@ -1,5 +1,5 @@
 /**
- * GabomaAI · SourcePills
+ * Ñkyel AI · SourcePills
  * SmartANDJ AI Technologies
  * Task 7 — Chips de sources (Radar LOXO / Invoquer LOXO / Coffre-Fort)
  */
@@ -7,16 +7,16 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import type { GabomaSource } from '@/lib/models';
+import type { NkyelSource } from '@/lib/models';
 
-const SOURCE_ICONS: Record<GabomaSource['type'], string> = {
+const SOURCE_ICONS: Record<NkyelSource['type'], string> = {
   loxo_web: '🌐',
   loxo_rag: '📚',
   coffre_fort: '🔐',
 };
 
 interface SourcePillsProps {
-  sources: GabomaSource[];
+  sources: NkyelSource[];
 }
 
 export default function SourcePills({ sources }: SourcePillsProps) {

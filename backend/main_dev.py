@@ -1,5 +1,5 @@
 """
-GabomaGPT — Backend DEV (Simplifié pour démo locale)
+Ñkyel AI — Backend DEV (Simplifié pour démo locale)
 SmartANDJ AI Technologies · Fondateur : Daniel Jonathan ANDJ
 Mode développement — Pas de DB externe requise
 Frontend + Backend servis depuis ce serveur
@@ -25,7 +25,7 @@ FRONTEND_STATIC = BASE_DIR / "apps" / "web" / "static"
 
 # ── Application FastAPI ──────────────────────────────────────
 app = FastAPI(
-    title="GabomaGPT API",
+    title="Ñkyel AI API",
     description="Backend API + Frontend - Développement Local",
     version="1.0.0"
 )
@@ -59,9 +59,9 @@ class Config(BaseModel):
 
 # ── In-Memory Store ──────────────────────────────────────────
 MOCK_MODELS = [
-    Model(id="gpt-4o-mini", name="GabomaGPT Flash Pro", provider="groq"),
-    Model(id="llama-3.1-70b", name="GabomaGPT Élite", provider="groq"),
-    Model(id="mixtral-8x7b", name="GabomaGPT Panthère", provider="groq"),
+    Model(id="gpt-4o-mini", name="Ñkyel Flash Pro", provider="groq"),
+    Model(id="llama-3.1-70b", name="Ñkyel Élite", provider="groq"),
+    Model(id="mixtral-8x7b", name="Ñkyel Panthère", provider="groq"),
 ]
 
 CURRENT_USER = {
@@ -78,7 +78,7 @@ async def get_config():
     """Get backend configuration"""
     return {
         "status": "ok",
-        "app_name": "GabomaGPT",
+        "app_name": "Ñkyel AI",
         "version": "1.0.0",
         "mode": "development",
         "backend_version": "1.0.0",
@@ -138,7 +138,7 @@ async def chat_completion(request: ChatRequest):
                 "index": 0,
                 "message": {
                     "role": "assistant",
-                    "content": f"[GabomaGPT - Mode Développement] Vous avez envoyé: {request.messages[-1].content if request.messages else 'message vide'}"
+                    "content": f"[Ñkyel AI - Mode Développement] Vous avez envoyé: {request.messages[-1].content if request.messages else 'message vide'}"
                 },
                 "finish_reason": "stop"
             }
@@ -157,6 +157,140 @@ async def health_check():
         "status": "healthy",
         "timestamp": datetime.now().isoformat()
     }
+
+
+# ── Agent Endpoints ──────────────────────────────────────────
+
+class AgentRunRequest(BaseModel):
+    goal: str
+    model: Optional[str] = "gemini-2.5-flash"
+    language: Optional[str] = "fr"
+
+class ReplanRequest(BaseModel):
+    run_id: str
+    reason: str
+    from_sequence: Optional[int] = None
+
+@app.post("/api/agent/run")
+async def agent_run(request: AgentRunRequest):
+    """Execute the full Ñkyel agent pipeline for a goal."""
+    try:
+        from agents.nkyel_graph import build_nkyel_graph
+
+        graph = build_nkyel_graph()
+        result = graph.invoke({
+            "user_message": request.goal,
+            "user_id": CURRENT_USER["id"],
+            "language": request.language or "fr",
+        })
+
+        return {
+            "success": True,
+            "run_id": result.get("run_id"),
+            "final_response": result.get("final_response"),
+            "plan": result.get("plan"),
+            "steps_taken": result.get("steps_taken"),
+            "total_latency_ms": result.get("total_latency_ms", 0),
+            "nodes_count": len(result.get("nodes", [])),
+            "events_count": len(result.get("events", [])),
+            "sources": result.get("sources", []),
+        }
+    except Exception as e:
+        return JSONResponse(
+            {"success": False, "error": str(e)},
+            status_code=500,
+        )
+
+@app.post("/api/agent/replan")
+async def agent_replan(request: ReplanRequest):
+    """Replanify an existing run with a new reason."""
+    try:
+        from agents.nkyel_graph import build_nkyel_graph
+        from events.persistent_store import get_snapshot
+
+        # Load the snapshot from the original run
+        snapshot = get_snapshot(request.run_id)
+        if not snapshot:
+            return JSONResponse(
+                {"success": False, "error": f"No snapshot found for run '{request.run_id}'"},
+                status_code=404,
+            )
+
+        # Re-invoke the graph with replan flags set
+        graph = build_nkyel_graph()
+        replan_state = {
+            "user_message": snapshot.get("goal_title", ""),
+            "user_id": snapshot.get("user_id", CURRENT_USER["id"]),
+            "language": snapshot.get("language", "fr"),
+            "goal_title": snapshot.get("goal_title", ""),
+            "plan": snapshot.get("plan", []),
+            "plan_version": snapshot.get("plan_version", 0),
+            "sources": snapshot.get("sources", []),
+            "replan_requested": True,
+            "replan_reason": request.reason,
+        }
+
+        result = graph.invoke(replan_state)
+
+        return {
+            "success": True,
+            "run_id": result.get("run_id"),
+            "original_run_id": request.run_id,
+            "final_response": result.get("final_response"),
+            "plan": result.get("plan"),
+            "plan_version": result.get("plan_version"),
+            "steps_taken": result.get("steps_taken"),
+            "replan_reason": request.reason,
+        }
+    except Exception as e:
+        return JSONResponse(
+            {"success": False, "error": str(e)},
+            status_code=500,
+        )
+
+@app.get("/api/agent/events/{run_id}")
+async def get_agent_events(run_id: str):
+    """Get all persisted events for a run."""
+    try:
+        from events.persistent_store import get_events
+        events = get_events(run_id)
+        return {"run_id": run_id, "events": events, "count": len(events)}
+    except Exception as e:
+        return JSONResponse(
+            {"error": str(e)},
+            status_code=500,
+        )
+
+@app.get("/api/agent/snapshot/{run_id}")
+async def get_agent_snapshot(run_id: str):
+    """Get the persisted snapshot for a run."""
+    try:
+        from events.persistent_store import get_snapshot
+        snapshot = get_snapshot(run_id)
+        if not snapshot:
+            return JSONResponse(
+                {"error": f"No snapshot found for run '{run_id}'"},
+                status_code=404,
+            )
+        return {"run_id": run_id, "snapshot": snapshot}
+    except Exception as e:
+        return JSONResponse(
+            {"error": str(e)},
+            status_code=500,
+        )
+
+@app.get("/api/mcp/tools")
+async def list_mcp_tools():
+    """List all registered MCP tools."""
+    try:
+        from mcp.registry import registry
+        import mcp.tools  # noqa: F401 — trigger registration
+        return {"tools": registry.list_tools()}
+    except Exception as e:
+        return JSONResponse(
+            {"error": str(e)},
+            status_code=500,
+        )
 
 # ── Servir les fichiers statiques ──────────────────────────────
 if FRONTEND_STATIC.exists():
@@ -184,8 +318,8 @@ if __name__ == "__main__":
     import uvicorn
     print("""
     ╔════════════════════════════════════════════════════════════════╗
-    ║                  GabomaGPT Backend - DEV MODE                  ║
-    ║              SmartANDJ AI Technologies · Gabon 🇬🇦            ║
+    ║                  Ñkyel AI Backend - DEV MODE                    ║
+    ║              SmartANDJ AI Technologies · Africa 🌍              ║
     ║                                                                ║
     ║  🚀 Server starting on http://localhost:8000                  ║
     ║  📚 Docs:      http://localhost:8000/docs                     ║
@@ -196,4 +330,4 @@ if __name__ == "__main__":
     ║        Chat persistence not available                          ║
     ╚════════════════════════════════════════════════════════════════╝
     """)
-    uvicorn.run(app, host="0.0.0.0", port=8000, reload=True)
+    uvicorn.run("main_dev:app", host="0.0.0.0", port=8000, reload=True)

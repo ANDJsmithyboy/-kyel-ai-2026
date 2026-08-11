@@ -38,7 +38,7 @@ export default function AntreModal({ isOpen, onClose, initialTab = 'profil' }: A
               <div className="flex justify-between items-center py-2 border-b border-white/5">
                 <span className="opacity-80">Email</span>
                 <div className="flex gap-4 items-center">
-                  <span className="opacity-60">daniel@gabomagpt.com</span>
+                  <span className="opacity-60">daniel@Ñkyel AI.com</span>
                   <button className="text-primary text-sm font-medium hover:underline">Modifier</button>
                 </div>
               </div>
@@ -414,7 +414,7 @@ export default function AntreModal({ isOpen, onClose, initialTab = 'profil' }: A
                   <div className="space-y-2 text-xs opacity-80">
                     <p className="flex justify-between">
                       <span>Version:</span>
-                      <span className="font-mono">Gaboma AI - Build 1.0.0-Gaboma</span>
+                      <span className="font-mono">Ñkyel AI - Build 1.0.0-Ñkyel</span>
                     </p>
                     <p className="flex justify-between">
                       <span>Nœud:</span>

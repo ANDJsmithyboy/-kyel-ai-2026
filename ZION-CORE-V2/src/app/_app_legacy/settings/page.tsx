@@ -1,6 +1,6 @@
-/* GabomaGPT · settings/page.tsx · SmartANDJ AI Technologies · Constitution Zion Core
+/* Ñkyel AI · settings/page.tsx · SmartANDJ AI Technologies · Constitution Zion Core
    Fondateur : Daniel Jonathan ANDJ
-   Page paramètres complète — Apparence, GabomaGPT, Chat, Audio, À propos */
+   Page paramètres complète — Apparence, Ñkyel AI, Chat, Audio, À propos */
 'use client';
 
 import { useState } from 'react';
@@ -19,11 +19,11 @@ import { cn } from '@/lib/utils';
 import { useClerk } from '@clerk/nextjs';
 import { motion, AnimatePresence } from 'framer-motion';
 
-type TabKey = 'apparence' | 'gabomagpt' | 'chat' | 'audio' | 'about';
+type TabKey = 'apparence' | 'Ñkyel AI' | 'chat' | 'audio' | 'about';
 
 const TABS: { key: TabKey; label: string; icon: typeof Palette }[] = [
   { key: 'apparence', label: 'Apparence', icon: Palette },
-  { key: 'gabomagpt', label: 'GabomaGPT', icon: Sparkles },
+  { key: 'Ñkyel AI', label: 'Ñkyel AI', icon: Sparkles },
   { key: 'chat', label: 'Chat', icon: MessageSquare },
   { key: 'audio', label: 'Audio', icon: Volume2 },
   { key: 'about', label: 'À propos', icon: Info },
@@ -129,7 +129,7 @@ export default function SettingsPage() {
                 <span>⚠️</span> Suppression Définitive
               </h3>
               <p className="text-[13px] leading-relaxed" style={{ color: '#8A8A92' }}>
-                Cette action est <strong style={{ color: '#ef4444' }}>irréversible</strong>. Votre Profil Cadre, vos conversations En Piste, et votre historique seront définitivement effacés de GabomaAI.
+                Cette action est <strong style={{ color: '#ef4444' }}>irréversible</strong>. Votre Profil Cadre, vos conversations En Piste, et votre historique seront définitivement effacés de Ñkyel AI.
               </p>
               <p className="text-[12px] italic p-2.5 rounded-lg" style={{ background: 'rgba(239,68,68,0.05)', border: '1px solid rgba(239,68,68,0.1)', color: '#525258' }}>
                 Pour valider, veuillez saisir <span className="font-mono select-all" style={{ color: '#F0EDE6' }}>SUPPRIMER</span> ci-dessous :
@@ -290,7 +290,7 @@ export default function SettingsPage() {
                     <Palette size={16} className="text-[var(--accent)]" />
                     Couleur d&apos;accentuation
                   </h2>
-                  <p className="text-xs text-[var(--text-tertiary)] mb-3">Les 5 pétales du logo GabomaGPT</p>
+                  <p className="text-xs text-[var(--text-tertiary)] mb-3">Les 5 pétales du logo Ñkyel AI</p>
                   <div className="space-y-1.5">
                     {ACCENTS.map((a) => (
                       <button
@@ -353,8 +353,8 @@ export default function SettingsPage() {
               </>
             )}
 
-            {/* ═══════ GABOMAGPT ═══════ */}
-            {activeTab === 'gabomagpt' && (
+            {/* ═══════ Ñkyel AI ═══════ */}
+            {activeTab === 'Ñkyel AI' && (
               <>
                 {/* Black Panther */}
                 <section>
@@ -449,9 +449,9 @@ export default function SettingsPage() {
             {activeTab === 'about' && (
               <section className="space-y-4">
                 <div className="flex items-center gap-4">
-                  <img src="/gabomagpt-logo.jpeg" alt="GabomaGPT" className="w-16 h-16 rounded-2xl object-cover" />
+                  <img src="/Ñkyel AI-logo.jpeg" alt="Ñkyel AI" className="w-16 h-16 rounded-2xl object-cover" />
                   <div>
-                    <h2 className="text-lg font-bold text-[var(--text-primary)]">GabomaGPT</h2>
+                    <h2 className="text-lg font-bold text-[var(--text-primary)]">Ñkyel AI</h2>
                     <p className="text-sm text-[var(--text-secondary)]">v2.0 · Zion-Core Obsidian</p>
                   </div>
                 </div>

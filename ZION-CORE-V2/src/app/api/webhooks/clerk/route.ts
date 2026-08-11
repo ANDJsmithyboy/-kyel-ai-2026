@@ -1,4 +1,4 @@
-/* GabomaGPT · Clerk Webhook · SmartANDJ AI Technologies
+/* Ñkyel AI · Clerk Webhook · SmartANDJ AI Technologies
    Sync Clerk users → Neon PostgreSQL via Drizzle
    Events: user.created, user.updated, user.deleted
    Fondateur : Daniel Jonathan ANDJ */
@@ -70,7 +70,7 @@ export async function POST(req: Request) {
           email: email || `${data.id}@clerk.user`,
           fullName: name,
           avatarUrl: data.image_url,
-          tier: isGodMode ? 'BLUE_PANTHER' : 'AURATA',
+          tier: isGodMode ? 'BLUE_PANTHER' : 'NKYEL_CHUI',
           credits: isGodMode ? 999999999 : 100,
           isAdmin: !!isGodMode,
         }).onConflictDoNothing();

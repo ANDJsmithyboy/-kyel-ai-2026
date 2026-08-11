@@ -1,5 +1,5 @@
 /**
- * Gaboma AI · TierPicker.tsx · Client Component
+ * Ñkyel AI · TierPicker.tsx · Client Component
  * SmartANDJ AI Technologies
  * Sélecteur de tier — Bottom sheet mobile, popover desktop.
  */
@@ -12,7 +12,7 @@ import { cn } from '@/lib/utils';
 import { IconAurata, IconNkyel, IconOnyxGris, IconWandana, IconBlackPanther, IconBluePanther } from '@/components/icons';
 
 /* ── Types ────────────────────────────────────────── */
-export type TierKey = 'AURATA' | 'NYEL' | 'WANDANA' | 'ONYX' | 'BLACK_PANTHER' | 'BLUE_PANTHER';
+export type TierKey = 'NKYEL_CHUI' | 'NKYEL_TAI' | 'RECHERCHE_WEB' | 'NKYEL_RADI' | 'BLUE_PANTHER';
 
 interface Tier {
   key: TierKey;
@@ -24,12 +24,11 @@ interface Tier {
 }
 
 const TIERS: Tier[] = [
-  { key: 'AURATA',        label: 'Aurata',        description: 'Mode fondamental',               badge: 'AURATA',        available: true,  accentColor: '#C5A059' },
-  { key: 'NYEL',          label: 'Ñkyel',          description: 'Mode avancé',                    badge: 'ÑKYEL',          available: false, accentColor: '#94A3B8' },
-  { key: 'WANDANA',       label: 'Wandana',       description: 'Recherche & Deep Recherche',     badge: 'WANDANA',       available: false, accentColor: '#A855F7' },
-  { key: 'ONYX',          label: 'OnyxGris',          description: 'Agent IA autonome',              badge: 'ONYXGRIS',          available: false, accentColor: '#E2E8F0' },
-  { key: 'BLACK_PANTHER', label: 'Black Panther', description: 'Super Agent multi-agents', badge: 'BLACK PANTHER', available: false, accentColor: '#C5A059' },
-  { key: 'BLUE_PANTHER', label: 'Blue Panther', description: 'Mode Créateur Illimité', badge: 'BLUE PANTHER', available: true, accentColor: '#0070F3' },
+  { key: 'NKYEL_CHUI',    label: 'Nkyel Chui',    description: 'Réponses rapides & efficaces',       badge: 'CHUI',        available: true, accentColor: '#C5A059' },
+  { key: 'NKYEL_TAI',     label: 'Nkyel Tai',     description: 'Raisonnement profond & multimodal', badge: 'TAI',         available: true, accentColor: '#6B46C1' },
+  { key: 'RECHERCHE_WEB', label: 'Recherche Web', description: 'Recherche web & Deep Research',     badge: 'RECHERCHE',   available: true, accentColor: '#EAB308' },
+  { key: 'NKYEL_RADI',    label: 'Nkyel Radi',    description: 'Langues gabonaises & tâches légères', badge: 'RADI',       available: true, accentColor: '#10B981' },
+  { key: 'BLUE_PANTHER',  label: 'Blue Panther',  description: 'Mode Créateur Illimité',             badge: 'CRÉATEUR',   available: true, accentColor: '#0070F3' },
 ];
 
 /* ── Props ────────────────────────────────────────── */
@@ -109,7 +108,7 @@ export default function TierPicker({ isOpen, onClose, selectedTier, onSelect }: 
             drag={shouldReduceMotion ? false : 'y'}
             dragConstraints={{ top: 0 }}
             dragElastic={0.1}
-            onDragEnd={(_, info) => {
+            onDragEnd={(_: any, info: any) => {
               if (info.offset.y > 80) onClose();
             }}
           >
@@ -177,11 +176,10 @@ export default function TierPicker({ isOpen, onClose, selectedTier, onSelect }: 
                         {(() => {
                           const props = { width: 16, height: 16 };
                           switch (tier.key) {
-                            case 'AURATA': return <IconAurata {...props} />;
-                            case 'NYEL': return <IconNkyel {...props} />;
-                            case 'WANDANA': return <IconWandana {...props} />;
-                            case 'ONYX': return <IconOnyxGris {...props} />;
-                            case 'BLACK_PANTHER': return <IconBlackPanther {...props} />;
+                            case 'NKYEL_CHUI': return <IconAurata {...props} />;
+                            case 'NKYEL_TAI': return <IconNkyel {...props} />;
+                            case 'RECHERCHE_WEB': return <IconWandana {...props} />;
+                            case 'NKYEL_RADI': return <IconOnyxGris {...props} />;
                             case 'BLUE_PANTHER': return <IconBluePanther {...props} />;
                             default: return <div className="h-2.5 w-2.5 rounded-full" style={{ background: tier.accentColor }} />;
                           }

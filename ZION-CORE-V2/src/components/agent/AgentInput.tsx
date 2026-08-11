@@ -1,5 +1,5 @@
 /**
- * GabomaAI · AgentInput
+ * Ñkyel AI · AgentInput
  * SmartANDJ AI Technologies
  * Barre de saisie avec sélection ONYX / BLACK PANTHER.
  * Thème : Zion Core Obsidian.
@@ -81,7 +81,7 @@ export default function AgentInput() {
 
   const modeConfig: Record<AgentMode, { label: string; color: string; bg: string }> = {
     onyx: {
-      label: 'ONYX',
+      label: 'NKYEL_RADI',
       color: 'var(--green-emerald)',
       bg: 'rgba(46, 204, 138, 0.1)',
     },

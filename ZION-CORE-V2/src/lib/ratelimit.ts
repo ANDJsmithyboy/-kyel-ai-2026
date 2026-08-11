@@ -1,4 +1,4 @@
-/* GabomaGPT · Rate Limiting · SmartANDJ AI Technologies
+/* Ñkyel AI · Rate Limiting · SmartANDJ AI Technologies
    Upstash sliding window rate limiter
    Fondateur : Daniel Jonathan ANDJ */
 
@@ -12,7 +12,7 @@ export const freeLimiter = new Ratelimit({
   redis: getRedis(),
   limiter: Ratelimit.slidingWindow(10, '1 m'),
   analytics: true,
-  prefix: 'gaboma:rl:free',
+  prefix: 'nkyel:rl:free',
 });
 
 /** Pro tier: 60 requests per minute */
@@ -20,7 +20,7 @@ export const proLimiter = new Ratelimit({
   redis: getRedis(),
   limiter: Ratelimit.slidingWindow(60, '1 m'),
   analytics: true,
-  prefix: 'gaboma:rl:pro',
+  prefix: 'nkyel:rl:pro',
 });
 
 /** Admin tier: 200 requests per minute */
@@ -28,7 +28,7 @@ export const adminLimiter = new Ratelimit({
   redis: getRedis(),
   limiter: Ratelimit.slidingWindow(200, '1 m'),
   analytics: true,
-  prefix: 'gaboma:rl:admin',
+  prefix: 'nkyel:rl:admin',
 });
 
 /** IP-based limiter for public routes: 30 requests per minute */
@@ -36,7 +36,7 @@ export const ipLimiter = new Ratelimit({
   redis: getRedis(),
   limiter: Ratelimit.slidingWindow(30, '1 m'),
   analytics: true,
-  prefix: 'gaboma:rl:ip',
+  prefix: 'nkyel:rl:ip',
 });
 
 // ── Helper ──────────────────────────────────────────────────

@@ -1,4 +1,4 @@
-/* GabomaGPT · Sentry Client Config · SmartANDJ AI Technologies */
+/* Ñkyel AI · Sentry Client Config · SmartANDJ AI Technologies */
 import * as Sentry from '@sentry/nextjs';
 
 Sentry.init({

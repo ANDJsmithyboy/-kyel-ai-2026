@@ -1,5 +1,5 @@
 /**
- * Gaboma AI · SidebarNav.tsx · Client Component (usePathname)
+ * Ñkyel AI · SidebarNav.tsx · Client Component (usePathname)
  * SmartANDJ AI Technologies
  * Navigation principale — Nouvelle Piste + 3 nav items.
  */

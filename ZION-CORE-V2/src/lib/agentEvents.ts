@@ -1,7 +1,7 @@
 /**
- * GabomaAI · Agent Event Labels
+ * Ñkyel AI · Agent Event Labels
  * SmartANDJ AI Technologies
- * Mapping interne → vocabulaire GabomaAI public
+ * Mapping interne → vocabulaire Ñkyel AI public
  */
 
 export const AGENT_EVENT_LABELS: Record<string, { label: string; icon_key: string }> = {
@@ -23,7 +23,7 @@ export const AGENT_EVENT_LABELS: Record<string, { label: string; icon_key: strin
 };
 
 /**
- * Résout un type d'événement interne vers un label GabomaAI.
+ * Résout un type d'événement interne vers un label Ñkyel AI.
  * Retourne un fallback humanisé si inconnu.
  */
 export function resolveEventLabel(eventType: string): { label: string; icon_key: string } {

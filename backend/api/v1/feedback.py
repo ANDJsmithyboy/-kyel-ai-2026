@@ -1,5 +1,5 @@
 """
-GabomaGPT — API v1 Feedback · SmartANDJ AI Technologies
+Ñkyel AI — API v1 Feedback · SmartANDJ AI Technologies
 Feedback loop — Section 16 du prompt
 Fondateur : Daniel Jonathan ANDJ
 """

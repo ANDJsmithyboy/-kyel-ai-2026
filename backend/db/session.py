@@ -1,5 +1,5 @@
 """
-GabomaAI — Session Base de Données · SmartANDJ AI Technologies
+Ñkyel AI — Session Base de Données · SmartANDJ AI Technologies
 Neon PostgreSQL async via SQLAlchemy 2.0 + asyncpg.
 Fondateur : Daniel Jonathan ANDJ
 """

@@ -1,5 +1,5 @@
 /**
- * Gaboma AI · HomeInputBar.tsx · Client Component
+ * Ñkyel AI · HomeInputBar.tsx · Client Component
  * SmartANDJ AI Technologies
  * Barre d'input — page d'accueil (état vide, pas de conversation).
  */
@@ -15,7 +15,7 @@ import TierPicker, { type TierKey } from './TierPicker';
 export default function HomeInputBar() {
   const [value, setValue] = useState('');
   const [isFocused, setIsFocused] = useState(false);
-  const [selectedTier, setSelectedTier] = useState<TierKey>('AURATA');
+  const [selectedTier, setSelectedTier] = useState<TierKey>('NKYEL_CHUI');
   const [showTierPicker, setShowTierPicker] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const shouldReduceMotion = useReducedMotion();
@@ -54,12 +54,11 @@ export default function HomeInputBar() {
 
   /* Tier chip label */
   const tierLabel = (() => {
-    const labels: Record<TierKey, string> = {
-      AURATA: 'Aurata',
-      NYEL: 'Ñkyel',
-      WANDANA: 'Wandana',
-      ONYX: 'OnyxGris',
-      BLACK_PANTHER: 'Black Panther',
+    const labels: Record<string, string> = {
+      NKYEL_CHUI: 'Nkyel Chui',
+      NKYEL_TAI: 'Nkyel Tai',
+      RECHERCHE_WEB: 'Recherche Web',
+      NKYEL_RADI: 'Nkyel Radi',
       BLUE_PANTHER: 'Blue Panther (Créateur)',
     };
     return labels[selectedTier];
@@ -104,7 +103,7 @@ export default function HomeInputBar() {
           </button>
 
           {/* Tier chip (visible when not showing picker) */}
-          {!showTierPicker && selectedTier !== 'AURATA' && (
+          {!showTierPicker && selectedTier !== 'NKYEL_CHUI' && (
             <span
               className="ml-1 rounded-full px-2.5 py-1 text-[11px] font-medium"
               style={{

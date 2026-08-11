@@ -1,5 +1,5 @@
 /**
- * GabomaAI · SidebarSection (déployable)
+ * Ñkyel AI · SidebarSection (déployable)
  * SmartANDJ AI Technologies
  */
 

@@ -1,4 +1,4 @@
-/* GabomaGPT · ChatWindow.tsx · SmartANDJ AI Technologies · Constitution Zion Core
+/* Ñkyel AI · ChatWindow.tsx · SmartANDJ AI Technologies · Constitution Zion Core
    Fondateur : Daniel Jonathan ANDJ
    Fenêtre de chat complète — messages, streaming SSE, suggestions, état vide */
 'use client';
@@ -22,7 +22,7 @@ function getTimeGreeting(name: string): string {
   if (h >= 5 && h < 12) return `Mbolo ! Bonjour ${name}`;
   if (h >= 12 && h < 18) return `Akeva ! Bon après-midi ${name}`;
   if (h >= 18 && h < 21) return `Bonsoir ${name}, on gère quoi ?`;
-  return `C'est tard ${name}, mais Gaboma AI veille`;
+  return `C'est tard ${name}, mais Ñkyel AI veille`;
 }
 
 /* ── Messages d'erreur gabonais ── */
@@ -30,7 +30,7 @@ function getErrorMessage(error: string): string {
   if (error.includes('network') || error.includes('fetch')) return 'Wolo wolo, connexion perdue. On réessaie ?';
   if (error.includes('500') || error.includes('server')) return 'Le serveur fait la sieste. Patience frère.';
   if (error.includes('429') || error.includes('rate')) return 'Doucement ! Trop de requêtes. On souf le gaz.';
-  if (error.includes('empty')) return 'Gaboma AI réfléchit encore... c\'est chaud.';
+  if (error.includes('empty')) return 'Ñkyel AI réfléchit encore... c\'est chaud.';
   return `Erreur : ${error}`;
 }
 

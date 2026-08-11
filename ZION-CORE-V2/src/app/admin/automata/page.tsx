@@ -1,4 +1,4 @@
-/* GabomaGPT · DeerFlow Monitor · SmartANDJ AI Technologies */
+/* Ñkyel AI · DeerFlow Monitor · SmartANDJ AI Technologies */
 'use client';
 import { KPICard, SectionHeader, DataTable, StatusBadge, ChartCard } from '@/components/admin/AdminComponents';
 

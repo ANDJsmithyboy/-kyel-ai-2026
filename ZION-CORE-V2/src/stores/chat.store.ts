@@ -1,4 +1,4 @@
-/* GabomaGPT · chat.store.ts · SmartANDJ AI Technologies · Constitution Zion Core
+/* Ñkyel AI · chat.store.ts · SmartANDJ AI Technologies · Constitution Zion Core
    Fondateur : Daniel Jonathan ANDJ
    Store conversations et messages */
 

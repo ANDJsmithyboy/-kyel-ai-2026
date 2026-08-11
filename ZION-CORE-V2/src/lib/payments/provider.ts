@@ -1,4 +1,4 @@
-/* GabomaGPT · Payment Provider Interface · SmartANDJ AI Technologies
+/* Ñkyel AI · Payment Provider Interface · SmartANDJ AI Technologies
    Abstract payment provider — all concrete providers implement this.
    Fondateur : Daniel Jonathan ANDJ */
 

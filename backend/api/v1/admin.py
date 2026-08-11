@@ -1,5 +1,5 @@
 """
-GabomaAI — API v1 Admin Stats · SmartANDJ AI Technologies
+Ñkyel AI — API v1 Admin Stats · SmartANDJ AI Technologies
 Dashboard KPI de l'administration.
 Protégé par Clerk JWKS + vérification du rôle (Daniel ANDJ).
 Fondateur : Daniel Jonathan ANDJ

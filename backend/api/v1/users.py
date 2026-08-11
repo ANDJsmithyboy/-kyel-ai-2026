@@ -1,5 +1,5 @@
 """
-GabomaAI — API v1 Users · SmartANDJ AI Technologies
+Ñkyel AI — API v1 Users · SmartANDJ AI Technologies
 Profil utilisateur.
 Protégé par Clerk JWKS.
 Fondateur : Daniel Jonathan ANDJ

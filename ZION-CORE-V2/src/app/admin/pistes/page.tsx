@@ -1,4 +1,4 @@
-/* GabomaGPT · Admin Conversations · SmartANDJ AI Technologies
+/* Ñkyel AI · Admin Conversations · SmartANDJ AI Technologies
    View all conversations, search, filter, read messages
    Fondateur : Daniel Jonathan ANDJ */
 

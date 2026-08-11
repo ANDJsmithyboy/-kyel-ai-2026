@@ -1,4 +1,4 @@
-/* GabomaGPT · rag.rs
+/* Ñkyel AI · rag.rs
    SmartANDJ AI Technologies · Constitution Zion Core
    Fondateur : Daniel Jonathan ANDJ
    Module RAG — Retrieval-Augmented Generation

@@ -1,4 +1,4 @@
-/* GabomaGPT · middleware.ts · SmartANDJ AI Technologies
+/* Ñkyel AI · middleware.ts · SmartANDJ AI Technologies
    Clerk auth + error-resilient Edge middleware + onboarding redirect
    Fondateur : Daniel Jonathan ANDJ */
 

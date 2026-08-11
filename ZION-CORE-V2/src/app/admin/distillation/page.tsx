@@ -1,4 +1,4 @@
-/* GabomaGPT · Distillation Lab · SmartANDJ AI Technologies
+/* Ñkyel AI · Distillation Lab · SmartANDJ AI Technologies
    Section 18+20C: Teacher/Student pipeline, dataset status, SFT/LoRA jobs */
 'use client';
 import { SectionHeader, KPICard, ChartCard, DataTable, StatusBadge } from '@/components/admin/AdminComponents';
@@ -55,7 +55,7 @@ const jobCols = [
 export default function DistillationPage() {
   return (
     <div className="space-y-8">
-      <SectionHeader title="Distillation Lab" subtitle="Pipeline Teacher→Student pour l'agent souverain Gaboma" />
+      <SectionHeader title="Distillation Lab" subtitle="Pipeline Teacher→Student pour l'agent souverain Ñkyel" />
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {distillKpis.map((k) => <KPICard key={k.title} {...k} />)}
       </div>

@@ -1,5 +1,5 @@
 /**
- * GabomaAI · RenduPanel
+ * Ñkyel AI · RenduPanel
  * SmartANDJ AI Technologies
  * Affiche les artifacts générés (code, markdown, Word, Excel).
  * Thème : Zion Core Obsidian.

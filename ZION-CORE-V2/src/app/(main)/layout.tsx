@@ -1,5 +1,5 @@
 /**
- * GabomaAI · Main Layout
+ * Ñkyel AI · Main Layout
  * SmartANDJ AI Technologies
  * Task 1 — Layout racine (main) avec Sidebar + TopBar + RenduPanel
  */

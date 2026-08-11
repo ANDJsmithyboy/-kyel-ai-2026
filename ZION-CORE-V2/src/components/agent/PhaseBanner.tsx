@@ -1,5 +1,5 @@
 /**
- * GabomaAI · PhaseBanner
+ * Ñkyel AI · PhaseBanner
  * SmartANDJ AI Technologies
  * Task 8 — Bandeau 3 phases : Compréhension | Planification | Exécution
  */

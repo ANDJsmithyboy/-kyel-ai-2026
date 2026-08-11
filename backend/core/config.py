@@ -21,13 +21,13 @@ class Settings(BaseSettings):
     debug: bool = True
 
     # ── Base de données Neon PostgreSQL ──────────────────────
-    database_url: str = "postgresql+asyncpg://localhost:5432/gabomai"
+    database_url: str = "postgresql+asyncpg://localhost:5432/nkyelai"
 
     # ── Redis (Upstash) ─────────────────────────────────────
     redis_url: str = "redis://localhost:6379"
 
     # ── Clerk Auth (JWKS RS256) ─────────────────────────────
-    clerk_domain: str = "clerk.gaboma.ai"
+    clerk_domain: str = "clerk.nkyel.ai"
     clerk_secret_key: str = ""
 
     # ── Groq (AURATA / SONAR) ───────────────────────────────

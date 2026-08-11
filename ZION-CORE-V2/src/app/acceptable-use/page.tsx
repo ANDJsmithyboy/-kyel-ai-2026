@@ -1,30 +1,30 @@
-/* GabomaGPT · Acceptable Use Policy · SmartANDJ AI Technologies
+/* Ñkyel AI · Acceptable Use Policy · SmartANDJ AI Technologies
    Politique d'Utilisation Acceptable — page publique
    Fondateur : Daniel Jonathan ANDJ */
 
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Utilisation Acceptable — Gaboma AI',
-  description: 'Politique d\'Utilisation Acceptable de Gaboma AI par SmartANDJ AI Technologies.',
+  title: 'Utilisation Acceptable — Ñkyel AI',
+  description: 'Politique d\'Utilisation Acceptable de Ñkyel AI par SmartANDJ AI Technologies.',
 };
 
 const SECTIONS = [
   {
     title: 'Introduction',
-    content: `Cette Politique d'Utilisation Acceptable définit les comportements attendus et interdits lors de l'utilisation de Gaboma AI. Le non-respect de cette politique peut entraîner la suspension ou la suppression de votre compte.`,
+    content: `Cette Politique d'Utilisation Acceptable définit les comportements attendus et interdits lors de l'utilisation de Ñkyel AI. Le non-respect de cette politique peut entraîner la suspension ou la suppression de votre compte.`,
   },
   {
     title: 'Utilisations Interdites',
-    content: `Il est interdit d'utiliser Gaboma AI pour :\n\n• Générer du contenu illégal, haineux, discriminatoire ou incitant à la violence.\n• Usurper l'identité d'une personne ou d'une organisation.\n• Harceler, menacer ou intimider d'autres personnes.\n• Générer de la désinformation ou des « fake news » dans l'intention de nuire.\n• Tenter de contourner les mesures de sécurité ou les filtres de contenu.\n• Utiliser le Service pour du spam, du phishing ou des activités frauduleuses.\n• Collecter ou stocker des données personnelles de tiers sans leur consentement.\n• Effectuer du reverse engineering, décompiler ou tenter d'extraire le code source des modèles.\n• Utiliser le Service de manière à surcharger intentionnellement les infrastructures.`,
+    content: `Il est interdit d'utiliser Ñkyel AI pour :\n\n• Générer du contenu illégal, haineux, discriminatoire ou incitant à la violence.\n• Usurper l'identité d'une personne ou d'une organisation.\n• Harceler, menacer ou intimider d'autres personnes.\n• Générer de la désinformation ou des « fake news » dans l'intention de nuire.\n• Tenter de contourner les mesures de sécurité ou les filtres de contenu.\n• Utiliser le Service pour du spam, du phishing ou des activités frauduleuses.\n• Collecter ou stocker des données personnelles de tiers sans leur consentement.\n• Effectuer du reverse engineering, décompiler ou tenter d'extraire le code source des modèles.\n• Utiliser le Service de manière à surcharger intentionnellement les infrastructures.`,
   },
   {
     title: 'Contenu Généré',
-    content: `Vous êtes responsable de l'utilisation que vous faites du contenu généré par Gaboma AI. Nous vous rappelons que :\n\n• Les réponses de l'IA peuvent contenir des inexactitudes — vérifiez toujours les informations critiques.\n• Le contenu généré ne constitue pas un conseil juridique, médical, financier ou professionnel.\n• Vous ne devez pas présenter le contenu généré comme provenant d'un humain lorsque la distinction est importante.`,
+    content: `Vous êtes responsable de l'utilisation que vous faites du contenu généré par Ñkyel AI. Nous vous rappelons que :\n\n• Les réponses de l'IA peuvent contenir des inexactitudes — vérifiez toujours les informations critiques.\n• Le contenu généré ne constitue pas un conseil juridique, médical, financier ou professionnel.\n• Vous ne devez pas présenter le contenu généré comme provenant d'un humain lorsque la distinction est importante.`,
   },
   {
     title: 'Signalement',
-    content: `Si vous constatez une utilisation abusive de Gaboma AI ou un contenu inapproprié, merci de le signaler via l'icône de signalement dans le chat ou par e-mail à abuse@gaboma.ai.`,
+    content: `Si vous constatez une utilisation abusive de Ñkyel AI ou un contenu inapproprié, merci de le signaler via l'icône de signalement dans le chat ou par e-mail à abuse@nkyel.ai.`,
   },
   {
     title: 'Sanctions',
@@ -32,7 +32,7 @@ const SECTIONS = [
   },
   {
     title: 'Contact',
-    content: `SmartANDJ AI Technologies\nLibreville, Gabon\nabuse@gaboma.ai`,
+    content: `SmartANDJ AI Technologies\nLibreville, Gabon\nabuse@nkyel.ai`,
   },
 ];
 
@@ -56,7 +56,7 @@ export default function AcceptableUsePage() {
           ))}
         </div>
 
-        <footer className="legal-footer">SMARTANDJ AI TECHNOLOGIES · GABOMA AI 2026</footer>
+        <footer className="legal-footer">SMARTANDJ AI TECHNOLOGIES · Ñkyel AI 2026</footer>
       </div>
 
       <style>{`

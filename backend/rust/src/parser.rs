@@ -1,4 +1,4 @@
-/* GabomaGPT · parser.rs
+/* Ñkyel AI · parser.rs
    SmartANDJ AI Technologies · Constitution Zion Core
    Fondateur : Daniel Jonathan ANDJ
    Parser linguistique pour 500+ paires de langues gabonaises
@@ -264,7 +264,7 @@ mod tests {
     #[test]
     fn test_tokenize() {
         let parser = LinguisticParser::new();
-        let result = parser.parse("Mbolo GabomaGPT", None);
+        let result = parser.parse("Mbolo Ñkyel AI", None);
         assert_eq!(result.word_count, 2);
     }
 

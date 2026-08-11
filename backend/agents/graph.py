@@ -1,6 +1,6 @@
 """
-GabomaGPT — StateGraph Principal · SmartANDJ AI Technologies
-Graphe de raisonnement LangGraph pour GabomaGPT.
+Ñkyel AI — StateGraph Principal (legacy) · SmartANDJ AI Technologies
+Graphe de raisonnement LangGraph legacy pour Ñkyel AI.
 Fondateur : Daniel Jonathan ANDJ
 
 Architecture du graphe :
@@ -22,7 +22,7 @@ from __future__ import annotations
 
 from langgraph.graph import StateGraph, END
 
-from agents.state import GabomaState
+from agents.state import NkyelLegacyState
 from agents.nodes import (
     classify_intent,
     validate_msisdn,
@@ -33,10 +33,10 @@ from agents.nodes import (
 )
 
 
-def build_gabomagpt_graph() -> StateGraph:
-    """Construit et compile le graphe de raisonnement GabomaGPT."""
+def build_nkyel_legacy_graph() -> StateGraph:
+    """Construit et compile le graphe de raisonnement legacy Ñkyel AI."""
 
-    graph = StateGraph(GabomaState)
+    graph = StateGraph(NkyelLegacyState)
 
     # ── Ajouter les nœuds ───────────────────────────────
     graph.add_node("classify_intent", classify_intent)
@@ -76,4 +76,6 @@ def build_gabomagpt_graph() -> StateGraph:
 
 
 # Instance globale pré-compilée du graphe
-gabomagpt_graph = build_gabomagpt_graph()
+nkyel_legacy_graph = build_nkyel_legacy_graph()
+# Alias pour compatibilité arrière
+nkyel_graph = nkyel_legacy_graph

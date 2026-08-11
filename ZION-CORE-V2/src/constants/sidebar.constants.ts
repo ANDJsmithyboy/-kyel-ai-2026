@@ -1,5 +1,5 @@
 /**
- * GabomaAI · Sidebar Constants
+ * Ñkyel AI · Sidebar Constants
  * SmartANDJ AI Technologies
  */
 
@@ -8,7 +8,7 @@ import {
   RenduIcon,
   PawHistoryIcon,
   TropheeIcon,
-} from '@/components/icons/gaboma';
+} from '@/components/icons/NkyelIcons';
 import type { NavItem } from '@/types/sidebar.types';
 
 export const NAV_ITEMS: NavItem[] = [
@@ -28,4 +28,4 @@ export const MOBILE_BREAKPOINT = 768;
 
 export const RECENTS_DISPLAY_COUNT = 5;
 
-export const SIDEBAR_STORAGE_KEY = 'gaboma-sidebar-collapsed';
+export const SIDEBAR_STORAGE_KEY = 'nkyel-sidebar-collapsed';

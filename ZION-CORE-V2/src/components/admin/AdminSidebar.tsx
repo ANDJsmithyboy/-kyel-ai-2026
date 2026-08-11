@@ -1,4 +1,4 @@
-/* GabomaGPT · Admin Sidebar · SmartANDJ AI Technologies
+/* Ñkyel AI · Admin Sidebar · SmartANDJ AI Technologies
    Apple/Vercel-inspired ultra-minimal glassmorphism sidebar
    Fondateur : Daniel Jonathan ANDJ */
 
@@ -108,7 +108,7 @@ export default function AdminSidebar({
         {/* ── Header / Logo ─────────────────────────────────────────── */}
         <div className="flex items-center gap-3 px-4 py-4 border-b border-[var(--divider)] h-14 shrink-0">
           <div className="relative flex items-center justify-center text-[var(--text-primary)] w-6 h-6 flex-shrink-0">
-            <img src="/gabomagpt-logo.jpeg" alt="Gaboma AI" className="w-full h-full rounded" />
+            <img src="/Ñkyel AI-logo.jpeg" alt="Ñkyel AI" className="w-full h-full rounded" />
           </div>
           
           <AnimatePresence mode="wait">
@@ -121,7 +121,7 @@ export default function AdminSidebar({
                 className="flex-1 min-w-0"
               >
                 <span className="text-[var(--text-muted)] font-display font-medium text-[10px] tracking-widest uppercase truncate whitespace-nowrap">
-                  GABOMA AI
+                  Ñkyel AI
                 </span>
               </motion.div>
             )}
@@ -218,7 +218,7 @@ export default function AdminSidebar({
                   className="flex-1 min-w-0"
                 >
                   <p className="text-[10px] text-[var(--text-muted)] tracking-wide truncate whitespace-nowrap">
-                    Gaboma AI peut faire des erreurs. Votre discernement reste souverain.
+                    Ñkyel AI peut faire des erreurs. Votre discernement reste souverain.
                   </p>
                 </motion.div>
               )}

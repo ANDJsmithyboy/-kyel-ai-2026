@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 ╔══════════════════════════════════════════════════════════════════════════════╗
-║  GabomaGPT-2026 — Download Models & Datasets                              ║
+║  ÑkyelGPT-2026 — Download Models & Datasets                              ║
 ║  SmartANDJ AI Technologies — Fondateur : Daniel Jonathan ANDJ              ║
 ║                                                                            ║
 ║  Pipeline de téléchargement pour ONYXGRIS fine-tuning QLoRA                ║
@@ -75,11 +75,11 @@ class Colors:
 # ──────────────────────────────────────────────────────────────────────────────
 
 def print_banner():
-    """Affiche la bannière GabomaGPT."""
+    """Affiche la bannière ÑkyelGPT."""
     banner = f"""
 {Colors.CYAN}{Colors.BOLD}
     ╔═══════════════════════════════════════════════════════════════╗
-    ║           🇬🇦  GabomaGPT-2026 — ONYXGRIS Pipeline  🇬🇦       ║
+    ║           🇬🇦  ÑkyelGPT-2026 — ONYXGRIS Pipeline  🇬🇦       ║
     ║                                                               ║
     ║   Téléchargement des modèles et datasets HuggingFace          ║
     ║   SmartANDJ AI Technologies — Daniel Jonathan ANDJ             ║
@@ -467,7 +467,7 @@ def generate_manifest(verified_files: list[dict]):
 
     manifest = {
         "_meta": {
-            "project": "GabomaGPT-2026 / ONYXGRIS",
+            "project": "ÑkyelGPT-2026 / ONYXGRIS",
             "organization": "SmartANDJ AI Technologies",
             "founder": "Daniel Jonathan ANDJ",
             "generated_at": now,
@@ -516,7 +516,7 @@ def print_final_summary(progress: DownloadProgress, manifest: dict):
 
 def parse_args():
     parser = argparse.ArgumentParser(
-        description="GabomaGPT-2026 — Téléchargement des modèles et datasets",
+        description="ÑkyelGPT-2026 — Téléchargement des modèles et datasets",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Exemples :

@@ -1,1 +1,1 @@
-# GabomaAI · Auth package
+# Ñkyel AI · Auth package

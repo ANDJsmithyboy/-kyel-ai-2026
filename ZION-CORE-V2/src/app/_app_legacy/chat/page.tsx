@@ -2,7 +2,7 @@
 
 import { useSettingsStore } from '@/stores/settings.store';
 import { useChat } from '@/hooks/useChat';
-import type { GabomaModel } from '@/lib/models';
+import type { NkyelModel } from '@/lib/models';
 import InputBar from '@/components/input/InputBar';
 import ConversationStream from '@/components/chat/ConversationStream';
 
@@ -13,7 +13,7 @@ export default function NewChatPage() {
   // In a real app, we might want to redirect to /chat/[id] once the first message is sent,
   // or manage the URL via shallow routing.
   const { messages, isStreaming, error, sendMessage, stop } = useChat({
-    model: isBlackPanther ? 'BLACK_PANTHER' : 'AURATA',
+    model: isBlackPanther ? 'BLACK_PANTHER' : 'NKYEL_CHUI',
   });
 
   const handleSend = (text: string) => {
@@ -32,7 +32,7 @@ export default function NewChatPage() {
 
       <div className="absolute bottom-0 left-0 w-full bg-gradient-to-t from-[var(--zc-background)] via-[var(--zc-background)] to-transparent pt-10 pb-4">
         <InputBar 
-          model={isBlackPanther ? 'BLACK_PANTHER' : 'AURATA'}
+          model={isBlackPanther ? 'BLACK_PANTHER' : 'NKYEL_CHUI'}
           setModel={(m) => { /* TODO: Update local or global model preference */ }}
           onSend={handleSend} 
           onStop={stop} 

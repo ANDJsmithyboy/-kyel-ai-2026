@@ -1,5 +1,5 @@
 /**
- * Gaboma AI · ChatHome.tsx · Client Component
+ * Ñkyel AI · ChatHome.tsx · Client Component
  * SmartANDJ AI Technologies
  * 
  * Zone centrale d'accueil (écran vide) :
@@ -47,8 +47,8 @@ export default function ChatHome({ firstName = 'Citoyen' }: ChatHomeProps) {
             className="mb-4"
           >
             <Image
-              src="/gaboma-logo.png"
-              alt="Gaboma AI"
+              src="/nkyel-logo.png"
+              alt="Ñkyel AI"
               width={64}
               height={64}
               className="rounded-2xl"

@@ -1,4 +1,4 @@
-/* GabomaGPT · Admin Settings · SmartANDJ AI Technologies */
+/* Ñkyel AI · Admin Settings · SmartANDJ AI Technologies */
 'use client';
 import { useState } from 'react';
 import { SectionHeader, StatusBadge } from '@/components/admin/AdminComponents';
@@ -35,7 +35,7 @@ export default function SettingsPage() {
 
   return (
     <div className="space-y-10">
-      <SectionHeader title="Settings" subtitle="Configuration système de Gaboma AI" />
+      <SectionHeader title="Settings" subtitle="Configuration système de Ñkyel AI" />
 
       {/* Model Configuration */}
       <section>
@@ -115,7 +115,7 @@ export default function SettingsPage() {
         <h3 className="text-sm font-semibold text-[var(--text-primary)] mb-4">ℹ️ Informations Système</h3>
         <div className="bg-[var(--bg-card,var(--bg-elevated))] border border-[var(--border)] rounded-xl p-5 space-y-3">
           {[
-            ['App', 'Gaboma AI v2.0.0'],
+            ['App', 'Ñkyel AI v2.0.0'],
             ['Fondateur', 'Daniel Jonathan ANDJ'],
             ['Entreprise', 'SmartANDJ AI Technologies'],
             ['Ville', 'Libreville, Gabon 🇬🇦'],

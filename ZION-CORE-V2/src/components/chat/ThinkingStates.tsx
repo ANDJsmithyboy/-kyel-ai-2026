@@ -17,10 +17,10 @@ const THINKING_STATES: Record<ThinkingMode, {
 }> = {
   default: {
     icon: '🌿',
-    label: 'GabomaGPT réfléchit',
+    label: 'Ñkyel AI réfléchit',
     auraColors: ['#22C55E', '#38BDF8', '#FACC15'],
     phrases: [
-      'GabomaGPT consulte les savoirs gabonais...',
+      'Ñkyel AI consulte les savoirs gabonais...',
       'Connexion aux mémoires de nos ancêtres...',
       'Les esprits de l\'Iboga guident la réponse...',
       'Synthèse des connaissances du Gabon profond...',

@@ -1,5 +1,5 @@
 /**
- * GabomaAI · Sidebar Types
+ * Ñkyel AI · Sidebar Types
  * SmartANDJ AI Technologies
  */
 

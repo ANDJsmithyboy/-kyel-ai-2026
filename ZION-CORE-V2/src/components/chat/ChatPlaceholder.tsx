@@ -39,8 +39,8 @@ export default function ChatPlaceholder({ userName }: ChatPlaceholderProps) {
       {/* Logo */}
       <div className="mb-6 animate-fade-in-up" style={{ animationDelay: '100ms' }}>
         <img
-          src="/gabomagpt-logo.jpeg"
-          alt="GabomaGPT"
+          src="/Ñkyel AI-logo.jpeg"
+          alt="Ñkyel AI"
           className="w-20 h-20 sm:w-28 sm:h-28 rounded-2xl shadow-lg ring-1 ring-white/10"
         />
       </div>

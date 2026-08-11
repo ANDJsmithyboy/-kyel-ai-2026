@@ -2,8 +2,8 @@ import DeerFlowCanvas from '@/components/flow/DeerFlowCanvas';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'DeerFlow Canvas | Gaboma AI Admin',
-  description: 'Éditeur visuel de workflows d\'agents autonomes pour Gaboma AI.',
+  title: 'DeerFlow Canvas | Ñkyel AI Admin',
+  description: 'Éditeur visuel de workflows d\'agents autonomes pour Ñkyel AI.',
 };
 
 export default function AdminFlowPage() {

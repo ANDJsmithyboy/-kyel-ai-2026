@@ -1,1 +1,1 @@
-# GabomaGPT — Database Module · SmartANDJ AI Technologies
+# Ñkyel AI — Database Module · SmartANDJ AI Technologies

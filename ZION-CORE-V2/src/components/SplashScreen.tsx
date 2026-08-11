@@ -1,4 +1,4 @@
-/* GabomaGPT · SplashScreen.tsx · SmartANDJ AI Technologies · Constitution Zion Core
+/* Ñkyel AI · SplashScreen.tsx · SmartANDJ AI Technologies · Constitution Zion Core
    Fondateur : Daniel Jonathan ANDJ
    Splash screen cinematique — gere par React (pas de DOM manipulation directe) */
 'use client';
@@ -42,8 +42,8 @@ export default function SplashScreen() {
       }}
     >
       <img
-        src="/gabomagpt-logo.jpeg"
-        alt="GabomaGPT"
+        src="/Ñkyel AI-logo.jpeg"
+        alt="Ñkyel AI"
         className="splash-logo w-auto h-28 rounded-[22px]"
       />
       <div
@@ -56,12 +56,12 @@ export default function SplashScreen() {
         className="splash-subtitle mt-2 text-[13px] text-[#8A9BBE] whitespace-nowrap"
         style={{ fontFamily: "'Outfit', sans-serif" }}
       >
-        GabomaGPT — IA Souveraine du Gabon
+        Ñkyel AI — IA Souveraine du Gabon
       </div>
 
       <div className="absolute bottom-10 opacity-80" style={{ color: 'var(--text-tertiary)' }}>
         <span className="text-[11px] tracking-wide">
-          Gaboma AI peut faire des erreurs. Votre discernement reste souverain.
+          Ñkyel AI peut faire des erreurs. Votre discernement reste souverain.
         </span>
       </div>
     </div>

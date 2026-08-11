@@ -1,1 +1,1 @@
-# GabomaGPT — Core Module · SmartANDJ AI Technologies
+# Ñkyel AI — Core Module · SmartANDJ AI Technologies

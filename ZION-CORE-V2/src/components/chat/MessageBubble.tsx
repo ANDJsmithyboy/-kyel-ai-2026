@@ -130,7 +130,7 @@ export default function MessageBubble({
                 boxShadow: '0 0 10px var(--accent-10)',
               }}
             >
-               {modelName.includes('AURATA') ? <AurataIcon className="w-3.5 h-3.5" /> : <OnyxFaceIcon className="w-3.5 h-3.5" />}
+               {modelName.includes('NKYEL_CHUI') ? <AurataIcon className="w-3.5 h-3.5" /> : <OnyxFaceIcon className="w-3.5 h-3.5" />}
             </div>
             <span className="eyebrow-label">
               {modelName} <span style={{ color: 'var(--text-muted)', padding: '0 4px' }}>·</span> <span style={{ color: 'var(--text-secondary)', letterSpacing: 'var(--ls-meta)' }}>{tagline}</span>

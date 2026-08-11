@@ -1,18 +1,18 @@
 /**
- * Gaboma AI · SidebarFooter.tsx
+ * Ñkyel AI · SidebarFooter.tsx
  * SmartANDJ AI Technologies
  * Profil utilisateur + badge tier + engrenage settings.
  */
 
 import Link from 'next/link';
 
-type TierKey = 'FREE' | 'NYEL' | 'WANDANA' | 'ONYX' | 'BLACK_PANTHER' | 'BLUE_PANTHER';
+type TierKey = 'FREE' | 'NKYEL_TAI' | 'RECHERCHE_WEB' | 'NKYEL_RADI' | 'BLACK_PANTHER' | 'BLUE_PANTHER';
 
 const TIER_LABELS: Record<TierKey, string> = {
-  FREE: 'AURATA',
+  FREE: 'NKYEL_CHUI',
   NYEL: 'ÑKYEL',
-  WANDANA: 'WANDANA',
-  ONYX: 'ONYXGRIS',
+  WANDANA: 'RECHERCHE_WEB',
+  ONYX: 'NKYEL_RADI',
   BLACK_PANTHER: 'BLACK PANTHER',
   BLUE_PANTHER: 'BLUE PANTHER',
 };

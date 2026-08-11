@@ -1,5 +1,5 @@
 """
-GabomaAI — Service Qdrant (LOXO) · SmartANDJ AI Technologies
+Ñkyel AI — Service Qdrant (LOXO) · SmartANDJ AI Technologies
 Recherche vectorielle via Qdrant pour le Radar LOXO.
 Fondateur : Daniel Jonathan ANDJ
 """

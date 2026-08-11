@@ -1,1 +1,1 @@
-# GabomaAI · App package
+# Ñkyel AI · App package

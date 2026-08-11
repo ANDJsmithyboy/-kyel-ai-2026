@@ -4,7 +4,7 @@ import { useEffect, useState, useCallback, useRef } from 'react';
 
 type TabState = 'LEADER' | 'FOLLOWER' | 'ELECTION';
 
-export function useTabSync(channelName: string = 'gaboma_ai_sync') {
+export function useTabSync(channelName: string = 'nkyel_ai_sync') {
   const [tabState, setTabState] = useState<TabState>('ELECTION');
   const [isReadOnly, setIsReadOnly] = useState<boolean>(false);
   const channelRef = useRef<BroadcastChannel | null>(null);

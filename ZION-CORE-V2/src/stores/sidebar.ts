@@ -1,4 +1,4 @@
-/* GabomaGPT · sidebar.ts · SmartANDJ AI Technologies */
+/* Ñkyel AI · sidebar.ts · SmartANDJ AI Technologies */
 import { create } from 'zustand';
 
 interface SidebarState {

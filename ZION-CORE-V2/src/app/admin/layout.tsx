@@ -1,4 +1,4 @@
-/* GabomaGPT · Admin Layout · SmartANDJ AI Technologies
+/* Ñkyel AI · Admin Layout · SmartANDJ AI Technologies
    Apple-inspired ultra-premium admin shell (Dynamic OLED Themes)
    Fondateur : Daniel Jonathan ANDJ */
 

@@ -1,5 +1,5 @@
 /**
- * GabomaAI · useSidebar Hook (Zustand)
+ * Ñkyel AI · useSidebar Hook (Zustand)
  * SmartANDJ AI Technologies
  * Collapsed state persisted to localStorage
  */

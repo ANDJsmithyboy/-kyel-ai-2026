@@ -1,4 +1,4 @@
-/* GabomaGPT · Database Connection · SmartANDJ AI Technologies
+/* Ñkyel AI · Database Connection · SmartANDJ AI Technologies
    Neon PostgreSQL serverless + Drizzle ORM
    Fondateur : Daniel Jonathan ANDJ */
 

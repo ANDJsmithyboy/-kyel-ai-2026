@@ -1,5 +1,5 @@
 """
-GabomaAI · Router : Agents
+Ñkyel AI · Router : Agents
 POST /api/agents/run — exécution d'agents DeerFlow.
 """
 

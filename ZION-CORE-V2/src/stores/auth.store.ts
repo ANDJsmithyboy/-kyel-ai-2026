@@ -1,4 +1,4 @@
-/* GabomaGPT · auth.store.ts · SmartANDJ AI Technologies · Constitution Zion Core
+/* Ñkyel AI · auth.store.ts · SmartANDJ AI Technologies · Constitution Zion Core
    Fondateur : Daniel Jonathan ANDJ
    Store authentification Zustand */
 

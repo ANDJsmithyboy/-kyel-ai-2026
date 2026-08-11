@@ -6,7 +6,7 @@ import {
   Cloud as CloudIcon,
 } from 'lucide-react';
 import { IconAurata, IconNkyel, IconOnyxGris, IconBlackPanther } from '@/components/icons';
-import { WandanaIcon, RenduIcon } from '@/components/icons/gaboma';
+import { WandanaIcon, RenduIcon } from '@/components/icons/NkyelIcons';
 import { saveDraft, getDraft } from '@/lib/indexedDB';
 
 /* ── Types ────────────────────────────────────────── */
@@ -33,11 +33,11 @@ interface InputBarProps {
   isGenerating?: boolean;
 }
 
-/* ── Gaboma Waves ───────────────────── */
-function GabomaWaves({ isLive }: { isLive?: boolean }) {
+/* ── Ñkyel Waves ───────────────────── */
+function NkyelWaves({ isLive }: { isLive?: boolean }) {
   const bars = isLive ? Array.from({ length: 24 }) : [0, 1, 2, 3];
   return (
-    <div className={`flex items-center gap-[3px] ${isLive ? 'flex-1 justify-center' : ''}`} aria-label="Gaboma Waves">
+    <div className={`flex items-center gap-[3px] ${isLive ? 'flex-1 justify-center' : ''}`} aria-label="Ñkyel Waves">
       {bars.map((_, i) => (
         <motion.div
           key={i}
@@ -290,7 +290,7 @@ export default function InputBar({ onSend, onStop, isGenerating }: InputBarProps
               >
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
               </button>
-              <GabomaWaves isLive />
+              <NkyelWaves isLive />
               <button 
                 onClick={handleSend}
                 className="p-2 rounded-full text-white bg-red-500/80 hover:bg-red-500 transition"
@@ -409,7 +409,7 @@ export default function InputBar({ onSend, onStop, isGenerating }: InputBarProps
                         onClick={() => setIsLiveMode(true)}
                         className="flex h-10 w-10 items-center justify-center rounded-full text-white/50 hover:text-white/90 hover:bg-white/5 transition"
                       >
-                        <GabomaWaves />
+                        <NkyelWaves />
                       </button>
                     </motion.div>
                   )}
@@ -421,7 +421,7 @@ export default function InputBar({ onSend, onStop, isGenerating }: InputBarProps
       </div>
 
       <p className="mt-3 text-center text-[11px] text-white/30 tracking-wide font-medium select-none">
-        Gaboma AI peut faire des erreurs. Votre discernement reste souverain.
+        Ñkyel AI peut faire des erreurs. Votre discernement reste souverain.
       </p>
     </div>
   );

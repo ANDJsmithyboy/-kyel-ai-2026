@@ -1,5 +1,5 @@
 /**
- * Gaboma AI · UpsellCard.tsx · Server Component
+ * Ñkyel AI · UpsellCard.tsx · Server Component
  * SmartANDJ AI Technologies
  */
 

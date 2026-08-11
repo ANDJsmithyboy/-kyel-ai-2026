@@ -1,5 +1,5 @@
 /**
- * Gaboma AI · TopBar.tsx · Client Component (needs onClick handlers)
+ * Ñkyel AI · TopBar.tsx · Client Component (needs onClick handlers)
  * SmartANDJ AI Technologies
  * Barre de navigation minimale — hamburger + nouveau chat.
  */
@@ -13,7 +13,7 @@ export default function TopBar() {
 
   const handleOpenSidebar = () => {
     /* Dispatch custom event — sidebar listens for this */
-    window.dispatchEvent(new CustomEvent('gaboma:sidebar:toggle'));
+    window.dispatchEvent(new CustomEvent('nkyel:sidebar:toggle'));
   };
 
   const handleNewChat = () => {

@@ -1,5 +1,5 @@
 /**
- * GabomaAI · AgentTimeline
+ * Ñkyel AI · AgentTimeline
  * SmartANDJ AI Technologies
  * Task 8 — Timeline verticale des événements agent
  */

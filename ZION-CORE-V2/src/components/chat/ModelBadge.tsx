@@ -1,7 +1,7 @@
 'use client';
 
 import { motion, AnimatePresence } from 'framer-motion';
-import type { GabomaModel } from '@/lib/models';
+import type { NkyelModel } from '@/lib/models';
 import { MODEL_META } from '@/lib/models';
 import { IconAurata } from '../icons/IconAurata';
 import { IconNkyel } from '../icons/IconNkyel';
@@ -10,7 +10,7 @@ import { IconWandana } from '../icons/IconWandana';
 import { IconBlackPanther } from '../icons/IconBlackPanther';
 
 interface ModelBadgeProps {
-  model: GabomaModel;
+  model: NkyelModel;
   isVisible: boolean;
   onDismiss: () => void;
 }
@@ -20,10 +20,10 @@ export default function ModelBadge({ model, isVisible, onDismiss }: ModelBadgePr
 
   const getIcon = () => {
     switch(model) {
-      case 'AURATA': return <IconAurata className="w-4 h-4" />;
-      case 'NKYEL': return <IconNkyel className="w-4 h-4" />;
-      case 'ONYXGRIS': return <IconOnyxGris className="w-4 h-4" />;
-      case 'WANDANA': return <IconWandana className="w-4 h-4" />;
+      case 'NKYEL_CHUI': return <IconAurata className="w-4 h-4" />;
+      case 'NKYEL_TAI': return <IconNkyel className="w-4 h-4" />;
+      case 'NKYEL_RADI': return <IconOnyxGris className="w-4 h-4" />;
+      case 'RECHERCHE_WEB': return <IconWandana className="w-4 h-4" />;
       case 'BLACK_PANTHER': return <IconBlackPanther className="w-4 h-4" />;
       case 'BLUE_PANTHER': return <IconBlackPanther className="w-4 h-4" style={{ color: '#0070F3' }} />;
       default: return <IconAurata className="w-4 h-4" />;

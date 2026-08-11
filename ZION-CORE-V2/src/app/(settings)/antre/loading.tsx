@@ -1,5 +1,5 @@
 /**
- * Gaboma AI · L'Antre · loading.tsx
+ * Ñkyel AI · L'Antre · loading.tsx
  * SmartANDJ AI Technologies
  * Skeleton — Lee Robinson pattern (animate-pulse)
  */

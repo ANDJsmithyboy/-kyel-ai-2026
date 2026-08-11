@@ -1,5 +1,5 @@
 /**
- * Gaboma AI · SettingsToggle.tsx · Client Component
+ * Ñkyel AI · SettingsToggle.tsx · Client Component
  * SmartANDJ AI Technologies
  */
 

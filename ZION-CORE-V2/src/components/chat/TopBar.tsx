@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import Image from 'next/image';
-import { OmbreIcon, RenduIcon, TropheeIcon } from '@/components/icons/gaboma';
+import { OmbreIcon, RenduIcon, TropheeIcon } from '@/components/icons/NkyelIcons';
 import { ForetEveilleIcon } from '@/components/icons/ForetEveilleIcon';
 
 export default function TopBar({ onToggleSidebar, sidebarOpen }: { onToggleSidebar: () => void, sidebarOpen: boolean }) {
@@ -22,9 +22,9 @@ export default function TopBar({ onToggleSidebar, sidebarOpen }: { onToggleSideb
           title={sidebarOpen ? 'Fermer la barre latérale' : 'Ouvrir la barre latérale'}
         >
           {hoveredSidebar || sidebarOpen ? (
-            <Image src="/gaboma-logo.png" alt="Iboga AI" width={28} height={28} className="rounded-lg" />
+            <Image src="/nkyel-logo.png" alt="Iboga AI" width={28} height={28} className="rounded-lg" />
           ) : (
-            <Image src="/gaboma-icon.png" alt="Gaboma AI" width={28} height={28} className="rounded-lg" />
+            <Image src="/nkyel-icon.png" alt="Ñkyel AI" width={28} height={28} className="rounded-lg" />
           )}
         </button>
         {ephemeral && (

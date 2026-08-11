@@ -1,5 +1,5 @@
 """
-GabomaAI — Service DeerFlow (ONYX / BLACK_PANTHER) · SmartANDJ AI Technologies
+Ñkyel AI — Service DeerFlow (ONYX / BLACK_PANTHER) · SmartANDJ AI Technologies
 Bridge SSE vers DeerFlow 2.0 sur RunPod.
 Fondateur : Daniel Jonathan ANDJ
 """

@@ -1,5 +1,5 @@
 /**
- * GabomaAI · Sidebar Complète
+ * Ñkyel AI · Sidebar Complète
  * SmartANDJ AI Technologies
  * Gemini/Claude-style: IbogaAI toggle, stacked nav, L'Antre at bottom
  */
@@ -17,7 +17,7 @@ import SidebarItem from '@/components/shell/SidebarItem';
 import SidebarSection from '@/components/shell/SidebarSection';
 import EnergyGauge from '@/components/shell/EnergyGauge';
 import MeuteLinks from '@/components/shell/MeuteLinks';
-import { NouvellePisteIcon, RenduIcon, ProjetIcon } from '@/components/icons/GabomaIcons';
+import { NouvellePisteIcon, RenduIcon, ProjetIcon } from '@/components/icons/NkyelIcons';
 import { EnPisteIcon } from '@/components/icons/EnPisteIcon';
 import { IbogaAiIcon } from '@/components/icons/IbogaAiIcon';
 import { Gear, SignOut, Trash, CaretUp, CaretDown, CheckCircle, Shield, Link, Robot, Crosshair, Broadcast, Lightning, LockKey, Desktop, UserCircle, Circle } from '@phosphor-icons/react';
@@ -90,11 +90,11 @@ export default function Sidebar() {
       className="flex flex-col h-full overflow-hidden w-[260px] z-40"
       style={{ background: 'var(--bg-elevated)', borderRight: '1px solid var(--border)' }}
     >
-      {/* ── Header: Logo GabomaAI ── */}
+      {/* ── Header: Logo Ñkyel AI ── */}
       <div className="px-4 pt-4 pb-3 flex items-center gap-2.5">
         <Image
-          src="/gaboma-logo.png"
-          alt="Gaboma AI"
+          src="/nkyel-logo.png"
+          alt="Ñkyel AI"
           width={28}
           height={28}
           className="rounded-lg flex-shrink-0"
@@ -184,7 +184,7 @@ export default function Sidebar() {
             className="w-[244px] bg-[var(--bg-elevated)] border-[var(--border)] rounded-xl p-1.5 shadow-2xl"
           >
             <DropdownMenuLabel className="text-[11px] text-[var(--text-tertiary)] font-normal px-2 py-1 truncate">
-              cadre.gaboma@gabon.ga
+              contact@nkyel.ai
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
 
@@ -305,7 +305,7 @@ export default function Sidebar() {
                 <span>⚠️</span> Suppression Définitive
               </h3>
               <p className="text-[13px] leading-relaxed text-[var(--text-secondary)]">
-                Cette action est <strong className="text-[var(--color-error)]">irréversible</strong>. Votre Profil Cadre, vos conversations En Piste, et votre historique seront définitivement effacés de GabomaAI.
+                Cette action est <strong className="text-[var(--color-error)]">irréversible</strong>. Votre Profil Cadre, vos conversations En Piste, et votre historique seront définitivement effacés de Ñkyel AI.
               </p>
               <p className="text-[12px] italic p-2.5 rounded-lg bg-[rgba(239,68,68,0.05)] border border-[rgba(239,68,68,0.1)] text-[var(--text-tertiary)]">
                 Pour valider, veuillez saisir <span className="font-mono select-all text-[var(--text-primary)]">SUPPRIMER</span> ci-dessous :

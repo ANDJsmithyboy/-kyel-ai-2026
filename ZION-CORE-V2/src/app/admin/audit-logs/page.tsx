@@ -1,4 +1,4 @@
-/* GabomaGPT · Audit Logs · SmartANDJ AI Technologies */
+/* Ñkyel AI · Audit Logs · SmartANDJ AI Technologies */
 'use client';
 import { SectionHeader, DataTable, StatusBadge } from '@/components/admin/AdminComponents';
 

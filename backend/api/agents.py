@@ -1,5 +1,5 @@
 """
-GabomaGPT — API Agents (LangGraph) · SmartANDJ AI Technologies
+Ñkyel AI — API Agents (LangGraph) · SmartANDJ AI Technologies
 Endpoints FastAPI pour le graphe de raisonnement LangGraph.
 Fondateur : Daniel Jonathan ANDJ
 """
@@ -14,9 +14,9 @@ from pydantic import BaseModel
 
 from core.config import settings
 from core.security import get_current_user_id
-from agents.graph import gabomagpt_graph
+from agents.graph import nkyel_graph
 
-logger = logging.getLogger("gabomagpt.api.agents")
+logger = logging.getLogger("nkyel.api.agents")
 
 router = APIRouter(prefix="/api/agents", tags=["Agents LangGraph"])
 
@@ -64,7 +64,7 @@ async def invoke_agent(
     user_id: str = Depends(get_current_user_id),
 ) -> AgentResponse:
     """
-    Invoque le graphe LangGraph de GabomaGPT.
+    Invoque le graphe LangGraph de Ñkyel AI.
     Le graphe classifie l'intention, route vers le bon nœud,
     et retourne une réponse enrichie.
     """
@@ -82,7 +82,7 @@ async def invoke_agent(
         }
 
         # Exécuter le graphe
-        result = await gabomagpt_graph.ainvoke(initial_state)
+        result = await nkyel_graph.ainvoke(initial_state)
 
         return AgentResponse(
             response=result.get("llm_response", "Aucune réponse générée."),
@@ -131,7 +131,7 @@ async def stream_agent(
             yield _sse("agent_start", {"message": "Analyse en cours..."})
 
             # Exécuter le graphe (non-streaming, on stream les étapes)
-            result = await gabomagpt_graph.ainvoke(initial_state)
+            result = await nkyel_graph.ainvoke(initial_state)
 
             # Envoyer les étapes traversées
             for step in result.get("steps_taken", []):
@@ -187,7 +187,7 @@ async def agent_health() -> dict:
     """Vérifie que le moteur LangGraph est opérationnel."""
     try:
         # Test simple : le graphe est-il compilé ?
-        _ = gabomagpt_graph.get_graph()
+        _ = nkyel_graph.get_graph()
         return {
             "status": "healthy",
             "engine": "LangGraph",

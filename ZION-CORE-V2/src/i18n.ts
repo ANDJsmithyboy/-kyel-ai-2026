@@ -1,10 +1,10 @@
-/* GabomaGPT · i18n Config · SmartANDJ AI Technologies
-   next-intl configuration — fr, fang, punu
+/* Ñkyel AI · i18n Config · SmartANDJ AI Technologies
+   next-intl configuration — fr, en, fang, punu
    Fondateur : Daniel Jonathan ANDJ */
 
 import { getRequestConfig } from 'next-intl/server';
 
-export const locales = ['fr', 'fang', 'punu'] as const;
+export const locales = ['fr', 'en', 'fang', 'punu'] as const;
 export type Locale = (typeof locales)[number];
 export const defaultLocale: Locale = 'fr';
 

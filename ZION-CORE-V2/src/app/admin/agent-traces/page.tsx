@@ -1,4 +1,4 @@
-/* GabomaGPT · Agent Traces · SmartANDJ AI Technologies
+/* Ñkyel AI · Agent Traces · SmartANDJ AI Technologies
    Section 17+20D: Visualize agent trajectories, mark gold examples
    Fondateur : Daniel Jonathan ANDJ */
 

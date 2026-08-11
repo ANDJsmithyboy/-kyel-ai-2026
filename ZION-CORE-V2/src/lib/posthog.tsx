@@ -1,4 +1,4 @@
-/* GabomaGPT · PostHog Analytics · SmartANDJ AI Technologies
+/* Ñkyel AI · PostHog Analytics · SmartANDJ AI Technologies
    Client-side + Server-side PostHog integration
    Fondateur : Daniel Jonathan ANDJ */
 
@@ -54,8 +54,8 @@ export function identifyUser(userId: string, traits?: Record<string, unknown>) {
   }
 }
 
-// ── Gaboma-specific events ──────────────────────────────────
-export const gabomaEvents = {
+// ── Ñkyel-specific events ──────────────────────────────────
+export const nkyelEvents = {
   chatSent: (mode: string, lang: string) =>
     trackEvent('chat_message_sent', { mode, language: lang }),
 

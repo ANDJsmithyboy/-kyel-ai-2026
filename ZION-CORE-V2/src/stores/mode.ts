@@ -1,4 +1,4 @@
-/* GabomaGPT · mode.ts · SmartANDJ AI Technologies · Constitution Zion Core
+/* Ñkyel AI · mode.ts · SmartANDJ AI Technologies · Constitution Zion Core
    Fondateur : Daniel Jonathan ANDJ
    Store React (Zustand) pour les 4 modes : Aurata / Sonar / Onyx (Black Panther) / Loxo */
 
@@ -71,9 +71,9 @@ export const MODEL_MAP: Record<Mode, ModeConfig> = {
     tokenCost: 15,
   },
   vision: {
-    label: 'GabomaSeer (Vision)',
+    label: 'ÑkyelVision',
     image: '/seer-image.jpg',
-    model: 'gabomaseer-eye',
+    model: 'nkyelvision-eye',
     provider: 'openai',
     color: '#10B981',
     colorGlow: '#34D399',
@@ -94,7 +94,7 @@ export const useModeStore = create<ModeState>((set) => ({
   setMode: (mode: Mode) => {
     set({ activeMode: mode });
     if (typeof window !== 'undefined') {
-      localStorage.setItem('gabomagpt-mode', mode);
+      localStorage.setItem('Ñkyel AI-mode', mode);
       if (mode === 'superagent') {
         document.body.classList.add('mode-bp');
       } else {
@@ -106,7 +106,7 @@ export const useModeStore = create<ModeState>((set) => ({
 
 // Initialize from localStorage on client side only
 if (typeof window !== 'undefined') {
-  const saved = (localStorage.getItem('gabomagpt-mode') as Mode) || 'flash';
+  const saved = (localStorage.getItem('Ñkyel AI-mode') as Mode) || 'flash';
   useModeStore.setState({ activeMode: saved });
 }
 

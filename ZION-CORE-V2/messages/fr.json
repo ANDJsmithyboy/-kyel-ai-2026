@@ -28,12 +28,12 @@
     "signup": "S'inscrire"
   },
   "chat": {
-    "placeholder": "Posez votre question à Gaboma AI...",
+    "placeholder": "Posez votre question à Ñkyel AI...",
     "send": "Envoyer",
     "regenerate": "Régénérer la réponse",
     "stopGenerating": "Arrêter la génération",
     "newConversation": "Nouvelle conversation",
-    "thinking": "Gaboma AI réfléchit...",
+    "thinking": "Ñkyel AI réfléchit...",
     "searching": "Recherche en cours...",
     "webSearch": "Recherche web",
     "ragSearch": "Recherche dans les documents",
@@ -100,14 +100,14 @@
   },
   "welcome": {
     "title": "Mbolo ! 🇬🇦",
-    "subtitle": "Je suis Gaboma AI, votre assistant intelligent du Gabon",
-    "suggestion1": "Explique-moi le code forestier du Gabon",
+    "subtitle": "Je suis Ñkyel AI, votre assistant intelligent d'Afrique",
+    "suggestion1": "Explique-moi l'impact de l'IA en Afrique",
     "suggestion2": "Traduis « bonjour » en fang, punu et mpongwé",
     "suggestion3": "Résume l'histoire du Gabon en 5 points",
     "suggestion4": "Quels sont les parcs nationaux du Gabon ?"
   },
   "meta": {
-    "title": "GabomaGPT — IA Souveraine du Gabon",
-    "description": "L'intelligence artificielle souveraine du Gabon par SmartANDJ AI Technologies"
+    "title": "Ñkyel AI — IA Souveraine d'Afrique",
+    "description": "L'intelligence artificielle souveraine d'Afrique par SmartANDJ AI Technologies"
   }
 }

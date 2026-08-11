@@ -1,5 +1,5 @@
 """
-GabomaAI · Outil DeerFlow : wandana_search
+Ñkyel AI · Outil DeerFlow : wandana_search
 Permet aux agents d'effectuer des recherches web via WANDANA.
 """
 

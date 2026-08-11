@@ -1,4 +1,4 @@
-/* GabomaGPT · Admin Users (Meute) · SmartANDJ AI Technologies */
+/* Ñkyel AI · Admin Users (Meute) · SmartANDJ AI Technologies */
 'use client';
 
 import { useState } from 'react';
@@ -40,7 +40,7 @@ const mockUsers: UserData[] = [
   { id: '3', name: 'Paul Nze', email: 'paul@email.ga', role: 'pro', credits: 800, conversations: 67, tokensUsed: 456000, lastActive: '18/06 11:44', status: 'active' },
   { id: '4', name: 'Sophie Koumba', email: 'sophie@email.ga', role: 'free', credits: 12, conversations: 8, tokensUsed: 23000, lastActive: '17/06 22:10', status: 'inactive' },
   { id: '5', name: 'Alain B.', email: 'alain@email.ga', role: 'free', credits: 0, conversations: 2, tokensUsed: 5400, lastActive: '15/06 10:00', status: 'banned' },
-  { id: '6', name: 'Daniel ANDJ', email: 'founder@gaboma.ga', role: 'admin', credits: 999999, conversations: 1450, tokensUsed: 15000000, lastActive: '19/06 16:30', status: 'active' },
+  { id: '6', name: 'Daniel ANDJ', email: 'founder@nkyel.ai', role: 'admin', credits: 999999, conversations: 1450, tokensUsed: 15000000, lastActive: '19/06 16:30', status: 'active' },
 ];
 
 const columnHelper = createColumnHelper<UserData>();

@@ -1,4 +1,4 @@
-/* GabomaGPT · E-Billing Webhook · SmartANDJ AI Technologies
+/* Ñkyel AI · E-Billing Webhook · SmartANDJ AI Technologies
    Handles payment confirmation callbacks from E-Billing Gabon
    Fondateur : Daniel Jonathan ANDJ */
 
@@ -18,8 +18,8 @@ export async function POST(req: Request) {
       amount: number;
       currency: string;
       metadata?: {
-        gaboma_user_id?: string;
-        gaboma_plan_id?: string;
+        nkyel_user_id?: string;
+        nkyel_plan_id?: string;
       };
     };
 
@@ -31,8 +31,8 @@ export async function POST(req: Request) {
       return NextResponse.json({ received: true });
     }
 
-    const userId = body.metadata?.gaboma_user_id;
-    const planId = body.metadata?.gaboma_plan_id;
+    const userId = body.metadata?.nkyel_user_id;
+    const planId = body.metadata?.nkyel_plan_id;
 
     if (!userId || !planId) {
       console.error('[E-Billing Webhook] Missing user or plan ID in metadata');

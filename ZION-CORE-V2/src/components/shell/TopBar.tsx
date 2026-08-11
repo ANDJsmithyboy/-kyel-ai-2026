@@ -1,5 +1,5 @@
 /**
- * GabomaAI · TopBar
+ * Ñkyel AI · TopBar
  * SmartANDJ AI Technologies
  * Sidebar toggle + Logo when collapsed + Nouvelle Piste + Rendu
  */
@@ -11,7 +11,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useSidebar } from '@/hooks/useSidebar';
 import { useIsMobile } from '@/hooks/useIsMobile';
 import { useRenduPanel } from '@/hooks/useRenduPanel';
-import { RenduIcon } from '@/components/icons/GabomaIcons';
+import { RenduIcon } from '@/components/icons/NkyelIcons';
 import { IconEdit, IconMenu2 } from '@tabler/icons-react';
 
 export default function TopBar() {
@@ -50,7 +50,7 @@ export default function TopBar() {
                 className="text-[14px] font-semibold text-[var(--text-primary)] hidden sm:inline"
                 style={{ fontFamily: 'var(--font-heading)' }}
               >
-                Gaboma AI
+                Ñkyel AI
               </span>
             </motion.div>
           )}

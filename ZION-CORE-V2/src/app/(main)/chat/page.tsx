@@ -1,5 +1,5 @@
 /**
- * GabomaAI · Chat Page (nouvelle conversation)
+ * Ñkyel AI · Chat Page (nouvelle conversation)
  * SmartANDJ AI Technologies
  * Task 11 — Redirige vers /chat/[id] après création
  */
@@ -8,14 +8,14 @@
 
 import { useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import type { GabomaModel } from '@/lib/models';
+import type { NkyelModel } from '@/lib/models';
 import { useChat } from '@/hooks/useChat';
 import ConversationStream from '@/components/chat/ConversationStream';
 import InputBar from '@/components/input/InputBar';
 
 export default function ChatPage() {
   const router = useRouter();
-  const [model, setModel] = useState<GabomaModel>('AURATA');
+  const [model, setModel] = useState<NkyelModel>('NKYEL_CHUI');
   const [conversationId, setConversationId] = useState<string | null>(null);
   const chat = useChat({
     conversationId,

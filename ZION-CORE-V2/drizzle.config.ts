@@ -1,4 +1,4 @@
-/* GabomaGPT · Drizzle Config · SmartANDJ AI Technologies */
+/* Ñkyel AI · Drizzle Config · SmartANDJ AI Technologies */
 
 import { defineConfig } from 'drizzle-kit';
 

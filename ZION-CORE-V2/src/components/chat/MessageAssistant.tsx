@@ -1,5 +1,5 @@
 /**
- * GabomaAI · MessageAssistant
+ * Ñkyel AI · MessageAssistant
  * SmartANDJ AI Technologies
  * Task 7 — Bulle assistant alignée gauche avec markdown + sources
  */
@@ -7,11 +7,11 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import type { GabomaMessage } from '@/lib/models';
+import type { NkyelMessage } from '@/lib/models';
 import SourcePills from '@/components/chat/SourcePills';
 
 interface MessageAssistantProps {
-  message: GabomaMessage;
+  message: NkyelMessage;
 }
 
 export default function MessageAssistant({ message }: MessageAssistantProps) {
@@ -43,7 +43,7 @@ export default function MessageAssistant({ message }: MessageAssistantProps) {
 
 /**
  * Rendu markdown minimal côté client (inline code, bold, italic, links).
- * Pour le rendu complet, utiliser GabomaMarkdown avec react-markdown.
+ * Pour le rendu complet, utiliser NkyelMarkdown avec react-markdown.
  */
 function renderMarkdownSimple(text: string): string {
   return text

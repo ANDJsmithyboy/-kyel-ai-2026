@@ -1,5 +1,5 @@
 /**
- * GabomaAI · useChat Hook
+ * Ñkyel AI · useChat Hook
  * SmartANDJ AI Technologies
  * Task 4 — SSE streaming chat avec reconnexion auto
  */
@@ -7,34 +7,34 @@
 'use client';
 
 import { useState, useCallback, useRef } from 'react';
-import type { GabomaMessage, GabomaModel, GabomaSource } from '@/lib/models';
+import type { NkyelMessage, NkyelModel, NkyelSource } from '@/lib/models';
 import { useRenduPanel } from '@/hooks/useRenduPanel';
 
 interface UseChatParams {
   conversationId: string | null;
-  model: GabomaModel;
+  model: NkyelModel;
   loxoEnabled: boolean;
   loxoRAGEnabled: boolean;
 }
 
 interface UseChatReturn {
-  messages: GabomaMessage[];
+  messages: NkyelMessage[];
   isStreaming: boolean;
-  sources: GabomaSource[];
+  sources: NkyelSource[];
   error: string | null;
   sendMessage: (content: string, attachments?: File[]) => Promise<void>;
   stop: () => void;
   clearError: () => void;
-  setMessages: React.Dispatch<React.SetStateAction<GabomaMessage[]>>;
+  setMessages: React.Dispatch<React.SetStateAction<NkyelMessage[]>>;
 }
 
 const MAX_RETRIES = 3;
 const BACKOFF_MS = [1000, 2000, 4000];
 
 export function useChat({ conversationId, model, loxoEnabled, loxoRAGEnabled }: UseChatParams): UseChatReturn {
-  const [messages, setMessages] = useState<GabomaMessage[]>([]);
+  const [messages, setMessages] = useState<NkyelMessage[]>([]);
   const [isStreaming, setIsStreaming] = useState(false);
-  const [sources, setSources] = useState<GabomaSource[]>([]);
+  const [sources, setSources] = useState<NkyelSource[]>([]);
   const [error, setError] = useState<string | null>(null);
   const readerRef = useRef<ReadableStreamDefaultReader<Uint8Array> | null>(null);
   const abortRef = useRef<AbortController | null>(null);
@@ -56,14 +56,14 @@ export function useChat({ conversationId, model, loxoEnabled, loxoRAGEnabled }: 
     setError(null);
     setSources([]);
 
-    const userMsg: GabomaMessage = {
+    const userMsg: NkyelMessage = {
       id: `user-${Date.now()}`,
       role: 'user',
       content: content.trim(),
       created_at: Date.now(),
     };
 
-    const assistantMsg: GabomaMessage = {
+    const assistantMsg: NkyelMessage = {
       id: `assistant-${Date.now()}`,
       role: 'assistant',
       content: '',
@@ -147,12 +147,12 @@ export function useChat({ conversationId, model, loxoEnabled, loxoRAGEnabled }: 
                   break;
 
                 case 'source': {
-                  const src: GabomaSource = {
+                  const src: NkyelSource = {
                     url: event.url as string,
                     title: event.title as string,
                     snippet: event.snippet as string | undefined,
                     favicon: event.favicon as string | undefined,
-                    type: (event.source_type as GabomaSource['type']) ?? 'loxo_web',
+                    type: (event.source_type as NkyelSource['type']) ?? 'loxo_web',
                   };
                   setSources((prev) => [...prev, src]);
                   setMessages((prev) => {
@@ -178,15 +178,15 @@ export function useChat({ conversationId, model, loxoEnabled, loxoRAGEnabled }: 
                       content?: string;
                       url?: string;
                     };
-                    const gabomaRendu = {
+                    const nkyelRendu = {
                       id: rendu.id,
-                      type: rendu.type as GabomaSource['type'] extends string ? string : never,
+                      type: rendu.type as NkyelSource['type'] extends string ? string : never,
                       title: rendu.title,
                       content: rendu.content,
                       url: rendu.url,
                       created_at: Date.now(),
                     };
-                    renduPanel.openRendu(gabomaRendu as never);
+                    renduPanel.openRendu(nkyelRendu as never);
                   }
                   break;
 

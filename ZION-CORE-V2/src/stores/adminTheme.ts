@@ -1,4 +1,4 @@
-/* Gaboma AI · adminTheme.ts · SmartANDJ AI Technologies
+/* Ñkyel AI · adminTheme.ts · SmartANDJ AI Technologies
    Admin panel theme — aligned with 6-theme system */
 
 import { create } from 'zustand';

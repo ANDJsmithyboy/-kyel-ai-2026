@@ -1,5 +1,5 @@
 """
-GabomaAI — API v1 Agent · SmartANDJ AI Technologies
+Ñkyel AI — API v1 Agent · SmartANDJ AI Technologies
 Streaming SSE via DeerFlow (ONYX / BLACK_PANTHER) + Sauvegarde DB Neon.
 Protégé par Clerk JWKS.
 Fondateur : Daniel Jonathan ANDJ

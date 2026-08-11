@@ -1,5 +1,5 @@
 /**
- * GabomaAI · SidebarItem
+ * Ñkyel AI · SidebarItem
  * SmartANDJ AI Technologies
  * Accepts ReactNode icons (SVG components) or string emojis
  */

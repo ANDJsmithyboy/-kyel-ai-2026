@@ -1,1 +1,1 @@
-# GabomaAI · Models package
+# Ñkyel AI · Models package

@@ -1,4 +1,4 @@
-/* GabomaGPT · Onboarding Page · SmartANDJ AI Technologies
+/* Ñkyel AI · Onboarding Page · SmartANDJ AI Technologies
    Premium 6-step onboarding: Consent → Name → Birth → Language → Sector → Telemetry
    Fondateur : Daniel Jonathan ANDJ */
 
@@ -10,7 +10,7 @@ import { useRouter } from 'next/navigation';
 import { DURATION, EASE_CSS } from '@/lib/motion';
 
 // ── Languages gabonaises ──
-const GABOMA_LANGUAGES = [
+const ÑKYEL_LANGUAGES = [
   { code: 'fr-GA', name: 'Français (Gabon)', native: 'Français', flag: '🇬🇦' },
   { code: 'fan',   name: 'Fang',             native: 'Fang',     flag: '🌿' },
   { code: 'pun',   name: 'Punu',             native: 'Yipunu',   flag: '🌊' },
@@ -40,7 +40,7 @@ const STEPS: { key: StepKey; title: string; subtitle: string }[] = [
   { key: 'birth',     title: 'Date de naissance',          subtitle: 'Pour personnaliser votre expérience' },
   { key: 'language',  title: 'Vos langues',                subtitle: 'Sélectionnez les langues pour l\'IA et l\'interface' },
   { key: 'sector',    title: 'Votre domaine',              subtitle: 'Quel est votre secteur d\'activité ?' },
-  { key: 'telemetry', title: 'Améliorer Gaboma AI',        subtitle: 'Aidez-nous à construire la meilleure IA gabonaise' },
+  { key: 'telemetry', title: 'Améliorer Ñkyel AI',        subtitle: 'Aidez-nous à construire la meilleure IA gabonaise' },
 ];
 
 export default function OnboardingPage() {
@@ -176,7 +176,7 @@ export default function OnboardingPage() {
           <div className="onboarding-logo-circle">
             <span className="onboarding-logo-text">G</span>
           </div>
-          <h1 className="onboarding-title">Bienvenue sur Gaboma AI</h1>
+          <h1 className="onboarding-title">Bienvenue sur Ñkyel AI</h1>
           <p className="onboarding-subtitle">Quelques étapes pour personnaliser votre expérience</p>
         </header>
 
@@ -199,7 +199,7 @@ export default function OnboardingPage() {
           {currentStep.key === 'consent' && (
             <div className="onboarding-card">
               <p className="onboarding-card-text">
-                En utilisant Gaboma AI, vous acceptez nos conditions et notre politique de confidentialité.
+                En utilisant Ñkyel AI, vous acceptez nos conditions et notre politique de confidentialité.
               </p>
               <div className="onboarding-legal-links">
                 <a href="/terms" target="_blank" rel="noopener noreferrer" className="onboarding-legal-btn">📜 CGU</a>
@@ -254,7 +254,7 @@ export default function OnboardingPage() {
           {currentStep.key === 'language' && (
             <div className="onboarding-card">
               <div className="onboarding-lang-grid">
-                {GABOMA_LANGUAGES.map(lang => {
+                {ÑKYEL_LANGUAGES.map(lang => {
                   const isSelected = selectedLangs.has(lang.code);
                   const isPrimary = lang.code === primaryLocale;
                   return (
@@ -318,7 +318,7 @@ export default function OnboardingPage() {
           {currentStep.key === 'telemetry' && (
             <div className="onboarding-card">
               <p className="onboarding-card-text">
-                Vos données d&apos;utilisation, anonymisées, peuvent contribuer à améliorer les futurs modèles Gaboma AI. 
+                Vos données d&apos;utilisation, anonymisées, peuvent contribuer à améliorer les futurs modèles Ñkyel AI. 
                 Ce choix est modifiable à tout moment dans les paramètres.
               </p>
               <label className="onboarding-toggle-row">
@@ -369,7 +369,7 @@ export default function OnboardingPage() {
         </div>
 
         {/* Footer */}
-        <p className="onboarding-footer">SMARTANDJ AI TECHNOLOGIES · GABOMA AI 2026</p>
+        <p className="onboarding-footer">SMARTANDJ AI TECHNOLOGIES · Ñkyel AI 2026</p>
       </div>
 
       <style>{`

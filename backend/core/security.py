@@ -1,5 +1,5 @@
 """
-GabomaAI — Clerk JWT Auth (RS256 JWKS) · SmartANDJ AI Technologies
+Ñkyel AI — Clerk JWT Auth (RS256 JWKS) · SmartANDJ AI Technologies
 Authentification via Clerk JWKS — jamais de JWT maison.
 Fondateur : Daniel Jonathan ANDJ
 """

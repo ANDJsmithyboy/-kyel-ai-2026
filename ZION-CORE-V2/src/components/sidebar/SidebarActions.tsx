@@ -1,5 +1,5 @@
 /**
- * GabomaAI · SidebarActions (Zone 2)
+ * Ñkyel AI · SidebarActions (Zone 2)
  * SmartANDJ AI Technologies
  * Nouvelle Piste + Rechercher
  */
@@ -7,7 +7,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { PawNewIcon, RadarWandanaIcon, RenduIcon, ProjetsIcon, TropheeIcon } from '@/components/icons/gaboma';
+import { PawNewIcon, RadarWandanaIcon, RenduIcon, ProjetsIcon, TropheeIcon } from '@/components/icons/NkyelIcons';
 import SidebarItem from './SidebarItem';
 import styles from './sidebar.module.css';
 

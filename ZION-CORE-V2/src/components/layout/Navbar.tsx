@@ -1,4 +1,4 @@
-/* GabomaGPT · Navbar.tsx · SmartANDJ AI Technologies · Constitution Zion Core
+/* Ñkyel AI · Navbar.tsx · SmartANDJ AI Technologies · Constitution Zion Core
    Fondateur : Daniel Jonathan ANDJ
    Barre de navigation supérieure
    Migré depuis Navbar.svelte */
@@ -28,8 +28,8 @@ export default function Navbar() {
         )}
         {isMobile && !sidebarOpen && (
           <img
-            src="/gabomagpt-logo.jpeg"
-            alt="GabomaGPT"
+            src="/Ñkyel AI-logo.jpeg"
+            alt="Ñkyel AI"
             className="w-7 h-7 rounded-lg object-cover"
           />
         )}

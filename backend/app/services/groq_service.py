@@ -1,5 +1,5 @@
 """
-GabomaAI · Groq Service
+Ñkyel AI · Groq Service
 Appels LLM via Groq API pour AURATA, NKYEL, ONYXGRIS.
 Les noms de providers ne sont jamais exposés côté UI.
 """
@@ -68,7 +68,7 @@ async def groq_chat_stream(
     if not settings.groq_api_key:
         # Mock streaming pour le développement
         mock_response = (
-            "Bonjour ! Je suis GabomaAI en mode développement. "
+            "Bonjour ! Je suis Ñkyel AI en mode développement. "
             "L'API Groq n'est pas encore configurée, mais l'interface fonctionne parfaitement. "
             "Configurez votre GROQ_API_KEY dans le fichier .env pour activer les réponses réelles."
         )

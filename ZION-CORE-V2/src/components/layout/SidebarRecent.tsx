@@ -1,5 +1,5 @@
 /**
- * Gaboma AI · SidebarRecent.tsx
+ * Ñkyel AI · SidebarRecent.tsx
  * SmartANDJ AI Technologies
  * Conversations récentes — 5 dernières, tronquées.
  */

@@ -1,18 +1,18 @@
-/* GabomaGPT · Privacy Policy · SmartANDJ AI Technologies
+/* Ñkyel AI · Privacy Policy · SmartANDJ AI Technologies
    Politique de Confidentialité — page publique
    Fondateur : Daniel Jonathan ANDJ */
 
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Confidentialité — Gaboma AI',
-  description: 'Politique de Confidentialité de Gaboma AI par SmartANDJ AI Technologies.',
+  title: 'Confidentialité — Ñkyel AI',
+  description: 'Politique de Confidentialité de Ñkyel AI par SmartANDJ AI Technologies.',
 };
 
 const SECTIONS = [
   {
     title: '1. Responsable du Traitement',
-    content: `SmartANDJ AI Technologies, société basée à Libreville, Gabon, est responsable du traitement de vos données personnelles dans le cadre de l'utilisation de Gaboma AI.`,
+    content: `SmartANDJ AI Technologies, société basée à Libreville, Gabon, est responsable du traitement de vos données personnelles dans le cadre de l'utilisation de Ñkyel AI.`,
   },
   {
     title: '2. Données Collectées',
@@ -20,7 +20,7 @@ const SECTIONS = [
   },
   {
     title: '3. Finalités du Traitement',
-    content: `Vos données sont utilisées pour :\n\n• Fournir et améliorer le Service Gaboma AI.\n• Personnaliser votre expérience (langue, modèle, préférences).\n• Gérer votre compte et vos abonnements.\n• Assurer la sécurité et prévenir les abus.\n• Si vous y consentez : entraîner et améliorer les modèles d'IA Gaboma (données anonymisées).`,
+    content: `Vos données sont utilisées pour :\n\n• Fournir et améliorer le Service Ñkyel AI.\n• Personnaliser votre expérience (langue, modèle, préférences).\n• Gérer votre compte et vos abonnements.\n• Assurer la sécurité et prévenir les abus.\n• Si vous y consentez : entraîner et améliorer les modèles d'IA Ñkyel (données anonymisées).`,
   },
   {
     title: '4. Base Légale du Traitement',
@@ -36,7 +36,7 @@ const SECTIONS = [
   },
   {
     title: '7. Vos Droits',
-    content: `Conformément à la législation gabonaise et aux réglementations applicables, vous disposez des droits suivants :\n\n• Droit d'accès à vos données personnelles.\n• Droit de rectification de vos données.\n• Droit de suppression (« droit à l'oubli »).\n• Droit de retirer votre consentement à tout moment.\n• Droit à la portabilité de vos données.\n• Droit d'opposition au traitement.\n\nPour exercer ces droits, contactez-nous à privacy@gaboma.ai.`,
+    content: `Conformément à la législation gabonaise et aux réglementations applicables, vous disposez des droits suivants :\n\n• Droit d'accès à vos données personnelles.\n• Droit de rectification de vos données.\n• Droit de suppression (« droit à l'oubli »).\n• Droit de retirer votre consentement à tout moment.\n• Droit à la portabilité de vos données.\n• Droit d'opposition au traitement.\n\nPour exercer ces droits, contactez-nous à privacy@nkyel.ai.`,
   },
   {
     title: '8. Sécurité',
@@ -52,7 +52,7 @@ const SECTIONS = [
   },
   {
     title: 'Contact — Délégué à la Protection des Données',
-    content: `SmartANDJ AI Technologies\nLibreville, Gabon\nprivacy@gaboma.ai`,
+    content: `SmartANDJ AI Technologies\nLibreville, Gabon\nprivacy@nkyel.ai`,
   },
 ];
 
@@ -76,7 +76,7 @@ export default function PrivacyPage() {
           ))}
         </div>
 
-        <footer className="legal-footer">SMARTANDJ AI TECHNOLOGIES · GABOMA AI 2026</footer>
+        <footer className="legal-footer">SMARTANDJ AI TECHNOLOGIES · Ñkyel AI 2026</footer>
       </div>
 
       <style>{`

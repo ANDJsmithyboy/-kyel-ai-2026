@@ -1,5 +1,5 @@
 """
-GabomaAI — Database Helpers · SmartANDJ AI Technologies
+Ñkyel AI — Database Helpers · SmartANDJ AI Technologies
 Requêtes Neon PostgreSQL via SQLAlchemy async + text().
 Fondateur : Daniel Jonathan ANDJ
 """

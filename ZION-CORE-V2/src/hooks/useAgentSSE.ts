@@ -1,5 +1,5 @@
 /**
- * GabomaAI · useAgentSSE Hook
+ * Ñkyel AI · useAgentSSE Hook
  * SmartANDJ AI Technologies
  * Hook SSE via Fetch API — distribue les événements au agentStore.
  */

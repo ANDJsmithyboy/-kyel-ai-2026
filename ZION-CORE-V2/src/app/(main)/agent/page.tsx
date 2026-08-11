@@ -1,5 +1,5 @@
 /**
- * GabomaAI · Agent Page (ONYX / BLACK PANTHER)
+ * Ñkyel AI · Agent Page (ONYX / BLACK PANTHER)
  * SmartANDJ AI Technologies
  * Expérience "Wide Search" (Clone Manus AI) avec Generative UI
  */

@@ -1,5 +1,5 @@
 /**
- * GabomaAI - Page d'accueil - Server Component
+ * Ñkyel AI - Page d'accueil - Server Component
  * SmartANDJ AI Technologies
  * Route "/" dans le layout (main) avec Sidebar + TopBar + RenduPanel
  */
@@ -10,7 +10,7 @@ import ChatHome from '@/components/chat/ChatHome';
 
 async function getFirstName(): Promise<string> {
   const cookieStore = await cookies();
-  const name = cookieStore.get('gabomagpt_firstname')?.value;
+  const name = cookieStore.get('Ñkyel AI_firstname')?.value;
   return name || 'explorateur';
 }
 

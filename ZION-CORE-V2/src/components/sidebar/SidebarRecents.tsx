@@ -1,5 +1,5 @@
 /**
- * GabomaAI · SidebarRecents (Zone 4)
+ * Ñkyel AI · SidebarRecents (Zone 4)
  * SmartANDJ AI Technologies
  * "En piste" — recent conversations list
  */

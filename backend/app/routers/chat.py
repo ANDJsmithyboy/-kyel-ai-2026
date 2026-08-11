@@ -1,5 +1,5 @@
 """
-GabomaAI · Router : Chat
+Ñkyel AI · Router : Chat
 POST /api/chat — streaming et non-streaming.
 """
 

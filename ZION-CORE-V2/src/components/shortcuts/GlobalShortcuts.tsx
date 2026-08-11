@@ -1,11 +1,11 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { useGabomaShortcuts } from '@/hooks/useGabomaShortcuts';
+import { useNkyelShortcuts } from '@/hooks/useNkyelShortcuts';
 import ShortcutsOverlay from './ShortcutsOverlay';
 
 export default function GlobalShortcuts() {
-  const { isShortcutsOverlayOpen, setIsShortcutsOverlayOpen } = useGabomaShortcuts();
+  const { isShortcutsOverlayOpen, setIsShortcutsOverlayOpen } = useNkyelShortcuts();
   
   // Custom event listener for toggling shortcuts manually via 'mod+/'
   useEffect(() => {

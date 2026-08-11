@@ -13,7 +13,7 @@ export default function AgentPage() {
   const openRendu = useRenduPanel(s => s.openRendu);
   
   const { messages, isStreaming, error, activeRendu, sendMessage, stop } = useAgent({
-    model: isBlackPanther ? 'BLACK_PANTHER' : 'ONYX',
+    model: isBlackPanther ? 'BLACK_PANTHER' : 'NKYEL_RADI',
   });
 
   const handleSend = (text: string) => {
@@ -52,7 +52,7 @@ export default function AgentPage() {
 
         <div className="absolute bottom-0 left-0 w-full bg-gradient-to-t from-[var(--zc-background)] via-[var(--zc-background)] to-transparent pt-10 pb-4">
           <InputBar 
-            model={isBlackPanther ? 'BLACK_PANTHER' : 'ONYX'}
+            model={isBlackPanther ? 'BLACK_PANTHER' : 'NKYEL_RADI'}
             setModel={(m) => { /* TODO */ }}
             onSend={handleSend} 
             onStop={stop} 

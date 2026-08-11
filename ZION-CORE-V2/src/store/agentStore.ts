@@ -1,5 +1,5 @@
 /**
- * GabomaAI · Agent Store (Zustand)
+ * Ñkyel AI · Agent Store (Zustand)
  * SmartANDJ AI Technologies
  * État global pour l'exécution des agents ONYX / BLACK PANTHER
  */

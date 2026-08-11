@@ -1,1 +1,1 @@
-# GabomaAI · Services package
+# Ñkyel AI · Services package

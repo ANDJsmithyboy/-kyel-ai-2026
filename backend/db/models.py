@@ -1,5 +1,5 @@
 """
-GabomaGPT — Modèles de base de données · SmartANDJ AI Technologies
+Ñkyel AI — Modèles de base de données · SmartANDJ AI Technologies
 User, Conversation, Message, Document — PostgreSQL 16 + SQLAlchemy 2.0
 """
 
@@ -41,7 +41,7 @@ class UserRole(str, enum.Enum):
     pending = "pending"
 
 
-class GabomaMode(str, enum.Enum):
+class NkyelMode(str, enum.Enum):
     flash = "flash"
     pro = "pro"
     black_panther = "black-panther"
@@ -113,8 +113,8 @@ class Conversation(Base):
     title: Mapped[str] = mapped_column(
         String(512), default="Nouvelle conversation"
     )
-    mode: Mapped[GabomaMode] = mapped_column(
-        SAEnum(GabomaMode), default=GabomaMode.flash, nullable=False
+    mode: Mapped[NkyelMode] = mapped_column(
+        SAEnum(NkyelMode), default=NkyelMode.flash, nullable=False
     )
     is_archived: Mapped[bool] = mapped_column(Boolean, default=False)
     created_at: Mapped[datetime] = mapped_column(
@@ -156,8 +156,8 @@ class Message(Base):
         SAEnum(MessageRole), nullable=False
     )
     content: Mapped[str] = mapped_column(Text, nullable=False)
-    mode: Mapped[GabomaMode] = mapped_column(
-        SAEnum(GabomaMode), nullable=False
+    mode: Mapped[NkyelMode] = mapped_column(
+        SAEnum(NkyelMode), nullable=False
     )
     language: Mapped[Optional[Language]] = mapped_column(
         SAEnum(Language), nullable=True

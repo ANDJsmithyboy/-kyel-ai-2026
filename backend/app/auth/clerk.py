@@ -1,5 +1,5 @@
 """
-GabomaAI · Clerk JWT Auth Middleware
+Ñkyel AI · Clerk JWT Auth Middleware
 Vérifie les tokens Clerk pour sécuriser les endpoints.
 """
 
@@ -46,7 +46,7 @@ async def get_current_user(
     """
     # En développement, autoriser sans auth si pas de clé Clerk
     if not settings.clerk_secret_key:
-        return {"sub": "dev-user", "email": "dev@gabomaai.com", "dev_mode": True}
+        return {"sub": "dev-user", "email": "dev@nkyelai.com", "dev_mode": True}
 
     if not credentials:
         raise HTTPException(status_code=401, detail="Token d'authentification requis")

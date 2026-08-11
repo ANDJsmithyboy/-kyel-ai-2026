@@ -1,5 +1,5 @@
 /**
- * Gaboma AI · TierBadge.tsx · Server Component
+ * Ñkyel AI · TierBadge.tsx · Server Component
  * SmartANDJ AI Technologies
  */
 

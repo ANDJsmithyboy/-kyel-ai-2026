@@ -1,5 +1,5 @@
 /**
- * GabomaAI · Chat [id] Page (conversation existante)
+ * Ñkyel AI · Chat [id] Page (conversation existante)
  * SmartANDJ AI Technologies
  * Task 11 — Charge la conversation puis streaming
  */
@@ -8,7 +8,7 @@
 
 import { useState, useCallback, useEffect } from 'react';
 import { useParams } from 'next/navigation';
-import type { GabomaModel, GabomaMessage } from '@/lib/models';
+import type { NkyelModel, NkyelMessage } from '@/lib/models';
 import { useChat } from '@/hooks/useChat';
 import ConversationStream from '@/components/chat/ConversationStream';
 import InputBar from '@/components/input/InputBar';
@@ -16,7 +16,7 @@ import InputBar from '@/components/input/InputBar';
 export default function ChatIdPage() {
   const params = useParams<{ id: string }>();
   const conversationId = params.id;
-  const [model, setModel] = useState<GabomaModel>('AURATA');
+  const [model, setModel] = useState<NkyelModel>('NKYEL_CHUI');
   const [loading, setLoading] = useState(true);
   const chat = useChat({
     conversationId,
@@ -32,7 +32,7 @@ export default function ChatIdPage() {
       try {
         const res = await fetch(`/api/conversations/${conversationId}`);
         if (res.ok) {
-          const data = await res.json() as { messages: GabomaMessage[]; model?: GabomaModel };
+          const data = await res.json() as { messages: NkyelMessage[]; model?: NkyelModel };
           chat.setMessages(data.messages ?? []);
           if (data.model) setModel(data.model);
         }

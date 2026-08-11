@@ -1,22 +1,22 @@
 /**
- * GabomaAI · useRenduPanel Hook
+ * Ñkyel AI · useRenduPanel Hook
  * SmartANDJ AI Technologies
  */
 
 'use client';
 
 import { create } from 'zustand';
-import type { GabomaRendu } from '@/lib/models';
+import type { NkyelRendu } from '@/lib/models';
 
 interface RenduPanelState {
   isOpen: boolean;
-  artifacts: GabomaRendu[];
+  artifacts: NkyelRendu[];
   activeIndex: number;
   open: () => void;
   close: () => void;
   toggle: () => void;
-  openRendu: (rendu: GabomaRendu) => void;
-  addArtifact: (rendu: GabomaRendu) => void;
+  openRendu: (rendu: NkyelRendu) => void;
+  addArtifact: (rendu: NkyelRendu) => void;
   setActiveIndex: (index: number) => void;
   clear: () => void;
 }

@@ -2,7 +2,7 @@
 Ñkyel AI — Agent State · SmartANDJ AI Technologies
 TypedDict for the Ñkyel autonomous agent's state graph.
 
-This replaces the simple intent-router GabomaState with a full
+This replaces the simple intent-router NkyelLegacyState with a full
 autonomous agent state supporting planning, research, evidence,
 hypotheses, and replanification.
 

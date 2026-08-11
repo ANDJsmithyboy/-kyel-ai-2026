@@ -1,5 +1,5 @@
 /**
- * Gaboma AI · SettingsRow.tsx · Server Component
+ * Ñkyel AI · SettingsRow.tsx · Server Component
  * SmartANDJ AI Technologies
  */
 

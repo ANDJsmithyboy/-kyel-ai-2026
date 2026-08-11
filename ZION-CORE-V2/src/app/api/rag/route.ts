@@ -1,6 +1,6 @@
 /**
  * ╔══════════════════════════════════════════════════════════════╗
- * ║  Gaboma AI — RAG Qdrant Cloud Query API                     ║
+ * ║  Ñkyel AI — RAG Qdrant Cloud Query API                     ║
  * ║  SmartANDJ AI Technologies · Constitution Zion Core          ║
  * ║                                                              ║
  * ║  Hybrid Search: Dense (sémantique) + Sparse (mots-clés)      ║

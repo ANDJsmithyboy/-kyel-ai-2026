@@ -1,4 +1,4 @@
-/* GabomaGPT · Checkout API · SmartANDJ AI Technologies
+/* Ñkyel AI · Checkout API · SmartANDJ AI Technologies
    Creates payment sessions via the selected payment provider
    Fondateur : Daniel Jonathan ANDJ */
 

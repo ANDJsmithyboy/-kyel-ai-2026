@@ -1,5 +1,5 @@
 /**
- * GabomaAI · TaskSidebar
+ * Ñkyel AI · TaskSidebar
  * SmartANDJ AI Technologies
  * Barre latérale avec l'historique des actions de l'agent.
  * Animée par Framer Motion, thème Zion Core.

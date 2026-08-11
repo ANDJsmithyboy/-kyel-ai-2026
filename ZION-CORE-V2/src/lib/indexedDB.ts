@@ -1,4 +1,4 @@
-export const dbName = 'GabomaDraftsDB';
+export const dbName = 'NkyelDraftsDB';
 export const storeName = 'drafts';
 
 const initDB = (): Promise<IDBDatabase> => {

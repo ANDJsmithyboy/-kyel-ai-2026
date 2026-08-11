@@ -1,5 +1,5 @@
 /**
- * GabomaAI · AgentEventRow
+ * Ñkyel AI · AgentEventRow
  * SmartANDJ AI Technologies
  * Task 8 — Ligne d'événement dans la timeline agent
  */

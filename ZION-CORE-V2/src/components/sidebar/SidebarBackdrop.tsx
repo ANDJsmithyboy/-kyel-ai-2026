@@ -1,5 +1,5 @@
 /**
- * GabomaAI · SidebarBackdrop
+ * Ñkyel AI · SidebarBackdrop
  * SmartANDJ AI Technologies
  * Mobile overlay backdrop — click to close
  */

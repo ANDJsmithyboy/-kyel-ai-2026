@@ -1,5 +1,5 @@
 /**
- * Gaboma AI · LiveButton.tsx · Client Component
+ * Ñkyel AI · LiveButton.tsx · Client Component
  * SmartANDJ AI Technologies
  * Bouton audio live — cercle 36px, 3 barres animées.
  */

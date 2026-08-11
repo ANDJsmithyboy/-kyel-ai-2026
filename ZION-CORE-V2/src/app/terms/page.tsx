@@ -1,42 +1,42 @@
-/* GabomaGPT · Terms of Service · SmartANDJ AI Technologies
+/* Ñkyel AI · Terms of Service · SmartANDJ AI Technologies
    Conditions Générales d'Utilisation — page publique
    Fondateur : Daniel Jonathan ANDJ */
 
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'CGU — Gaboma AI',
-  description: 'Conditions Générales d\'Utilisation de Gaboma AI par SmartANDJ AI Technologies.',
+  title: 'CGU — Ñkyel AI',
+  description: 'Conditions Générales d\'Utilisation de Ñkyel AI par SmartANDJ AI Technologies.',
 };
 
 const SECTIONS = [
   {
     title: '1. Acceptation des Conditions',
-    content: `En accédant à Gaboma AI ou en l'utilisant, vous acceptez d'être lié par les présentes Conditions Générales d'Utilisation (« CGU »). Si vous n'acceptez pas ces CGU, veuillez ne pas utiliser le Service. Gaboma AI est édité par SmartANDJ AI Technologies, société enregistrée au Gabon, fondée par Daniel Jonathan ANDJ.`,
+    content: `En accédant à Ñkyel AI ou en l'utilisant, vous acceptez d'être lié par les présentes Conditions Générales d'Utilisation (« CGU »). Si vous n'acceptez pas ces CGU, veuillez ne pas utiliser le Service. Ñkyel AI est édité par SmartANDJ AI Technologies, société enregistrée au Gabon, fondée par Daniel Jonathan ANDJ.`,
   },
   {
     title: '2. Description du Service',
-    content: `Gaboma AI est une plateforme d'intelligence artificielle conversationnelle et agentique offrant des fonctionnalités de chat, recherche, génération de contenu, et exécution de tâches autonomes. Le Service est disponible via application mobile (Android) et application web.`,
+    content: `Ñkyel AI est une plateforme d'intelligence artificielle conversationnelle et agentique offrant des fonctionnalités de chat, recherche, génération de contenu, et exécution de tâches autonomes. Le Service est disponible via application mobile (Android) et application web.`,
   },
   {
     title: '3. Inscription et Compte',
-    content: `Pour utiliser Gaboma AI, vous devez créer un compte en fournissant des informations exactes. Vous êtes responsable de la sécurité de votre compte et de toutes les activités qui s'y déroulent. Vous devez avoir au moins 16 ans pour utiliser le Service.`,
+    content: `Pour utiliser Ñkyel AI, vous devez créer un compte en fournissant des informations exactes. Vous êtes responsable de la sécurité de votre compte et de toutes les activités qui s'y déroulent. Vous devez avoir au moins 16 ans pour utiliser le Service.`,
   },
   {
     title: '4. Utilisation Acceptable',
-    content: `Vous vous engagez à utiliser Gaboma AI de manière responsable et conforme à la loi gabonaise et aux lois applicables de votre pays de résidence. Toute utilisation abusive, frauduleuse, ou contraire à notre Politique d'Utilisation Acceptable est interdite et peut entraîner la suspension ou la suppression de votre compte.`,
+    content: `Vous vous engagez à utiliser Ñkyel AI de manière responsable et conforme à la loi gabonaise et aux lois applicables de votre pays de résidence. Toute utilisation abusive, frauduleuse, ou contraire à notre Politique d'Utilisation Acceptable est interdite et peut entraîner la suspension ou la suppression de votre compte.`,
   },
   {
     title: '5. Propriété Intellectuelle',
-    content: `Le contenu que vous générez via Gaboma AI vous appartient, sous réserve des droits préexistants des tiers. L'interface, le code source, les modèles d'IA, les marques, logos et le design de Gaboma AI restent la propriété exclusive de SmartANDJ AI Technologies.`,
+    content: `Le contenu que vous générez via Ñkyel AI vous appartient, sous réserve des droits préexistants des tiers. L'interface, le code source, les modèles d'IA, les marques, logos et le design de Ñkyel AI restent la propriété exclusive de SmartANDJ AI Technologies.`,
   },
   {
     title: '6. Abonnements et Paiements',
-    content: `Gaboma AI propose des formules gratuites et payantes. Les paiements sont effectués via Mobile Money (Airtel Money, Moov Money), E-Billing, ou carte bancaire sur notre plateforme web. Les abonnements se renouvellent automatiquement sauf annulation. Les remboursements sont accordés conformément à la législation gabonaise en vigueur.`,
+    content: `Ñkyel AI propose des formules gratuites et payantes. Les paiements sont effectués via Mobile Money (Airtel Money, Moov Money), E-Billing, ou carte bancaire sur notre plateforme web. Les abonnements se renouvellent automatiquement sauf annulation. Les remboursements sont accordés conformément à la législation gabonaise en vigueur.`,
   },
   {
     title: '7. Limitation de Responsabilité',
-    content: `Gaboma AI est fourni « en l'état ». SmartANDJ AI Technologies ne garantit pas que les réponses générées par l'IA soient exactes, complètes ou adaptées à un usage spécifique. Vous êtes responsable de vérifier les informations fournies. La responsabilité de SmartANDJ AI Technologies est limitée au montant que vous avez payé pour le Service au cours des 12 derniers mois.`,
+    content: `Ñkyel AI est fourni « en l'état ». SmartANDJ AI Technologies ne garantit pas que les réponses générées par l'IA soient exactes, complètes ou adaptées à un usage spécifique. Vous êtes responsable de vérifier les informations fournies. La responsabilité de SmartANDJ AI Technologies est limitée au montant que vous avez payé pour le Service au cours des 12 derniers mois.`,
   },
   {
     title: '8. Résiliation',
@@ -52,7 +52,7 @@ const SECTIONS = [
   },
   {
     title: 'Contact',
-    content: `SmartANDJ AI Technologies\nLibreville, Gabon\ncontact@gaboma.ai`,
+    content: `SmartANDJ AI Technologies\nLibreville, Gabon\ncontact@nkyel.ai`,
   },
 ];
 
@@ -76,7 +76,7 @@ export default function TermsPage() {
           ))}
         </div>
 
-        <footer className="legal-footer">SMARTANDJ AI TECHNOLOGIES · GABOMA AI 2026</footer>
+        <footer className="legal-footer">SMARTANDJ AI TECHNOLOGIES · Ñkyel AI 2026</footer>
       </div>
 
       <style>{`

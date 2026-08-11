@@ -1,1 +1,1 @@
-# GabomaGPT — API Module · SmartANDJ AI Technologies
+# Ñkyel AI — API Module · SmartANDJ AI Technologies

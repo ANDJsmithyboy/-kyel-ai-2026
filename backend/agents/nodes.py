@@ -1,5 +1,5 @@
 """
-GabomaGPT — Nœuds du StateGraph · SmartANDJ AI Technologies
+Ñkyel AI — Nœuds du StateGraph (legacy) · SmartANDJ AI Technologies
 Chaque fonction = un nœud du graphe de raisonnement.
 Fondateur : Daniel Jonathan ANDJ
 """
@@ -10,10 +10,10 @@ import re
 import logging
 from typing import Any
 
-from agents.state import GabomaState
+from agents.state import NkyelLegacyState
 from core.config import settings
 
-logger = logging.getLogger("gabomagpt.agents")
+logger = logging.getLogger("nkyel.agents")
 
 # ── Regex MSISDN Gabon (format international +241 ou local) ──────
 # Airtel : 074, 077, 066 — Moov (ex-Libertis) : 060, 062, 065, 066
@@ -29,7 +29,7 @@ GABON_MSISDN_RE = re.compile(
 # NŒUD 1 — Classification de l'intention
 # ═══════════════════════════════════════════════════════════════════
 
-def classify_intent(state: GabomaState) -> dict[str, Any]:
+def classify_intent(state: NkyelLegacyState) -> dict[str, Any]:
     """Analyse le message utilisateur et détermine l'intention."""
     msg = (state.get("user_message") or "").lower().strip()
     steps = list(state.get("steps_taken") or [])
@@ -78,7 +78,7 @@ def classify_intent(state: GabomaState) -> dict[str, Any]:
 # NŒUD 2 — Validation MSISDN (Airtel/Moov Gabon)
 # ═══════════════════════════════════════════════════════════════════
 
-def validate_msisdn(state: GabomaState) -> dict[str, Any]:
+def validate_msisdn(state: NkyelLegacyState) -> dict[str, Any]:
     """Valide un numéro MSISDN gabonais et identifie l'opérateur."""
     steps = list(state.get("steps_taken") or [])
     steps.append("validate_msisdn")
@@ -125,7 +125,7 @@ def validate_msisdn(state: GabomaState) -> dict[str, Any]:
 # NŒUD 3 — Recherche web contextuelle via Tavily
 # ═══════════════════════════════════════════════════════════════════
 
-async def tavily_search(state: GabomaState) -> dict[str, Any]:
+async def tavily_search(state: NkyelLegacyState) -> dict[str, Any]:
     """Effectue une recherche Tavily orientée contexte gabonais."""
     steps = list(state.get("steps_taken") or [])
     steps.append("tavily_search")
@@ -179,7 +179,7 @@ async def tavily_search(state: GabomaState) -> dict[str, Any]:
 # NŒUD 4 — Handler conversationnel (LLM standard)
 # ═══════════════════════════════════════════════════════════════════
 
-async def conversational_handler(state: GabomaState) -> dict[str, Any]:
+async def conversational_handler(state: NkyelLegacyState) -> dict[str, Any]:
     """Génère une réponse conversationnelle via Groq ou Anthropic."""
     steps = list(state.get("steps_taken") or [])
     steps.append("conversational_handler")
@@ -188,11 +188,11 @@ async def conversational_handler(state: GabomaState) -> dict[str, Any]:
     message = state.get("user_message", "")
     context = state.get("tavily_context", "")
 
-    system_prompt = """Tu es GabomaGPT, l'intelligence artificielle souveraine du Gabon.
-Développée par SmartANDJ AI Technologies, fondée par Daniel Jonathan ANDJ à Libreville.
-Tu es fier d'être gabonais. Tu connais le Gabon profondément.
+    system_prompt = """Tu es Ñkyel AI, l'intelligence artificielle souveraine d'Afrique.
+Développée par SmartANDJ AI Technologies, fondée par Daniel Jonathan ANDJ.
+Tu représentes l'excellence technologique africaine.
 Tu ne dis jamais que tu es ChatGPT, Claude, Gemini ou un autre modèle.
-Tu es GabomaGPT. Point final."""
+Tu es Ñkyel AI. Point final."""
 
     if context:
         system_prompt += f"\n\nContexte web récent :\n{context}"
@@ -243,7 +243,7 @@ Tu es GabomaGPT. Point final."""
 # NŒUD 5 — Handler transactionnel (Airtel/Moov paiement)
 # ═══════════════════════════════════════════════════════════════════
 
-async def transactional_handler(state: GabomaState) -> dict[str, Any]:
+async def transactional_handler(state: NkyelLegacyState) -> dict[str, Any]:
     """Gère les requêtes transactionnelles (paiement mobile)."""
     steps = list(state.get("steps_taken") or [])
     steps.append("transactional_handler")
@@ -278,7 +278,7 @@ async def transactional_handler(state: GabomaState) -> dict[str, Any]:
 # ROUTEUR — Détermine le prochain nœud selon l'intention
 # ═══════════════════════════════════════════════════════════════════
 
-def route_by_intent(state: GabomaState) -> str:
+def route_by_intent(state: NkyelLegacyState) -> str:
     """Route vers le bon nœud selon l'intention classifiée."""
     intent = state.get("intent", "conversational")
 

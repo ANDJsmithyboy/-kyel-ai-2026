@@ -1,4 +1,4 @@
-/* GabomaGPT · main.rs
+/* Ñkyel AI · main.rs
    SmartANDJ AI Technologies · Constitution Zion Core
    Fondateur : Daniel Jonathan ANDJ
    Point d'entrée du moteur RAG + Parser linguistique Rust */
@@ -28,7 +28,7 @@ struct HealthResponse {
 async fn health(data: web::Data<AppState>) -> HttpResponse {
     HttpResponse::Ok().json(HealthResponse {
         status: "ok".to_string(),
-        service: "gabomagpt-rag-engine".to_string(),
+        service: "Ñkyel AI-rag-engine".to_string(),
         version: "1.0.0".to_string(),
         languages_supported: data.parser.language_count(),
     })
@@ -98,7 +98,7 @@ async fn main() -> std::io::Result<()> {
     // Initialiser le parser linguistique
     let parser = parser::LinguisticParser::new();
     info!(
-        "🦀 GabomaGPT RAG Engine démarré — {} paires linguistiques chargées",
+        "🦀 Ñkyel AI RAG Engine démarré — {} paires linguistiques chargées",
         parser.language_count()
     );
 

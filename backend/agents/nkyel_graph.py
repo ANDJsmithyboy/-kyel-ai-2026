@@ -58,18 +58,35 @@ def _gen_id(prefix: str) -> str:
 
 
 def _emit_event(state: dict, event_type: str, node: dict | None = None, edge: dict | None = None, payload: dict | None = None) -> dict:
-    """Append an event to the state's event list."""
+    """Append an event to the state's event list and persist it."""
+    try:
+        from events.persistent_store import append_event as persist_event
+    except ImportError:
+        persist_event = None
+
+    event_id = _gen_id("evt")
+    run_id = state.get("run_id", "")
+    
     event: NkyelEvent = {
-        "id": _gen_id("evt"),
+        "id": event_id,
         "type": event_type,
-        "run_id": state.get("run_id", ""),
+        "run_id": run_id,
     }
+    
+    payload_data = {}
     if node:
         event["node"] = node
+        payload_data["node"] = node
     if edge:
         event["edge"] = edge
+        payload_data["edge"] = edge
     if payload:
         event["payload"] = payload
+        payload_data["payload"] = payload
+
+    # Persist the event to SQLite
+    if run_id and persist_event:
+        persist_event(run_id, event_id, event_type, payload_data)
 
     events = list(state.get("events", []))
     events.append(event)
@@ -206,8 +223,10 @@ Only output the JSON array, nothing else."""
 # ─── Node: Research ─────────────────────────────────────
 
 def research(state: NkyelState) -> dict:
-    """Execute web searches for each research task in the plan."""
-    from services.tavily_search_service import tavily_search
+    """Execute web searches for each research task in the plan via MCP registry."""
+    from mcp.registry import registry
+    # Ensure MCP tools are registered
+    import mcp.tools  # noqa: F401
 
     plan = state.get("plan", [])
     goal = state.get("goal_title", "")
@@ -216,6 +235,12 @@ def research(state: NkyelState) -> dict:
     new_nodes = []
     new_edges = []
     events = list(state.get("events", []))
+    audit_log = list(state.get("mcp_audit_log", []))
+
+    user_context = {
+        "user_id": state.get("user_id", "anonymous"),
+        "role": "user",
+    }
 
     for task in plan:
         if task.get("type") != "research":
@@ -223,12 +248,42 @@ def research(state: NkyelState) -> dict:
 
         query = task.get("description", task.get("title", goal))
 
-        try:
-            results = tavily_search(query, max_results=3)
-        except Exception:
-            results = []
+        # Execute via MCP registry (with permission check + audit)
+        mcp_result = registry.execute(
+            "tavily_search",
+            {"query": query, "max_results": 3},
+            user_context=user_context,
+        )
 
-        for r in results:
+        # Record audit entry
+        audit_log.append({
+            "audit_id": mcp_result.get("audit_id"),
+            "tool": mcp_result.get("tool"),
+            "success": mcp_result.get("success"),
+            "duration_ms": mcp_result.get("duration_ms"),
+        })
+
+        results = mcp_result.get("result", []) if mcp_result.get("success") else []
+
+        # Emit tool.started event
+        tool_node = _make_node(
+            "tool_call",
+            f"Web Search: {query[:50]}",
+            f"Tavily search via MCP registry",
+            status="active" if mcp_result.get("success") else "failed",
+            provenance="generated",
+        )
+        tool_node["permissions"] = ["search:web"]
+        tool_node["latency_ms"] = mcp_result.get("duration_ms", 0)
+        new_nodes.append(tool_node)
+        events.append({
+            "id": _gen_id("evt"),
+            "type": "tool.started" if mcp_result.get("success") else "tool.failed",
+            "run_id": state.get("run_id", ""),
+            "node": tool_node,
+        })
+
+        for r in (results or []):
             source_node = _make_node(
                 "source",
                 r.get("title", "Source"),
@@ -251,7 +306,7 @@ def research(state: NkyelState) -> dict:
                 "node": source_node,
             })
 
-        all_results.extend(results)
+        all_results.extend(results or [])
 
     all_nodes = list(state.get("nodes", [])) + new_nodes
 
@@ -261,6 +316,7 @@ def research(state: NkyelState) -> dict:
         "nodes": all_nodes,
         "edges": list(state.get("edges", [])) + new_edges,
         "events": events,
+        "mcp_audit_log": audit_log,
         "steps_taken": list(state.get("steps_taken", [])) + ["research"],
     }
 
@@ -427,14 +483,19 @@ Write in the user's language (detect from the goal). Respond in markdown."""
 def check_replan(state: NkyelState) -> str:
     """Conditional: check if replanification was requested."""
     if state.get("replan_requested"):
-        return "plan"
-    return "deliver"
+        return "do_plan"
+    return "do_deliver"
 
 
 # ─── Node: Deliver ──────────────────────────────────────
 
 def deliver(state: NkyelState) -> dict:
     """Create a checkpoint and finalize the run."""
+    try:
+        from events.persistent_store import create_snapshot
+    except ImportError:
+        create_snapshot = None
+
     checkpoint_node = _make_node("checkpoint", "Mission Complete", "Final checkpoint", status="completed")
 
     events = list(state.get("events", []))
@@ -442,6 +503,15 @@ def deliver(state: NkyelState) -> dict:
     events.append({"id": _gen_id("evt"), "type": "final.delivered", "run_id": state.get("run_id", ""), "payload": {"success": True}})
 
     all_nodes = list(state.get("nodes", [])) + [checkpoint_node]
+
+    # Create a persistent snapshot of the final state
+    run_id = state.get("run_id")
+    if run_id and create_snapshot:
+        # We don't persist the events list inside the snapshot itself to save space if desired,
+        # but for P0 we just dump the whole state
+        state_to_save = dict(state)
+        state_to_save["nodes"] = all_nodes
+        create_snapshot(run_id, state_to_save)
 
     return {
         "nodes": all_nodes,
@@ -457,33 +527,35 @@ def build_nkyel_graph() -> StateGraph:
 
     graph = StateGraph(NkyelState)
 
+    # Node names use do_ prefix to avoid colliding with state keys
+    # (LangGraph forbids node names that match state key names)
     graph.add_node("receive_goal", receive_goal)
-    graph.add_node("plan", plan)
-    graph.add_node("research", research)
-    graph.add_node("analyze", analyze)
-    graph.add_node("synthesize", synthesize)
-    graph.add_node("deliver", deliver)
+    graph.add_node("do_plan", plan)
+    graph.add_node("do_research", research)
+    graph.add_node("do_analyze", analyze)
+    graph.add_node("do_synthesize", synthesize)
+    graph.add_node("do_deliver", deliver)
 
     # Entry point
     graph.set_entry_point("receive_goal")
 
     # Linear flow with replan loop
-    graph.add_edge("receive_goal", "plan")
-    graph.add_edge("plan", "research")
-    graph.add_edge("research", "analyze")
-    graph.add_edge("analyze", "synthesize")
+    graph.add_edge("receive_goal", "do_plan")
+    graph.add_edge("do_plan", "do_research")
+    graph.add_edge("do_research", "do_analyze")
+    graph.add_edge("do_analyze", "do_synthesize")
 
     # Conditional: replan or deliver
     graph.add_conditional_edges(
-        "synthesize",
+        "do_synthesize",
         check_replan,
         {
-            "plan": "plan",
-            "deliver": "deliver",
+            "do_plan": "do_plan",
+            "do_deliver": "do_deliver",
         },
     )
 
-    graph.add_edge("deliver", END)
+    graph.add_edge("do_deliver", END)
 
     return graph.compile()
 

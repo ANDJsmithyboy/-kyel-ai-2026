@@ -130,7 +130,7 @@ export default function ChatScreen() {
         <div className="flex flex-col h-full">
           {/* Header */}
           <div className="flex items-center justify-between p-4 border-b border-[var(--border)]">
-            <img src="/gabomagpt-logo.jpeg" alt="GabomaGPT" className="h-8 rounded" />
+            <img src="/Ñkyel AI-logo.jpeg" alt="Ñkyel AI" className="h-8 rounded" />
             <button className="p-2 hover:bg-[var(--accent-10)] rounded-lg transition-colors md:hidden">
               <ChevronLeft size={18} />
             </button>

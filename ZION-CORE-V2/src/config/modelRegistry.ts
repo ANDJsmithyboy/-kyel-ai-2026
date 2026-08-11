@@ -1,4 +1,4 @@
-/* GabomaGPT · modelRegistry.ts · SmartANDJ AI Technologies · Constitution Zion Core
+/* Ñkyel AI · modelRegistry.ts · SmartANDJ AI Technologies · Constitution Zion Core
    Registre de configuration des familles de modèles et des cibles système. */
 
 export interface ModelEntry {
@@ -20,7 +20,7 @@ export const MODEL_REGISTRY: ModelFamily[] = [
     key: 'aurata',
     name: 'Famille Aurata',
     description: 'Inférence Locale · Légère · Instance Oracle Cloud (Ollama)',
-    targetUrls: ['flash.gabomagpt.com', 'elande.gabomagpt.com'],
+    targetUrls: ['flash.Ñkyel AI.com', 'elande.Ñkyel AI.com'],
     models: [
       { key: 'aurata-spark', name: 'Aurata Spark', description: 'Ultra-léger, quasi-instantané (Réflexe pur)' },
       { key: 'aurata', name: 'Aurata', description: 'Standard gratuit, local (Agile, efficace, sans superflu)' },
@@ -31,7 +31,7 @@ export const MODEL_REGISTRY: ModelFamily[] = [
     key: 'nyel',
     name: 'Famille Ñkyel',
     description: 'Modèle intelligent · Inférence Pro Reasoning',
-    targetUrls: ['pro.gabomagpt.com'],
+    targetUrls: ['pro.Ñkyel AI.com'],
     models: [
       { key: 'nyel', name: 'Ñkyel', description: 'Modèle intelligent (Raisonnement standard)' },
       { key: 'nyel-echo', name: 'Ñkyel Echo', description: 'Raisonnement + Auto-vérification (Modèle se relit et corrige)' },
@@ -42,7 +42,7 @@ export const MODEL_REGISTRY: ModelFamily[] = [
     key: 'onyxgris',
     name: 'Famille OnyxGris',
     description: 'Mode Black Panther · Vitesse brute · Zéro Compromis',
-    targetUrls: ['onyx.gabomagpt.com', 'agent.gabomagpt.com'],
+    targetUrls: ['onyx.Ñkyel AI.com', 'agent.Ñkyel AI.com'],
     models: [
       { key: 'onyxgris', name: 'OnyxGris', description: "Mode puissant standard (La panthère sort de l'ombre)" },
       { key: 'onyxgris-stealth', name: 'OnyxGris Stealth', description: 'Contexte court, exécution silencieuse et chirurgicale' },
@@ -53,7 +53,7 @@ export const MODEL_REGISTRY: ModelFamily[] = [
     key: 'wandana',
     name: 'Famille Wandana',
     description: 'Mode recherche et deep recherche',
-    targetUrls: ['research.gabomagpt.com'],
+    targetUrls: ['research.Ñkyel AI.com'],
     models: [
       { key: 'wandana', name: 'Wandana', description: 'Recherche structurée standard (Mémorisation et organisation)' },
       { key: 'wandana-savane', name: 'Wandana Savane', description: 'Recherche web étendue (Parcours multi-sources)' },

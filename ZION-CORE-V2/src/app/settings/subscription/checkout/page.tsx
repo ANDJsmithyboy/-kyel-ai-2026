@@ -1,4 +1,4 @@
-/* GabomaGPT · Checkout Page · SmartANDJ AI Technologies
+/* Ñkyel AI · Checkout Page · SmartANDJ AI Technologies
    Payment method selection + checkout flow (web-only per §9)
    Fondateur : Daniel Jonathan ANDJ */
 
@@ -217,7 +217,7 @@ export default function CheckoutPage() {
         {/* Footer */}
         <footer className="checkout-footer">
           <p>🔒 Paiement sécurisé · Vos données sont chiffrées</p>
-          <p>SMARTANDJ AI TECHNOLOGIES · GABOMA AI 2026</p>
+          <p>SMARTANDJ AI TECHNOLOGIES · Ñkyel AI 2026</p>
         </footer>
       </div>
 

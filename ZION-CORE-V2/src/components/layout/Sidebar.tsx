@@ -1,4 +1,4 @@
-/* GabomaGPT · Sidebar.tsx · SmartANDJ AI Technologies · Constitution Zion Core
+/* Ñkyel AI · Sidebar.tsx · SmartANDJ AI Technologies · Constitution Zion Core
    Fondateur : Daniel Jonathan ANDJ
    Barre latérale premium — conversations, recherche, profil utilisateur
    Identique à Claude.ai / ChatGPT en qualité */
@@ -10,7 +10,7 @@ import {
   Plus, MagnifyingGlass as Search, Gear as Settings, ChatTeardropText as MessageSquare, CaretLeft as PanelLeftClose,
   Trash as Trash2, PushPin as Pin, DotsThree as MoreHorizontal, Sparkle as Sparkles, CaretDown as ChevronDown, Check
 } from '@phosphor-icons/react';
-import { IconBlackPanther, GabomaAgentIcon } from '../icons';
+import { IconBlackPanther, NkyelAgentIcon } from '../icons';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useSidebarStore } from '@/stores/sidebar';
 import { useAuthStore } from '@/stores/auth.store';
@@ -32,7 +32,7 @@ function getGreeting(name: string, style: string): string {
   if (h >= 5 && h < 12) return `Mbolo ! Bonjour ${name}`;
   if (h >= 12 && h < 18) return `Akeva ! Bon après-midi ${name}`;
   if (h >= 18 && h < 21) return `Bonsoir ${name}, on gère quoi ?`;
-  return `C'est tard ${name}, mais GabomaGPT veille`;
+  return `C'est tard ${name}, mais Ñkyel AI veille`;
 }
 
 export default function Sidebar() {
@@ -167,7 +167,7 @@ export default function Sidebar() {
           className="p-2 rounded-xl hover:bg-[var(--accent-10)] transition-colors group text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
           title="Ouvrir la barre latérale (Ctrl+B)"
         >
-          <GabomaAgentIcon className="w-6 h-6" />
+          <NkyelAgentIcon className="w-6 h-6" />
         </button>
 
         <button
@@ -226,7 +226,7 @@ export default function Sidebar() {
                 <span>⚠️</span> Suppression Définitive
               </h3>
               <p className="text-[13px] leading-relaxed" style={{ color: '#8A8A92' }}>
-                Cette action est <strong style={{ color: '#ef4444' }}>irréversible</strong>. Votre Profil Cadre, vos conversations En Piste, et votre historique seront définitivement effacés de GabomaAI.
+                Cette action est <strong style={{ color: '#ef4444' }}>irréversible</strong>. Votre Profil Cadre, vos conversations En Piste, et votre historique seront définitivement effacés de Ñkyel AI.
               </p>
               <p className="text-[12px] italic p-2.5 rounded-lg" style={{ background: 'rgba(239,68,68,0.05)', border: '1px solid rgba(239,68,68,0.1)', color: '#525258' }}>
                 Pour valider, veuillez saisir <span className="font-mono select-all" style={{ color: '#F0EDE6' }}>SUPPRIMER</span> ci-dessous :
@@ -286,7 +286,7 @@ export default function Sidebar() {
           'transition-transform duration-250',
           isMobile ? 'shadow-2xl' : '',
         )}        suppressHydrationWarning      >
-        {/* ── En-tête : Logo + GabomaGPT + Iboga toggle ── */}
+        {/* ── En-tête : Logo + Ñkyel AI + Iboga toggle ── */}
         <div className="flex items-center gap-2 px-3 pt-3 pb-2 relative">
           {/* Dot indicator lumineux */}
           <div className="absolute top-4 left-4 w-1.5 h-1.5 rounded-full bg-[var(--accent)] shadow-[0_0_10px_var(--accent)]" />
@@ -297,8 +297,8 @@ export default function Sidebar() {
               </div>
             ) : (
               <img
-                src="/gabomagpt-logo.jpeg"
-                alt="GabomaGPT"
+                src="/Ñkyel AI-logo.jpeg"
+                alt="Ñkyel AI"
                 className="w-8 h-8 rounded-xl object-cover shrink-0 ring-1 ring-[var(--border)]"
               />
             )}
@@ -312,7 +312,7 @@ export default function Sidebar() {
             className="p-1.5 rounded-xl hover:bg-white/[0.06] transition-colors shrink-0 text-[var(--text-tertiary)] hover:text-[var(--text-primary)]"
             title="Fermer la barre latérale (Ctrl+B)"
           >
-            <GabomaAgentIcon className="w-6 h-6" />
+            <NkyelAgentIcon className="w-6 h-6" />
           </button>
         </div>
 
@@ -464,7 +464,7 @@ export default function Sidebar() {
           {/* Signature */}
           <div className="text-center pt-2 pb-1 select-none flex flex-col gap-0.5">
             <span className="text-[10px] tracking-[0.2em] uppercase font-mono text-[var(--text-tertiary)] opacity-60">
-              Gaboma AI VOP
+              Ñkyel AI VOP
             </span>
             <span className="text-[9px] text-[var(--text-tertiary)] opacity-40 font-light">
               &copy; 2026 SmartANDJ AI
