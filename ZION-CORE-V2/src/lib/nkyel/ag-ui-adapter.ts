@@ -45,6 +45,42 @@ function mapAgUiEventToNkyelEvent(raw: AgUiRawEvent, runId: string): NkyelEvent 
   };
 
   switch (raw.type) {
+    // ── Native NkyelEvents (Pass-through) ──
+    case 'goal.received':
+    case 'plan.created':
+    case 'plan.updated':
+    case 'task.created':
+    case 'task.started':
+    case 'task.completed':
+    case 'task.failed':
+    case 'agent.spawned':
+    case 'tool.requested':
+    case 'tool.started':
+    case 'tool.completed':
+    case 'tool.failed':
+    case 'source.added':
+    case 'claim.created':
+    case 'evidence.linked':
+    case 'hypothesis.created':
+    case 'hypothesis.rejected':
+    case 'artifact.created':
+    case 'checkpoint.created':
+    case 'run.interrupted':
+    case 'run.resumed':
+    case 'run.cancelled':
+    case 'replan.requested':
+    case 'replan.completed':
+    case 'final.delivered':
+      return {
+        ...baseEvent,
+        type: raw.type as NkyelEventType,
+        sequenceNumber: 0,
+        timestamp: '',
+        node: raw.data?.node as any,
+        edge: raw.data?.edge as any,
+        payload: raw.data?.payload as any,
+      };
+
     // ── Run Lifecycle ──
     case 'run_started':
     case 'lifecycle':

@@ -283,8 +283,8 @@ async def get_agent_snapshot(run_id: str):
 async def list_mcp_tools():
     """List all registered MCP tools."""
     try:
-        from mcp.registry import registry
-        import mcp.tools  # noqa: F401 — trigger registration
+        from mcp_integration.registry import registry
+        import mcp_integration.tools  # noqa: F401 — trigger registration
         return {"tools": registry.list_tools()}
     except Exception as e:
         return JSONResponse(

@@ -84,12 +84,33 @@ async def _run_nkyel_agent(request: NkyelRunRequest) -> AsyncGenerator[str, None
         }
 
         # Run the graph — stream events as they happen
-        # LangGraph streams node outputs in order
         final_state = None
-        async for event in _stream_graph(nkyel_graph, initial_state):
-            yield _sse_event(event["type"], event["data"])
-            if event.get("final_state"):
-                final_state = event["final_state"]
+        # Using astream with stream_mode='values' emits the full state after each node completes
+        yielded_count = 0
+        async for state in nkyel_graph.astream(initial_state, stream_mode="values"):
+            events = state.get("events", [])
+            # Yield any new events
+            for i in range(yielded_count, len(events)):
+                evt = events[i]
+                event_type = evt.get("type", "agent_step")
+                node = evt.get("node")
+                edge = evt.get("edge")
+
+                data = {
+                    "event_id": evt.get("id", ""),
+                    "run_id": evt.get("run_id", ""),
+                }
+                if node:
+                    data["node"] = node
+                if edge:
+                    data["edge"] = edge
+                if evt.get("payload"):
+                    data["payload"] = evt["payload"]
+
+                yield _sse_event(event_type, data)
+            
+            yielded_count = len(events)
+            final_state = state
 
         # Emit final
         if final_state:
@@ -116,45 +137,6 @@ async def _run_nkyel_agent(request: NkyelRunRequest) -> AsyncGenerator[str, None
     yield "data: [DONE]\n\n"
 
 
-async def _stream_graph(graph, initial_state: dict) -> AsyncGenerator[dict, None]:
-    """
-    Run the LangGraph graph synchronously (in a thread) and
-    yield events as each node completes.
-    """
-    loop = asyncio.get_event_loop()
-
-    # Run graph in thread to not block the event loop
-    result = await loop.run_in_executor(
-        None,
-        lambda: graph.invoke(initial_state),
-    )
-
-    # Emit events from the state
-    events = result.get("events", [])
-    for evt in events:
-        event_type = evt.get("type", "agent_step")
-        node = evt.get("node")
-        edge = evt.get("edge")
-
-        data = {
-            "event_id": evt.get("id", ""),
-            "run_id": evt.get("run_id", ""),
-        }
-        if node:
-            data["node"] = node
-        if edge:
-            data["edge"] = edge
-        if evt.get("payload"):
-            data["payload"] = evt["payload"]
-
-        yield {"type": event_type, "data": data}
-
-    # Yield final state marker
-    yield {
-        "type": "_internal_final",
-        "data": {},
-        "final_state": result,
-    }
 
 
 @router.post("/run")
@@ -178,19 +160,82 @@ async def run_nkyel_agent(request: NkyelRunRequest):
 async def replan(request: NkyelReplanRequest):
     """
     Trigger replanification for a running mission.
-    This would be called when the user edits a node in the Visual Workspace.
+    This returns a new SSE stream that resumes the graph.
     """
-    # In a full implementation, this would:
-    # 1. Load the current state from the event store
-    # 2. Set replan_requested = True with the reason
-    # 3. Re-invoke the graph from the "plan" node
-    # For P0, return acknowledgement
-    return {
-        "status": "replan_queued",
-        "run_id": request.run_id,
-        "edited_node_id": request.edited_node_id,
-        "reason": request.reason,
-    }
+    async def _run_replan() -> AsyncGenerator[str, None]:
+        from agents.nkyel_graph import nkyel_graph
+        
+        from events.persistent_store import get_snapshot
+        
+        snapshot = get_snapshot(request.run_id)
+        if not snapshot:
+            yield _sse_event("error", {"run_id": request.run_id, "message": "Snapshot not found."})
+            yield "data: [DONE]\n\n"
+            return
+            
+        initial_state = dict(snapshot)
+        
+        # Apply updates to the specific node (e.g. a hypothesis)
+        for node in initial_state.get("nodes", []):
+            if node.get("id") == request.edited_node_id:
+                node.update(request.updates)
+                break
+                
+        initial_state["replan_requested"] = True
+        initial_state["replan_reason"] = request.reason
+        initial_state["replan_edited_node_id"] = request.edited_node_id
+
+        # Emit replan.requested
+        yield _sse_event("replan.requested", {
+            "run_id": request.run_id,
+            "payload": {"reason": request.reason}
+        })
+
+        # Emit run.resumed event
+        yield _sse_event("run_started", {
+            "run_id": request.run_id,
+            "status": "resumed",
+        })
+
+        try:
+            yielded_count = 0
+            # Route to "do_plan" directly
+            async for state in nkyel_graph.astream(initial_state, stream_mode="values"):
+                events = state.get("events", [])
+                for i in range(yielded_count, len(events)):
+                    evt = events[i]
+                    data = {
+                        "event_id": evt.get("id", ""),
+                        "run_id": evt.get("run_id", ""),
+                    }
+                    if evt.get("node"): data["node"] = evt["node"]
+                    if evt.get("edge"): data["edge"] = evt["edge"]
+                    if evt.get("payload"): data["payload"] = evt["payload"]
+                    yield _sse_event(evt.get("type", "agent_step"), data)
+                yielded_count = len(events)
+            
+            yield _sse_event("replan.completed", {
+                "run_id": request.run_id,
+            })
+            
+            yield _sse_event("run_completed", {
+                "run_id": request.run_id,
+                "status": "completed",
+            })
+        except Exception as e:
+            yield _sse_event("error", {"run_id": request.run_id, "message": str(e)})
+            
+        yield "data: [DONE]\n\n"
+
+    return StreamingResponse(
+        _run_replan(),
+        media_type="text/event-stream",
+        headers={
+            "Cache-Control": "no-cache",
+            "Connection": "keep-alive",
+            "X-Accel-Buffering": "no",
+        },
+    )
 
 
 @router.get("/health")

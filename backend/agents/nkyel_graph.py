@@ -111,6 +111,9 @@ def _make_node(node_type: str, title: str, summary: str = "", status: str = "act
 
 def receive_goal(state: NkyelState) -> dict:
     """Parse the user message into a goal."""
+    if state.get("replan_requested"):
+        return {"steps_taken": ["receive_goal"]}
+
     goal_title = state.get("user_message", "Untitled Goal")
     run_id = state.get("run_id") or _gen_id("run")
 
@@ -223,10 +226,17 @@ Only output the JSON array, nothing else."""
 # ─── Node: Research ─────────────────────────────────────
 
 def research(state: NkyelState) -> dict:
-    """Execute web searches for each research task in the plan via MCP registry."""
-    from mcp.registry import registry
-    # Ensure MCP tools are registered
-    import mcp.tools  # noqa: F401
+    """Execute web searches or fetches for each research task in the plan."""
+    import asyncio
+    import re
+    from mcp_integration.registry import registry
+    import mcp_integration.tools  # noqa: F401
+    
+    # Try importing the new fetch client, fallback if not there
+    try:
+        from mcp_integration.clients.fetch_client import fetch_url_via_mcp
+    except ImportError:
+        fetch_url_via_mcp = None
 
     plan = state.get("plan", [])
     goal = state.get("goal_title", "")
@@ -247,66 +257,152 @@ def research(state: NkyelState) -> dict:
             continue
 
         query = task.get("description", task.get("title", goal))
-
-        # Execute via MCP registry (with permission check + audit)
-        mcp_result = registry.execute(
-            "tavily_search",
-            {"query": query, "max_results": 3},
-            user_context=user_context,
-        )
-
-        # Record audit entry
-        audit_log.append({
-            "audit_id": mcp_result.get("audit_id"),
-            "tool": mcp_result.get("tool"),
-            "success": mcp_result.get("success"),
-            "duration_ms": mcp_result.get("duration_ms"),
-        })
-
-        results = mcp_result.get("result", []) if mcp_result.get("success") else []
-
-        # Emit tool.started event
-        tool_node = _make_node(
-            "tool_call",
-            f"Web Search: {query[:50]}",
-            f"Tavily search via MCP registry",
-            status="active" if mcp_result.get("success") else "failed",
-            provenance="generated",
-        )
-        tool_node["permissions"] = ["search:web"]
-        tool_node["latency_ms"] = mcp_result.get("duration_ms", 0)
-        new_nodes.append(tool_node)
-        events.append({
-            "id": _gen_id("evt"),
-            "type": "tool.started" if mcp_result.get("success") else "tool.failed",
-            "run_id": state.get("run_id", ""),
-            "node": tool_node,
-        })
-
-        for r in (results or []):
-            source_node = _make_node(
-                "source",
-                r.get("title", "Source"),
-                r.get("content", "")[:200],
-                status="completed",
-                provenance="retrieved",
-                source_ref=r.get("url", ""),
+        
+        # Check if the query contains URLs for the P0 demo
+        urls = re.findall(r'(https?://[^\s>]+)', query)
+        
+        if urls and fetch_url_via_mcp:
+            # P0 Demo: Use MCP fetch client directly
+            for url in urls:
+                # Emit tool.requested
+                tool_node = _make_node(
+                    "tool_call",
+                    f"MCP Fetch: {url}",
+                    f"mcp-server-fetch via stdio",
+                    status="requested",
+                    provenance="generated",
+                )
+                tool_node["permissions"] = ["file:read"]
+                new_nodes.append(tool_node)
+                events.append({
+                    "id": _gen_id("evt"),
+                    "type": "tool.requested",
+                    "run_id": state.get("run_id", ""),
+                    "node": tool_node,
+                })
+                
+                # Emit tool.started
+                tool_node["status"] = "active"
+                events.append({
+                    "id": _gen_id("evt"),
+                    "type": "tool.started",
+                    "run_id": state.get("run_id", ""),
+                    "node": tool_node,
+                })
+                
+                start_t = time.time()
+                
+                # We need to run the async fetch in a synchronous context since this graph is currently run sync in a thread
+                try:
+                    loop = asyncio.get_event_loop()
+                except RuntimeError:
+                    loop = asyncio.new_event_loop()
+                    asyncio.set_event_loop(loop)
+                    
+                content = loop.run_until_complete(fetch_url_via_mcp(url))
+                duration_ms = int((time.time() - start_t) * 1000)
+                
+                tool_node["latency_ms"] = duration_ms
+                success = content and not content.startswith("Error:")
+                
+                if success:
+                    tool_node["status"] = "completed"
+                    events.append({
+                        "id": _gen_id("evt"),
+                        "type": "tool.completed",
+                        "run_id": state.get("run_id", ""),
+                        "node": tool_node,
+                    })
+                    
+                    source_node = _make_node(
+                        "source",
+                        f"Fetched: {url}",
+                        content[:200] + "...",
+                        status="completed",
+                        provenance="retrieved",
+                        source_ref=url,
+                    )
+                    new_nodes.append(source_node)
+                    all_sources.append({
+                        "title": f"Fetched Source: {url}",
+                        "url": url,
+                        "content": content,
+                    })
+                    events.append({
+                        "id": _gen_id("evt"),
+                        "type": "source.added",
+                        "run_id": state.get("run_id", ""),
+                        "node": source_node,
+                    })
+                else:
+                    tool_node["status"] = "failed"
+                    tool_node["error"] = content or "Unknown error"
+                    events.append({
+                        "id": _gen_id("evt"),
+                        "type": "tool.failed",
+                        "run_id": state.get("run_id", ""),
+                        "node": tool_node,
+                    })
+                    
+        else:
+            # Fallback to Tavily Search (existing logic)
+            mcp_result = registry.execute(
+                "tavily_search",
+                {"query": query, "max_results": 3},
+                user_context=user_context,
             )
-            new_nodes.append(source_node)
-            all_sources.append({
-                "title": r.get("title", ""),
-                "url": r.get("url", ""),
-                "content": r.get("content", "")[:500],
+
+            audit_log.append({
+                "audit_id": mcp_result.get("audit_id"),
+                "tool": mcp_result.get("tool"),
+                "success": mcp_result.get("success"),
+                "duration_ms": mcp_result.get("duration_ms"),
             })
 
+            results = mcp_result.get("result", []) if mcp_result.get("success") else []
+
+            tool_node = _make_node(
+                "tool_call",
+                f"Web Search: {query[:50]}",
+                f"Tavily search via MCP registry",
+                status="active" if mcp_result.get("success") else "failed",
+                provenance="generated",
+            )
+            tool_node["permissions"] = ["search:web"]
+            tool_node["latency_ms"] = mcp_result.get("duration_ms", 0)
+            new_nodes.append(tool_node)
+            
             events.append({
                 "id": _gen_id("evt"),
-                "type": "source.added",
+                "type": "tool.started" if mcp_result.get("success") else "tool.failed",
                 "run_id": state.get("run_id", ""),
-                "node": source_node,
+                "node": tool_node,
             })
 
-        all_results.extend(results or [])
+            for r in (results or []):
+                source_node = _make_node(
+                    "source",
+                    r.get("title", "Source"),
+                    r.get("content", "")[:200],
+                    status="completed",
+                    provenance="retrieved",
+                    source_ref=r.get("url", ""),
+                )
+                new_nodes.append(source_node)
+                all_sources.append({
+                    "title": r.get("title", ""),
+                    "url": r.get("url", ""),
+                    "content": r.get("content", "")[:500],
+                })
+
+                events.append({
+                    "id": _gen_id("evt"),
+                    "type": "source.added",
+                    "run_id": state.get("run_id", ""),
+                    "node": source_node,
+                })
+
+            all_results.extend(results or [])
 
     all_nodes = list(state.get("nodes", [])) + new_nodes
 

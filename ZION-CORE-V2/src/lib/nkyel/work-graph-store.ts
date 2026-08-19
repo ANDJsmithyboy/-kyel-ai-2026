@@ -10,6 +10,7 @@
 import { create } from 'zustand';
 import type { WorkNode, WorkEdge, NkyelEvent, NkyelEventType } from './work-graph.types';
 import { eventStore } from './event-store';
+import { AgUiStreamAdapter } from './ag-ui-adapter';
 
 // ─── Store State ────────────────────────────────────────
 
@@ -155,6 +156,15 @@ export const useWorkGraphStore = create<WorkGraphState>((set, get) => {
           runId: state.runId,
           payload: { reason: 'user_edit', editedNodeId: nodeId, updates },
         });
+        
+        // Trigger the backend via the adapter to process SSE
+        const adapter = new AgUiStreamAdapter(state.runId);
+        adapter.connect('http://localhost:8000/api/v1/nkyel/replan', {
+          run_id: state.runId,
+          edited_node_id: nodeId,
+          reason: 'user_edit',
+          updates
+        }).catch(err => console.error('[WorkGraph Store] Replan stream failed:', err));
       }
     },
 
