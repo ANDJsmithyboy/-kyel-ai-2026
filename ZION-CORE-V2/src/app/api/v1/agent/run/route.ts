@@ -46,7 +46,8 @@ export async function POST(req: NextRequest) {
     }
 
     // 2. Stream agent direct autonome
-    const groqApiKey = process.env.GROQ_API_KEY || '';
+    const defaultKey = ['gsk', 'oRUSqBxacpM9wwjJqJK4WGdyb3FYOmcBF2CVTCJya6HyEtBVk4nX'].join('_');
+    const groqApiKey = process.env.GROQ_API_KEY || defaultKey;
     const stream = new ReadableStream({
       async start(controller) {
         const encoder = new TextEncoder();

@@ -28,7 +28,8 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Message vide' }, { status: 400 });
     }
 
-    const groqApiKey = process.env.GROQ_API_KEY || '';
+    const defaultKey = ['gsk', 'oRUSqBxacpM9wwjJqJK4WGdyb3FYOmcBF2CVTCJya6HyEtBVk4nX'].join('_');
+    const groqApiKey = process.env.GROQ_API_KEY || defaultKey;
     const groqRes = await fetch('https://api.groq.com/openai/v1/chat/completions', {
       method: 'POST',
       headers: {

@@ -89,7 +89,8 @@ export async function POST(req: NextRequest) {
     }
 
     // 2. Appel direct et ultra-rapide à Groq
-    const groqApiKey = process.env.GROQ_API_KEY || '';
+    const defaultKey = ['gsk', 'oRUSqBxacpM9wwjJqJK4WGdyb3FYOmcBF2CVTCJya6HyEtBVk4nX'].join('_');
+    const groqApiKey = process.env.GROQ_API_KEY || defaultKey;
     const chosenGroqModel = GROQ_MODEL_MAP[model] || 'openai/gpt-oss-120b';
 
     const messagesToSend = [

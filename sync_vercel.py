@@ -1,12 +1,16 @@
 import os
 import shutil
+import stat
 import subprocess
+import time
 
-temp_dir = os.path.join(os.environ.get('TEMP', r'C:\Temp'), 'nkyel-fd-sync')
-if os.path.exists(temp_dir):
-    shutil.rmtree(temp_dir, ignore_errors=True)
+def remove_readonly(func, path, excinfo):
+    os.chmod(path, stat.S_IWRITE)
+    func(path)
 
-print("Cloning nkyel-fd...")
+temp_dir = os.path.join(os.environ.get('TEMP', r'C:\Temp'), f'nkyel-fd-sync-{int(time.time())}')
+
+print(f"Cloning nkyel-fd into {temp_dir}...")
 subprocess.run(['git', 'clone', '--depth', '1', 'https://github.com/ANDJsmithyboy/nkyel-fd.git', temp_dir], check=True)
 
 src_dir = r'f:\Nkyel-AI-2026\ZION-CORE-V2'
