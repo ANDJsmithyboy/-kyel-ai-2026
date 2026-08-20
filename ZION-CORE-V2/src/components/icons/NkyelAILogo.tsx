@@ -10,7 +10,7 @@ interface NkyelAILogoProps {
 
 export const NkyelAILogo = ({ width = 24, height = 24, className, style }: NkyelAILogoProps) => (
   <img
-    src="/vrai-içone-pro-nkyel-ai2026.png"
+    src="/nkyel-ai.svg"
     alt="Nkyel AI"
     width={width}
     height={height}
