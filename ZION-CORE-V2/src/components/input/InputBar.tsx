@@ -1,23 +1,24 @@
 /**
- * Nkyel AI · InputBar V3
+ * Nkyel AI · InputBar
  * SmartANDJ AI Technologies
- * Glassmorphism, NkyelVision Live, placeholder rotatif
+ * Floating Composer matching Manus / ChatGPT structure: + Menu, Web toggle, Ñkyel Desktop badge, Mic, Send Button
  */
 
 'use client';
 
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowUp, Stop, Microphone, Plus } from '@phosphor-icons/react';
+import {
+  ArrowUp,
+  Stop,
+  Microphone,
+  Plus,
+  Desktop,
+  Globe,
+  ChatCircleDots,
+} from '@phosphor-icons/react';
 import type { NkyelModel } from '@/lib/models';
-import { MODEL_META } from '@/lib/models';
-import AttachmentSheet from './AttachmentSheet';
-import ModelBadge from '../chat/ModelBadge';
-import { IconAurata } from '../icons/IconAurata';
-import { IconNkyel } from '../icons/IconNkyel';
-import { IconOnyxGris } from '../icons/IconOnyxGris';
-import { IconWandana } from '../icons/IconWandana';
-import { IconBlackPanther } from '../icons/IconBlackPanther';
+import AttachmentMenu from './AttachmentMenu';
 
 interface InputBarProps {
   onSend: (content: string) => void;
@@ -25,36 +26,8 @@ interface InputBarProps {
   isStreaming: boolean;
   model: NkyelModel;
   onModelChange: (m: NkyelModel) => void;
+  initialPrompt?: string;
 }
-
-const getTierAccent = (tier: string) => {
-  switch (tier) {
-    case 'NKYEL_CHUI': return '#C9A84C';
-    case 'RECHERCHE_WEB': return '#00D4AA';
-    case 'NKYEL_RADI': return '#EAEAEA';
-    case 'NKYEL_TAI': return '#60A5FA';
-    default: return '#C9A84C';
-  }
-};
-
-const getTierIcon = (tier: string) => {
-  const props = { width: 14, height: 14 };
-  switch (tier) {
-    case 'NKYEL_CHUI': return <IconAurata {...props} />;
-    case 'NKYEL_RADI': return <IconOnyxGris {...props} />;
-    case 'NKYEL_TAI': return <IconNkyel {...props} />;
-    case 'RECHERCHE_WEB': return <IconWandana {...props} />;
-    default: return null;
-  }
-};
-
-const PLACEHOLDERS = [
-  'Demande à Nkyel...',
-  'Le Rendu attend tes instructions...',
-  'WANDANA cherche pour toi...',
-  'BLACK PANTHER est en veille...',
-  'Que veux-tu faire aujourd\'hui ?',
-];
 
 export default function InputBar({
   onSend,
@@ -62,22 +35,25 @@ export default function InputBar({
   isStreaming,
   model,
   onModelChange,
+  initialPrompt = '',
 }: InputBarProps) {
-  const [value, setValue] = useState('');
-  const [placeholderIdx, setPlaceholderIdx] = useState(0);
-  const [isSheetOpen, setIsSheetOpen] = useState(false);
-  const [wandanaEnabled, setWandanaEnabled] = useState(false);
-  const [isLiveActive, setIsLiveActive] = useState(false);
-  const [showBadge, setShowBadge] = useState(false);
+  const [value, setValue] = useState(initialPrompt);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [webSearchEnabled, setWebSearchEnabled] = useState(false);
+  const [desktopConnected, setDesktopConnected] = useState(false);
+  const [isListening, setIsListening] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  /* Placeholder rotatif */
   useEffect(() => {
-    const interval = setInterval(() => {
-      setPlaceholderIdx((i) => (i + 1) % PLACEHOLDERS.length);
-    }, 4000);
-    return () => clearInterval(interval);
-  }, []);
+    if (initialPrompt) {
+      setValue(initialPrompt);
+      if (textareaRef.current) {
+        textareaRef.current.focus();
+        textareaRef.current.style.height = 'auto';
+        textareaRef.current.style.height = Math.min(textareaRef.current.scrollHeight, 180) + 'px';
+      }
+    }
+  }, [initialPrompt]);
 
   const handleSubmit = useCallback(() => {
     if (!value.trim() || isStreaming) return;
@@ -97,228 +73,166 @@ export default function InputBar({
     setValue(e.target.value);
     const el = e.target;
     el.style.height = 'auto';
-    el.style.height = Math.min(el.scrollHeight, 160) + 'px';
+    el.style.height = Math.min(el.scrollHeight, 180) + 'px';
   };
 
-  const handleModelChange = (m: NkyelModel) => {
-    onModelChange(m);
-    setShowBadge(true);
-    setTimeout(() => setShowBadge(false), 4000);
+  const handleSelectOption = (option: string) => {
+    setValue((prev) => (prev ? `${prev}\n[${option}] ` : `[${option}] `));
+    if (textareaRef.current) textareaRef.current.focus();
   };
 
-  const toggleLive = () => {
-    setIsLiveActive((prev) => !prev);
+  const toggleSpeechRecognition = () => {
+    if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+      alert('La reconnaissance vocale n’est pas supportée sur ce navigateur.');
+      return;
+    }
+    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    const recognition = new SpeechRecognition();
+    recognition.lang = 'fr-FR';
+    recognition.interimResults = false;
+
+    if (!isListening) {
+      setIsListening(true);
+      recognition.start();
+      recognition.onresult = (event: any) => {
+        const transcript = event.results[0][0].transcript;
+        setValue((prev) => (prev ? `${prev} ${transcript}` : transcript));
+        setIsListening(false);
+      };
+      recognition.onerror = () => setIsListening(false);
+      recognition.onend = () => setIsListening(false);
+    } else {
+      setIsListening(false);
+      recognition.stop();
+    }
   };
 
   const hasText = value.trim().length > 0;
 
   return (
-    <div className="px-4 pb-4 pt-2 relative">
-      {/* Badge de changement de modèle */}
-      <ModelBadge
-        model={model}
-        isVisible={showBadge}
-        onDismiss={() => setShowBadge(false)}
-      />
-
-      {/* Overlay Live NkyelVision */}
-      <AnimatePresence>
-        {isLiveActive && (
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 10 }}
-            className="absolute left-4 right-4 bottom-full mb-3 flex items-center justify-between px-4 py-3 rounded-2xl z-40"
-            style={{
-              background: 'rgba(20, 19, 15, 0.88)',
-              backdropFilter: 'blur(16px)',
-              border: '1px solid var(--accent-20, rgba(197,160,89,0.2))',
-            }}
-          >
-            <div className="flex items-center gap-3">
-              <div className="relative flex items-center justify-center w-4 h-4">
-                <span className="absolute w-full h-full rounded-full bg-[#1F9D6B] opacity-30 animate-ping" />
-                <span className="relative w-2 h-2 rounded-full bg-[#1F9D6B]" />
-              </div>
-              <span
-                className="text-sm font-semibold"
-                style={{ color: 'var(--text-primary, #EDEAE3)' }}
-              >
-                NkyelVision regarde…
-              </span>
-            </div>
-            <button
-              onClick={toggleLive}
-              className="text-[#8A8378] hover:text-[#E0584B] transition-colors"
-              aria-label="Arrêter NkyelVision"
-            >
-              <Stop size={22} weight="fill" />
-            </button>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* Barre principale (Single Row Liquid Glass) */}
+    <div className="w-full max-w-3xl mx-auto px-4 pb-6 pt-2 relative z-30">
+      {/* Outer Composer Container matching screenshot */}
       <div
-        className="flex items-center gap-2 rounded-full relative z-30 glass p-1.5 transition-all duration-500 ease-out"
+        className="relative rounded-3xl bg-[#10141F] border border-white/[0.08] hover:border-white/[0.15] shadow-2xl transition-all flex flex-col p-3.5 focus-within:border-[#D5AE57]/40 focus-within:shadow-[0_0_30px_rgba(213,174,87,0.15)]"
         style={{
-          boxShadow: isLiveActive
-            ? '0 0 0 2px rgba(31,157,107,0.3), 0 24px 80px rgba(0,0,0,0.6)'
-            : '0 24px 80px rgba(0,0,0,0.4)',
+          boxShadow: '0 20px 50px rgba(0,0,0,0.6)',
         }}
       >
-        {/* Bouton + (Attachment) */}
-        <div className="relative shrink-0">
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            transition={{ type: 'spring', stiffness: 400, damping: 25 }}
-            type="button"
-            onClick={() => setIsSheetOpen(!isSheetOpen)}
-            className="w-9 h-9 rounded-full flex items-center justify-center transition-colors bg-[var(--accent-06)] border hairline-border hover:bg-[var(--accent-10)]"
-            style={{
-              color: isSheetOpen ? 'var(--accent)' : 'var(--text-primary)',
-            }}
-          >
-            <Plus size={18} weight="thin" />
-          </motion.button>
-          
-          <AttachmentSheet
-            isOpen={isSheetOpen}
-            onClose={() => setIsSheetOpen(false)}
-            model={model}
-            onModelSelect={handleModelChange}
-            wandanaEnabled={wandanaEnabled}
-            onToggleWandana={() => setWandanaEnabled(!wandanaEnabled)}
-          />
-        </div>
+        {/* Attachment Flyout Menu */}
+        <AttachmentMenu
+          isOpen={isMenuOpen}
+          onClose={() => setIsMenuOpen(false)}
+          onSelectOption={handleSelectOption}
+        />
 
-        {/* Vecteur de Force (Model Badge) */}
-        <button
-          onClick={() => setIsSheetOpen(true)}
-          className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full shrink-0 transition-all hover:bg-[var(--accent-10)] bg-[var(--accent-06)] border border-[var(--border)]"
-        >
-          <span style={{ color: getTierAccent(model) }}>{getTierIcon(model)}</span>
-          <span
-            className="text-[12px] font-bold tracking-wide"
-            style={{ color: 'var(--text-primary)' }}
-          >
-            {MODEL_META[model].label} <span className="text-[10px] text-[var(--text-tertiary)]">▾</span>
-          </span>
-        </button>
+        {/* Top: Auto-expanding Textarea */}
+        <textarea
+          ref={textareaRef}
+          value={value}
+          onChange={handleInput}
+          onKeyDown={handleKeyDown}
+          disabled={isStreaming}
+          rows={1}
+          placeholder="Posez n'importe quelle question à Ñkyel, sans frais de crédits"
+          className="w-full bg-transparent outline-none resize-none text-[15px] text-[#F5F6FA] placeholder-[#9199A8] leading-relaxed max-h-44 px-1.5 py-1"
+          style={{
+            fontFamily: 'var(--font-body, "Sora", sans-serif)',
+          }}
+        />
 
-        {/* Textarea */}
-        <div className="flex-1 relative flex items-center min-h-[32px]">
-          <textarea
-            ref={textareaRef}
-            value={value}
-            onChange={handleInput}
-            onKeyDown={handleKeyDown}
-            disabled={isStreaming}
-            rows={1}
-            aria-label="Directive..."
-            className="w-full resize-none bg-transparent outline-none self-center focus:ring-0 placeholder-transparent"
-            style={{
-              color: 'var(--text-primary, #EDEAE3)',
-              fontFamily: 'var(--font-body)',
-              fontSize: '14px',
-              lineHeight: '22px',
-              maxHeight: '160px',
-              padding: '6px 4px',
-              letterSpacing: '0.01em',
-            }}
-          />
-          {!value && (
-            <AnimatePresence mode="wait">
-              <motion.span
-                key={placeholderIdx}
-                initial={{ opacity: 0, y: 4 }}
-                animate={{ opacity: 0.4, y: 0 }}
-                exit={{ opacity: 0, y: -4 }}
-                transition={{ duration: 0.3 }}
-                className="absolute left-1 pointer-events-none"
-                style={{ 
-                  color: 'var(--text-secondary, #8A8378)',
-                  fontSize: '13px',
-                }}
+        {/* Bottom Bar: Action buttons */}
+        <div className="flex items-center justify-between mt-3 pt-2 border-t border-white/[0.04]">
+          {/* Left Buttons: + (Menu) | Web | Ñkyel Desktop */}
+          <div className="flex items-center gap-1.5">
+            {/* Plus button */}
+            <button
+              type="button"
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              className={`w-8 h-8 rounded-xl flex items-center justify-center transition-colors ${
+                isMenuOpen
+                  ? 'bg-[#D5AE57]/20 text-[#D5AE57]'
+                  : 'text-[#9199A8] hover:text-white hover:bg-white/[0.06]'
+              }`}
+              title="Ajouter des fichiers ou capacités"
+            >
+              <Plus size={16} weight="bold" />
+            </button>
+
+            {/* Web Search toggle */}
+            <button
+              type="button"
+              onClick={() => setWebSearchEnabled(!webSearchEnabled)}
+              className={`flex items-center gap-1.5 px-2.5 py-1 rounded-xl text-[12px] font-medium transition-colors ${
+                webSearchEnabled
+                  ? 'bg-[#00D4AA]/20 text-[#00D4AA] border border-[#00D4AA]/30 font-semibold'
+                  : 'text-[#9199A8] hover:text-white hover:bg-white/[0.06]'
+              }`}
+              title="Recherche Web & RAG en direct"
+            >
+              <Globe size={15} />
+              <span className="hidden sm:inline">Web</span>
+            </button>
+
+            {/* Ñkyel Desktop badge */}
+            <button
+              type="button"
+              onClick={() => setDesktopConnected(!desktopConnected)}
+              className={`flex items-center gap-1.5 px-2.5 py-1 rounded-xl text-[12px] font-medium transition-colors ${
+                desktopConnected
+                  ? 'bg-[#6757E8]/20 text-[#6757E8] border border-[#6757E8]/30 font-semibold'
+                  : 'text-[#9199A8] hover:text-white hover:bg-white/[0.06]'
+              }`}
+              title="Session Ñkyel Desktop"
+            >
+              <Desktop size={15} />
+              <span className="hidden sm:inline">Ñkyel Desktop</span>
+            </button>
+          </div>
+
+          {/* Right Buttons: Voice / Mic | Send */}
+          <div className="flex items-center gap-2">
+            {/* Microphone dictation */}
+            <button
+              type="button"
+              onClick={toggleSpeechRecognition}
+              className={`w-8 h-8 rounded-xl flex items-center justify-center transition-colors ${
+                isListening
+                  ? 'bg-[#E0584B] text-white animate-pulse'
+                  : 'text-[#9199A8] hover:text-white hover:bg-white/[0.06]'
+              }`}
+              title="Dictée vocale"
+            >
+              <Microphone size={16} />
+            </button>
+
+            {/* Send / Stop Button */}
+            {isStreaming ? (
+              <button
+                type="button"
+                onClick={onStop}
+                className="h-8 px-3 rounded-xl bg-[#E0584B]/20 border border-[#E0584B]/40 text-[#E0584B] flex items-center gap-1.5 text-xs font-semibold hover:bg-[#E0584B]/30 transition-colors"
               >
-                {PLACEHOLDERS[placeholderIdx]}
-              </motion.span>
-            </AnimatePresence>
-          )}
-        </div>
-
-        {/* Mic / Live / Send Buttons */}
-        <div className="flex items-center gap-1.5 shrink-0">
-          {/* Memo / Mic */}
-          {!hasText && !isStreaming && (
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              transition={{ type: 'spring', stiffness: 400, damping: 25 }}
-              className="w-9 h-9 rounded-full flex items-center justify-center transition-colors bg-[var(--accent-06)] hover:bg-[var(--accent-10)] text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
-            >
-              <Microphone size={18} weight="thin" />
-            </motion.button>
-          )}
-
-
-          {/* Send / Stop */}
-          {isStreaming ? (
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={onStop}
-              className="h-8 px-3 rounded-full flex items-center gap-1.5 text-xs font-semibold"
-              style={{
-                background: 'rgba(255,107,122,0.15)', // Danger #FF6B7A
-                border: '1px solid rgba(255,107,122,0.4)',
-                color: '#FF6B7A',
-              }}
-            >
-              <Stop size={14} weight="fill" /> Stop
-            </motion.button>
-          ) : (
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              transition={{ type: 'spring', stiffness: 400, damping: 25 }}
-              onClick={hasText ? handleSubmit : toggleLive}
-              className="w-9 h-9 rounded-full flex items-center justify-center shadow-lg transition-transform"
-              style={{
-                background: hasText ? 'var(--text-primary)' : 'var(--color-success)', 
-                color: hasText ? 'var(--bg)' : '#FFFFFF',
-              }}
-            >
-              {hasText ? (
+                <Stop size={14} weight="fill" />
+                <span>Stop</span>
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={handleSubmit}
+                disabled={!hasText}
+                className={`w-8 h-8 rounded-xl flex items-center justify-center transition-all ${
+                  hasText
+                    ? 'bg-white text-black shadow-lg hover:scale-105 active:scale-95'
+                    : 'bg-white/10 text-white/30 cursor-not-allowed'
+                }`}
+                title="Envoyer"
+              >
                 <ArrowUp size={16} weight="bold" />
-              ) : (
-                <div className="flex items-center justify-center gap-1">
-                  <div className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
-                </div>
-              )}
-            </motion.button>
-          )}
+              </button>
+            )}
+          </div>
         </div>
       </div>
-
-      {/* Animation pulse-luxe */}
-      <style jsx global>{`
-        @keyframes pulse-luxe {
-          0%, 100% {
-            box-shadow: 0 0 0 0 rgba(197, 160, 89, 0.35);
-          }
-          50% {
-            box-shadow: 0 0 0 10px rgba(197, 160, 89, 0);
-          }
-        }
-        @media (prefers-reduced-motion: reduce) {
-          .pulse-luxe,
-          [style*="pulse-luxe"] {
-            animation: none !important;
-          }
-        }
-      `}</style>
     </div>
   );
 }

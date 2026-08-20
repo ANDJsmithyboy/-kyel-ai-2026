@@ -1,7 +1,7 @@
 /**
- * Nkyel AI · SidebarFooter (Zone 5)
+ * Nkyel AI · SidebarFooter
  * SmartANDJ AI Technologies
- * Energy gauge + Profile + Settings dropdown
+ * Profile bar matching Manus screenshot: User Avatar, Name, Desktop icon, Notification Bell with badge
  */
 
 'use client';
@@ -13,11 +13,11 @@ import {
   GearSix,
   User,
   SignOut,
-  ClockCounterClockwise,
+  Bell,
+  Desktop,
+  Sparkle,
 } from '@phosphor-icons/react';
 import { useAuthStore } from '@/stores/auth.store';
-import SidebarItem from './SidebarItem';
-import styles from './sidebar.module.css';
 
 interface SidebarFooterProps {
   isCollapsed: boolean;
@@ -30,16 +30,8 @@ export default function SidebarFooter({ isCollapsed }: SidebarFooterProps) {
   const user = useAuthStore((s) => s.user);
 
   const [showDropdown, setShowDropdown] = useState(false);
-  const [energyWidth, setEnergyWidth] = useState(0);
   const footerRef = useRef<HTMLDivElement>(null);
 
-  // Animate energy bar on mount
-  useEffect(() => {
-    const timer = setTimeout(() => setEnergyWidth(35), 300);
-    return () => clearTimeout(timer);
-  }, []);
-
-  // Close dropdown on outside click
   useEffect(() => {
     if (!showDropdown) return;
     const handler = (e: MouseEvent) => {
@@ -51,40 +43,25 @@ export default function SidebarFooter({ isCollapsed }: SidebarFooterProps) {
     return () => document.removeEventListener('mousedown', handler);
   }, [showDropdown]);
 
-  // Close dropdown on Escape
-  useEffect(() => {
-    if (!showDropdown) return;
-    const handler = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setShowDropdown(false);
-    };
-    document.addEventListener('keydown', handler);
-    return () => document.removeEventListener('keydown', handler);
-  }, [showDropdown]);
-
   const handleSignOut = async () => {
     logout();
     await signOut();
     router.push('/sign-in');
   };
 
-  const displayName = user?.name || 'Daniel Jonathan';
-  const initials = displayName.split(' ').map((w) => w[0]).join('').slice(0, 2).toUpperCase();
+  const displayName = user?.name || 'Daniel Jonathan ANDJ';
+  const initials = 'DJ';
 
-  // Collapsed state: just icon buttons
   if (isCollapsed) {
     return (
-      <div style={{ marginTop: 'auto', padding: '8px', borderTop: '0.5px solid var(--border)', flexShrink: 0 }}>
-        <SidebarItem
-          icon={<ClockCounterClockwise size={16} />}
-          label="Activité"
-          isCollapsed
-        />
-        <SidebarItem
-          icon={<GearSix size={16} />}
-          label="Paramètres"
-          isCollapsed
+      <div className="mt-auto p-2 border-t border-white/[0.06] flex flex-col items-center gap-2 shrink-0">
+        <button
+          type="button"
           onClick={() => setShowDropdown(!showDropdown)}
-        />
+          className="w-8 h-8 rounded-full bg-[#D5AE57]/15 border border-[#D5AE57]/30 text-[#D5AE57] flex items-center justify-center text-[12px] font-bold"
+        >
+          {initials}
+        </button>
       </div>
     );
   }
@@ -92,97 +69,91 @@ export default function SidebarFooter({ isCollapsed }: SidebarFooterProps) {
   return (
     <div
       ref={footerRef}
-      className={styles.sidebarFooter}
-      style={{
-        marginTop: 14,
-        paddingTop: 14,
-        borderTop: '0.5px solid var(--border)',
-        flexShrink: 0,
-        padding: '14px 8px',
-        position: 'relative',
-      }}
+      className="mt-auto p-2.5 border-t border-white/[0.06] shrink-0 relative bg-[#07090F]/60"
     >
-      {/* Energy card */}
-      <div className={styles.energyCard} style={{ padding: 12, backgroundColor: 'var(--surface-01)', borderRadius: 12, marginBottom: 12 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
-          <span style={{ fontSize: 14 }}>⚡</span>
-          <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)' }}>Énergie Quotidienne</span>
-        </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16 }}>
-          <div className={styles.energyTrack} style={{ flex: 1, height: 6, borderRadius: 3, backgroundColor: 'rgba(255,255,255,0.1)' }}>
-            <div
-              className={styles.energyFill}
-              style={{ width: `${energyWidth}%`, height: '100%', backgroundColor: 'var(--accent)', borderRadius: 3 }}
-            />
-          </div>
-          <span style={{ fontSize: 12, color: 'var(--text-secondary)' }}>35%</span>
-        </div>
+      {/* Profile Bar */}
+      <div className="flex items-center justify-between p-1.5 rounded-xl hover:bg-white/[0.04] transition-colors">
+        {/* User Info */}
         <button
           type="button"
-          style={{
-            width: '100%',
-            padding: '10px 0',
-            backgroundColor: 'var(--accent)',
-            color: '#000',
-            border: 'none',
-            borderRadius: 20,
-            fontSize: 11,
-            fontWeight: 700,
-            letterSpacing: 1,
-            cursor: 'pointer',
-          }}
-        >
-          ALIMENTER LA MEUTE
-        </button>
-      </div>
-
-      {/* Profile row */}
-      <div className={styles.profileRow} style={{ marginTop: 6 }}>
-        <div className={styles.avatar}>{initials}</div>
-        <div className={styles.userInfo}>
-          <div className={styles.userName}>{displayName}</div>
-          <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--accent)' }}>Black Panther</div>
-        </div>
-        <button
-          type="button"
-          className={styles.settingsBtn}
           onClick={() => setShowDropdown(!showDropdown)}
-          aria-label="Paramètres"
-          aria-expanded={showDropdown}
+          className="flex items-center gap-2.5 min-w-0 flex-1 text-left"
         >
-          <GearSix size={16} />
-        </button>
-      </div>
-
-      {/* Settings dropdown */}
-      {showDropdown && (
-        <div className={styles.settingsDropdown}>
-          {/* User info header */}
-          <div className={styles.dropdownHeader}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-              <div className={styles.avatar} style={{ width: 34, height: 34, fontSize: 13 }}>{initials}</div>
-              <div>
-                <div style={{ fontSize: 13, fontWeight: 500, color: 'var(--text-primary)' }}>{displayName}</div>
-                <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--accent)' }}>Black Panther</div>
-              </div>
-            </div>
+          <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-[#6757E8] to-[#D5AE57] flex items-center justify-center text-black text-[11px] font-extrabold shadow-sm shrink-0">
+            {initials}
           </div>
+          <div className="flex flex-col min-w-0">
+            <span className="text-[12px] font-semibold text-white truncate">
+              {displayName}
+            </span>
+            <span className="text-[10px] text-[#D5AE57] font-medium flex items-center gap-1">
+              <Sparkle size={10} weight="fill" /> Ñkyel Pro
+            </span>
+          </div>
+        </button>
 
-          <div className={styles.dropdownSeparator} />
-
-          <button type="button" className={styles.dropdownItem} onClick={() => { setShowDropdown(false); router.push('/settings'); }}>
-            <GearSix size={16} />
-            Paramètres
+        {/* Action icons: Desktop & Notifications */}
+        <div className="flex items-center gap-1 shrink-0 text-[#9199A8]">
+          <button
+            type="button"
+            onClick={() => router.push('/desktop')}
+            className="w-7 h-7 rounded-lg flex items-center justify-center hover:text-white hover:bg-white/5 transition-colors"
+            title="Ñkyel Desktop"
+          >
+            <Desktop size={15} />
           </button>
 
-          <button type="button" className={styles.dropdownItem} onClick={() => { setShowDropdown(false); router.push('/account'); }}>
+          <button
+            type="button"
+            onClick={() => router.push('/notifications')}
+            className="w-7 h-7 rounded-lg flex items-center justify-center hover:text-white hover:bg-white/5 transition-colors relative"
+            title="Notifications"
+          >
+            <Bell size={15} />
+            <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-[#E0584B] ring-2 ring-[#07090F]" />
+          </button>
+        </div>
+      </div>
+
+      {/* Settings Dropdown Menu */}
+      {showDropdown && (
+        <div className="absolute bottom-full left-2 right-2 mb-2 p-1.5 rounded-2xl bg-[#10141F] border border-white/10 shadow-2xl backdrop-blur-xl z-50 text-[13px] space-y-1">
+          <div className="px-3 py-2 border-b border-white/5">
+            <div className="font-semibold text-white text-[13px]">{displayName}</div>
+            <div className="text-[11px] text-[#9199A8]">SmartANDJ AI Technologies</div>
+          </div>
+
+          <button
+            type="button"
+            onClick={() => {
+              setShowDropdown(false);
+              router.push('/settings');
+            }}
+            className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-[#9199A8] hover:text-white hover:bg-white/5 transition-colors text-left"
+          >
+            <GearSix size={16} />
+            Paramètres & Modèles
+          </button>
+
+          <button
+            type="button"
+            onClick={() => {
+              setShowDropdown(false);
+              router.push('/account');
+            }}
+            className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-[#9199A8] hover:text-white hover:bg-white/5 transition-colors text-left"
+          >
             <User size={16} />
             Mon compte
           </button>
 
-          <div className={styles.dropdownSeparator} />
+          <div className="h-[1px] bg-white/5 my-1" />
 
-          <button type="button" className={`${styles.dropdownItem} ${styles.dropdownDanger}`} onClick={handleSignOut}>
+          <button
+            type="button"
+            onClick={handleSignOut}
+            className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-[#E0584B] hover:bg-[#E0584B]/10 transition-colors text-left font-medium"
+          >
             <SignOut size={16} />
             Déconnexion
           </button>

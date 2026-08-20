@@ -13,23 +13,33 @@ import TopBar from '@/components/shell/TopBar';
 import { useRenduPanel } from '@/hooks/useRenduPanel';
 import AuroraBackground from '@/components/ui/AuroraBackground';
 
+import { useState } from 'react';
+import CapabilitiesDrawer from '@/components/capabilities/CapabilitiesDrawer';
+
 export default function MainLayout({ children }: { children: ReactNode }) {
   const { isOpen: renduOpen, artifacts, activeIndex, close: closeRendu, setActiveIndex } = useRenduPanel();
+  const [capabilitiesOpen, setCapabilitiesOpen] = useState(false);
   const activeRendu = artifacts[activeIndex] ?? null;
 
   return (
-    <div className="flex h-dvh overflow-hidden bg-transparent">
+    <div className="flex h-dvh overflow-hidden bg-[#07090F] text-[#F5F6FA]">
       <AuroraBackground />
       {/* Sidebar */}
       <SidebarClient />
 
       {/* Main content */}
-      <div className="flex-1 flex flex-col min-w-0">
-        <TopBar />
+      <div className="flex-1 flex flex-col min-w-0 bg-[#07090F]">
+        <TopBar onOpenCapabilities={() => setCapabilitiesOpen(true)} />
         <main className="flex-1 overflow-hidden">
           {children}
         </main>
       </div>
+
+      <CapabilitiesDrawer
+        isOpen={capabilitiesOpen}
+        onClose={() => setCapabilitiesOpen(false)}
+        onSelectCapability={() => setCapabilitiesOpen(false)}
+      />
 
       {/* RenduPanel — slide droit */}
       <AnimatePresence>
