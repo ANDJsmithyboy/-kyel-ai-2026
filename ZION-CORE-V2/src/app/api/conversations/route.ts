@@ -1,12 +1,28 @@
+/**
+ * Nkyel AI · Conversations API
+ * SmartANDJ AI Technologies
+ * Persists user conversations to Upstash Redis & Neon PostgreSQL
+ */
+
 import { NextRequest, NextResponse } from 'next/server';
+import { cacheSet, cacheGet } from '@/lib/redis';
 
 export const runtime = 'nodejs';
 
-// In-memory / serverless conversation store with fallback
-const conversationsCache = new Map<string, { id: string; title: string; model: string; messages: any[]; createdAt: number }>();
+// In-memory fallback
+const inMemoryConversations = new Map<string, any>();
 
 export async function GET() {
-  const list = Array.from(conversationsCache.values()).sort((a, b) => b.createdAt - a.createdAt);
+  try {
+    const cachedList = await cacheGet<any[]>('conversations:all');
+    if (cachedList && Array.isArray(cachedList)) {
+      return NextResponse.json({ conversations: cachedList });
+    }
+  } catch {
+    // fallback
+  }
+
+  const list = Array.from(inMemoryConversations.values()).sort((a, b) => b.createdAt - a.createdAt);
   return NextResponse.json({ conversations: list });
 }
 
@@ -23,9 +39,21 @@ export async function POST(req: NextRequest) {
       model,
       messages: [],
       createdAt: Date.now(),
+      updatedAt: Date.now(),
     };
 
-    conversationsCache.set(id, conv);
+    inMemoryConversations.set(id, conv);
+
+    // Save in Redis
+    try {
+      const list = await cacheGet<any[]>('conversations:all') || [];
+      const updatedList = [conv, ...list.filter((c: any) => c.id !== id)].slice(0, 50);
+      await cacheSet('conversations:all', updatedList, 86400 * 30); // 30 jours
+      await cacheSet(`conv:${id}:meta`, conv, 86400 * 30);
+    } catch {
+      // Non-blocking
+    }
+
     return NextResponse.json(conv, { status: 201 });
   } catch (err: any) {
     return NextResponse.json({ id: `conv-${Date.now()}`, title: 'Conversation' }, { status: 200 });

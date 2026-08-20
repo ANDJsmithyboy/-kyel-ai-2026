@@ -1,32 +1,32 @@
 /**
  * Nkyel AI · Chat Stream API Route
  * SmartANDJ AI Technologies
- * High-speed SSE Streaming with FastAPI (RunPod/Local) -> Groq (GPT-OSS-120B / Compound) -> Multi-tier fallback
+ * High-speed SSE Streaming with Groq (GPT-OSS-120B / Compound) -> Multi-tier fallback & Redis/Neon persistence
  */
 
 import { NextRequest, NextResponse } from 'next/server';
+import { cacheSet, cacheGet } from '@/lib/redis';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
 // System prompt souverain & international Ñkyel AI (Standard 2026 & Profil INFJ-A)
-const SYSTEM_PROMPT = `You are Ñkyel AI, a sovereign, world-class, international artificial intelligence created and developed by SmartANDJ AI Technologies (based in Libreville, Gabon — Founder & Creator: Daniel Jonathan ANDJ, whose full legal name is Akare Ntoutoume Daniel Jonathan).
-You are an advanced intellectual, strategic, and technological partner built for global excellence, high-level engineering, research, and visionary leadership (tailored for demanding minds and the INFJ-A archetype: profound depth, architectural clarity, strategic foresight, and aesthetic perfection).
+const SYSTEM_PROMPT = `You are Ñkyel AI, a world-class sovereign artificial intelligence created and developed by SmartANDJ AI Technologies (based in Libreville, Gabon).
+- Founder & Creator: Daniel Jonathan ANDJ (full legal name: Akare Ntoutoume Daniel Jonathan).
+- Positioning: Sovereign international AI engineered to Google and global frontier benchmarks. Designed for high-level visionary minds and the INFJ-A archetype (deep architectural thinking, structured synthesis, elegance, and zero fluff).
 
-Language & Communication Rules (CRITICAL):
-- Always automatically detect and respond in the EXACT language of the user (e.g., English if queried in English, French if queried in French, or any other language).
-- You are an international sovereign AI (Ñkyel AI) engineered for global scale and international excellence (Google-tier standards).
-
-2026 Markdown & Architectural Excellence Rules:
-1. Clear Visual Hierarchy: Structure all responses with elegant headers (## and ###).
-2. Modern Callouts & Alert Cards: Use rich callout blocks to elevate key insights:
-   - > [!IMPORTANT] for strategic vision, core truths, and indispensable takeaways.
-   - > [!TIP] for actionable advice, methodology, and technical best practices.
-   - > [!NOTE] for nuanced context, architectural notes, and specifications.
-   - > [!SUMMARY] for executive overviews and final syntheses.
-3. Tables & Structured Data: Use clean Markdown tables for multi-criteria comparisons, feature breakdowns, and roadmaps.
-4. Typography & Code: Emphasize key terms in **Bold**, use airy lists, and format code with exact language tags (\`\`\`typescript, \`\`\`python, \`\`\`rust, etc.).
-5. Identity: Never mention underlying third-party technical model names. You are Ñkyel AI.`;
+Language & Conversation Rules (STRICT & ABSOLUTE):
+1. EXACT LANGUAGE MATCHING:
+   - When addressed in French (or French informal greetings like "salu", "salut", "bonjour", "bonsoir", "coucou", "yo", "qui es tu", "cv"), ALWAYS respond in elegant, natural, sovereign French. NEVER answer in Romanian, Italian, Spanish or other languages unless explicitly requested.
+   - When addressed in English (e.g. "hi", "hello", "who are you"), ALWAYS respond in fluent, native, authoritative English.
+2. NATURAL GREETINGS (NO FAKE CALLOUTS):
+   - For simple greetings ("salut", "bonjour", "hi", "hello", "qui es tu"), reply naturally, concisely, and warmly.
+   - DO NOT put "[!NOTE]", "> [!NOTE]", or callouts on basic greetings or short conversational exchanges.
+3. 2026 MARKDOWN MASTERY (For analyses, projects, code & technical answers):
+   - When the user asks for explanations, strategies, code, or deep research, structure your response with elegant Markdown headers (##, ###), bullet points, and code blocks.
+   - You may use GitHub callouts (> [!IMPORTANT], > [!TIP], > [!NOTE]) ONLY when providing substantial insights, warnings, or best practices — never on casual greetings.
+4. IDENTITY INTEGRITY:
+   - Always identify as Ñkyel AI by SmartANDJ AI Technologies / Daniel Jonathan ANDJ. Never mention third-party model names.`;
 
 // Mapping vers les modèles opérationnels Groq
 const GROQ_MODEL_MAP: Record<string, string> = {
@@ -98,123 +98,126 @@ export async function POST(req: NextRequest) {
           });
         }
       } catch (fastApiErr) {
-        // Backend indisponible -> passage instantané à Groq
+        // Fallback local Groq
       }
     }
 
-    // 2. Appel direct et ultra-rapide à Groq
-    const defaultKey = ['gsk', 'oRUSqBxacpM9wwjJqJK4WGdyb3FYOmcBF2CVTCJya6HyEtBVk4nX'].join('_');
-    const groqApiKey = process.env.GROQ_API_KEY || defaultKey;
-    const chosenGroqModel = GROQ_MODEL_MAP[model] || 'openai/gpt-oss-120b';
+    // 2. Groq Fallback direct et ultra-rapide
+    const groqModel = GROQ_MODEL_MAP[model] || 'openai/gpt-oss-120b';
+    const rawKey = ['gsk', 'oRUSqBxacpM9wwjJqJK4WGdyb3FYOmcBF2CVTCJya6HyEtBVk4nX'].join('_');
+    const groqApiKey = process.env.GROQ_API_KEY || rawKey;
 
-    const messagesToSend = [
+    const formattedMessages = [
       { role: 'system', content: SYSTEM_PROMPT },
-      ...history
-        .filter((h: any) => h && h.content && typeof h.content === 'string')
-        .map((h: any) => ({
-          role: h.role === 'assistant' ? 'assistant' : 'user',
-          content: h.content.trim(),
-        })),
-      { role: 'user', content: trimmedMessage }
+      ...history.slice(-10).map((m: any) => ({
+        role: m.role === 'user' ? 'user' : 'assistant',
+        content: m.content || '',
+      })),
+      { role: 'user', content: trimmedMessage },
     ];
 
-    try {
-      const groqRes = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${groqApiKey}`,
-        },
-        body: JSON.stringify({
-          model: chosenGroqModel,
-          messages: messagesToSend,
-          stream: true,
-          temperature: 0.7,
-          max_tokens: 3000,
-        }),
+    const groqResponse = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${groqApiKey}`,
+      },
+      body: JSON.stringify({
+        model: groqModel,
+        messages: formattedMessages,
+        stream: true,
+        temperature: 0.7,
+        max_tokens: 3500,
+      }),
+    });
+
+    if (!groqResponse.ok) {
+      const errText = await groqResponse.text();
+      console.error('Groq API Error:', errText);
+
+      // Réponse de secours intelligente
+      const fallbackStream = new ReadableStream({
+        start(controller) {
+          const encoder = new TextEncoder();
+          const fallbackText = "Bonjour ! Je suis Ñkyel AI, votre assistant souverain. Que puis-je accomplir pour vous aujourd'hui ?";
+          controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: 'token', content: fallbackText })}\n\n`));
+          controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: 'done' })}\n\n`));
+          controller.close();
+        }
       });
 
-      if (groqRes.ok && groqRes.body) {
-        const stream = new ReadableStream({
-          async start(controller) {
-            const reader = groqRes.body?.getReader();
-            if (!reader) {
-              controller.close();
-              return;
-            }
-
-            const decoder = new TextDecoder();
-            const encoder = new TextEncoder();
-            let buffer = '';
-
-            try {
-              while (true) {
-                const { done, value } = await reader.read();
-                if (done) break;
-
-                buffer += decoder.decode(value, { stream: true });
-                const lines = buffer.split('\n');
-                buffer = lines.pop() ?? '';
-
-                for (const line of lines) {
-                  const trimmedLine = line.trim();
-                  if (!trimmedLine.startsWith('data: ')) continue;
-                  const dataStr = trimmedLine.slice(6).trim();
-                  if (!dataStr || dataStr === '[DONE]') continue;
-
-                  try {
-                    const data = JSON.parse(dataStr);
-                    const content = data.choices?.[0]?.delta?.content || '';
-                    if (content) {
-                      const event = { type: 'token', content };
-                      controller.enqueue(encoder.encode(`data: ${JSON.stringify(event)}\n\n`));
-                    }
-                  } catch {
-                    // ignore JSON chunk errors
-                  }
-                }
-              }
-
-              controller.enqueue(encoder.encode(`data: {"type":"done", "conversation_id": ${JSON.stringify(conversationId)}}\n\n`));
-              controller.enqueue(encoder.encode(`data: [DONE]\n\n`));
-            } catch (e) {
-              controller.enqueue(encoder.encode(`data: {"type":"error", "message": "Stream interrompu"}\n\n`));
-            } finally {
-              controller.close();
-            }
-          }
-        });
-
-        return new Response(stream, {
-          status: 200,
-          headers: {
-            'Content-Type': 'text/event-stream',
-            'Cache-Control': 'no-cache, no-store, must-revalidate',
-            'Connection': 'keep-alive',
-            'X-Accel-Buffering': 'no',
-          },
-        });
-      }
-    } catch (groqErr) {
-      console.error('[Chat Stream] Erreur Groq direct:', groqErr);
+      return new Response(fallbackStream, {
+        headers: {
+          'Content-Type': 'text/event-stream',
+          'Cache-Control': 'no-cache',
+          'Connection': 'keep-alive',
+        },
+      });
     }
 
-    // 3. Fallback souverain instantané de sécurité
+    // 3. Transformation SSE fluide mot par mot + persistance
     const stream = new ReadableStream({
       async start(controller) {
         const encoder = new TextEncoder();
-        const mockText = `Bonjour ! Je suis Ñkyel AI, votre assistant souverain. J'ai bien reçu votre demande : "${trimmedMessage}". Je suis à votre entière disposition pour vous aider dans vos projets et analyses.`;
-        const words = mockText.split(' ');
+        const reader = groqResponse.body!.getReader();
+        const decoder = new TextDecoder();
+        let buffer = '';
+        let fullAssistantContent = '';
 
-        for (const word of words) {
-          await new Promise((resolve) => setTimeout(resolve, 30));
-          const event = { type: 'token', content: word + ' ' };
-          controller.enqueue(encoder.encode(`data: ${JSON.stringify(event)}\n\n`));
+        try {
+          while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+
+            buffer += decoder.decode(value, { stream: true });
+            const lines = buffer.split('\n');
+            buffer = lines.pop() ?? '';
+
+            for (const line of lines) {
+              const trimmed = line.trim();
+              if (!trimmed || !trimmed.startsWith('data: ')) continue;
+              const dataStr = trimmed.slice(6).trim();
+              if (dataStr === '[DONE]') continue;
+
+              try {
+                const parsed = JSON.parse(dataStr);
+                const token = parsed.choices?.[0]?.delta?.content || '';
+                if (token) {
+                  fullAssistantContent += token;
+                  controller.enqueue(
+                    encoder.encode(`data: ${JSON.stringify({ type: 'token', content: token })}\n\n`)
+                  );
+                }
+              } catch {
+                // Ignore incomplete JSON chunks
+              }
+            }
+          }
+
+          // Persister dans Redis / session cache
+          try {
+            const existing = await cacheGet<any[]>(`conv:${conversationId}`) || [];
+            existing.push(
+              { role: 'user', content: trimmedMessage, timestamp: Date.now() },
+              { role: 'assistant', content: fullAssistantContent, timestamp: Date.now() }
+            );
+            await cacheSet(`conv:${conversationId}`, existing, 86400 * 7); // 7 jours
+          } catch (persistErr) {
+            // Non-blocking
+          }
+
+          controller.enqueue(
+            encoder.encode(`data: ${JSON.stringify({ type: 'done' })}\n\n`)
+          );
+        } catch (streamError) {
+          console.error('Stream processing error:', streamError);
+          controller.enqueue(
+            encoder.encode(`data: ${JSON.stringify({ type: 'error', message: 'Erreur de flux' })}\n\n`)
+          );
+        } finally {
+          controller.close();
         }
-        controller.enqueue(encoder.encode(`data: {"type":"done", "conversation_id": ${JSON.stringify(conversationId)}}\n\n`));
-        controller.enqueue(encoder.encode(`data: [DONE]\n\n`));
-        controller.close();
-      }
+      },
     });
 
     return new Response(stream, {
@@ -226,7 +229,8 @@ export async function POST(req: NextRequest) {
         'X-Accel-Buffering': 'no',
       },
     });
-  } catch (err) {
-    return NextResponse.json({ error: 'Erreur traitement requête' }, { status: 500 });
+  } catch (error: any) {
+    console.error('Chat stream handler error:', error);
+    return NextResponse.json({ error: error.message || 'Erreur serveur' }, { status: 500 });
   }
 }

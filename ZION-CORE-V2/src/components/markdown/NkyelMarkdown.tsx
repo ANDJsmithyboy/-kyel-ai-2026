@@ -151,6 +151,11 @@ function extractCalloutInfo(children: ReactNode): { type: string | null; cleanCo
 export default function NkyelMarkdown({ content }: NkyelMarkdownProps) {
   if (!content) return null;
 
+  // Nettoyer les balises d'alerte parasites accidentelles au début du message
+  const sanitizedContent = content
+    .replace(/^\[!(NOTE|INFO|TIP|IMPORTANT|WARNING|CAUTION|SUMMARY|VISION)\]\s*/i, '')
+    .trim();
+
   return (
     <div className="markdown-prose max-w-none text-[15px] leading-relaxed text-[var(--text-primary)] font-normal space-y-3">
       <ReactMarkdown
@@ -293,7 +298,7 @@ export default function NkyelMarkdown({ content }: NkyelMarkdownProps) {
           },
         }}
       >
-        {content}
+        {sanitizedContent}
       </ReactMarkdown>
     </div>
   );
