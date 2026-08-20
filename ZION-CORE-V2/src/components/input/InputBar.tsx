@@ -1,7 +1,7 @@
 /**
  * Nkyel AI · InputBar
  * SmartANDJ AI Technologies
- * Floating Composer matching Manus / ChatGPT structure: + Menu, Web toggle, Ñkyel Desktop badge, Mic, Send Button
+ * Responsive Floating Composer: + Menu, Web, Desktop, Mic, Send
  */
 
 'use client';
@@ -15,7 +15,6 @@ import {
   Plus,
   Desktop,
   Globe,
-  ChatCircleDots,
 } from '@phosphor-icons/react';
 import type { NkyelModel } from '@/lib/models';
 import AttachmentMenu from './AttachmentMenu';
@@ -110,15 +109,15 @@ export default function InputBar({
   const hasText = value.trim().length > 0;
 
   return (
-    <div className="w-full max-w-3xl mx-auto px-4 pb-6 pt-2 relative z-30">
-      {/* Outer Composer Container matching screenshot */}
+    <div className="w-full max-w-3xl mx-auto px-3 sm:px-4 pb-3 sm:pb-6 pt-1 relative z-30">
+      {/* Outer Composer Container */}
       <div
-        className="relative rounded-3xl bg-[#10141F] border border-white/[0.08] hover:border-white/[0.15] shadow-2xl transition-all flex flex-col p-3.5 focus-within:border-[#D5AE57]/40 focus-within:shadow-[0_0_30px_rgba(213,174,87,0.15)]"
+        className="relative rounded-2xl sm:rounded-3xl bg-[#10141F] border border-white/[0.08] hover:border-white/[0.15] shadow-2xl transition-all flex flex-col p-2.5 sm:p-3.5 focus-within:border-[#D5AE57]/40 focus-within:shadow-[0_0_30px_rgba(213,174,87,0.15)]"
         style={{
-          boxShadow: '0 20px 50px rgba(0,0,0,0.6)',
+          boxShadow: '0 15px 40px rgba(0,0,0,0.6)',
         }}
       >
-        {/* Attachment Flyout Menu */}
+        {/* Attachment Menu (Bottom sheet on mobile, cascaded on desktop) */}
         <AttachmentMenu
           isOpen={isMenuOpen}
           onClose={() => setIsMenuOpen(false)}
@@ -133,22 +132,22 @@ export default function InputBar({
           onKeyDown={handleKeyDown}
           disabled={isStreaming}
           rows={1}
-          placeholder="Posez n'importe quelle question à Ñkyel, sans frais de crédits"
-          className="w-full bg-transparent outline-none resize-none text-[15px] text-[#F5F6FA] placeholder-[#9199A8] leading-relaxed max-h-44 px-1.5 py-1"
+          placeholder="Posez une question ou décrivez votre mission à Ñkyel…"
+          className="w-full bg-transparent outline-none resize-none text-[14px] sm:text-[15px] text-[#F5F6FA] placeholder-[#9199A8] leading-relaxed max-h-36 sm:max-h-44 px-1 py-0.5"
           style={{
             fontFamily: 'var(--font-body, "Sora", sans-serif)',
           }}
         />
 
         {/* Bottom Bar: Action buttons */}
-        <div className="flex items-center justify-between mt-3 pt-2 border-t border-white/[0.04]">
-          {/* Left Buttons: + (Menu) | Web | Ñkyel Desktop */}
-          <div className="flex items-center gap-1.5">
+        <div className="flex items-center justify-between mt-2 pt-2 border-t border-white/[0.04]">
+          {/* Left Buttons */}
+          <div className="flex items-center gap-1 sm:gap-1.5">
             {/* Plus button */}
             <button
               type="button"
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className={`w-8 h-8 rounded-xl flex items-center justify-center transition-colors ${
+              className={`w-7 h-7 sm:w-8 sm:h-8 rounded-lg sm:rounded-xl flex items-center justify-center transition-colors ${
                 isMenuOpen
                   ? 'bg-[#D5AE57]/20 text-[#D5AE57]'
                   : 'text-[#9199A8] hover:text-white hover:bg-white/[0.06]'
@@ -162,57 +161,57 @@ export default function InputBar({
             <button
               type="button"
               onClick={() => setWebSearchEnabled(!webSearchEnabled)}
-              className={`flex items-center gap-1.5 px-2.5 py-1 rounded-xl text-[12px] font-medium transition-colors ${
+              className={`flex items-center gap-1 px-2 py-1 rounded-lg sm:rounded-xl text-xs font-medium transition-colors ${
                 webSearchEnabled
                   ? 'bg-[#00D4AA]/20 text-[#00D4AA] border border-[#00D4AA]/30 font-semibold'
                   : 'text-[#9199A8] hover:text-white hover:bg-white/[0.06]'
               }`}
-              title="Recherche Web & RAG en direct"
+              title="Recherche Web"
             >
-              <Globe size={15} />
-              <span className="hidden sm:inline">Web</span>
+              <Globe size={14} />
+              <span className="text-[11px] sm:text-xs">Web</span>
             </button>
 
             {/* Ñkyel Desktop badge */}
             <button
               type="button"
               onClick={() => setDesktopConnected(!desktopConnected)}
-              className={`flex items-center gap-1.5 px-2.5 py-1 rounded-xl text-[12px] font-medium transition-colors ${
+              className={`flex items-center gap-1 px-2 py-1 rounded-lg sm:rounded-xl text-xs font-medium transition-colors ${
                 desktopConnected
                   ? 'bg-[#6757E8]/20 text-[#6757E8] border border-[#6757E8]/30 font-semibold'
                   : 'text-[#9199A8] hover:text-white hover:bg-white/[0.06]'
               }`}
-              title="Session Ñkyel Desktop"
+              title="Session Desktop"
             >
-              <Desktop size={15} />
-              <span className="hidden sm:inline">Ñkyel Desktop</span>
+              <Desktop size={14} />
+              <span className="hidden xs:inline text-[11px] sm:text-xs">Desktop</span>
             </button>
           </div>
 
-          {/* Right Buttons: Voice / Mic | Send */}
-          <div className="flex items-center gap-2">
-            {/* Microphone dictation */}
+          {/* Right Buttons */}
+          <div className="flex items-center gap-1.5">
+            {/* Microphone */}
             <button
               type="button"
               onClick={toggleSpeechRecognition}
-              className={`w-8 h-8 rounded-xl flex items-center justify-center transition-colors ${
+              className={`w-7 h-7 sm:w-8 sm:h-8 rounded-lg sm:rounded-xl flex items-center justify-center transition-colors ${
                 isListening
                   ? 'bg-[#E0584B] text-white animate-pulse'
                   : 'text-[#9199A8] hover:text-white hover:bg-white/[0.06]'
               }`}
               title="Dictée vocale"
             >
-              <Microphone size={16} />
+              <Microphone size={15} />
             </button>
 
-            {/* Send / Stop Button */}
+            {/* Send / Stop */}
             {isStreaming ? (
               <button
                 type="button"
                 onClick={onStop}
-                className="h-8 px-3 rounded-xl bg-[#E0584B]/20 border border-[#E0584B]/40 text-[#E0584B] flex items-center gap-1.5 text-xs font-semibold hover:bg-[#E0584B]/30 transition-colors"
+                className="h-7 sm:h-8 px-2.5 sm:px-3 rounded-lg sm:rounded-xl bg-[#E0584B]/20 border border-[#E0584B]/40 text-[#E0584B] flex items-center gap-1 text-[11px] font-semibold hover:bg-[#E0584B]/30"
               >
-                <Stop size={14} weight="fill" />
+                <Stop size={13} weight="fill" />
                 <span>Stop</span>
               </button>
             ) : (
@@ -220,14 +219,14 @@ export default function InputBar({
                 type="button"
                 onClick={handleSubmit}
                 disabled={!hasText}
-                className={`w-8 h-8 rounded-xl flex items-center justify-center transition-all ${
+                className={`w-7 h-7 sm:w-8 sm:h-8 rounded-lg sm:rounded-xl flex items-center justify-center transition-all ${
                   hasText
-                    ? 'bg-white text-black shadow-lg hover:scale-105 active:scale-95'
+                    ? 'bg-white text-black shadow-md hover:scale-105 active:scale-95'
                     : 'bg-white/10 text-white/30 cursor-not-allowed'
                 }`}
                 title="Envoyer"
               >
-                <ArrowUp size={16} weight="bold" />
+                <ArrowUp size={15} weight="bold" />
               </button>
             )}
           </div>

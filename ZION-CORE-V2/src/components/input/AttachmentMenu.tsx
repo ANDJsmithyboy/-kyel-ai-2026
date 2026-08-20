@@ -1,12 +1,13 @@
 /**
  * Nkyel AI · AttachmentMenu
  * SmartANDJ AI Technologies
- * Multi-level flyout menu matching Manus screenshot: Sources, Google Drive, Plan, Capacités, Mémoire, Fichiers locaux
+ * Responsive: Floating cascaded menu on Desktop, Bottom Sheet Modal on Mobile
  */
 
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   FolderOpen,
   GoogleDriveLogo,
@@ -16,6 +17,7 @@ import {
   Books,
   FileArrowUp,
   CaretRight,
+  CaretLeft,
   Sparkle,
   Globe,
   Code,
@@ -24,7 +26,7 @@ import {
   Table,
   VideoCamera,
   Microphone,
-  Check,
+  X,
 } from '@phosphor-icons/react';
 
 interface AttachmentMenuProps {
@@ -76,210 +78,287 @@ export default function AttachmentMenu({
   ];
 
   return (
-    <div
-      ref={menuRef}
-      className="absolute bottom-full left-0 mb-3 w-64 p-1.5 rounded-2xl bg-[#10141F] border border-white/10 shadow-2xl backdrop-blur-2xl z-50 text-[13px] font-medium"
-      style={{
-        boxShadow: '0 20px 50px rgba(0,0,0,0.7), 0 0 1px 1px rgba(255,255,255,0.08)',
-      }}
-    >
-      {/* 1. Autres sources > */}
-      <div
-        className="relative"
-        onMouseEnter={() => setActiveSubmenu('sources')}
-        onMouseLeave={() => setActiveSubmenu(null)}
-      >
-        <button
-          type="button"
-          className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-[#EDEAE3] hover:text-white hover:bg-white/[0.06] transition-colors text-left"
+    <>
+      {/* 1. Mobile Backdrop & Bottom Sheet (< 640px) */}
+      <div className="sm:hidden">
+        <div
+          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50"
+          onClick={onClose}
+        />
+        <motion.div
+          initial={{ y: '100%' }}
+          animate={{ y: 0 }}
+          exit={{ y: '100%' }}
+          transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+          className="fixed inset-x-0 bottom-0 max-h-[80vh] bg-[#10141F] border-t border-white/10 rounded-t-3xl p-4 z-50 overflow-y-auto flex flex-col space-y-2"
         >
-          <div className="flex items-center gap-2.5">
-            <FolderOpen size={16} className="text-[#9199A8]" />
-            <span>Autres sources</span>
-          </div>
-          <CaretRight size={13} className="text-[#9199A8]" />
-        </button>
-
-        {activeSubmenu === 'sources' && (
-          <div className="absolute left-full top-0 ml-1.5 w-60 p-1.5 rounded-2xl bg-[#10141F] border border-white/10 shadow-2xl backdrop-blur-2xl z-50 space-y-1">
-            <button
-              type="button"
-              onClick={() => { onSelectOption('Google Drive'); onClose(); }}
-              className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-[#EDEAE3] hover:bg-white/[0.06] text-left"
-            >
-              <GoogleDriveLogo size={16} className="text-[#00D4AA]" />
-              <span>Google Drive</span>
-            </button>
-            <button
-              type="button"
-              onClick={() => { onSelectOption('Mémoire Ñkyel'); onClose(); }}
-              className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-[#EDEAE3] hover:bg-white/[0.06] text-left"
-            >
-              <Books size={16} className="text-[#D5AE57]" />
-              <span>Mémoire Ñkyel</span>
-            </button>
-          </div>
-        )}
-      </div>
-
-      {/* 2. Ajouter depuis Google Drive */}
-      <button
-        type="button"
-        onClick={() => { onSelectOption('Google Drive'); onClose(); }}
-        className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-[#EDEAE3] hover:text-white hover:bg-white/[0.06] transition-colors text-left"
-      >
-        <GoogleDriveLogo size={16} className="text-[#00D4AA]" />
-        <span>Ajouter depuis Google Drive</span>
-      </button>
-
-      {/* 3. Plan d'exécution (Ctrl+/) */}
-      <button
-        type="button"
-        onClick={() => { onSelectOption('Plan d’exécution'); onClose(); }}
-        className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-[#EDEAE3] hover:text-white hover:bg-white/[0.06] transition-colors text-left"
-      >
-        <div className="flex items-center gap-2.5">
-          <TreeStructure size={16} className="text-[#6757E8]" />
-          <span>Plan d'exécution</span>
-        </div>
-        <span className="text-[11px] text-[#9199A8] font-mono">Ctrl+/</span>
-      </button>
-
-      {/* 4. Utiliser des capacités > */}
-      <div
-        className="relative"
-        onMouseEnter={() => setActiveSubmenu('capacities')}
-        onMouseLeave={() => setActiveSubmenu(null)}
-      >
-        <button
-          type="button"
-          className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-[#EDEAE3] hover:text-white hover:bg-white/[0.06] transition-colors text-left"
-        >
-          <div className="flex items-center gap-2.5">
-            <Robot size={16} className="text-[#D5AE57]" />
-            <span>Utiliser des capacités</span>
-          </div>
-          <CaretRight size={13} className="text-[#9199A8]" />
-        </button>
-
-        {activeSubmenu === 'capacities' && (
-          <div className="absolute left-full top-0 ml-1.5 w-72 p-1.5 rounded-2xl bg-[#10141F] border border-white/10 shadow-2xl backdrop-blur-2xl z-50 space-y-1 max-h-80 overflow-y-auto scrollbar-thin">
-            <div className="px-3 py-1.5 text-[11px] font-semibold text-[#9199A8] uppercase tracking-wider">
-              Capacités d'action Ñkyel
-            </div>
-            {capabilities.map((cap) => {
-              const Icon = cap.icon;
-              return (
-                <button
-                  key={cap.id}
-                  type="button"
-                  onClick={() => { onSelectOption(cap.label); onClose(); }}
-                  className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-[#EDEAE3] hover:bg-white/[0.06] text-left transition-colors"
-                >
-                  <Icon size={16} className="text-[#D5AE57] shrink-0" />
-                  <span className="truncate">{cap.label}</span>
-                </button>
-              );
-            })}
-          </div>
-        )}
-      </div>
-
-      {/* 5. Ajouter des tâches récentes > */}
-      <div
-        className="relative"
-        onMouseEnter={() => setActiveSubmenu('recents')}
-        onMouseLeave={() => setActiveSubmenu(null)}
-      >
-        <button
-          type="button"
-          className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-[#EDEAE3] hover:text-white hover:bg-white/[0.06] transition-colors text-left"
-        >
-          <div className="flex items-center gap-2.5">
-            <ClockCounterClockwise size={16} className="text-[#9199A8]" />
-            <span>Ajouter des tâches récentes</span>
-          </div>
-          <CaretRight size={13} className="text-[#9199A8]" />
-        </button>
-
-        {activeSubmenu === 'recents' && (
-          <div className="absolute left-full top-0 ml-1.5 w-64 p-1.5 rounded-2xl bg-[#10141F] border border-white/10 shadow-2xl backdrop-blur-2xl z-50 space-y-1">
-            {recentDocs.map((doc) => (
+          {/* Header */}
+          <div className="flex items-center justify-between pb-3 border-b border-white/10">
+            {activeSubmenu ? (
               <button
-                key={doc.id}
                 type="button"
-                onClick={() => { onSelectOption(doc.name); onClose(); }}
-                className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-[#EDEAE3] hover:bg-white/[0.06] text-left truncate"
+                onClick={() => setActiveSubmenu(null)}
+                className="flex items-center gap-1.5 text-xs text-[#D5AE57] font-semibold"
               >
-                <FileText size={15} className="text-[#E0584B] shrink-0" />
-                <span className="truncate">{doc.name}</span>
+                <CaretLeft size={16} />
+                <span>Retour</span>
               </button>
-            ))}
+            ) : (
+              <span className="text-sm font-bold text-white">Ajouter à la mission</span>
+            )}
+            <button
+              type="button"
+              onClick={onClose}
+              className="w-7 h-7 rounded-full bg-white/5 flex items-center justify-center text-white/70"
+            >
+              <X size={16} />
+            </button>
           </div>
-        )}
+
+          {/* Mobile Submenu View: Capacités */}
+          {activeSubmenu === 'capacities' && (
+            <div className="space-y-1 py-2">
+              <div className="text-[11px] font-semibold text-[#9199A8] uppercase tracking-wider px-2 mb-2">
+                Capacités d'action Ñkyel
+              </div>
+              {capabilities.map((cap) => {
+                const Icon = cap.icon;
+                return (
+                  <button
+                    key={cap.id}
+                    type="button"
+                    onClick={() => { onSelectOption(cap.label); onClose(); }}
+                    className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-white hover:bg-white/10 text-left text-sm"
+                  >
+                    <Icon size={18} className="text-[#D5AE57] shrink-0" />
+                    <span className="truncate">{cap.label}</span>
+                  </button>
+                );
+              })}
+            </div>
+          )}
+
+          {/* Mobile Submenu View: Sources */}
+          {activeSubmenu === 'sources' && (
+            <div className="space-y-1 py-2">
+              <button
+                type="button"
+                onClick={() => { onSelectOption('Google Drive'); onClose(); }}
+                className="w-full flex items-center gap-3 px-3 py-3 rounded-xl text-white hover:bg-white/10 text-left text-sm"
+              >
+                <GoogleDriveLogo size={20} className="text-[#00D4AA]" />
+                <span>Google Drive</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => { onSelectOption('Mémoire Ñkyel'); onClose(); }}
+                className="w-full flex items-center gap-3 px-3 py-3 rounded-xl text-white hover:bg-white/10 text-left text-sm"
+              >
+                <Books size={20} className="text-[#D5AE57]" />
+                <span>Mémoire Ñkyel</span>
+              </button>
+            </div>
+          )}
+
+          {/* Mobile Main Menu Items */}
+          {!activeSubmenu && (
+            <div className="space-y-1 py-1">
+              <button
+                type="button"
+                onClick={() => setActiveSubmenu('capacities')}
+                className="w-full flex items-center justify-between px-3 py-3 rounded-xl text-white hover:bg-white/10 text-left text-sm"
+              >
+                <div className="flex items-center gap-3">
+                  <Robot size={18} className="text-[#D5AE57]" />
+                  <span>Utiliser des capacités</span>
+                </div>
+                <CaretRight size={16} className="text-[#9199A8]" />
+              </button>
+
+              <button
+                type="button"
+                onClick={() => { onSelectOption('Plan d’exécution'); onClose(); }}
+                className="w-full flex items-center justify-between px-3 py-3 rounded-xl text-white hover:bg-white/10 text-left text-sm"
+              >
+                <div className="flex items-center gap-3">
+                  <TreeStructure size={18} className="text-[#6757E8]" />
+                  <span>Construire un plan d'exécution</span>
+                </div>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setActiveSubmenu('sources')}
+                className="w-full flex items-center justify-between px-3 py-3 rounded-xl text-white hover:bg-white/10 text-left text-sm"
+              >
+                <div className="flex items-center gap-3">
+                  <FolderOpen size={18} className="text-[#9199A8]" />
+                  <span>Autres sources</span>
+                </div>
+                <CaretRight size={16} className="text-[#9199A8]" />
+              </button>
+
+              <label className="w-full flex items-center gap-3 px-3 py-3 rounded-xl text-white hover:bg-white/10 text-left text-sm cursor-pointer">
+                <FileArrowUp size={18} className="text-[#9199A8]" />
+                <span>Ajouter depuis les fichiers locaux</span>
+                <input
+                  type="file"
+                  multiple
+                  className="hidden"
+                  onChange={(e) => {
+                    if (e.target.files && e.target.files.length > 0) {
+                      onSelectOption(`Fichier: ${e.target.files[0].name}`);
+                      onClose();
+                    }
+                  }}
+                />
+              </label>
+            </div>
+          )}
+        </motion.div>
       </div>
 
-      {/* 6. Ajouter depuis la bibliothèque (Mémoire) > */}
+      {/* 2. Desktop Floating Menu (>= 640px) */}
       <div
-        className="relative"
-        onMouseEnter={() => setActiveSubmenu('memory')}
-        onMouseLeave={() => setActiveSubmenu(null)}
+        ref={menuRef}
+        className="hidden sm:block absolute bottom-full left-0 mb-3 w-64 p-1.5 rounded-2xl bg-[#10141F] border border-white/10 shadow-2xl backdrop-blur-2xl z-50 text-[13px] font-medium"
+        style={{
+          boxShadow: '0 20px 50px rgba(0,0,0,0.7), 0 0 1px 1px rgba(255,255,255,0.08)',
+        }}
       >
+        {/* Autres sources > */}
+        <div
+          className="relative"
+          onMouseEnter={() => setActiveSubmenu('sources')}
+          onMouseLeave={() => setActiveSubmenu(null)}
+        >
+          <button
+            type="button"
+            className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-[#EDEAE3] hover:text-white hover:bg-white/[0.06] transition-colors text-left"
+          >
+            <div className="flex items-center gap-2.5">
+              <FolderOpen size={16} className="text-[#9199A8]" />
+              <span>Autres sources</span>
+            </div>
+            <CaretRight size={13} className="text-[#9199A8]" />
+          </button>
+
+          {activeSubmenu === 'sources' && (
+            <div className="absolute left-full top-0 ml-1.5 w-60 p-1.5 rounded-2xl bg-[#10141F] border border-white/10 shadow-2xl backdrop-blur-2xl z-50 space-y-1">
+              <button
+                type="button"
+                onClick={() => { onSelectOption('Google Drive'); onClose(); }}
+                className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-[#EDEAE3] hover:bg-white/[0.06] text-left"
+              >
+                <GoogleDriveLogo size={16} className="text-[#00D4AA]" />
+                <span>Google Drive</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => { onSelectOption('Mémoire Ñkyel'); onClose(); }}
+                className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-[#EDEAE3] hover:bg-white/[0.06] text-left"
+              >
+                <Books size={16} className="text-[#D5AE57]" />
+                <span>Mémoire Ñkyel</span>
+              </button>
+            </div>
+          )}
+        </div>
+
+        {/* Ajouter depuis Google Drive */}
         <button
           type="button"
+          onClick={() => { onSelectOption('Google Drive'); onClose(); }}
+          className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-[#EDEAE3] hover:text-white hover:bg-white/[0.06] transition-colors text-left"
+        >
+          <GoogleDriveLogo size={16} className="text-[#00D4AA]" />
+          <span>Ajouter depuis Google Drive</span>
+        </button>
+
+        {/* Plan d'exécution (Ctrl+/) */}
+        <button
+          type="button"
+          onClick={() => { onSelectOption('Plan d’exécution'); onClose(); }}
+          className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-[#EDEAE3] hover:text-white hover:bg-white/[0.06] transition-colors text-left"
+        >
+          <div className="flex items-center gap-2.5">
+            <TreeStructure size={16} className="text-[#6757E8]" />
+            <span>Plan d'exécution</span>
+          </div>
+          <span className="text-[11px] text-[#9199A8] font-mono">Ctrl+/</span>
+        </button>
+
+        {/* Utiliser des capacités > */}
+        <div
+          className="relative"
+          onMouseEnter={() => setActiveSubmenu('capacities')}
+          onMouseLeave={() => setActiveSubmenu(null)}
+        >
+          <button
+            type="button"
+            className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-[#EDEAE3] hover:text-white hover:bg-white/[0.06] transition-colors text-left"
+          >
+            <div className="flex items-center gap-2.5">
+              <Robot size={16} className="text-[#D5AE57]" />
+              <span>Utiliser des capacités</span>
+            </div>
+            <CaretRight size={13} className="text-[#9199A8]" />
+          </button>
+
+          {activeSubmenu === 'capacities' && (
+            <div className="absolute left-full top-0 ml-1.5 w-72 p-1.5 rounded-2xl bg-[#10141F] border border-white/10 shadow-2xl backdrop-blur-2xl z-50 space-y-1 max-h-80 overflow-y-auto scrollbar-thin">
+              <div className="px-3 py-1.5 text-[11px] font-semibold text-[#9199A8] uppercase tracking-wider">
+                Capacités d'action Ñkyel
+              </div>
+              {capabilities.map((cap) => {
+                const Icon = cap.icon;
+                return (
+                  <button
+                    key={cap.id}
+                    type="button"
+                    onClick={() => { onSelectOption(cap.label); onClose(); }}
+                    className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-[#EDEAE3] hover:bg-white/[0.06] text-left transition-colors"
+                  >
+                    <Icon size={16} className="text-[#D5AE57] shrink-0" />
+                    <span className="truncate">{cap.label}</span>
+                  </button>
+                );
+              })}
+            </div>
+          )}
+        </div>
+
+        {/* Ajouter depuis la bibliothèque (Mémoire) */}
+        <button
+          type="button"
+          onClick={() => { onSelectOption('Mémoire Ñkyel'); onClose(); }}
           className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-[#EDEAE3] hover:text-white hover:bg-white/[0.06] transition-colors text-left"
         >
           <div className="flex items-center gap-2.5">
             <Books size={16} className="text-[#D5AE57]" />
-            <span>Ajouter depuis la bibliothèque</span>
+            <span>Mémoire Ñkyel</span>
           </div>
-          <CaretRight size={13} className="text-[#9199A8]" />
         </button>
 
-        {activeSubmenu === 'memory' && (
-          <div className="absolute left-full top-0 ml-1.5 w-64 p-1.5 rounded-2xl bg-[#10141F] border border-white/10 shadow-2xl backdrop-blur-2xl z-50 space-y-1">
-            {recentDocs.map((doc) => (
-              <button
-                key={doc.id}
-                type="button"
-                onClick={() => { onSelectOption(doc.name); onClose(); }}
-                className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-[#EDEAE3] hover:bg-white/[0.06] text-left truncate"
-              >
-                <FileText size={15} className="text-[#E0584B] shrink-0" />
-                <span className="truncate">{doc.name}</span>
-              </button>
-            ))}
-            <div className="h-[1px] bg-white/5 my-1" />
-            <button
-              type="button"
-              onClick={() => { onSelectOption('Ouvrir la Mémoire'); onClose(); }}
-              className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-[#D5AE57] hover:bg-[#D5AE57]/10 text-left font-semibold"
-            >
-              <Books size={15} />
-              <span>Ouvrir la Mémoire Ñkyel</span>
-            </button>
-          </div>
-        )}
+        <div className="h-[1px] bg-white/[0.06] my-1" />
+
+        {/* Ajouter depuis les fichiers locaux */}
+        <label className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-[#EDEAE3] hover:text-white hover:bg-white/[0.06] transition-colors text-left cursor-pointer">
+          <FileArrowUp size={16} className="text-[#9199A8]" />
+          <span>Ajouter depuis les fichiers locaux</span>
+          <input
+            type="file"
+            multiple
+            className="hidden"
+            onChange={(e) => {
+              if (e.target.files && e.target.files.length > 0) {
+                onSelectOption(`Fichier: ${e.target.files[0].name}`);
+                onClose();
+              }
+            }}
+          />
+        </label>
       </div>
-
-      <div className="h-[1px] bg-white/[0.06] my-1" />
-
-      {/* 7. Ajouter depuis les fichiers locaux */}
-      <label className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-[#EDEAE3] hover:text-white hover:bg-white/[0.06] transition-colors text-left cursor-pointer">
-        <FileArrowUp size={16} className="text-[#9199A8]" />
-        <span>Ajouter depuis les fichiers locaux</span>
-        <input
-          type="file"
-          multiple
-          className="hidden"
-          onChange={(e) => {
-            if (e.target.files && e.target.files.length > 0) {
-              onSelectOption(`Fichier: ${e.target.files[0].name}`);
-              onClose();
-            }
-          }}
-        />
-      </label>
-    </div>
+    </>
   );
 }
