@@ -151,10 +151,12 @@ async def chat_completion(request: ChatRequest):
     }
 
 @app.get("/health")
+@app.get("/api/v1/nkyel/health")
 async def health_check():
     """Health check endpoint"""
     return {
         "status": "healthy",
+        "service": "Ñkyel Agent API",
         "timestamp": datetime.now().isoformat()
     }
 
@@ -330,4 +332,5 @@ if __name__ == "__main__":
     ║        Chat persistence not available                          ║
     ╚════════════════════════════════════════════════════════════════╝
     """)
-    uvicorn.run("main_dev:app", host="0.0.0.0", port=8000, reload=True)
+    port = int(os.getenv("PORT", "8080"))
+    uvicorn.run(app, host="0.0.0.0", port=port)
