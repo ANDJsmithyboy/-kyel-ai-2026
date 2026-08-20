@@ -1,6 +1,6 @@
-import { NextRequest } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 
-const FASTAPI_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+const FASTAPI_URL = process.env.NEXT_PUBLIC_API_URL || 'https://ejresep5jsepf3-8080.proxy.runpod.net';
 
 export async function POST(req: NextRequest) {
   try {

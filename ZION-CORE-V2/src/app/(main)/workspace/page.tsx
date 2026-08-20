@@ -342,7 +342,7 @@ export default function NkyelWorkspacePage() {
     const runId = startRun(goalInput.trim(), 'User-submitted research goal');
 
     // Try real backend first, fallback to demo
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://ejresep5jsepf3-8080.proxy.runpod.net';
 
     try {
       const adapter = new AgUiStreamAdapter(runId);

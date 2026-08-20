@@ -2,7 +2,9 @@
    Service de communication avec le backend FastAPI Nkyel AI v1
    Fondateur : Daniel Jonathan ANDJ */
 
-const BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+import axios from 'axios';
+
+const BASE = process.env.NEXT_PUBLIC_API_URL || 'https://ejresep5jsepf3-8080.proxy.runpod.net';
 
 /* -- Types ------------------------------------------ */
 
