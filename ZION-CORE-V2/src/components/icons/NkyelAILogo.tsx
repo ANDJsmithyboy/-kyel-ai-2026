@@ -1,14 +1,14 @@
 import { SVGProps } from 'react';
 import Image from 'next/image';
 
-interface Nkyel AILogoProps {
+interface NkyelAILogoProps {
   width?: number;
   height?: number;
   className?: string;
   style?: React.CSSProperties;
 }
 
-export const Nkyel AILogo = ({ width = 24, height = 24, className, style }: Nkyel AILogoProps) => (
+export const NkyelAILogo = ({ width = 24, height = 24, className, style }: NkyelAILogoProps) => (
   <img
     src="/vrai-içone-pro-gaboma-ai2026.png"
     alt="Nkyel AI"
@@ -18,3 +18,4 @@ export const Nkyel AILogo = ({ width = 24, height = 24, className, style }: Nkye
     style={{ ...style, objectFit: 'contain' }}
   />
 );
+
