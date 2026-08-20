@@ -1,7 +1,7 @@
 /**
- * Ñkyel AI · Agent Event Labels
+ * Nkyel AI · Agent Event Labels
  * SmartANDJ AI Technologies
- * Mapping interne → vocabulaire Ñkyel AI public
+ * Mapping interne → vocabulaire Nkyel AI public
  */
 
 export const AGENT_EVENT_LABELS: Record<string, { label: string; icon_key: string }> = {
@@ -23,7 +23,7 @@ export const AGENT_EVENT_LABELS: Record<string, { label: string; icon_key: strin
 };
 
 /**
- * Résout un type d'événement interne vers un label Ñkyel AI.
+ * Résout un type d'événement interne vers un label Nkyel AI.
  * Retourne un fallback humanisé si inconnu.
  */
 export function resolveEventLabel(eventType: string): { label: string; icon_key: string } {

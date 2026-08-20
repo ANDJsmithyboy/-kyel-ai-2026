@@ -1,4 +1,4 @@
-/* Ñkyel AI · Quality Lab · SmartANDJ AI Technologies
+/* Nkyel AI · Quality Lab · SmartANDJ AI Technologies
    Section 20B: Transform feedback into test cases, compare prompt/model versions */
 'use client';
 import { SectionHeader, DataTable, StatusBadge, KPICard, ChartCard } from '@/components/admin/AdminComponents';

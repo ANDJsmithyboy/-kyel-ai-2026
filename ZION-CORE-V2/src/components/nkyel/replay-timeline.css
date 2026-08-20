@@ -1,0 +1,220 @@
+/**
+ * Nkyel AI — Replay Timeline Styles
+ * @version 1.0.0
+ */
+
+.replay-timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px 16px;
+  background: rgba(10, 12, 16, 0.85);
+  backdrop-filter: blur(16px);
+  border-top: 1px solid rgba(192, 160, 98, 0.12);
+  font-family: 'Inter', -apple-system, sans-serif;
+}
+
+.replay-timeline--empty {
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.replay-timeline__empty-text {
+  color: rgba(255, 255, 255, 0.3);
+  font-size: 13px;
+  font-style: italic;
+}
+
+/* --- Controls --------------------------------------- */
+
+.replay-timeline__controls {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.replay-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.replay-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+}
+
+.replay-btn--primary {
+  background: rgba(192, 160, 98, 0.15);
+  color: #C0A062;
+  width: 36px;
+  height: 36px;
+  font-size: 16px;
+}
+
+.replay-btn--primary:hover {
+  background: rgba(192, 160, 98, 0.25);
+}
+
+.replay-speed {
+  margin-left: auto;
+  padding: 4px 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 12px;
+  cursor: pointer;
+  outline: none;
+}
+
+.replay-speed:focus {
+  border-color: rgba(192, 160, 98, 0.3);
+}
+
+/* --- Progress Bar ----------------------------------- */
+
+.replay-timeline__progress {
+  height: 3px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+}
+
+.replay-timeline__progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #C0A062, #E8C878);
+  border-radius: 2px;
+  transition: width 0.3s ease;
+}
+
+/* --- Event Track ------------------------------------ */
+
+.replay-timeline__track {
+  display: flex;
+  gap: 2px;
+  overflow-x: auto;
+  padding: 6px 0;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(192, 160, 98, 0.3) transparent;
+}
+
+.replay-timeline__track::-webkit-scrollbar {
+  height: 4px;
+}
+
+.replay-timeline__track::-webkit-scrollbar-thumb {
+  background: rgba(192, 160, 98, 0.3);
+  border-radius: 2px;
+}
+
+.replay-marker {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 6px;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 28px;
+  position: relative;
+}
+
+.replay-marker:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.replay-marker__icon {
+  font-size: 12px;
+  opacity: 0.4;
+  transition: opacity 0.2s ease;
+}
+
+.replay-marker__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--marker-color, #888);
+  opacity: 0.3;
+  transition: all 0.2s ease;
+}
+
+.replay-marker--past .replay-marker__dot {
+  opacity: 0.6;
+}
+
+.replay-marker--past .replay-marker__icon {
+  opacity: 0.6;
+}
+
+.replay-marker--active {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.replay-marker--active .replay-marker__dot {
+  opacity: 1;
+  width: 10px;
+  height: 10px;
+  box-shadow: 0 0 8px var(--marker-color, #888);
+}
+
+.replay-marker--active .replay-marker__icon {
+  opacity: 1;
+  transform: scale(1.15);
+}
+
+/* --- Info Bar --------------------------------------- */
+
+.replay-timeline__info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.replay-info__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: 500;
+  color: #fff;
+}
+
+.replay-info__seq {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  opacity: 0.5;
+}
+
+.replay-info__title {
+  color: rgba(255, 255, 255, 0.7);
+  font-weight: 500;
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.replay-info__counter {
+  margin-left: auto;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  opacity: 0.4;
+}

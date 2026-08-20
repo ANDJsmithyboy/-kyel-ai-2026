@@ -1,5 +1,5 @@
 /**
- * Ñkyel AI · HomeInputBar.tsx · Client Component
+ * Nkyel AI · HomeInputBar.tsx · Client Component
  * SmartANDJ AI Technologies
  * Barre d'input — page d'accueil (état vide, pas de conversation).
  */

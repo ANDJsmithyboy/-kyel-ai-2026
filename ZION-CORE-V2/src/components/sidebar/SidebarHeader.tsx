@@ -1,5 +1,5 @@
 /**
- * Ñkyel AI · SidebarHeader (Zone 1)
+ * Nkyel AI · SidebarHeader (Zone 1)
  * SmartANDJ AI Technologies
  * Logo + collapse toggle — ALWAYS on the same row
  */
@@ -54,7 +54,7 @@ export default function SidebarHeader({
               fontFamily: 'var(--font-heading)',
             }}
           >
-            ÑKYEL
+            NKYEL
           </span>
         </div>
       )}
@@ -64,7 +64,7 @@ export default function SidebarHeader({
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%' }}>
           <Image
             src="/vrai-içone-pro-gaboma-ai2026.png"
-            alt="Ñkyel AI"
+            alt="Nkyel AI"
             width={22}
             height={22}
           />

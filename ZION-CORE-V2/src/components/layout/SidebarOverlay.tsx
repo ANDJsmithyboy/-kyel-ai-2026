@@ -1,5 +1,5 @@
 /**
- * Ñkyel AI · SidebarOverlay.tsx · Client Component
+ * Nkyel AI · SidebarOverlay.tsx · Client Component
  * SmartANDJ AI Technologies
  * Backdrop mobile — opacity animée, click to close.
  */

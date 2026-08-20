@@ -1,13 +1,13 @@
 /**
- * Ñkyel AI · SidebarHeader.tsx
+ * Nkyel AI · SidebarHeader.tsx
  * SmartANDJ AI Technologies
- * Logo Ñkyel AI (gauche) + IbogaAI toggle (droite) + dot live pulsant.
+ * Logo Nkyel AI (gauche) + IbogaAI toggle (droite) + dot live pulsant.
  */
 
 'use client';
 
 import { motion, useReducedMotion } from 'framer-motion';
-import { Ñkyel AILogo } from '@/components/icons';
+import { Nkyel AILogo } from '@/components/icons';
 import { IbogaAiIcon } from '@/components/icons/IbogaAiIcon';
 import { useSidebarStore } from '@/stores/sidebar';
 
@@ -19,9 +19,9 @@ export default function SidebarHeader() {
     <div
       className="group flex h-[52px] flex-shrink-0 items-center justify-between px-4"
     >
-      {/* LEFT — Ñkyel AI Logo + Wordmark */}
+      {/* LEFT — Nkyel AI Logo + Wordmark */}
       <div className="flex items-center gap-2">
-        <Ñkyel AILogo
+        <Nkyel AILogo
           width={24}
           height={24}
         />
@@ -34,7 +34,7 @@ export default function SidebarHeader() {
             color: 'var(--text-primary)',
           }}
         >
-          Ñkyel AI
+          Nkyel AI
         </span>
       </div>
 

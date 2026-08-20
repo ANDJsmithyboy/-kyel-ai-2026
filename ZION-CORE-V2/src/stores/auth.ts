@@ -1,4 +1,4 @@
-/* Ñkyel AI · auth.ts · SmartANDJ AI Technologies · Constitution Zion Core
+/* Nkyel AI · auth.ts · SmartANDJ AI Technologies · Constitution Zion Core
    Fondateur : Daniel Jonathan ANDJ
    Authentification et gestion de session Open WebUI */
 

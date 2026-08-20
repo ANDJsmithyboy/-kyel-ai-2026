@@ -1,4 +1,4 @@
-/* Ñkyel AI · auth.store.ts · SmartANDJ AI Technologies · Constitution Zion Core
+/* Nkyel AI · auth.store.ts · SmartANDJ AI Technologies · Constitution Zion Core
    Fondateur : Daniel Jonathan ANDJ
    Store authentification Zustand */
 

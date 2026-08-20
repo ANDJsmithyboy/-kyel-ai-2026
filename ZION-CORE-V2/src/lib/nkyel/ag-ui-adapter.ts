@@ -1,5 +1,5 @@
 /**
- * Ñkyel AI — AG-UI Adapter
+ * Nkyel AI — AG-UI Adapter
  *
  * Adapts backend SSE events into the Canonical Event format,
  * bridging the Agent Runtime ↔ Visual Workspace.
@@ -35,7 +35,7 @@ function genId(prefix: string): string {
   return `${prefix}_${Date.now()}_${++agUiIdCounter}`;
 }
 
-// --- AG-UI to Ñkyel Event Mapper ------------------------
+// --- AG-UI to Nkyel Event Mapper ------------------------
 
 function mapAgUiEventToNkyelEvent(raw: AgUiRawEvent, runId: string): NkyelEvent | null {
   const baseEvent = {
@@ -286,7 +286,7 @@ export class AgUiStreamAdapter {
 
   /**
    * Connect to the backend SSE endpoint and pipe events
-   * into the Ñkyel Event Store.
+   * into the Nkyel Event Store.
    */
   async connect(url: string, body: Record<string, unknown>): Promise<void> {
     this.abortController = new AbortController();

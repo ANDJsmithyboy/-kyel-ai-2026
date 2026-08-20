@@ -4,10 +4,10 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Lightning, Brain, Robot, Cat, MagnifyingGlass, Plus, Paperclip, Microphone, Waveform, Stop, ArrowUp } from '@phosphor-icons/react';
 
-// Ñkyel Lexicon Models
+// Nkyel Lexicon Models
 const MODELS = [
   { id: 'aurata', name: 'Aurata', description: 'Mode Flash — rapide, exécution quotidienne', icon: <Lightning weight="duotone" size={20} className="text-primary" /> },
-  { id: 'nkyel', name: 'Ñkyel', description: 'Mode Pro — raisonnement logique profond', icon: <Brain weight="duotone" size={20} className="text-primary" /> },
+  { id: 'nkyel', name: 'Nkyel', description: 'Mode Pro — raisonnement logique profond', icon: <Brain weight="duotone" size={20} className="text-primary" /> },
   { id: 'onyxgris', name: 'OnyxGris', description: 'Agent Perroquet Gris — tâches simples', icon: <Robot weight="duotone" size={20} className="text-primary" /> },
   { id: 'blackpanther', name: 'Black Panther', description: 'Le GOAT — multi-agent autonome', icon: <Cat weight="fill" size={20} className="text-primary" /> },
   { id: 'wandana', name: 'Wandana', description: 'L\'Éléphant — recherche web profonde', icon: <MagnifyingGlass weight="duotone" size={20} className="text-primary" /> },

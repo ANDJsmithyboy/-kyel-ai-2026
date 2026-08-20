@@ -1,4 +1,4 @@
-/* Ñkyel AI · Header.tsx · SmartANDJ AI Technologies · Constitution Zion Core
+/* Nkyel AI · Header.tsx · SmartANDJ AI Technologies · Constitution Zion Core
    Fondateur : Daniel Jonathan ANDJ
    En-tête chat — sélecteur de modèle + contrôles + toggle sidebar mobile */
 'use client';
@@ -12,12 +12,12 @@ import { useSidebarStore } from '@/stores/sidebar';
 import { useSettingsStore, getDisplayModelName } from '@/stores/settings.store';
 import { useAuthStore } from '@/stores/auth.store';
 import { cn } from '@/lib/utils';
-import { IconAurata, IconNkyel, IconWandana, Ñkyel AILogo } from '@/components/icons';
+import { IconAurata, IconNkyel, IconWandana, Nkyel AILogo } from '@/components/icons';
 
 /* -- Modèles disponibles -- */
 const MODELS = [
   { id: 'aurata-spark', icon: IconAurata, color: '#C5A059', label: 'Aurata' },
-  { id: 'nyel-deep', icon: IconNkyel, color: '#94A3B8', label: 'Ñkyel' },
+  { id: 'nyel-deep', icon: IconNkyel, color: '#94A3B8', label: 'Nkyel' },
   { id: 'wandana-archive', icon: IconWandana, color: '#A855F7', label: 'Wandana' },
 ];
 
@@ -40,11 +40,11 @@ export default function Header({ currentModel, onModelChange }: HeaderProps) {
 
   return (
     <header className="sticky top-0 z-30 flex items-center gap-2 px-3 py-2 navbar-glass border-b border-[var(--border)]">
-      {/* Logo Ñkyel AI + Toggle (visible quand sidebar fermée ou mobile) */}
+      {/* Logo Nkyel AI + Toggle (visible quand sidebar fermée ou mobile) */}
       {(isMobile || !isOpen) && (
         <div className="group flex items-center gap-1.5 mr-2">
           <div className="flex h-8 w-8 items-center justify-center">
-            <Ñkyel AILogo width={22} height={22} />
+            <Nkyel AILogo width={22} height={22} />
           </div>
           <button
             onClick={toggle}

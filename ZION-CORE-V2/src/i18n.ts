@@ -1,4 +1,4 @@
-/* Ñkyel AI · i18n Config · SmartANDJ AI Technologies
+/* Nkyel AI · i18n Config · SmartANDJ AI Technologies
    next-intl configuration — fr, en, fang, punu
    Fondateur : Daniel Jonathan ANDJ */
 

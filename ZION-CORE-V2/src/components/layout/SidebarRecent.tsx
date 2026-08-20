@@ -1,5 +1,5 @@
 /**
- * Ñkyel AI · SidebarRecent.tsx
+ * Nkyel AI · SidebarRecent.tsx
  * SmartANDJ AI Technologies
  * Conversations récentes — 5 dernières, tronquées.
  */

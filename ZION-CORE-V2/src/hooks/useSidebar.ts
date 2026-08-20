@@ -1,5 +1,5 @@
 /**
- * Ñkyel AI · useSidebar Hook (Zustand)
+ * Nkyel AI · useSidebar Hook (Zustand)
  * SmartANDJ AI Technologies
  * Collapsed state persisted to localStorage
  */

@@ -1,5 +1,5 @@
 /**
- * Ñkyel AI — Canonical Work Graph Types
+ * Nkyel AI — Canonical Work Graph Types
  * 
  * The typed, versioned model representing all agent work,
  * independent of the visual interface.

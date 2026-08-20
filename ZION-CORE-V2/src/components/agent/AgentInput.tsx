@@ -1,5 +1,5 @@
 /**
- * Ñkyel AI · AgentInput
+ * Nkyel AI · AgentInput
  * SmartANDJ AI Technologies
  * Barre de saisie avec sélection ONYX / BLACK PANTHER.
  * Thème : Zion Core Obsidian.

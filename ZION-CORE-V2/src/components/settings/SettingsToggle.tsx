@@ -1,5 +1,5 @@
 /**
- * Ñkyel AI · SettingsToggle.tsx · Client Component
+ * Nkyel AI · SettingsToggle.tsx · Client Component
  * SmartANDJ AI Technologies
  */
 

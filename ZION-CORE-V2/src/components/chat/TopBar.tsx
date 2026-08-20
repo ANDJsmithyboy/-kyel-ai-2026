@@ -24,7 +24,7 @@ export default function TopBar({ onToggleSidebar, sidebarOpen }: { onToggleSideb
           {hoveredSidebar || sidebarOpen ? (
             <Image src="/nkyel-logo.png" alt="Iboga AI" width={28} height={28} className="rounded-lg" />
           ) : (
-            <Image src="/nkyel-icon.png" alt="Ñkyel AI" width={28} height={28} className="rounded-lg" />
+            <Image src="/nkyel-icon.png" alt="Nkyel AI" width={28} height={28} className="rounded-lg" />
           )}
         </button>
         {ephemeral && (

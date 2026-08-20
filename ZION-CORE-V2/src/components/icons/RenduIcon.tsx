@@ -1,5 +1,5 @@
 /**
- * Ñkyel AI · RenduIcon — Diamant 💎
+ * Nkyel AI · RenduIcon — Diamant 💎
  * SmartANDJ AI Technologies
  * Icône "Le Rendu" — diamant à facettes géométriques
  */

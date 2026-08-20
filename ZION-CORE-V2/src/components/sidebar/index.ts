@@ -1,5 +1,5 @@
 /**
- * Ñkyel AI · Sidebar barrel export
+ * Nkyel AI · Sidebar barrel export
  * SmartANDJ AI Technologies
  */
 

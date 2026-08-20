@@ -1,0 +1,7 @@
+{
+  "buildCommand": "cd ZION-CORE-V2 && npm install --legacy-peer-deps && npm run build",
+  "outputDirectory": "ZION-CORE-V2/.next",
+  "installCommand": "echo 'Install handled in buildCommand'",
+  "framework": "nextjs",
+  "devCommand": "cd ZION-CORE-V2 && npm run dev"
+}

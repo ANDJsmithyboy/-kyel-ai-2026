@@ -1,4 +1,4 @@
-/* Ñkyel AI · admin/images/page.tsx · SmartANDJ AI Technologies · Constitution Zion Core
+/* Nkyel AI · admin/images/page.tsx · SmartANDJ AI Technologies · Constitution Zion Core
    Fondateur : Daniel Jonathan ANDJ
    Parametres Generation d'Images — Miroir Open WebUI Images Settings */
 'use client';

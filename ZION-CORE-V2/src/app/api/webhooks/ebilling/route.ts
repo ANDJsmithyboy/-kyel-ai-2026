@@ -1,4 +1,4 @@
-/* Ñkyel AI · E-Billing Webhook · SmartANDJ AI Technologies
+/* Nkyel AI · E-Billing Webhook · SmartANDJ AI Technologies
    Handles payment confirmation callbacks from E-Billing Gabon
    Fondateur : Daniel Jonathan ANDJ */
 

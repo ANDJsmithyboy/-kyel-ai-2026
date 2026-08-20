@@ -1,5 +1,5 @@
 /**
- * Ñkyel AI · useIsMobile Hook
+ * Nkyel AI · useIsMobile Hook
  * SmartANDJ AI Technologies
  * SSR-safe responsive breakpoint detection
  */

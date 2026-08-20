@@ -1,5 +1,5 @@
 /**
- * Ñkyel AI · TierBadge.tsx · Server Component
+ * Nkyel AI · TierBadge.tsx · Server Component
  * SmartANDJ AI Technologies
  */
 

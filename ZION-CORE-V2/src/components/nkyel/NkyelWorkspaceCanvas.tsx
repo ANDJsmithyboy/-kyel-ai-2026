@@ -1,5 +1,5 @@
 /**
- * Ñkyel AI — Visual Workspace Canvas
+ * Nkyel AI — Visual Workspace Canvas
  *
  * The spatial reasoning canvas that renders the Canonical Work Graph
  * using React Flow, driven by real events from the Event Store.
@@ -321,7 +321,7 @@ export default function NkyelWorkspaceCanvas() {
       {/* Canvas Header */}
       <div className="nkyel-workspace-header">
         <div>
-          <p className="nkyel-workspace-label">Ñkyel AI</p>
+          <p className="nkyel-workspace-label">Nkyel AI</p>
           <h2 className="nkyel-workspace-title">Visual Workspace</h2>
           <p className="nkyel-workspace-subtitle">
             {isRunning ? 'Mission active' : isReplaying ? 'Replay mode' : 'Ready'}

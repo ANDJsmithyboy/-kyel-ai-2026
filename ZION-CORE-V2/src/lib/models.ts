@@ -1,5 +1,5 @@
 /**
- * Ñkyel AI · Types & Modèles
+ * Nkyel AI · Types & Modèles
  * SmartANDJ AI Technologies
  * TypeScript strict — Taxonomie Officielle V3
  */

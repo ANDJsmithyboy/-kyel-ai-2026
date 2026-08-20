@@ -1,5 +1,5 @@
 /**
- * Ñkyel AI · FilesPanel
+ * Nkyel AI · FilesPanel
  * SmartANDJ AI Technologies
  * Explorateur de fichiers du sandbox de l'agent.
  * Thème : Zion Core Obsidian.

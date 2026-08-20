@@ -1,5 +1,5 @@
 /**
- * Ñkyel AI · SidebarSection (déployable)
+ * Nkyel AI · SidebarSection (déployable)
  * SmartANDJ AI Technologies
  */
 

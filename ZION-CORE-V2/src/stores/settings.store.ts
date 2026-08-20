@@ -1,4 +1,4 @@
-/* Ñkyel AI · settings.store.ts · SmartANDJ AI Technologies
+/* Nkyel AI · settings.store.ts · SmartANDJ AI Technologies
    Paramètres utilisateur persistés en localStorage */
 
 import { create } from 'zustand';
@@ -106,17 +106,17 @@ export const useSettingsStore = create<SettingsState>((set, get) => ({
   blackPantherMode: false,
 
   hydrate: () => {
-    const rawTheme = ls('Ñkyel AI_theme', 'black-panther');
+    const rawTheme = ls('Nkyel AI_theme', 'black-panther');
     const theme: ThemeKey = isValidTheme(rawTheme) ? rawTheme : 'black-panther';
-    const accent = ls('Ñkyel AI_accent', 'foret') as AccentKey;
-    const fontSize = ls('Ñkyel AI_fontSize', 'normal') as FontSize;
-    const greetingStyle = ls('Ñkyel AI_greetingStyle', 'gabonais') as GreetingStyle;
-    const language = ls('Ñkyel AI_language', 'fr');
-    const showThinking = ls('Ñkyel AI_showThinking', 'true') === 'true';
-    const streamResponses = ls('Ñkyel AI_streamResponses', 'true') === 'true';
-    const showCopyButton = ls('Ñkyel AI_showCopyButton', 'true') === 'true';
-    const codeSyntaxHighlight = ls('Ñkyel AI_codeSyntax', 'true') === 'true';
-    const blackPantherMode = ls('Ñkyel AI_bp', 'false') === 'true';
+    const accent = ls('Nkyel AI_accent', 'foret') as AccentKey;
+    const fontSize = ls('Nkyel AI_fontSize', 'normal') as FontSize;
+    const greetingStyle = ls('Nkyel AI_greetingStyle', 'gabonais') as GreetingStyle;
+    const language = ls('Nkyel AI_language', 'fr');
+    const showThinking = ls('Nkyel AI_showThinking', 'true') === 'true';
+    const streamResponses = ls('Nkyel AI_streamResponses', 'true') === 'true';
+    const showCopyButton = ls('Nkyel AI_showCopyButton', 'true') === 'true';
+    const codeSyntaxHighlight = ls('Nkyel AI_codeSyntax', 'true') === 'true';
+    const blackPantherMode = ls('Nkyel AI_bp', 'false') === 'true';
 
     applyThemeToDOM(blackPantherMode ? 'black-panther' : theme);
     applyAccentToDOM(accent);
@@ -127,59 +127,59 @@ export const useSettingsStore = create<SettingsState>((set, get) => ({
 
   setTheme: (t) => {
     applyThemeToDOM(t);
-    localStorage.setItem('Ñkyel AI_theme', t);
+    localStorage.setItem('Nkyel AI_theme', t);
     set({ theme: t });
   },
 
   setAccent: (a) => {
     applyAccentToDOM(a);
-    localStorage.setItem('Ñkyel AI_accent', a);
+    localStorage.setItem('Nkyel AI_accent', a);
     set({ accent: a });
   },
 
   setFontSize: (f) => {
     applyFontSizeToDOM(f);
-    localStorage.setItem('Ñkyel AI_fontSize', f);
+    localStorage.setItem('Nkyel AI_fontSize', f);
     set({ fontSize: f });
   },
 
   setGreetingStyle: (g) => {
-    localStorage.setItem('Ñkyel AI_greetingStyle', g);
+    localStorage.setItem('Nkyel AI_greetingStyle', g);
     set({ greetingStyle: g });
   },
 
   setLanguage: (l) => {
-    localStorage.setItem('Ñkyel AI_language', l);
+    localStorage.setItem('Nkyel AI_language', l);
     set({ language: l });
   },
 
   toggleThinking: () => {
     const v = !get().showThinking;
-    localStorage.setItem('Ñkyel AI_showThinking', String(v));
+    localStorage.setItem('Nkyel AI_showThinking', String(v));
     set({ showThinking: v });
   },
 
   toggleStream: () => {
     const v = !get().streamResponses;
-    localStorage.setItem('Ñkyel AI_streamResponses', String(v));
+    localStorage.setItem('Nkyel AI_streamResponses', String(v));
     set({ streamResponses: v });
   },
 
   toggleCopy: () => {
     const v = !get().showCopyButton;
-    localStorage.setItem('Ñkyel AI_showCopyButton', String(v));
+    localStorage.setItem('Nkyel AI_showCopyButton', String(v));
     set({ showCopyButton: v });
   },
 
   toggleSyntax: () => {
     const v = !get().codeSyntaxHighlight;
-    localStorage.setItem('Ñkyel AI_codeSyntax', String(v));
+    localStorage.setItem('Nkyel AI_codeSyntax', String(v));
     set({ codeSyntaxHighlight: v });
   },
 
   toggleBlackPanther: () => {
     const v = !get().blackPantherMode;
-    localStorage.setItem('Ñkyel AI_bp', String(v));
+    localStorage.setItem('Nkyel AI_bp', String(v));
     if (v) {
       applyThemeToDOM('black-panther');
     } else {

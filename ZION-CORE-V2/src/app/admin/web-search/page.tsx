@@ -1,4 +1,4 @@
-/* Ñkyel AI · admin/web-search/page.tsx · SmartANDJ AI Technologies · Constitution Zion Core
+/* Nkyel AI · admin/web-search/page.tsx · SmartANDJ AI Technologies · Constitution Zion Core
    Fondateur : Daniel Jonathan ANDJ
    Configuration Recherche Web — Miroir Open WebUI Web Search */
 'use client';
@@ -90,7 +90,7 @@ export default function AdminWebSearchPage() {
           checked={enabled}
           onChange={setEnabled}
           label="Activer la recherche web"
-          helper="Permet à Ñkyel AI de rechercher des informations sur le web pour répondre aux questions"
+          helper="Permet à Nkyel AI de rechercher des informations sur le web pour répondre aux questions"
         />
       </section>
 

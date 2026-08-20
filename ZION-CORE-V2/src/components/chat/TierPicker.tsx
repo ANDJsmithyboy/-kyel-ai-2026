@@ -1,5 +1,5 @@
 /**
- * Ñkyel AI · TierPicker.tsx · Client Component
+ * Nkyel AI · TierPicker.tsx · Client Component
  * SmartANDJ AI Technologies
  * Sélecteur de tier — Bottom sheet mobile, popover desktop.
  */

@@ -1,4 +1,4 @@
-/* Ñkyel AI · Admin Dashboard · SmartANDJ AI Technologies
+/* Nkyel AI · Admin Dashboard · SmartANDJ AI Technologies
    Main dashboard — KPIs, charts, activity feed, system health
    Apple/Vercel-inspired Glassmorphism UI
    Fondateur : Daniel Jonathan ANDJ */

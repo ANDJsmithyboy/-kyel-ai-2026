@@ -1,5 +1,5 @@
 /**
- * Ñkyel AI · ConversationStream
+ * Nkyel AI · ConversationStream
  * SmartANDJ AI Technologies
  * Task 7 — Liste des messages avec auto-scroll et curseur streaming
  */

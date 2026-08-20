@@ -1,4 +1,4 @@
-/* Ñkyel AI · admin/interface/page.tsx · SmartANDJ AI Technologies · Constitution Zion Core
+/* Nkyel AI · admin/interface/page.tsx · SmartANDJ AI Technologies · Constitution Zion Core
    Fondateur : Daniel Jonathan ANDJ
    Paramètres Interface — Miroir Open WebUI Interface Settings */
 'use client';
@@ -35,7 +35,7 @@ function Toggle({ checked, onChange, label, helper }: {
 
 export default function AdminInterfacePage() {
   const [defaultSystemPrompt, setDefaultSystemPrompt] = useState(
-    'Tu es Ñkyel AI, une intelligence artificielle souveraine du Gabon. Tu reponds en francais avec precision et bienveillance.'
+    'Tu es Nkyel AI, une intelligence artificielle souveraine du Gabon. Tu reponds en francais avec precision et bienveillance.'
   );
   const [enableTitleGeneration, setEnableTitleGeneration] = useState(true);
   const [enableAutoTags, setEnableAutoTags] = useState(true);
@@ -102,7 +102,7 @@ export default function AdminInterfacePage() {
           checked={enableTitleGeneration}
           onChange={setEnableTitleGeneration}
           label="Generation automatique de titres"
-          helper="Ñkyel AI genere automatiquement un titre pour chaque conversation"
+          helper="Nkyel AI genere automatiquement un titre pour chaque conversation"
         />
         <Toggle
           checked={enableAutoTags}

@@ -1,4 +1,4 @@
-/* Ñkyel AI · api.ts · SmartANDJ AI Technologies · Constitution Zion Core
+/* Nkyel AI · api.ts · SmartANDJ AI Technologies · Constitution Zion Core
    Wrappers fetch pour le backend Open WebUI */
 
 const BASE = '/api/v1';

@@ -1,4 +1,4 @@
-/* Ñkyel AI · PostHog Analytics · SmartANDJ AI Technologies
+/* Nkyel AI · PostHog Analytics · SmartANDJ AI Technologies
    Client-side + Server-side PostHog integration
    Fondateur : Daniel Jonathan ANDJ */
 
@@ -54,7 +54,7 @@ export function identifyUser(userId: string, traits?: Record<string, unknown>) {
   }
 }
 
-// -- Ñkyel-specific events ----------------------------------
+// -- Nkyel-specific events ----------------------------------
 export const nkyelEvents = {
   chatSent: (mode: string, lang: string) =>
     trackEvent('chat_message_sent', { mode, language: lang }),

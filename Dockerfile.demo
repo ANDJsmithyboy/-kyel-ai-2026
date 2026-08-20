@@ -1,0 +1,64 @@
+# Dockerfile.demo
+# Multi-stage build for Ñkyel AI Demo on RunPod CPU
+FROM node:20-alpine AS frontend-builder
+WORKDIR /app
+COPY ZION-CORE-V2/package.json ZION-CORE-V2/pnpm-lock.yaml* ./
+RUN npm install -g pnpm && pnpm install
+COPY ZION-CORE-V2/ .
+ENV NEXT_PUBLIC_API_URL=/api
+RUN pnpm build
+
+FROM python:3.11-slim AS backend-builder
+WORKDIR /app
+RUN pip install --no-cache-dir uv
+COPY backend/requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+COPY backend/ .
+
+FROM python:3.11-slim AS final
+WORKDIR /app
+
+# Install Node.js for frontend serving (using a lightweight server like serve or running via fastAPI)
+# But here we will use a python static file server or FastAPI to serve the frontend for simplicity, 
+# or just install Caddy/Nginx as reverse proxy.
+# Let's install caddy
+RUN apt-get update && apt-get install -y debian-keyring debian-archive-keyring apt-transport-https \
+    && apt-get install -y caddy \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install uv for uvx mcp-server-fetch
+RUN pip install --no-cache-dir uv
+
+# Copy backend
+COPY --from=backend-builder /usr/local/lib/python3.11/site-packages/ /usr/local/lib/python3.11/site-packages/
+COPY --from=backend-builder /usr/local/bin/ /usr/local/bin/
+COPY --from=backend-builder /app /app/backend
+
+# Copy frontend static build
+COPY --from=frontend-builder /app/out /app/frontend
+
+# Setup Caddyfile
+RUN echo ":8080 {\n\
+    route /api/* {\n\
+        uri strip_prefix /api\n\
+        reverse_proxy 127.0.0.1:8000\n\
+    }\n\
+    route /* {\n\
+        file_server { root /app/frontend }\n\
+        try_files {path} /index.html\n\
+    }\n\
+}" > /etc/caddy/Caddyfile
+
+EXPOSE 8080
+
+# Create a non-root user
+RUN useradd -m nkyel && chown -R nkyel:nkyel /app /etc/caddy
+USER nkyel
+
+# Add a start script
+RUN echo "#!/bin/sh\n\
+cd /app/backend && uvicorn main_dev:app --host 127.0.0.1 --port 8000 &\n\
+caddy run --config /etc/caddy/Caddyfile --adapter caddyfile\n\
+" > /app/start.sh && chmod +x /app/start.sh
+
+CMD ["/app/start.sh"]

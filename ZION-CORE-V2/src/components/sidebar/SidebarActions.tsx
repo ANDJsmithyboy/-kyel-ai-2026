@@ -1,5 +1,5 @@
 /**
- * Ñkyel AI · SidebarActions (Zone 2)
+ * Nkyel AI · SidebarActions (Zone 2)
  * SmartANDJ AI Technologies
  * Nouvelle Piste + Rechercher
  */

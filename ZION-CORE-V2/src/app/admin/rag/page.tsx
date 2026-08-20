@@ -1,4 +1,4 @@
-/* Ñkyel AI · RAG Monitor · SmartANDJ AI Technologies */
+/* Nkyel AI · RAG Monitor · SmartANDJ AI Technologies */
 'use client';
 import { KPICard, SectionHeader, DataTable, StatusBadge } from '@/components/admin/AdminComponents';
 

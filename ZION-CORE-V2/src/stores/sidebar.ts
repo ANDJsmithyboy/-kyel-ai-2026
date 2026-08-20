@@ -1,4 +1,4 @@
-/* Ñkyel AI · sidebar.ts · SmartANDJ AI Technologies */
+/* Nkyel AI · sidebar.ts · SmartANDJ AI Technologies */
 import { create } from 'zustand';
 
 interface SidebarState {

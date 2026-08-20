@@ -1,5 +1,5 @@
 /**
- * Ñkyel AI · MessageAssistant
+ * Nkyel AI · MessageAssistant
  * SmartANDJ AI Technologies
  * Task 7 — Bulle assistant alignée gauche avec markdown + sources
  */

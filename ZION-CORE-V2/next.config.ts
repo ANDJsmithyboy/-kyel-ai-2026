@@ -1,4 +1,4 @@
-/* Ñkyel AI · next.config.ts · SmartANDJ AI Technologies · Constitution Zion Core */
+/* Nkyel AI - next.config.ts - SmartANDJ AI Technologies */
 import type { NextConfig } from 'next';
 
 const BACKEND_URL = process.env.OPENWEBUI_BACKEND_URL || 'http://localhost:8080';
@@ -8,7 +8,7 @@ const nextConfig: NextConfig = {
   images: {
     remotePatterns: [
       { protocol: 'http', hostname: 'localhost' },
-      { protocol: 'https', hostname: '*.Ñkyel AI.ga' },
+      { protocol: 'https', hostname: '*.nkyel.ga' },
     ],
   },
   typescript: {
@@ -17,9 +17,7 @@ const nextConfig: NextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
-  experimental: {
-    cacheComponents: true,
-  },
+  cacheComponents: true,
 };
 
 export default nextConfig;

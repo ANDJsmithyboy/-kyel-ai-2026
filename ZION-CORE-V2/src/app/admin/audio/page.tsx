@@ -1,4 +1,4 @@
-/* Ñkyel AI · admin/audio/page.tsx · SmartANDJ AI Technologies · Constitution Zion Core
+/* Nkyel AI · admin/audio/page.tsx · SmartANDJ AI Technologies · Constitution Zion Core
    Fondateur : Daniel Jonathan ANDJ
    Parametres Audio TTS/STT — Miroir Open WebUI Audio Settings */
 'use client';

@@ -1,5 +1,5 @@
 /**
- * Ñkyel AI · ConnectorsRow
+ * Nkyel AI · ConnectorsRow
  * Pills horizontaux scrollables pour les connecteurs.
  */
 

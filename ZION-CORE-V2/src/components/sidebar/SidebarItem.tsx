@@ -1,5 +1,5 @@
 /**
- * Ñkyel AI · SidebarItem
+ * Nkyel AI · SidebarItem
  * SmartANDJ AI Technologies
  * Reusable interactive row — expanded & collapsed states
  */

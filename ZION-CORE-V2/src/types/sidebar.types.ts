@@ -1,5 +1,5 @@
 /**
- * Ñkyel AI · Sidebar Types
+ * Nkyel AI · Sidebar Types
  * SmartANDJ AI Technologies
  */
 

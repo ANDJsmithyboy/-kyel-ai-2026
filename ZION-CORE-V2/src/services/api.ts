@@ -1,5 +1,5 @@
-/* Ñkyel AI · api.ts · SmartANDJ AI Technologies
-   Service de communication avec le backend FastAPI Ñkyel AI v1
+/* Nkyel AI · api.ts · SmartANDJ AI Technologies
+   Service de communication avec le backend FastAPI Nkyel AI v1
    Fondateur : Daniel Jonathan ANDJ */
 
 const BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';

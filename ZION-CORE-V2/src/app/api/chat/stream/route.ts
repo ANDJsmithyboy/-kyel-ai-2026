@@ -1,5 +1,5 @@
 /**
- * Ñkyel AI · Chat Stream API Route
+ * Nkyel AI · Chat Stream API Route
  * SmartANDJ AI Technologies
  * Task 12 — Proxy SSE Next.js → FastAPI
  */
@@ -43,7 +43,7 @@ export async function POST(req: NextRequest) {
     const stream = new ReadableStream({
       async start(controller) {
         const encoder = new TextEncoder();
-        const mockText = "Bonjour ! Je suis l'IA Ñkyel en mode simulation (Mock). Je n'ai pas besoin du backend FastAPI pour fonctionner. Mon design suit maintenant la Constitution Zion Core V3. Comment puis-je t'aider aujourd'hui ?";
+        const mockText = "Bonjour ! Je suis l'IA Nkyel en mode simulation (Mock). Je n'ai pas besoin du backend FastAPI pour fonctionner. Mon design suit maintenant la Constitution Zion Core V3. Comment puis-je t'aider aujourd'hui ?";
         const words = mockText.split(' ');
         
         for (const word of words) {

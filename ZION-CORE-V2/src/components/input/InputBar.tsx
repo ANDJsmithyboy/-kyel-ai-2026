@@ -1,7 +1,7 @@
 /**
- * Ñkyel AI · InputBar V3
+ * Nkyel AI · InputBar V3
  * SmartANDJ AI Technologies
- * Glassmorphism, ÑkyelVision Live, placeholder rotatif
+ * Glassmorphism, NkyelVision Live, placeholder rotatif
  */
 
 'use client';
@@ -121,7 +121,7 @@ export default function InputBar({
         onDismiss={() => setShowBadge(false)}
       />
 
-      {/* Overlay Live ÑkyelVision */}
+      {/* Overlay Live NkyelVision */}
       <AnimatePresence>
         {isLiveActive && (
           <motion.div
@@ -144,13 +144,13 @@ export default function InputBar({
                 className="text-sm font-semibold"
                 style={{ color: 'var(--text-primary, #EDEAE3)' }}
               >
-                ÑkyelVision regarde…
+                NkyelVision regarde…
               </span>
             </div>
             <button
               onClick={toggleLive}
               className="text-[#8A8378] hover:text-[#E0584B] transition-colors"
-              aria-label="Arrêter ÑkyelVision"
+              aria-label="Arrêter NkyelVision"
             >
               <Stop size={22} weight="fill" />
             </button>

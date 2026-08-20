@@ -1,5 +1,5 @@
 /**
- * Ñkyel AI · Agent Stream Adapter (Vercel AI SDK)
+ * Nkyel AI · Agent Stream Adapter (Vercel AI SDK)
  * Transforme le flux SSE (Server-Sent Events) brut de FastAPI 
  * en Data Stream Protocol compatible avec le Vercel AI SDK (`useChat`).
  */

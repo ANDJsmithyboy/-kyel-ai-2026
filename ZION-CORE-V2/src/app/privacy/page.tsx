@@ -1,18 +1,18 @@
-/* Ñkyel AI · Privacy Policy · SmartANDJ AI Technologies
+/* Nkyel AI · Privacy Policy · SmartANDJ AI Technologies
    Politique de Confidentialité — page publique
    Fondateur : Daniel Jonathan ANDJ */
 
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Confidentialité — Ñkyel AI',
-  description: 'Politique de Confidentialité de Ñkyel AI par SmartANDJ AI Technologies.',
+  title: 'Confidentialité — Nkyel AI',
+  description: 'Politique de Confidentialité de Nkyel AI par SmartANDJ AI Technologies.',
 };
 
 const SECTIONS = [
   {
     title: '1. Responsable du Traitement',
-    content: `SmartANDJ AI Technologies, société basée à Libreville, Gabon, est responsable du traitement de vos données personnelles dans le cadre de l'utilisation de Ñkyel AI.`,
+    content: `SmartANDJ AI Technologies, société basée à Libreville, Gabon, est responsable du traitement de vos données personnelles dans le cadre de l'utilisation de Nkyel AI.`,
   },
   {
     title: '2. Données Collectées',
@@ -20,7 +20,7 @@ const SECTIONS = [
   },
   {
     title: '3. Finalités du Traitement',
-    content: `Vos données sont utilisées pour :\n\n• Fournir et améliorer le Service Ñkyel AI.\n• Personnaliser votre expérience (langue, modèle, préférences).\n• Gérer votre compte et vos abonnements.\n• Assurer la sécurité et prévenir les abus.\n• Si vous y consentez : entraîner et améliorer les modèles d'IA Ñkyel (données anonymisées).`,
+    content: `Vos données sont utilisées pour :\n\n• Fournir et améliorer le Service Nkyel AI.\n• Personnaliser votre expérience (langue, modèle, préférences).\n• Gérer votre compte et vos abonnements.\n• Assurer la sécurité et prévenir les abus.\n• Si vous y consentez : entraîner et améliorer les modèles d'IA Nkyel (données anonymisées).`,
   },
   {
     title: '4. Base Légale du Traitement',
@@ -76,7 +76,7 @@ export default function PrivacyPage() {
           ))}
         </div>
 
-        <footer className="legal-footer">SMARTANDJ AI TECHNOLOGIES · Ñkyel AI 2026</footer>
+        <footer className="legal-footer">SMARTANDJ AI TECHNOLOGIES · Nkyel AI 2026</footer>
       </div>
 
       <style>{`

@@ -1,5 +1,5 @@
 /**
- * Ñkyel AI · L'Antre · page.tsx · Server Component
+ * Nkyel AI · L'Antre · page.tsx · Server Component
  * SmartANDJ AI Technologies
  * Page de paramètres — shell UI uniquement, zéro API.
  */
@@ -52,7 +52,7 @@ const user = {
 
 const TIER_LABELS: Record<string, string> = {
   FREE: 'NKYEL_CHUI',
-  NYEL: 'ÑKYEL',
+  NYEL: 'NKYEL',
   WANDANA: 'RECHERCHE_WEB',
   ONYX: 'NKYEL_RADI',
   BLACK_PANTHER: 'BLACK PANTHER',
@@ -142,9 +142,9 @@ export default function AntrePage() {
 
         {/* REJOINDRE LA MEUTE */}
         <SettingsSection title="REJOINDRE LA MEUTE">
-          <SettingsRow icon={<SendIcon />} label="Telegram" action="arrow" href="https://t.me/Ñkyel AI" />
-          <SettingsRow icon={<ChatIcon />} label="WhatsApp" action="arrow" href="https://wa.me/Ñkyel AI" />
-          <SettingsRow icon={<GlobeIcon />} label="X / Twitter" action="arrow" href="https://x.com/Ñkyel AI" />
+          <SettingsRow icon={<SendIcon />} label="Telegram" action="arrow" href="https://t.me/Nkyel AI" />
+          <SettingsRow icon={<ChatIcon />} label="WhatsApp" action="arrow" href="https://wa.me/Nkyel AI" />
+          <SettingsRow icon={<GlobeIcon />} label="X / Twitter" action="arrow" href="https://x.com/Nkyel AI" />
           <SettingsRow icon={<BriefIcon />} label="LinkedIn" action="arrow" href="https://linkedin.com/company/smartandj" isLast />
         </SettingsSection>
 

@@ -1,5 +1,5 @@
 /**
- * Ñkyel AI · useRenduPanel Hook
+ * Nkyel AI · useRenduPanel Hook
  * SmartANDJ AI Technologies
  */
 

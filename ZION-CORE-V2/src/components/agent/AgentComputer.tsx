@@ -1,5 +1,5 @@
 /**
- * Ñkyel AI · AgentComputer — Design System V3
+ * Nkyel AI · AgentComputer — Design System V3
  * SmartANDJ AI Technologies
  * Canvas JPEG live du navigateur Playwright.
  * Cadre avec bordure 1px accent à 20% opacité.

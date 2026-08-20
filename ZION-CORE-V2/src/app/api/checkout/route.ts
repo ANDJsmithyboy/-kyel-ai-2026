@@ -1,4 +1,4 @@
-/* Ñkyel AI · Checkout API · SmartANDJ AI Technologies
+/* Nkyel AI · Checkout API · SmartANDJ AI Technologies
    Creates payment sessions via the selected payment provider
    Fondateur : Daniel Jonathan ANDJ */
 

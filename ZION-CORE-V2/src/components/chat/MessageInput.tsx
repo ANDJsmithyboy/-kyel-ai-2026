@@ -1,4 +1,4 @@
-/* Ñkyel AI · MessageInput.tsx · SmartANDJ AI Technologies · Constitution Zion Core
+/* Nkyel AI · MessageInput.tsx · SmartANDJ AI Technologies · Constitution Zion Core
    Fondateur : Daniel Jonathan ANDJ
    Zone de saisie du chat avec token gating
    Migré depuis MessageInput.svelte */

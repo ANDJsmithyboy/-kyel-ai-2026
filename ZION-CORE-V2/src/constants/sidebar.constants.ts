@@ -1,5 +1,5 @@
 /**
- * Ñkyel AI · Sidebar Constants
+ * Nkyel AI · Sidebar Constants
  * SmartANDJ AI Technologies
  */
 

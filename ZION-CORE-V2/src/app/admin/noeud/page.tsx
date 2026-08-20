@@ -1,8 +1,8 @@
-/* Ñkyel AI · admin/noeud/page.tsx · SmartANDJ AI Technologies · Constitution Zion Core
+/* Nkyel AI · admin/noeud/page.tsx · SmartANDJ AI Technologies · Constitution Zion Core
    Fondateur : Daniel Jonathan ANDJ
    Connexions API — Gestion des fournisseurs externes (Alibaba, DeepSeek, Groq, etc.)
    Miroir de la philosophie Open WebUI : les clés et URLs sont configurables ici,
-   mais les utilisateurs finaux ne voient que les noms Ñkyel Souverains. */
+   mais les utilisateurs finaux ne voient que les noms Nkyel Souverains. */
 'use client';
 
 import { useState } from 'react';

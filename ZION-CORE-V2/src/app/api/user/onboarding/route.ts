@@ -1,4 +1,4 @@
-/* Ñkyel AI · Onboarding API Route · SmartANDJ AI Technologies
+/* Nkyel AI · Onboarding API Route · SmartANDJ AI Technologies
    Saves onboarding data (birthDate, sector, ToS) into the users table (meta JSONB)
    and updates Clerk publicMetadata with onboardingComplete flag.
    Fondateur : Daniel Jonathan ANDJ */

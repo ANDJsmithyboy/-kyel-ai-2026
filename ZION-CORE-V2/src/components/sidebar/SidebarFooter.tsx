@@ -1,5 +1,5 @@
 /**
- * Ñkyel AI · SidebarFooter (Zone 5)
+ * Nkyel AI · SidebarFooter (Zone 5)
  * SmartANDJ AI Technologies
  * Energy gauge + Profile + Settings dropdown
  */

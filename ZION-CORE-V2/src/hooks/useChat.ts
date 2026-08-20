@@ -1,5 +1,5 @@
 /**
- * Ñkyel AI · useChat Hook
+ * Nkyel AI · useChat Hook
  * SmartANDJ AI Technologies
  * Task 4 — SSE streaming chat avec reconnexion auto
  */

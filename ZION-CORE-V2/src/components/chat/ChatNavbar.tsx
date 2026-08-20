@@ -34,7 +34,7 @@ export default function ChatNavbar({
         <div className="flex-1 flex flex-col items-center justify-center pointer-events-none">
           <div className="md:hidden">
             <span className="font-display font-semibold text-base text-[var(--text-primary)] tracking-tight">
-              Ñkyel AI
+              Nkyel AI
             </span>
           </div>
           <div className="hidden md:flex items-center justify-center h-6">

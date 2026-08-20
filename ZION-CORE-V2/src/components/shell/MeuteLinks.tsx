@@ -1,5 +1,5 @@
 /**
- * Ñkyel AI · MeuteLinks (Rejoindre La Meute)
+ * Nkyel AI · MeuteLinks (Rejoindre La Meute)
  * SmartANDJ AI Technologies
  * Icônes sociales uniquement — Phosphor thin
  */
@@ -9,10 +9,10 @@
 import { TelegramLogo, WhatsappLogo, XLogo, LinkedinLogo } from '@phosphor-icons/react';
 
 const LINKS = [
-  { label: 'Telegram',  href: 'https://t.me/Ñkyel AI',                icon: TelegramLogo },
+  { label: 'Telegram',  href: 'https://t.me/Nkyel AI',                icon: TelegramLogo },
   { label: 'WhatsApp',  href: 'https://wa.me/nkyelai',                 icon: WhatsappLogo },
-  { label: 'X',         href: 'https://x.com/Ñkyel AI',               icon: XLogo },
-  { label: 'LinkedIn',  href: 'https://linkedin.com/company/Ñkyel AI', icon: LinkedinLogo },
+  { label: 'X',         href: 'https://x.com/Nkyel AI',               icon: XLogo },
+  { label: 'LinkedIn',  href: 'https://linkedin.com/company/Nkyel AI', icon: LinkedinLogo },
 ];
 
 export default function MeuteLinks() {

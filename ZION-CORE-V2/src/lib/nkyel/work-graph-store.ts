@@ -1,5 +1,5 @@
 /**
- * Ñkyel AI — Work Graph Zustand Store
+ * Nkyel AI — Work Graph Zustand Store
  * 
  * Central state management for the Canonical Work Graph.
  * Connects the Event Store to the React UI layer.

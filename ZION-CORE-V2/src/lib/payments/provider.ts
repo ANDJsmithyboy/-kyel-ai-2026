@@ -1,4 +1,4 @@
-/* Ñkyel AI · Payment Provider Interface · SmartANDJ AI Technologies
+/* Nkyel AI · Payment Provider Interface · SmartANDJ AI Technologies
    Abstract payment provider — all concrete providers implement this.
    Fondateur : Daniel Jonathan ANDJ */
 
@@ -46,7 +46,7 @@ export const PLANS: PlanTier[] = [
     priceCurrency: 'XAF',
     interval: 'month',
     features: [
-      'Tous les modèles (Aurata, Ñkyel, Wandana)',
+      'Tous les modèles (Aurata, Nkyel, Wandana)',
       'Messages illimités',
       'Tous les agents (OnyxGris, Le Goat, Black Panther AI)',
       'Recherche web avancée (Wandana)',

@@ -1,4 +1,4 @@
-/* Ñkyel AI · Upstash Redis Client · SmartANDJ AI Technologies
+/* Nkyel AI · Upstash Redis Client · SmartANDJ AI Technologies
    Cache, rate limiting, queues, token counting
    Fondateur : Daniel Jonathan ANDJ */
 

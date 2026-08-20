@@ -1,6 +1,6 @@
 /**
- * Ñkyel AI — Module Index
- * Re-exports all core Ñkyel modules.
+ * Nkyel AI — Module Index
+ * Re-exports all core Nkyel modules.
  */
 
 // Types

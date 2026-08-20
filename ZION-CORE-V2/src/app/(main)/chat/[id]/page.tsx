@@ -1,5 +1,5 @@
 /**
- * Ñkyel AI · Chat [id] Page (conversation existante)
+ * Nkyel AI · Chat [id] Page (conversation existante)
  * SmartANDJ AI Technologies
  * Task 11 — Charge la conversation puis streaming
  */

@@ -1,5 +1,5 @@
 /**
- * Ñkyel AI · SidebarNav.tsx · Client Component (usePathname)
+ * Nkyel AI · SidebarNav.tsx · Client Component (usePathname)
  * SmartANDJ AI Technologies
  * Navigation principale — Nouvelle Piste + 3 nav items.
  */

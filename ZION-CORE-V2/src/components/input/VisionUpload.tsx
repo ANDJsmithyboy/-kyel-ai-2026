@@ -144,7 +144,7 @@ export function VisionUpload({ onUpload, isLoading }: VisionUploadProps) {
               ) : (
                 <>
                   <Eye weight="regular" className="w-5 h-5" />
-                  <span>Voir avec ÑkyelVision 👁</span>
+                  <span>Voir avec NkyelVision 👁</span>
                 </>
               )}
             </button>

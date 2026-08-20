@@ -1,4 +1,4 @@
-/* Ñkyel AI · DeerFlow Monitor · SmartANDJ AI Technologies */
+/* Nkyel AI · DeerFlow Monitor · SmartANDJ AI Technologies */
 'use client';
 import { KPICard, SectionHeader, DataTable, StatusBadge, ChartCard } from '@/components/admin/AdminComponents';
 

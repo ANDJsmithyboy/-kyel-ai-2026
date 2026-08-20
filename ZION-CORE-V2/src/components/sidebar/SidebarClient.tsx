@@ -1,5 +1,5 @@
 /**
- * Ñkyel AI · SidebarClient
+ * Nkyel AI · SidebarClient
  * SmartANDJ AI Technologies
  * Main 'use client' orchestrator — all 5 zones, collapse/mobile
  */
@@ -47,7 +47,7 @@ export default function SidebarClient() {
         data-collapsed={isMobile ? 'false' : String(isCollapsed)}
         data-open={isMobile ? String(isOpen) : undefined}
         role="navigation"
-        aria-label="Barre latérale Ñkyel AI"
+        aria-label="Barre latérale Nkyel AI"
       >
         {/* Zone 1 — Header */}
         <SidebarHeader

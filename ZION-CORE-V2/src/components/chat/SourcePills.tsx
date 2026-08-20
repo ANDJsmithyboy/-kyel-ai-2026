@@ -1,5 +1,5 @@
 /**
- * Ñkyel AI · SourcePills
+ * Nkyel AI · SourcePills
  * SmartANDJ AI Technologies
  * Task 7 — Chips de sources (Radar LOXO / Invoquer LOXO / Coffre-Fort)
  */

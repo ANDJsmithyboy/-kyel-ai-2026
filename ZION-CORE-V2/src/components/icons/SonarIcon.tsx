@@ -1,7 +1,7 @@
 /**
- * Ñkyel AI · SonarIcon / NkyelIcon — Dauphin 🐬
+ * Nkyel AI · SonarIcon / NkyelIcon — Dauphin 🐬
  * SmartANDJ AI Technologies
- * Ñkyel — Mode avancé — Dauphin complet avec nageoire dorsale, rostre, œil, caudale
+ * Nkyel — Mode avancé — Dauphin complet avec nageoire dorsale, rostre, œil, caudale
  */
 
 import { SVGProps } from 'react';
@@ -35,5 +35,5 @@ export const SonarIcon = ({ className, ...props }: SVGProps<SVGSVGElement>) => (
   </svg>
 );
 
-/** Alias — Ñkyel est le dauphin */
+/** Alias — Nkyel est le dauphin */
 export const NkyelIcon = SonarIcon;

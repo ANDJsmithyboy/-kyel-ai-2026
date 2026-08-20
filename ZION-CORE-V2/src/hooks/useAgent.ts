@@ -1,5 +1,5 @@
 /**
- * Ñkyel AI · useAgent Hook
+ * Nkyel AI · useAgent Hook
  * SmartANDJ AI Technologies
  * Task 8 — SSE streaming agent (ONYX / BLACK PANTHER)
  */

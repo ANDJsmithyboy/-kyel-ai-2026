@@ -1,5 +1,5 @@
 /**
- * Ñkyel AI · TopBar
+ * Nkyel AI · TopBar
  * SmartANDJ AI Technologies
  * Sidebar toggle + Logo when collapsed + Nouvelle Piste + Rendu
  */
@@ -50,7 +50,7 @@ export default function TopBar() {
                 className="text-[14px] font-semibold text-[var(--text-primary)] hidden sm:inline"
                 style={{ fontFamily: 'var(--font-heading)' }}
               >
-                Ñkyel AI
+                Nkyel AI
               </span>
             </motion.div>
           )}

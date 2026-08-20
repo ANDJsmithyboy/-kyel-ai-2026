@@ -1,4 +1,4 @@
-/* Ñkyel AI · admin/documents/page.tsx · SmartANDJ AI Technologies · Constitution Zion Core
+/* Nkyel AI · admin/documents/page.tsx · SmartANDJ AI Technologies · Constitution Zion Core
    Fondateur : Daniel Jonathan ANDJ
    Documents & RAG — Miroir complet Open WebUI Documents + Embedding + Reranking */
 'use client';

@@ -1,5 +1,5 @@
 /**
- * Ñkyel AI · ModelSelector (Vecteur de Force)
+ * Nkyel AI · ModelSelector (Vecteur de Force)
  * SmartANDJ AI Technologies
  */
 

@@ -1,4 +1,4 @@
-/* Ñkyel AI · admin/analytics/page.tsx · SmartANDJ AI Technologies · Constitution Zion Core
+/* Nkyel AI · admin/analytics/page.tsx · SmartANDJ AI Technologies · Constitution Zion Core
    Fondateur : Daniel Jonathan ANDJ
    Analytics — graphiques d'usage et métriques avancées */
 'use client';
@@ -47,7 +47,7 @@ export default function AdminAnalyticsPage() {
       <div>
         <h2 className="text-xl font-bold text-[var(--text-primary)] mb-1">Analytics</h2>
         <p className="text-sm text-[var(--text-tertiary)]">
-          Métriques d&apos;utilisation de Ñkyel AI
+          Métriques d&apos;utilisation de Nkyel AI
         </p>
       </div>
 
@@ -66,9 +66,9 @@ export default function AdminAnalyticsPage() {
           Utilisation par modèle
         </h3>
         <div className="space-y-4">
-          <ProgressBar label="Ñkyel AI Flash" value={0} max={100} color="#FFD54F" />
-          <ProgressBar label="Ñkyel AI Standard" value={0} max={100} color="#29B6F6" />
-          <ProgressBar label="Ñkyel AI Pro" value={0} max={100} color="#CE93D8" />
+          <ProgressBar label="Nkyel AI Flash" value={0} max={100} color="#FFD54F" />
+          <ProgressBar label="Nkyel AI Standard" value={0} max={100} color="#29B6F6" />
+          <ProgressBar label="Nkyel AI Pro" value={0} max={100} color="#CE93D8" />
           <ProgressBar label="Black Panther" value={0} max={100} color="#D4A417" />
         </div>
       </div>

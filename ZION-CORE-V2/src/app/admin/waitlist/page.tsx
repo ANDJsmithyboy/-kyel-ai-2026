@@ -1,4 +1,4 @@
-/* Ñkyel AI · Waitlist · SmartANDJ AI Technologies */
+/* Nkyel AI · Waitlist · SmartANDJ AI Technologies */
 'use client';
 import { useState } from 'react';
 import { SectionHeader, DataTable, StatusBadge, KPICard } from '@/components/admin/AdminComponents';
@@ -12,7 +12,7 @@ const waitlistKpis = [
 
 const mockWaitlist = [
   { id: '1', name: 'Fabrice M.', email: 'fabrice@univ-gabon.ga', reason: 'Recherche académique IA en langues locales', source: 'Twitter', status: 'pending', date: '18/06/2026' },
-  { id: '2', name: 'Cynthia O.', email: 'cynthia@startup.ga', reason: 'Intégrer Ñkyel AI dans notre SaaS', source: 'LinkedIn', status: 'invited', date: '17/06/2026' },
+  { id: '2', name: 'Cynthia O.', email: 'cynthia@startup.ga', reason: 'Intégrer Nkyel AI dans notre SaaS', source: 'LinkedIn', status: 'invited', date: '17/06/2026' },
   { id: '3', name: 'Michel N.', email: 'michel@gov.ga', reason: 'Modernisation administration publique', source: 'Referral', status: 'pending', date: '16/06/2026' },
   { id: '4', name: 'Estelle B.', email: 'estelle@media.ga', reason: 'Création de contenu multilingue', source: 'Google', status: 'converted', date: '15/06/2026' },
   { id: '5', name: 'Patrick A.', email: 'patrick@edu.ga', reason: 'Plateforme éducative pour le fang', source: 'Twitter', status: 'pending', date: '14/06/2026' },

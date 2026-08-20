@@ -1,5 +1,5 @@
 /**
- * Ñkyel AI · IconEnPiste — Deux pas de panthère 🐾🐾
+ * Nkyel AI · IconEnPiste — Deux pas de panthère 🐾🐾
  * SmartANDJ AI Technologies
  * Icône "En Piste" — deux empreintes de pattes en diagonale (bien visibles)
  */

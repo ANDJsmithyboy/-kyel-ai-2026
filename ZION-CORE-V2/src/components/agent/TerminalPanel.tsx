@@ -1,5 +1,5 @@
 /**
- * Ñkyel AI · TerminalPanel — Design System V3
+ * Nkyel AI · TerminalPanel — Design System V3
  * SmartANDJ AI Technologies
  * JetBrains Mono 13px, mapping ANSI gabonais,
  * curseur accent clignotant, fond neutre très sombre.

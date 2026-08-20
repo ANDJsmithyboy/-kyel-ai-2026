@@ -1,4 +1,4 @@
-/* Ñkyel AI · Admin Header · SmartANDJ AI Technologies
+/* Nkyel AI · Admin Header · SmartANDJ AI Technologies
    Apple-inspired glassmorphism top bar (Dynamic OLED Themes)
    Fondateur : Daniel Jonathan ANDJ */
 

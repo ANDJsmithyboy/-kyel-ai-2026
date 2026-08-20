@@ -8,7 +8,7 @@ interface Message {
   id: string;
   role: 'user' | 'assistant';
   content: string;
-  reasoning?: string[]; // For Ñkyel and Black Panther
+  reasoning?: string[]; // For Nkyel and Black Panther
   model?: string;
   versions?: string[]; // To track edited history
   currentVersionIndex?: number;
@@ -53,14 +53,14 @@ export default function HuntingZone({ messages, isGenerating, onEditMessage, onR
           transition={{ duration: 1.2, ease: "easeOut" }}
           className="relative mb-8"
         >
-          {/* Glowing Ñkyel Seal */}
+          {/* Glowing Nkyel Seal */}
           <motion.div 
             className="absolute inset-0 bg-primary/20 blur-[60px] rounded-full"
             animate={{ scale: [1, 1.2, 1], opacity: [0.5, 0.8, 0.5] }}
             transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
           />
           <div className="relative w-28 h-28 bg-gradient-to-br from-[#1a1a1a] to-[#0a0a0a] border border-white/10 rounded-[32px] flex items-center justify-center shadow-2xl p-4">
-            <img src="/nkyel-logo-transparent.svg" alt="Ñkyel AI Logo" className="w-full h-full object-contain drop-shadow-lg" />
+            <img src="/nkyel-logo-transparent.svg" alt="Nkyel AI Logo" className="w-full h-full object-contain drop-shadow-lg" />
           </div>
         </motion.div>
         
@@ -78,7 +78,7 @@ export default function HuntingZone({ messages, isGenerating, onEditMessage, onR
           transition={{ delay: 0.3 }}
           className="text-white/50 text-center max-w-md text-sm"
         >
-          Demandez n'importe quoi à Ñkyel AI.
+          Demandez n'importe quoi à Nkyel AI.
         </motion.p>
       </div>
     );
@@ -208,9 +208,9 @@ export default function HuntingZone({ messages, isGenerating, onEditMessage, onR
                   </button>
                 </div>
 
-                {/* Ñkyel Seal for end of turn */}
+                {/* Nkyel Seal for end of turn */}
                 <div className="flex items-center gap-2 opacity-30 select-none">
-                  <span className="text-[10px] uppercase font-bold tracking-widest">{msg.model || 'Ñkyel AI'}</span>
+                  <span className="text-[10px] uppercase font-bold tracking-widest">{msg.model || 'Nkyel AI'}</span>
                   <div className="w-4 h-4 rounded bg-primary/20 flex items-center justify-center">
                     <span className="text-[8px] font-bold text-primary">G</span>
                   </div>

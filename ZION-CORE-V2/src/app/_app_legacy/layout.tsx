@@ -1,4 +1,4 @@
-/* Ñkyel AI · (app)/layout.tsx · SmartANDJ AI Technologies · Constitution Zion Core
+/* Nkyel AI · (app)/layout.tsx · SmartANDJ AI Technologies · Constitution Zion Core
    Fondateur : Daniel Jonathan ANDJ
    Layout principal avec Sidebar + zone de contenu */
 'use client';

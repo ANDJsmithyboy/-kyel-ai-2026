@@ -1,4 +1,4 @@
-/* Ñkyel AI · Alerts & Incidents · SmartANDJ AI Technologies */
+/* Nkyel AI · Alerts & Incidents · SmartANDJ AI Technologies */
 'use client';
 import { SectionHeader, DataTable, StatusBadge, KPICard } from '@/components/admin/AdminComponents';
 

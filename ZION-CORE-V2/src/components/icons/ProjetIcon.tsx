@@ -1,5 +1,5 @@
 /**
- * Ñkyel AI · ProjetIcon — Dossier Projet ★
+ * Nkyel AI · ProjetIcon — Dossier Projet ★
  * SmartANDJ AI Technologies
  * Icône "Projet" — dossier avec étoile (style Claude Projects)
  */

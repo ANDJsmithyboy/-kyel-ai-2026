@@ -23,7 +23,7 @@ export function VisionResultCard({ mediaUrl, mediaType, description, tokensUsed,
       <div className="flex items-center justify-between px-4 py-3 border-b border-[var(--text-ai)]/5 bg-black/10">
         <div className="flex items-center gap-2">
           <Eye weight="regular" className="w-5 h-5 text-[var(--accent)]" />
-          <span className="text-sm font-medium text-[var(--accent)]">ÑkyelVision 👁</span>
+          <span className="text-sm font-medium text-[var(--accent)]">NkyelVision 👁</span>
         </div>
         <div className="flex items-center gap-3 text-xs text-[var(--text-ai)]/50">
           {durationMs && (

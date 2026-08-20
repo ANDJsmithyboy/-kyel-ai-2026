@@ -1,4 +1,4 @@
-/* Ñkyel AI · E-Billing Provider · SmartANDJ AI Technologies
+/* Nkyel AI · E-Billing Provider · SmartANDJ AI Technologies
    OAuth2 (Cognito) integration with E-Billing Gabon (Digitech Africa)
    Fondateur : Daniel Jonathan ANDJ */
 
@@ -86,7 +86,7 @@ export class EBillingProvider implements PaymentProvider {
         body: JSON.stringify({
           amount: request.amount,
           currency: request.currency || 'XAF',
-          description: `Abonnement Ñkyel AI — ${request.metadata?.planName || 'Pro'}`,
+          description: `Abonnement Nkyel AI — ${request.metadata?.planName || 'Pro'}`,
           payer_email: request.email,
           payer_reference: request.userId,
           callback_url: `${process.env.NEXT_PUBLIC_APP_URL}/api/webhooks/ebilling`,

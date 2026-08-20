@@ -1,5 +1,5 @@
 /**
- * Ñkyel AI · Sidebar Complète
+ * Nkyel AI · Sidebar Complète
  * SmartANDJ AI Technologies
  * Gemini/Claude-style: IbogaAI toggle, stacked nav, L'Antre at bottom
  */
@@ -90,11 +90,11 @@ export default function Sidebar() {
       className="flex flex-col h-full overflow-hidden w-[260px] z-40"
       style={{ background: 'var(--bg-elevated)', borderRight: '1px solid var(--border)' }}
     >
-      {/* -- Header: Logo Ñkyel AI -- */}
+      {/* -- Header: Logo Nkyel AI -- */}
       <div className="px-4 pt-4 pb-3 flex items-center gap-2.5">
         <Image
           src="/nkyel-logo.png"
-          alt="Ñkyel AI"
+          alt="Nkyel AI"
           width={28}
           height={28}
           className="rounded-lg flex-shrink-0"
@@ -305,7 +305,7 @@ export default function Sidebar() {
                 <span>⚠️</span> Suppression Définitive
               </h3>
               <p className="text-[13px] leading-relaxed text-[var(--text-secondary)]">
-                Cette action est <strong className="text-[var(--color-error)]">irréversible</strong>. Votre Profil Cadre, vos conversations En Piste, et votre historique seront définitivement effacés de Ñkyel AI.
+                Cette action est <strong className="text-[var(--color-error)]">irréversible</strong>. Votre Profil Cadre, vos conversations En Piste, et votre historique seront définitivement effacés de Nkyel AI.
               </p>
               <p className="text-[12px] italic p-2.5 rounded-lg bg-[rgba(239,68,68,0.05)] border border-[rgba(239,68,68,0.1)] text-[var(--text-tertiary)]">
                 Pour valider, veuillez saisir <span className="font-mono select-all text-[var(--text-primary)]">SUPPRIMER</span> ci-dessous :

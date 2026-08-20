@@ -1,4 +1,4 @@
-/* Ñkyel AI · Navbar.tsx · SmartANDJ AI Technologies · Constitution Zion Core
+/* Nkyel AI · Navbar.tsx · SmartANDJ AI Technologies · Constitution Zion Core
    Fondateur : Daniel Jonathan ANDJ
    Barre de navigation supérieure
    Migré depuis Navbar.svelte */
@@ -28,8 +28,8 @@ export default function Navbar() {
         )}
         {isMobile && !sidebarOpen && (
           <img
-            src="/Ñkyel AI-logo.jpeg"
-            alt="Ñkyel AI"
+            src="/Nkyel AI-logo.jpeg"
+            alt="Nkyel AI"
             className="w-7 h-7 rounded-lg object-cover"
           />
         )}

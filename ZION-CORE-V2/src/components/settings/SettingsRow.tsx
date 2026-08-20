@@ -1,5 +1,5 @@
 /**
- * Ñkyel AI · SettingsRow.tsx · Server Component
+ * Nkyel AI · SettingsRow.tsx · Server Component
  * SmartANDJ AI Technologies
  */
 

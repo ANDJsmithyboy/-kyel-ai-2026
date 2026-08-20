@@ -1,4 +1,4 @@
-/* Ñkyel AI · utils.ts · SmartANDJ AI Technologies · Constitution Zion Core */
+/* Nkyel AI · utils.ts · SmartANDJ AI Technologies · Constitution Zion Core */
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 

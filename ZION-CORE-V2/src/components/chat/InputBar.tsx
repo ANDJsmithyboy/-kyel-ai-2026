@@ -21,7 +21,7 @@ interface Model {
 
 const MODELS: Model[] = [
   { key: 'aurata',        label: 'Aurata',        description: 'Mode Flash — exécution quotidienne', status: 'online' },
-  { key: 'nkyel',         label: 'Ñkyel',         description: 'Mode Pro — raisonnement logique profond', status: 'online' },
+  { key: 'nkyel',         label: 'Nkyel',         description: 'Mode Pro — raisonnement logique profond', status: 'online' },
   { key: 'onyx-gris',     label: 'OnyxGris',      description: 'Agent IA autonome', status: 'online' },
   { key: 'black-panther', label: 'Black Panther', description: 'Le GOAT — multi-agent autonome', status: 'online' },
   { key: 'wandana',       label: 'Wandana',       description: 'L\'Éléphant — recherche web profonde', status: 'online' },
@@ -33,11 +33,11 @@ interface InputBarProps {
   isGenerating?: boolean;
 }
 
-/* -- Ñkyel Waves --------------------- */
+/* -- Nkyel Waves --------------------- */
 function NkyelWaves({ isLive }: { isLive?: boolean }) {
   const bars = isLive ? Array.from({ length: 24 }) : [0, 1, 2, 3];
   return (
-    <div className={`flex items-center gap-[3px] ${isLive ? 'flex-1 justify-center' : ''}`} aria-label="Ñkyel Waves">
+    <div className={`flex items-center gap-[3px] ${isLive ? 'flex-1 justify-center' : ''}`} aria-label="Nkyel Waves">
       {bars.map((_, i) => (
         <motion.div
           key={i}
@@ -421,7 +421,7 @@ export default function InputBar({ onSend, onStop, isGenerating }: InputBarProps
       </div>
 
       <p className="mt-3 text-center text-[11px] text-white/30 tracking-wide font-medium select-none">
-        Ñkyel AI peut faire des erreurs. Votre discernement reste souverain.
+        Nkyel AI peut faire des erreurs. Votre discernement reste souverain.
       </p>
     </div>
   );

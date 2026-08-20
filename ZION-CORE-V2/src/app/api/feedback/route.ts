@@ -1,4 +1,4 @@
-/* Ñkyel AI · Feedback API Proxy · SmartANDJ AI Technologies */
+/* Nkyel AI · Feedback API Proxy · SmartANDJ AI Technologies */
 
 import { NextRequest, NextResponse } from 'next/server';
 

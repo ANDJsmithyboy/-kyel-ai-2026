@@ -1,5 +1,5 @@
 /**
- * Ñkyel AI · SidebarNav (Zone 3)
+ * Nkyel AI · SidebarNav (Zone 3)
  * SmartANDJ AI Technologies
  * Projet, Le Rendu, En Piste, Trophées
  */

@@ -1,4 +1,4 @@
-/* Ñkyel AI · modelRegistry.ts · SmartANDJ AI Technologies · Constitution Zion Core
+/* Nkyel AI · modelRegistry.ts · SmartANDJ AI Technologies · Constitution Zion Core
    Registre de configuration des familles de modèles et des cibles système. */
 
 export interface ModelEntry {
@@ -20,7 +20,7 @@ export const MODEL_REGISTRY: ModelFamily[] = [
     key: 'aurata',
     name: 'Famille Aurata',
     description: 'Inférence Locale · Légère · Instance Oracle Cloud (Ollama)',
-    targetUrls: ['flash.Ñkyel AI.com', 'elande.Ñkyel AI.com'],
+    targetUrls: ['flash.Nkyel AI.com', 'elande.Nkyel AI.com'],
     models: [
       { key: 'aurata-spark', name: 'Aurata Spark', description: 'Ultra-léger, quasi-instantané (Réflexe pur)' },
       { key: 'aurata', name: 'Aurata', description: 'Standard gratuit, local (Agile, efficace, sans superflu)' },
@@ -29,20 +29,20 @@ export const MODEL_REGISTRY: ModelFamily[] = [
   },
   {
     key: 'nyel',
-    name: 'Famille Ñkyel',
+    name: 'Famille Nkyel',
     description: 'Modèle intelligent · Inférence Pro Reasoning',
-    targetUrls: ['pro.Ñkyel AI.com'],
+    targetUrls: ['pro.Nkyel AI.com'],
     models: [
-      { key: 'nyel', name: 'Ñkyel', description: 'Modèle intelligent (Raisonnement standard)' },
-      { key: 'nyel-echo', name: 'Ñkyel Echo', description: 'Raisonnement + Auto-vérification (Modèle se relit et corrige)' },
-      { key: 'nyel-deep', name: 'Ñkyel Deep', description: 'Chain-of-thought complet (Plongée et réflexion profonde)' },
+      { key: 'nyel', name: 'Nkyel', description: 'Modèle intelligent (Raisonnement standard)' },
+      { key: 'nyel-echo', name: 'Nkyel Echo', description: 'Raisonnement + Auto-vérification (Modèle se relit et corrige)' },
+      { key: 'nyel-deep', name: 'Nkyel Deep', description: 'Chain-of-thought complet (Plongée et réflexion profonde)' },
     ],
   },
   {
     key: 'onyxgris',
     name: 'Famille OnyxGris',
     description: 'Mode Black Panther · Vitesse brute · Zéro Compromis',
-    targetUrls: ['onyx.Ñkyel AI.com', 'agent.Ñkyel AI.com'],
+    targetUrls: ['onyx.Nkyel AI.com', 'agent.Nkyel AI.com'],
     models: [
       { key: 'onyxgris', name: 'OnyxGris', description: "Mode puissant standard (La panthère sort de l'ombre)" },
       { key: 'onyxgris-stealth', name: 'OnyxGris Stealth', description: 'Contexte court, exécution silencieuse et chirurgicale' },
@@ -53,7 +53,7 @@ export const MODEL_REGISTRY: ModelFamily[] = [
     key: 'wandana',
     name: 'Famille Wandana',
     description: 'Mode recherche et deep recherche',
-    targetUrls: ['research.Ñkyel AI.com'],
+    targetUrls: ['research.Nkyel AI.com'],
     models: [
       { key: 'wandana', name: 'Wandana', description: 'Recherche structurée standard (Mémorisation et organisation)' },
       { key: 'wandana-savane', name: 'Wandana Savane', description: 'Recherche web étendue (Parcours multi-sources)' },

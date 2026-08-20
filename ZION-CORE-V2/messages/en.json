@@ -1,0 +1,113 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "retry": "Retry",
+    "cancel": "Cancel",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "close": "Close",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "search": "Search...",
+    "noResults": "No results",
+    "confirm": "Confirm",
+    "yes": "Yes",
+    "no": "No",
+    "copy": "Copy",
+    "copied": "Copied!",
+    "share": "Share",
+    "download": "Download",
+    "upload": "Upload a file",
+    "settings": "Settings",
+    "profile": "Profile",
+    "logout": "Sign out",
+    "login": "Sign in",
+    "signup": "Sign up"
+  },
+  "chat": {
+    "placeholder": "Ask Ñkyel AI a question...",
+    "send": "Send",
+    "regenerate": "Regenerate response",
+    "stopGenerating": "Stop generating",
+    "newConversation": "New conversation",
+    "thinking": "Ñkyel AI is thinking...",
+    "searching": "Searching...",
+    "webSearch": "Web search",
+    "ragSearch": "Document search",
+    "feedbackThanks": "Thanks for your feedback!",
+    "feedbackQuestion": "Was this response helpful?",
+    "copyResponse": "Copy response",
+    "shareResponse": "Share this response"
+  },
+  "modes": {
+    "flash": "Flash",
+    "flashDesc": "Fast and concise answers",
+    "pro": "Pro",
+    "proDesc": "In-depth and creative analysis",
+    "blackPanther": "Black Panther",
+    "blackPantherDesc": "Agent mode — advanced research and reasoning"
+  },
+  "sidebar": {
+    "conversations": "Conversations",
+    "today": "Today",
+    "yesterday": "Yesterday",
+    "thisWeek": "This week",
+    "older": "Older",
+    "noConversations": "No conversations",
+    "deleteConversation": "Delete this conversation",
+    "archiveConversation": "Archive"
+  },
+  "settings": {
+    "title": "Settings",
+    "appearance": "Appearance",
+    "theme": "Theme",
+    "language": "Language",
+    "fontSize": "Font size",
+    "small": "Small",
+    "medium": "Medium",
+    "large": "Large",
+    "darkMode": "Dark mode",
+    "account": "Account",
+    "credits": "Credits remaining",
+    "plan": "Current plan",
+    "upgrade": "Upgrade to Pro",
+    "notifications": "Notifications",
+    "privacy": "Privacy",
+    "about": "About",
+    "version": "Version"
+  },
+  "errors": {
+    "network": "Connection error. Check your internet.",
+    "rateLimit": "Too many requests. Wait a moment.",
+    "unauthorized": "Session expired. Please sign in again.",
+    "serverError": "Server error. Try again later.",
+    "inputTooLong": "Your message is too long.",
+    "creditsExhausted": "No credits left. Upgrade to Pro or wait until tomorrow.",
+    "modelUnavailable": "The model is temporarily unavailable."
+  },
+  "feedback": {
+    "thumbsUp": "Good response",
+    "thumbsDown": "Bad response",
+    "reportHallucination": "Report hallucination",
+    "wrongLanguage": "Wrong language",
+    "tooSlow": "Too slow",
+    "badTone": "Inappropriate tone",
+    "comment": "Comment (optional)",
+    "submit": "Submit feedback"
+  },
+  "welcome": {
+    "title": "Welcome! 🌍",
+    "subtitle": "I'm Ñkyel AI, your intelligent assistant from Africa",
+    "suggestion1": "Explain the impact of AI in Africa",
+    "suggestion2": "Translate 'hello' into Fang, Punu, and Mpongwé",
+    "suggestion3": "Summarize the history of Gabon in 5 points",
+    "suggestion4": "What are the national parks of Gabon?"
+  },
+  "meta": {
+    "title": "Ñkyel AI — Sovereign African AI",
+    "description": "Sovereign African artificial intelligence by SmartANDJ AI Technologies"
+  }
+}

@@ -1,5 +1,5 @@
 /**
- * Ñkyel AI · MessageUser
+ * Nkyel AI · MessageUser
  * SmartANDJ AI Technologies
  * Task 7 — Bulle utilisateur alignée droite
  */

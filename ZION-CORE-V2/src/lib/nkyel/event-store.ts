@@ -1,5 +1,5 @@
 /**
- * Ñkyel AI — Event Store
+ * Nkyel AI — Event Store
  * 
  * Append-only, deterministic event store that drives the
  * Canonical Work Graph and enables replay/reconstruction.

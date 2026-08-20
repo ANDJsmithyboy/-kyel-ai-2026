@@ -1,4 +1,4 @@
-/* Ñkyel AI · Better Stack Logger · SmartANDJ AI Technologies
+/* Nkyel AI · Better Stack Logger · SmartANDJ AI Technologies
    Structured JSON logging to Better Stack Logs
    Fondateur : Daniel Jonathan ANDJ */
 
@@ -37,13 +37,13 @@ async function sendLog(entry: LogEntry): Promise<void> {
   }
 }
 
-/** Ñkyel logger */
+/** Nkyel logger */
 export const logger = {
   info: (message: string, meta?: Record<string, unknown>) =>
     sendLog({
       level: 'info',
       message,
-      service: 'Ñkyel AI-web',
+      service: 'Nkyel AI-web',
       timestamp: new Date().toISOString(),
       ...meta,
     }),
@@ -52,7 +52,7 @@ export const logger = {
     sendLog({
       level: 'warn',
       message,
-      service: 'Ñkyel AI-web',
+      service: 'Nkyel AI-web',
       timestamp: new Date().toISOString(),
       ...meta,
     }),
@@ -61,7 +61,7 @@ export const logger = {
     sendLog({
       level: 'error',
       message,
-      service: 'Ñkyel AI-web',
+      service: 'Nkyel AI-web',
       timestamp: new Date().toISOString(),
       ...meta,
     }),
@@ -70,7 +70,7 @@ export const logger = {
     sendLog({
       level: 'debug',
       message,
-      service: 'Ñkyel AI-web',
+      service: 'Nkyel AI-web',
       timestamp: new Date().toISOString(),
       ...meta,
     }),
@@ -80,7 +80,7 @@ export const logger = {
     sendLog({
       level: 'info',
       message: 'Chat completion',
-      service: 'Ñkyel AI-web',
+      service: 'Nkyel AI-web',
       timestamp: new Date().toISOString(),
       user_id: userId,
       mode,
@@ -94,7 +94,7 @@ export const logger = {
     sendLog({
       level: 'info',
       message: 'Agent session completed',
-      service: 'Ñkyel AI-web',
+      service: 'Nkyel AI-web',
       timestamp: new Date().toISOString(),
       user_id: userId,
       trace_id: traceId,

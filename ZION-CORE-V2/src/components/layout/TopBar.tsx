@@ -1,5 +1,5 @@
 /**
- * Ñkyel AI · TopBar.tsx · Client Component (needs onClick handlers)
+ * Nkyel AI · TopBar.tsx · Client Component (needs onClick handlers)
  * SmartANDJ AI Technologies
  * Barre de navigation minimale — hamburger + nouveau chat.
  */

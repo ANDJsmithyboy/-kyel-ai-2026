@@ -1,4 +1,4 @@
-/* Ñkyel AI · mode.ts · SmartANDJ AI Technologies · Constitution Zion Core
+/* Nkyel AI · mode.ts · SmartANDJ AI Technologies · Constitution Zion Core
    Fondateur : Daniel Jonathan ANDJ
    Store React (Zustand) pour les 4 modes : Aurata / Sonar / Onyx (Black Panther) / Loxo */
 
@@ -31,7 +31,7 @@ export const MODEL_MAP: Record<Mode, ModeConfig> = {
     tokenCost: 1,
   },
   pro: {
-    label: 'Ñkyel (Pro)',
+    label: 'Nkyel (Pro)',
     image: '/dauphin-image.jpg',
     model: 'nyel-deep',
     provider: 'deepseek',
@@ -71,7 +71,7 @@ export const MODEL_MAP: Record<Mode, ModeConfig> = {
     tokenCost: 15,
   },
   vision: {
-    label: 'ÑkyelVision',
+    label: 'NkyelVision',
     image: '/seer-image.jpg',
     model: 'nkyelvision-eye',
     provider: 'openai',
@@ -94,7 +94,7 @@ export const useModeStore = create<ModeState>((set) => ({
   setMode: (mode: Mode) => {
     set({ activeMode: mode });
     if (typeof window !== 'undefined') {
-      localStorage.setItem('Ñkyel AI-mode', mode);
+      localStorage.setItem('Nkyel AI-mode', mode);
       if (mode === 'superagent') {
         document.body.classList.add('mode-bp');
       } else {
@@ -106,7 +106,7 @@ export const useModeStore = create<ModeState>((set) => ({
 
 // Initialize from localStorage on client side only
 if (typeof window !== 'undefined') {
-  const saved = (localStorage.getItem('Ñkyel AI-mode') as Mode) || 'flash';
+  const saved = (localStorage.getItem('Nkyel AI-mode') as Mode) || 'flash';
   useModeStore.setState({ activeMode: saved });
 }
 

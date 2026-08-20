@@ -1,4 +1,4 @@
-/* Ñkyel AI · admin/database/page.tsx · SmartANDJ AI Technologies · Constitution Zion Core
+/* Nkyel AI · admin/database/page.tsx · SmartANDJ AI Technologies · Constitution Zion Core
    Fondateur : Daniel Jonathan ANDJ
    Base de donnees — Export/Import/Backup — Miroir Open WebUI Database */
 'use client';
@@ -27,7 +27,7 @@ export default function AdminDatabasePage() {
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `Ñkyel AI-chats-${new Date().toISOString().split('T')[0]}.json`;
+      a.download = `Nkyel AI-chats-${new Date().toISOString().split('T')[0]}.json`;
       a.click();
       URL.revokeObjectURL(url);
       toast.success('Export des conversations termine');
@@ -49,7 +49,7 @@ export default function AdminDatabasePage() {
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `Ñkyel AI-users-${new Date().toISOString().split('T')[0]}.json`;
+      a.download = `Nkyel AI-users-${new Date().toISOString().split('T')[0]}.json`;
       a.click();
       URL.revokeObjectURL(url);
       toast.success('Export des utilisateurs termine');
@@ -102,7 +102,7 @@ export default function AdminDatabasePage() {
     <div className="max-w-2xl mx-auto space-y-8">
       <div>
         <h2 className="text-xl font-bold text-[var(--text-primary)]">Base de donnees</h2>
-        <p className="text-sm text-[var(--text-tertiary)]">Export, import et gestion de la base de donnees Ñkyel AI</p>
+        <p className="text-sm text-[var(--text-tertiary)]">Export, import et gestion de la base de donnees Nkyel AI</p>
       </div>
 
       {/* Export */}

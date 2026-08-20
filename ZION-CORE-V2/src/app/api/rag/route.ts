@@ -1,6 +1,6 @@
 /**
  * ----------------------------------------------------------------
- * -  Ñkyel AI — RAG Qdrant Cloud Query API                     -
+ * -  Nkyel AI — RAG Qdrant Cloud Query API                     -
  * -  SmartANDJ AI Technologies · Constitution Zion Core          -
  * -                                                              -
  * -  Hybrid Search: Dense (sémantique) + Sparse (mots-clés)      -

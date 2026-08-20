@@ -1,5 +1,5 @@
 /**
- * Ñkyel AI · UpsellCard.tsx · Server Component
+ * Nkyel AI · UpsellCard.tsx · Server Component
  * SmartANDJ AI Technologies
  */
 
@@ -32,7 +32,7 @@ export default function UpsellCard() {
             className="text-[14px] font-semibold"
             style={{ fontFamily: 'var(--font-heading)', color: 'var(--accent)' }}
           >
-            Évoluer en Ñyel
+            Évoluer en Nyel
           </p>
           <p
             className="text-[12px]"

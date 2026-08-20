@@ -1,4 +1,4 @@
-/* Ñkyel AI · Billing & Credits · SmartANDJ AI Technologies */
+/* Nkyel AI · Billing & Credits · SmartANDJ AI Technologies */
 'use client';
 import { KPICard, SectionHeader, DataTable, StatusBadge, ChartCard } from '@/components/admin/AdminComponents';
 

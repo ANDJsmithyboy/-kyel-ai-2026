@@ -1,4 +1,4 @@
-/* Ñkyel AI · ModeSelector.tsx · SmartANDJ AI Technologies · Constitution Zion Core
+/* Nkyel AI · ModeSelector.tsx · SmartANDJ AI Technologies · Constitution Zion Core
    Fondateur : Daniel Jonathan ANDJ
    Sélecteur de mode minimaliste intégré dans la zone d'input (style Claude)
    Migré depuis InlineModeSelector.svelte */

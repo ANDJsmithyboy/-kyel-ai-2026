@@ -1,4 +1,4 @@
-/* Ñkyel AI · Admin Feedback Center · SmartANDJ AI Technologies
+/* Nkyel AI · Admin Feedback Center · SmartANDJ AI Technologies
    Section 16+20A: Feedback volume, thumbs_down rates, top motifs, export
    Fondateur : Daniel Jonathan ANDJ */
 

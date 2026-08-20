@@ -1,5 +1,5 @@
 /**
- * Ñkyel AI · SidebarFooter.tsx
+ * Nkyel AI · SidebarFooter.tsx
  * SmartANDJ AI Technologies
  * Profil utilisateur + badge tier + engrenage settings.
  */
@@ -10,7 +10,7 @@ type TierKey = 'FREE' | 'NKYEL_TAI' | 'RECHERCHE_WEB' | 'NKYEL_RADI' | 'BLACK_PA
 
 const TIER_LABELS: Record<TierKey, string> = {
   FREE: 'NKYEL_CHUI',
-  NYEL: 'ÑKYEL',
+  NYEL: 'NKYEL',
   WANDANA: 'RECHERCHE_WEB',
   ONYX: 'NKYEL_RADI',
   BLACK_PANTHER: 'BLACK PANTHER',

@@ -1,4 +1,4 @@
-/* Ñkyel AI · Fine-tuning Jobs · SmartANDJ AI Technologies */
+/* Nkyel AI · Fine-tuning Jobs · SmartANDJ AI Technologies */
 'use client';
 import { SectionHeader, DataTable, StatusBadge, KPICard } from '@/components/admin/AdminComponents';
 

@@ -1,4 +1,4 @@
-/* Ñkyel AI · Database Schema · SmartANDJ AI Technologies
+/* Nkyel AI · Database Schema · SmartANDJ AI Technologies
    Drizzle ORM schema for Neon PostgreSQL
    Fondateur : Daniel Jonathan ANDJ
 */

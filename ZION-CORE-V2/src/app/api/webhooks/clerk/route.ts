@@ -1,4 +1,4 @@
-/* Ñkyel AI · Clerk Webhook · SmartANDJ AI Technologies
+/* Nkyel AI · Clerk Webhook · SmartANDJ AI Technologies
    Sync Clerk users → Neon PostgreSQL via Drizzle
    Events: user.created, user.updated, user.deleted
    Fondateur : Daniel Jonathan ANDJ */

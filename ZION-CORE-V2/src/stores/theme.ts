@@ -1,4 +1,4 @@
-/* Ñkyel AI · theme.ts · SmartANDJ AI Technologies
+/* Nkyel AI · theme.ts · SmartANDJ AI Technologies
    Store thèmes (6 thèmes) + accents (5 pétales du logo) */
 
 import { create } from 'zustand';
@@ -93,14 +93,14 @@ export const useThemeStore = create<ThemeState>((set) => ({
   setTheme: (t: ThemeKey) => {
     applyTheme(t);
     if (typeof window !== 'undefined') {
-      localStorage.setItem('Ñkyel AI_theme', t);
+      localStorage.setItem('Nkyel AI_theme', t);
     }
     set({ theme: t });
   },
   setAccent: (a: AccentKey) => {
     applyAccent(a);
     if (typeof window !== 'undefined') {
-      localStorage.setItem('Ñkyel AI_accent', a);
+      localStorage.setItem('Nkyel AI_accent', a);
     }
     set({ accent: a });
   },
@@ -108,9 +108,9 @@ export const useThemeStore = create<ThemeState>((set) => ({
 
 /* -- Initialize from localStorage ------------------ */
 if (typeof window !== 'undefined') {
-  const storedTheme = localStorage.getItem('Ñkyel AI_theme') || 'black-panther';
+  const storedTheme = localStorage.getItem('Nkyel AI_theme') || 'black-panther';
   const initial: ThemeKey = isValidTheme(storedTheme) ? storedTheme : 'black-panther';
-  const initialAccent = (localStorage.getItem('Ñkyel AI_accent') as AccentKey) || 'foret';
+  const initialAccent = (localStorage.getItem('Nkyel AI_accent') as AccentKey) || 'foret';
   applyTheme(initial);
   applyAccent(initialAccent);
   useThemeStore.setState({ theme: initial, accent: initialAccent });

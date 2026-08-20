@@ -1,5 +1,5 @@
 /**
- * Ñkyel AI · ChatHome.tsx · Client Component
+ * Nkyel AI · ChatHome.tsx · Client Component
  * SmartANDJ AI Technologies
  * 
  * Zone centrale d'accueil (écran vide) :
@@ -48,7 +48,7 @@ export default function ChatHome({ firstName = 'Citoyen' }: ChatHomeProps) {
           >
             <Image
               src="/nkyel-logo.png"
-              alt="Ñkyel AI"
+              alt="Nkyel AI"
               width={64}
               height={64}
               className="rounded-2xl"

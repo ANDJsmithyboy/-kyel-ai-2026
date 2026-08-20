@@ -1,5 +1,5 @@
 /**
- * Ñkyel AI — Hero Demo Page
+ * Nkyel AI — Hero Demo Page
  * 
  * The main workspace page where the user submits a goal
  * and watches the autonomous agent work in a spatial canvas.
@@ -355,7 +355,7 @@ export default function NkyelWorkspacePage() {
       setMode('complete');
     } catch {
       // Fallback: run demo events with staggered timing
-      console.info('[Ñkyel] Backend unavailable, running demo mode');
+      console.info('[Nkyel] Backend unavailable, running demo mode');
       const demoEvents = generateDemoEvents(runId, goalInput.trim());
 
       for (const evt of demoEvents) {
@@ -381,7 +381,7 @@ export default function NkyelWorkspacePage() {
       <header className="nkyel-page-header">
         <div className="nkyel-brand">
           <span className="nkyel-brand-icon">✦</span>
-          <h1 className="nkyel-brand-name">Ñkyel AI</h1>
+          <h1 className="nkyel-brand-name">Nkyel AI</h1>
           <span className="nkyel-brand-tag">Visual Workspace</span>
         </div>
         <div className="nkyel-header-actions">
@@ -417,7 +417,7 @@ export default function NkyelWorkspacePage() {
             <div className="nkyel-goal-icon">✦</div>
             <h2 className="nkyel-goal-heading">What would you like to explore?</h2>
             <p className="nkyel-goal-subtitle">
-              Ñkyel will plan, research, analyze, and synthesize — all visible in your spatial workspace.
+              Nkyel will plan, research, analyze, and synthesize — all visible in your spatial workspace.
             </p>
             <div className="nkyel-goal-input-row">
               <textarea

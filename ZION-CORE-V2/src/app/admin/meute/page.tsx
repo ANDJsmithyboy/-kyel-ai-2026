@@ -1,4 +1,4 @@
-/* Ñkyel AI · Admin Users (Meute) · SmartANDJ AI Technologies */
+/* Nkyel AI · Admin Users (Meute) · SmartANDJ AI Technologies */
 'use client';
 
 import { useState } from 'react';

@@ -1,4 +1,4 @@
-/* Ñkyel AI · AuroraBackground.tsx · SmartANDJ AI Technologies
+/* Nkyel AI · AuroraBackground.tsx · SmartANDJ AI Technologies
    Arrière-plan dynamique "Aurora" avec halos animés et texture grain */
 'use client';
 

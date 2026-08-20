@@ -1,5 +1,5 @@
 /**
- * Ñkyel AI · Chat Page (nouvelle conversation)
+ * Nkyel AI · Chat Page (nouvelle conversation)
  * SmartANDJ AI Technologies
  * Task 11 — Redirige vers /chat/[id] après création
  */

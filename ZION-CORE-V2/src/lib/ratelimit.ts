@@ -1,4 +1,4 @@
-/* Ñkyel AI · Rate Limiting · SmartANDJ AI Technologies
+/* Nkyel AI · Rate Limiting · SmartANDJ AI Technologies
    Upstash sliding window rate limiter
    Fondateur : Daniel Jonathan ANDJ */
 
