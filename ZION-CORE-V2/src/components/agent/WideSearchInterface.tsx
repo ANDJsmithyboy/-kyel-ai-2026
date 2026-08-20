@@ -1,7 +1,8 @@
 'use client';
 
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import { useChat } from '@ai-sdk/react';
+
 import { useAuth } from '@clerk/nextjs';
 import { Send, Sparkles, Command } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
