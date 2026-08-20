@@ -158,13 +158,15 @@ export const useWorkGraphStore = create<WorkGraphState>((set, get) => {
         });
         
         // Trigger the backend via the adapter to process SSE
+        const backendBase = process.env.NEXT_PUBLIC_API_URL || 'https://ejresep5jsepf3-8080.proxy.runpod.net';
         const adapter = new AgUiStreamAdapter(state.runId);
-        adapter.connect('http://localhost:8000/api/v1/nkyel/replan', {
+        adapter.connect(`${backendBase}/api/v1/nkyel/replan`, {
           run_id: state.runId,
           edited_node_id: nodeId,
           reason: 'user_edit',
           updates
         }).catch(err => console.error('[WorkGraph Store] Replan stream failed:', err));
+
       }
     },
 
