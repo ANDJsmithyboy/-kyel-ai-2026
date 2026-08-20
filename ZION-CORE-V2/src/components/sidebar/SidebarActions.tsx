@@ -44,9 +44,17 @@ export default function SidebarActions({ isCollapsed }: SidebarActionsProps) {
       id: 'agent',
       label: 'Mission VIE',
       icon: Graph,
-      route: '/agent',
+      route: '/workspace',
       active: pathname === '/agent' || pathname.startsWith('/workspace'),
       badge: 'Agent',
+    },
+    {
+      id: 'protocols',
+      label: 'Protocoles',
+      icon: SquaresFour,
+      route: '/protocols',
+      active: pathname.startsWith('/protocols'),
+      badge: '8 Couches',
     },
     {
       id: 'capabilities',
@@ -54,13 +62,6 @@ export default function SidebarActions({ isCollapsed }: SidebarActionsProps) {
       icon: Robot,
       route: '/capabilities',
       active: pathname.startsWith('/capabilities'),
-    },
-    {
-      id: 'mcp',
-      label: 'Connecteurs MCP',
-      icon: SquaresFour,
-      route: '/connectors',
-      active: pathname.startsWith('/connectors'),
     },
     {
       id: 'scheduled',

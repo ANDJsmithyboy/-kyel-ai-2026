@@ -30,21 +30,33 @@ import type { WorkNode, WorkEdge, WorkNodeType, NkyelEvent } from '@/lib/nkyel/w
 // --- Node Colors by Type --------------------------------
 
 const NODE_COLORS: Record<WorkNodeType, string> = {
-  goal: '#C0A062',       // Gold
-  plan: '#6B8AE0',       // Blue
+  goal: '#C39A52',       // Old Gold
+  plan: '#665F9E',       // Ñkyel Indigo
   task: '#7C9AE8',       // Light blue
-  agent: '#9B72CF',      // Purple
-  tool_call: '#5BA3B5',  // Teal
-  source: '#6EB86E',     // Green
-  evidence: '#4CAF50',   // Vivid green
+  agent: '#6F9485',      // Celadon green (A2A)
+  tool_call: '#5BA3B5',  // Cyan Hexagon (MCP)
+  source: '#315A70',     // Deep Aizuri Blue
+  evidence: '#6F9485',   // Celadon
   claim: '#E8A838',      // Amber
   hypothesis: '#CF72A8', // Pink
   scenario: '#B56BD4',   // Violet
-  decision: '#E0C054',   // Yellow gold
+  decision: '#C39A52',   // Gold
   artifact: '#72B8CF',   // Cyan
-  approval: '#FFB74D',   // Orange
-  checkpoint: '#90A4AE', // Grey-blue
-  error: '#E57373',      // Red
+  approval: '#BE6254',   // Soft Vermilion
+  checkpoint: '#C39A52', // Gold
+  error: '#BE6254',      // Soft Vermilion
+  // Protocol extensions
+  mcp_tool: '#5BA3B5',        // Cyan Hexagon
+  mcp_app: '#665F9E',         // Indigo Interactive Window
+  skill: '#C39A52',           // Golden Puzzle Piece
+  a2a_agent: '#6F9485',       // Green Double Circles
+  agui_stream: '#315A70',     // Animated Blue Stream
+  a2ui_surface: '#765E78',    // Muted Plum Panel
+  ap2_payment: '#D98E3B',     // Amber Shield
+  ucp_commerce: '#C5A059',    // Commerce Network
+  google_tool: '#4285F4',     // Google Blue
+  workspace_doc: '#72B8CF',   // Document Blue
+  firebase_deploy: '#FFA000', // Firebase Amber
 };
 
 const NODE_ICONS: Record<WorkNodeType, string> = {
@@ -59,10 +71,47 @@ const NODE_ICONS: Record<WorkNodeType, string> = {
   hypothesis: '🔀',
   scenario: '🔮',
   decision: '⚖️',
-  artifact: '📦',
+  artifact: '💎',
   approval: '🔐',
   checkpoint: '💾',
   error: '❌',
+  // Protocol extensions
+  mcp_tool: '⬢',
+  mcp_app: '🪟',
+  skill: '🧩',
+  a2a_agent: '👥',
+  agui_stream: '≈',
+  a2ui_surface: '📐',
+  ap2_payment: '🛡️',
+  ucp_commerce: '🛒',
+  google_tool: '✨',
+  workspace_doc: '📄',
+  firebase_deploy: '🚀',
+};
+
+const EDGE_LABELS: Record<string, string> = {
+  uses_mcp: 'utilise via MCP',
+  loads_skill: 'charge le Skill',
+  delegates_a2a: 'délègue via A2A',
+  streams_agui: 'diffuse via AG-UI',
+  renders_a2ui: 'rend via A2UI',
+  displays_mcp_app: 'affiche via MCP Apps',
+  authorizes_ap2: 'autorise via AP2',
+  commerces_ucp: 'commerce via UCP',
+  deploys_firebase: 'déploie vers Firebase',
+  decomposes_into: 'se décompose en',
+  assigned_to: 'assigné à',
+  depends_on: 'dépend de',
+  uses: 'utilise',
+  produces: 'produit',
+  supports: 'valide',
+  contradicts: 'contredit',
+  derived_from: 'dérivé de',
+  compares_with: 'compare à',
+  selected: 'sélectionné',
+  rejected: 'rejeté',
+  blocked_by: 'bloqué par',
+  resumes_from: 'reprend depuis',
 };
 
 const STATUS_INDICATORS: Record<string, string> = {
@@ -273,8 +322,8 @@ export default function NkyelWorkspaceCanvas() {
       id: we.id,
       source: we.sourceId,
       target: we.targetId,
-      label: we.type.replace('_', ' '),
-      animated: we.type === 'depends_on' || we.type === 'assigned_to',
+      label: EDGE_LABELS[we.type] || we.type.replace('_', ' '),
+      animated: we.type === 'depends_on' || we.type === 'assigned_to' || we.type === 'streams_agui',
       style: {
         stroke: EDGE_COLORS[we.type] || 'rgba(255,255,255,0.3)',
         strokeWidth: 2,

@@ -6,8 +6,7 @@
 
 'use client';
 
-import { motion, useReducedMotion } from 'framer-motion';
-import { Nkyel AILogo } from '@/components/icons';
+import { NkyelAILogo } from '@/components/icons';
 import { IbogaAiIcon } from '@/components/icons/IbogaAiIcon';
 import { useSidebarStore } from '@/stores/sidebar';
 
@@ -21,7 +20,7 @@ export default function SidebarHeader() {
     >
       {/* LEFT — Nkyel AI Logo + Wordmark */}
       <div className="flex items-center gap-2">
-        <Nkyel AILogo
+        <NkyelAILogo
           width={24}
           height={24}
         />

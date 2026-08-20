@@ -12,7 +12,7 @@ import { useSidebarStore } from '@/stores/sidebar';
 import { useSettingsStore, getDisplayModelName } from '@/stores/settings.store';
 import { useAuthStore } from '@/stores/auth.store';
 import { cn } from '@/lib/utils';
-import { IconAurata, IconNkyel, IconWandana, Nkyel AILogo } from '@/components/icons';
+import { IconAurata, IconNkyel, IconWandana, NkyelAILogo } from '@/components/icons';
 
 /* -- Modèles disponibles -- */
 const MODELS = [
@@ -44,7 +44,7 @@ export default function Header({ currentModel, onModelChange }: HeaderProps) {
       {(isMobile || !isOpen) && (
         <div className="group flex items-center gap-1.5 mr-2">
           <div className="flex h-8 w-8 items-center justify-center">
-            <Nkyel AILogo width={22} height={22} />
+            <NkyelAILogo width={22} height={22} />
           </div>
           <button
             onClick={toggle}

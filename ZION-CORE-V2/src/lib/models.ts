@@ -45,7 +45,37 @@ export interface NkyelConversation {
 }
 
 // -- Rendus (Artefacts) ------------------------
-export type RenduType = 'markdown' | 'html' | 'pdf' | 'csv' | 'excel' | 'word' | 'code' | 'chart' | 'website';
+// -- Rendus (Artefacts) ------------------------
+export type RenduType =
+  | 'markdown'
+  | 'document'
+  | 'report'
+  | 'pdf'
+  | 'presentation'
+  | 'spreadsheet'
+  | 'excel'
+  | 'word'
+  | 'csv'
+  | 'code'
+  | 'chart'
+  | 'website'
+  | 'application'
+  | 'html'
+  | 'image'
+  | 'video'
+  | 'audio'
+  | 'a2ui_card'
+  | 'mcp_app'
+  | 'simulation'
+  | 'workgraph_result';
+
+export interface ArtifactVersion {
+  version: number;
+  content: string;
+  createdAt: number;
+  author: string;
+  changeSummary?: string;
+}
 
 export interface NkyelRendu {
   id: string;
@@ -56,6 +86,38 @@ export interface NkyelRendu {
   language?: string;
   version?: number;
   created_at: number;
+  updated_at?: number;
+  isPinned?: boolean;
+  status?: 'ready' | 'generating' | 'synced' | 'error';
+  providerBadge?: string; // e.g. 'Imagen 3', 'Veo 2', 'Google Docs', 'Gemini Code Exec'
+  
+  // Provenance & WorkGraph link
+  provenance?: {
+    agentName?: string;
+    skillUsed?: string;
+    mcpToolCalled?: string;
+    model?: string;
+    checkpointId?: string;
+    sourceNodeId?: string;
+  };
+
+  // Associated sources & citations
+  sources?: {
+    title: string;
+    url: string;
+    snippet?: string;
+  }[];
+
+  // Activity timeline
+  activityLog?: {
+    id: string;
+    event: string;
+    timestamp: string;
+    agent: string;
+  }[];
+
+  // Version history
+  versions?: ArtifactVersion[];
 }
 
 // -- Agent Events ------------------------------

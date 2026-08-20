@@ -35,6 +35,18 @@ const NODE_LABELS: Record<WorkNodeType, string> = {
   approval: '✋ Approbation',
   checkpoint: '💾 Checkpoint',
   error: '❌ Erreur',
+  // Protocol extensions
+  mcp_tool: '🔌 Outil MCP',
+  mcp_app: '📦 App MCP',
+  skill: '⚡ Compétence Skill',
+  a2a_agent: '🤝 Agent A2A',
+  agui_stream: '🌊 Flux AG-UI',
+  a2ui_surface: '🖥️ Surface A2UI',
+  ap2_payment: '💳 Paiement AP2',
+  ucp_commerce: '🛒 Commerce UCP',
+  google_tool: '🌐 Outil Google',
+  workspace_doc: '📁 Doc Workspace',
+  firebase_deploy: '🔥 Déploiement Firebase',
 };
 
 const STATUS_LABELS: Record<WorkNodeStatus, string> = {

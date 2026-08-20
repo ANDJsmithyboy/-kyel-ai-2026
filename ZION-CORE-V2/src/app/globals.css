@@ -18,19 +18,78 @@
     --font-body: 'Sora', sans-serif;
     --font-mono: 'JetBrains Mono', monospace;
 
+    /* Wada Sanzo Palette — 88% Neutrals, 8% Primary Accents, 4% Semantic */
+    --ws-ink-black: #08090D;
+    --ws-blue-black: #0E121A;
+    --ws-deep-onyx: #151922;
+    --ws-soft-ivory: #F1EEE7;
+    --ws-mist-silver: #B8C0CC;
+    --ws-muted-slate: #7E8795;
+
+    /* Accents Sémantiques Wada Sanzo */
+    --ws-indigo: #665F9E;       /* Mission active & sélection */
+    --ws-aizuri-blue: #315A70;   /* Sources & recherche */
+    --ws-celadon: #6F9485;       /* Réussite & tâche terminée */
+    --ws-old-gold: #C39A52;      /* Checkpoint, preuve & attente */
+    --ws-vermilion: #BE6254;     /* Erreur & intervention requise */
+    --ws-plum: #765E78;          /* A2UI, interface générée & mémoire */
+    --ws-lavender: #AAA2C8;      /* Protocole inactif / information */
+
+    /* Variables Centralisées Wada Sanzo & Surfaces */
+    --surface-canvas: #08090D;
+    --surface-primary: #0E121A;
+    --surface-elevated: #151922;
+    --surface-floating: rgba(21, 25, 34, 0.82);
+    --border-subtle: rgba(255, 255, 255, 0.06);
+    --border-active: rgba(255, 255, 255, 0.14);
+    --text-primary: #F1EEE7;
+    --text-secondary: #B8C0CC;
+    --text-tertiary: #7E8795;
+    --accent-nkyel: #665F9E;
+    --accent-source: #315A70;
+    --accent-success: #6F9485;
+    --accent-checkpoint: #C39A52;
+    --accent-warning: #C39A52;
+    --accent-danger: #BE6254;
+    --accent-a2ui: #765E78;
+    --accent-a2a: #6F9485;
+
+    /* Apple 8-Point Spacing Grid */
+    --space-1: 4px;
+    --space-2: 8px;
+    --space-3: 12px;
+    --space-4: 16px;
+    --space-6: 24px;
+    --space-8: 32px;
+    --space-12: 48px;
+    --space-16: 64px;
+    --space-24: 96px;
+
+    /* Apple Corner Radii */
+    --radius-control-sm: 8px;
+    --radius-control: 12px;
+    --radius-composer: 24px;
+    --radius-panel: 18px;
     --radius-sm: 6px;
     --radius-md: 10px;
     --radius-lg: 16px;
     --radius-pill: 9999px;
 
-    --transition-fast: 120ms ease;
-    --transition-base: 180ms ease;
-    --transition-slow: 240ms ease;
+    /* Apple Hairline Separators */
+    --hairline-dark: rgba(255, 255, 255, 0.06);
+    --hairline-dark-hover: rgba(255, 255, 255, 0.12);
+    --hairline-light: rgba(20, 25, 35, 0.08);
 
-    --color-success: #1F9D6B;
-    --color-warning: #D98E3B;
-    --color-error: #E0584B;
-    --color-info: #5B8DEF;
+    /* Apple Spring Motion */
+    --transition-fast: 120ms cubic-bezier(0.2, 0.8, 0.2, 1);
+    --transition-base: 180ms cubic-bezier(0.2, 0.8, 0.2, 1);
+    --transition-slow: 240ms cubic-bezier(0.2, 0.8, 0.2, 1);
+    --transition-panel: 280ms cubic-bezier(0.16, 1, 0.3, 1);
+
+    --color-success: #6F9485;
+    --color-warning: #C39A52;
+    --color-error: #BE6254;
+    --color-info: #315A70;
   }
 }
 

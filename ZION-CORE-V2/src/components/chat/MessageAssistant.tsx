@@ -10,12 +10,14 @@ import { motion } from 'framer-motion';
 import type { NkyelMessage } from '@/lib/models';
 import SourcePills from '@/components/chat/SourcePills';
 import NkyelMarkdown from '@/components/markdown/NkyelMarkdown';
+import ResponseActionBar from '@/components/chat/ResponseActionBar';
 
 interface MessageAssistantProps {
   message: NkyelMessage;
+  onRegenerate?: () => void;
 }
 
-export default function MessageAssistant({ message }: MessageAssistantProps) {
+export default function MessageAssistant({ message, onRegenerate }: MessageAssistantProps) {
   const isEmpty = !message.content || message.content.trim() === '';
 
   return (
@@ -26,24 +28,36 @@ export default function MessageAssistant({ message }: MessageAssistantProps) {
       className="flex justify-start w-full"
     >
       <div
-        className="max-w-[90%] md:max-w-[80%] px-5 py-4 glass shadow-sm"
+        className="max-w-[95%] md:max-w-[85%] px-5 py-4 bg-[#0E121A] border border-white/[0.06] shadow-md transition-all group"
         style={{
           borderRadius: '24px 24px 24px 6px',
         }}
       >
         {isEmpty ? (
           <div className="flex items-center gap-1.5 py-1">
-            <span className="w-2 h-2 rounded-full bg-[var(--accent)] animate-pulse" style={{ animationDelay: '0ms' }} />
-            <span className="w-2 h-2 rounded-full bg-[var(--accent)] animate-pulse" style={{ animationDelay: '200ms' }} />
-            <span className="w-2 h-2 rounded-full bg-[var(--accent)] animate-pulse" style={{ animationDelay: '400ms' }} />
+            <span className="w-2 h-2 rounded-full bg-[#C39A52] animate-pulse" style={{ animationDelay: '0ms' }} />
+            <span className="w-2 h-2 rounded-full bg-[#C39A52] animate-pulse" style={{ animationDelay: '200ms' }} />
+            <span className="w-2 h-2 rounded-full bg-[#C39A52] animate-pulse" style={{ animationDelay: '400ms' }} />
           </div>
         ) : (
           <NkyelMarkdown content={message.content} />
         )}
+
         {message.sources && message.sources.length > 0 && (
           <SourcePills sources={message.sources} />
+        )}
+
+        {!isEmpty && (
+          <ResponseActionBar
+            content={message.content}
+            messageId={message.id}
+            sourcesCount={message.sources?.length || 0}
+            hasArtifact={Boolean(message.rendu)}
+            onRegenerate={onRegenerate}
+          />
         )}
       </div>
     </motion.div>
   );
 }
+

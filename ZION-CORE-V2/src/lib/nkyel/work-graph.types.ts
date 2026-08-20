@@ -24,7 +24,19 @@ export type WorkNodeType =
   | 'artifact'
   | 'approval'
   | 'checkpoint'
-  | 'error';
+  | 'error'
+  // Protocol extensions
+  | 'mcp_tool'
+  | 'mcp_app'
+  | 'skill'
+  | 'a2a_agent'
+  | 'agui_stream'
+  | 'a2ui_surface'
+  | 'ap2_payment'
+  | 'ucp_commerce'
+  | 'google_tool'
+  | 'workspace_doc'
+  | 'firebase_deploy';
 
 export type WorkNodeStatus =
   | 'pending'
@@ -101,7 +113,17 @@ export type WorkEdgeType =
   | 'selected'
   | 'rejected'
   | 'blocked_by'
-  | 'resumes_from';
+  | 'resumes_from'
+  // Protocol typed edges
+  | 'uses_mcp'
+  | 'loads_skill'
+  | 'delegates_a2a'
+  | 'streams_agui'
+  | 'renders_a2ui'
+  | 'displays_mcp_app'
+  | 'authorizes_ap2'
+  | 'commerces_ucp'
+  | 'deploys_firebase';
 
 export interface WorkEdge {
   /** Stable unique identifier */
