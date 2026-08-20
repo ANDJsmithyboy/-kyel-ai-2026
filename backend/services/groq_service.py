@@ -17,6 +17,11 @@ from core.config import settings
 _MODEL_MAP = {
     "AURATA": settings.aurata_model,
     "SONAR": settings.sonar_model,
+    "NKYEL_CHUI": settings.aurata_model,
+    "NKYEL_RADI": settings.sonar_model,
+    "NKYEL_TAI": settings.aurata_model,
+    "BLACK_PANTHER": settings.aurata_model,
+    "WANDANA": settings.sonar_model,
 }
 
 # ── System prompt national ───────────────────────────────────

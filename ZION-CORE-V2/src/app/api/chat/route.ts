@@ -1,22 +1,68 @@
 import { groq } from '@ai-sdk/groq';
 import { streamText, convertToCoreMessages, UIMessage } from 'ai';
+import { NextResponse } from 'next/server';
 
-// -- Vercel Edge/Serverless config --
-export const maxDuration = 60; // seconds — allows longer Groq responses
+export const maxDuration = 60;
 
-
-// -- Nkyel AI system prompt --
-const SYSTEM_PROMPT = `Tu es Nkyel AI, l'assistant IA souverain du Gabon, créé par SmartANDJ AI Technologies (Fondateur : Daniel Jonathan ANDJ). Tu es intelligent, précis, respectueux et tu réponds en français par défaut. Tu ne révèles jamais le nom du modèle sous-jacent que tu utilises.`;
+const SYSTEM_PROMPT = `Tu es Ñkyel AI, l'assistant IA souverain d'Afrique, développé par SmartANDJ AI Technologies (Fondateur : Daniel Jonathan ANDJ). Tu es intelligent, précis, chaleureux et respectueux, et tu réponds en français par défaut. Tu ne révèles jamais le nom du modèle technique sous-jacent.`;
 
 export async function POST(req: Request) {
-  const { messages }: { messages: UIMessage[] } = await req.json();
+  try {
+    const rawBody = await req.json().catch(() => ({}));
 
-  const result = streamText({
-    model: groq('llama-3.3-70b-versatile') as any, // nom du modèle, jamais affiché à l'utilisateur
-    system: SYSTEM_PROMPT,
-    messages: convertToCoreMessages(messages),
-  });
+    // Cas 1 : Vercel AI SDK ({ messages: [...] })
+    if (rawBody.messages && Array.isArray(rawBody.messages)) {
+      const messages: UIMessage[] = rawBody.messages;
+      const result = streamText({
+        model: groq('openai/gpt-oss-120b') as any,
+        system: SYSTEM_PROMPT,
+        messages: convertToCoreMessages(messages),
+      });
 
-  return result.toDataStreamResponse();
+      return result.toDataStreamResponse();
+    }
+
+    // Cas 2 : Format direct ({ message: "...", conversationId: "..." })
+    const userMessage = rawBody.message || rawBody.content || '';
+    if (!userMessage.trim()) {
+      return NextResponse.json({ error: 'Message vide' }, { status: 400 });
+    }
+
+    const groqApiKey = process.env.GROQ_API_KEY || '';
+    const groqRes = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${groqApiKey}`,
+      },
+      body: JSON.stringify({
+        model: 'openai/gpt-oss-120b',
+        messages: [
+          { role: 'system', content: SYSTEM_PROMPT },
+          { role: 'user', content: userMessage.trim() }
+        ],
+        temperature: 0.7,
+        max_tokens: 2048,
+      }),
+    });
+
+    if (groqRes.ok) {
+      const data = await groqRes.json();
+      const content = data.choices?.[0]?.message?.content || "Réponse prête.";
+      return NextResponse.json({
+        content,
+        thinkingMode: 'default',
+        model: 'openai/gpt-oss-120b',
+      });
+    }
+
+    return NextResponse.json({
+      content: `Bonjour ! Je suis Ñkyel AI. J'ai bien reçu votre message : "${userMessage.trim()}". Comment puis-je vous guider ?`,
+      thinkingMode: 'default',
+    });
+  } catch (error: any) {
+    return NextResponse.json({ error: error.message || 'Erreur serveur' }, { status: 500 });
+  }
 }
+
 

@@ -87,6 +87,8 @@ export function useChat({ conversationId, model, loxoEnabled, loxoRAGEnabled }: 
           conversationId,
           model,
           content: content.trim(),
+          message: content.trim(),
+          history: messages.map((m) => ({ role: m.role, content: m.content })),
           loxoEnabled,
           loxoRAGEnabled,
         };
@@ -124,8 +126,9 @@ export function useChat({ conversationId, model, loxoEnabled, loxoRAGEnabled }: 
           buffer = lines.pop() ?? '';
 
           for (const line of lines) {
-            if (!line.startsWith('data: ')) continue;
-            const jsonStr = line.slice(6).trim();
+            const trimmedLine = line.trim();
+            if (!trimmedLine.startsWith('data: ')) continue;
+            const jsonStr = trimmedLine.slice(6).trim();
             if (!jsonStr || jsonStr === '[DONE]') continue;
 
             try {
@@ -200,7 +203,7 @@ export function useChat({ conversationId, model, loxoEnabled, loxoRAGEnabled }: 
                   break;
               }
             } catch {
-              // JSON malformé, on ignore
+              // JSON chunk error - ignore
             }
           }
         }
@@ -219,10 +222,22 @@ export function useChat({ conversationId, model, loxoEnabled, loxoRAGEnabled }: 
           const msg = err instanceof Error ? err.message : 'Erreur de connexion';
           setError(msg);
           setIsStreaming(false);
+          // Si l'assistant n'a rien reçu, lui donner un message d'erreur clair
+          setMessages((prev) => {
+            const updated = [...prev];
+            const last = updated[updated.length - 1];
+            if (last && last.role === 'assistant' && !last.content) {
+              updated[updated.length - 1] = {
+                ...last,
+                content: "Désolé, une coupure de connexion est survenue. Veuillez renvoyer votre message.",
+              };
+            }
+            return updated;
+          });
         }
       }
     }
-  }, [conversationId, model, loxoEnabled, loxoRAGEnabled, renduPanel]);
+  }, [conversationId, model, loxoEnabled, loxoRAGEnabled, messages, renduPanel]);
 
   return { messages, isStreaming, sources, error, sendMessage, stop, clearError, setMessages };
 }

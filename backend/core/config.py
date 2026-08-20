@@ -32,8 +32,8 @@ class Settings(BaseSettings):
 
     # ── Groq (AURATA / SONAR) ───────────────────────────────
     groq_api_key: str = ""
-    aurata_model: str = "llama-3.3-70b-versatile"
-    sonar_model: str = "llama-3.3-70b-versatile"
+    aurata_model: str = "openai/gpt-oss-120b"
+    sonar_model: str = "groq/compound"
 
     # ── DeerFlow Agent (ONYX / BLACK_PANTHER) ───────────────
     deerflow_url: str = "http://localhost:8080"
