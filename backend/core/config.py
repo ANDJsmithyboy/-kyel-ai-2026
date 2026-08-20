@@ -15,8 +15,8 @@ class Settings(BaseSettings):
     # ── Application ──────────────────────────────────────────────
     app_name: str = "Ñkyel AI"
     app_version: str = "2.0.0"
-    company_name: str = "SmartANDJ AI Technologies"
-    founder: str = "Akare Ntoutoume Daniel Jonathan"
+    company_name: str = "SmartANDJ AI Technologies (Libreville, Gabon)"
+    founder: str = "Daniel Jonathan ANDJ (Akare Ntoutoume Daniel Jonathan)"
     environment: str = "development"
     debug: bool = True
 
