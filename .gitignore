@@ -22,3 +22,5 @@ training/
 *.pdf
 package-lock.json
 *.exe
+.temp_sync_*
+*.tsbuildinfo
