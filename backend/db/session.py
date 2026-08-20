@@ -12,14 +12,18 @@ from sqlalchemy.ext.asyncio import (
 from core.config import settings
 
 # ── Engine async Neon PostgreSQL ─────────────────────────────
-# DATABASE_URL dans .env doit commencer par postgresql+asyncpg://
+db_url = settings.database_url
+if db_url.startswith("postgresql://"):
+    db_url = db_url.replace("postgresql://", "postgresql+asyncpg://", 1)
+
 engine = create_async_engine(
-    settings.database_url,
+    db_url,
     echo=settings.debug,
     pool_size=5,
     max_overflow=10,
     pool_pre_ping=True,
 )
+
 
 # ── Session factory ──────────────────────────────────────────
 async_session = async_sessionmaker(
