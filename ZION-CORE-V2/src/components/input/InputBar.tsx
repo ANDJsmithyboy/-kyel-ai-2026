@@ -49,7 +49,7 @@ const getTierIcon = (tier: string) => {
 };
 
 const PLACEHOLDERS = [
-  'Demande à Gaboma...',
+  'Demande à Nkyel...',
   'Le Rendu attend tes instructions...',
   'WANDANA cherche pour toi...',
   'BLACK PANTHER est en veille...',

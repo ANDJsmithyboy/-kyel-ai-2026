@@ -43,7 +43,7 @@ const cols = [
 export default function FineTuningPage() {
   return (
     <div className="space-y-8">
-      <SectionHeader title="Fine-tuning Jobs" subtitle="SFT et LoRA — Entraînement des modèles Gaboma"
+      <SectionHeader title="Fine-tuning Jobs" subtitle="SFT et LoRA — Entraînement des modèles Nkyel"
         action={<button className="h-9 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-medium transition-colors">+ Nouveau Job</button>}
       />
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">

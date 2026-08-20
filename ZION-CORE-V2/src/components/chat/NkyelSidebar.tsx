@@ -53,7 +53,7 @@ export function NkyelSidebar({ isOpen, onClose }: NkyelSidebarProps) {
 
 function SidebarContent({ onClose, isMobile }: { onClose: () => void; isMobile: boolean }) {
   const recentTracks = [
-    "Plan de développement Gaboma",
+    "Plan de développement Nkyel",
     "Analyse de l'API Stripe",
     "Synthèse de la réunion Q3",
   ];

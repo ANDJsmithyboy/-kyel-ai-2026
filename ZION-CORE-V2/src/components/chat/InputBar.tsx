@@ -207,7 +207,7 @@ export default function InputBar({ onSend, onStop, isGenerating }: InputBarProps
               {/* Modèles */}
               <div className="px-3 pb-2 pt-4">
                 <p className="mb-2 px-2 text-[10px] font-bold uppercase tracking-widest text-white/40">
-                  Modèles Gaboma
+                  Modèles Nkyel
                 </p>
                 {MODELS.map((model) => (
                   <button
@@ -351,7 +351,7 @@ export default function InputBar({ onSend, onStop, isGenerating }: InputBarProps
                 value={text}
                 onChange={(e) => setText(e.target.value)}
                 onKeyDown={handleKeyDown}
-                placeholder="Demandez n'importe quoi à Gaboma..."
+                placeholder="Demandez n'importe quoi à Nkyel..."
                 rows={1}
                 className="flex-1 resize-none border-none bg-transparent text-[15px] leading-relaxed outline-none placeholder:text-white/30 text-white px-2 py-2"
                 style={{ maxHeight: 200 }}

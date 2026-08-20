@@ -152,5 +152,5 @@ export const selectTokensPercent = (s: NkyelState) =>
 export const selectIsLowTokens = (s: NkyelState) =>
   s.tokensMax > 0 ? s.tokens / s.tokensMax < 0.2 : false;
 
-/* Alias pour migration progressive Gaboma → Nkyel */
+/* Alias pour migration progressive Nkyel → Nkyel */
 export const useNkyelStore = useGabomaStore;

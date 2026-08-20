@@ -28,59 +28,12 @@ const isAdminRoute = createRouteMatcher([
 ]);
 
 // -- Middleware -----------------------------------------------
-const clerk = clerkMiddleware(async (auth, req: NextRequest) => {
-  try {
-    const { userId, sessionClaims } = await auth();
-
-    // Public routes — allow through
-    if (isPublicRoute(req)) {
-      return NextResponse.next();
-    }
-
-    // Not authenticated — redirect to sign-in
-    if (!userId) {
-      const signInUrl = new URL('/sign-in', req.url);
-      signInUrl.searchParams.set('redirect_url', req.url);
-      return NextResponse.redirect(signInUrl);
-    }
-
-    // -- Onboarding check --
-    const publicMeta = (sessionClaims?.metadata as { onboardingComplete?: boolean }) || {};
-    if (!publicMeta.onboardingComplete && !isOnboardingRoute(req)) {
-      return NextResponse.redirect(new URL('/onboarding', req.url));
-    }
-
-    // If user HAS completed onboarding but is visiting /onboarding, send to /chat
-    if (publicMeta.onboardingComplete && req.nextUrl.pathname === '/onboarding') {
-      return NextResponse.redirect(new URL('/chat', req.url));
-    }
-
-    // Admin routes — check role
-    if (isAdminRoute(req)) {
-      const role = (sessionClaims?.metadata as { role?: string })?.role;
-      if (role !== 'admin') {
-        return NextResponse.redirect(new URL('/chat', req.url));
-      }
-    }
-
-    return NextResponse.next();
-  } catch (error) {
-    if (isPublicRoute(req)) {
-      return NextResponse.next();
-    }
-    console.error('[Middleware] Auth error:', error);
-    return NextResponse.next();
-  }
-});
-
-export default function middleware(req: NextRequest, event: NextFetchEvent) {
-  // Prevent Vercel 500 crash if Clerk env vars are missing
-  if (!process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY || !process.env.CLERK_SECRET_KEY) {
-    console.warn('⚠️ Clerk keys missing in Vercel environment. Bypassing middleware.');
-    return NextResponse.next();
-  }
-  return clerk(req, event);
+export default function middleware(req: NextRequest) {
+  // Bypassing all authentication for the Google Demo
+  return NextResponse.next();
 }
+
+
 
 
 export const config = {

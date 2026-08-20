@@ -92,7 +92,7 @@ export default function AdminNoeudPage() {
         <div>
           <h2 className="text-xl font-display font-semibold text-[var(--text-primary)] tracking-tight">Nœud Libreville-S-01</h2>
           <p className="text-[13px] font-medium text-[var(--text-secondary)] mt-1.5 tracking-tight">
-            Configuration des API Providers masqués sous l'identité souveraine Gaboma.
+            Configuration des API Providers masqués sous l'identité souveraine Nkyel.
           </p>
         </div>
         <button onClick={handleSave} className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[var(--accent)] text-[var(--text-primary)] text-xs font-semibold uppercase tracking-widest hover:brightness-110 transition-all shadow-[0_0_15px_var(--accent-20)]">

@@ -103,7 +103,7 @@ export default function Sidebar() {
           className="text-[15px] font-semibold text-[var(--text-primary)]"
           style={{ fontFamily: 'var(--font-heading)' }}
         >
-          Gaboma
+          Nkyel
         </span>
       </div>
 

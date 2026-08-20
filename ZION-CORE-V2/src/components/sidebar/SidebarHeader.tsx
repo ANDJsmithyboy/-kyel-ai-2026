@@ -63,7 +63,7 @@ export default function SidebarHeader({
       {isCollapsed && !isMobile && (
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%' }}>
           <Image
-            src="/vrai-içone-pro-gaboma-ai2026.png"
+            src="/vrai-içone-pro-nkyel-ai2026.png"
             alt="Nkyel AI"
             width={22}
             height={22}

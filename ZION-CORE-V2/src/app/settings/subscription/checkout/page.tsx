@@ -71,7 +71,7 @@ export default function CheckoutPage() {
         <header className="checkout-header">
           <button className="checkout-back" onClick={() => router.back()}>← Retour</button>
           <div className="checkout-logo">G</div>
-          <h1 className="checkout-title">Passer à Gaboma Pro</h1>
+          <h1 className="checkout-title">Passer à Nkyel Pro</h1>
           <p className="checkout-subtitle">Débloquez toute la puissance de l&apos;IA gabonaise</p>
         </header>
 

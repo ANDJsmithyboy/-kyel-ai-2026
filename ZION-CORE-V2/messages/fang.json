@@ -28,12 +28,12 @@
     "signup": "Tilè dzam"
   },
   "chat": {
-    "placeholder": "Biè Gaboma AI nkwèl wa wé...",
+    "placeholder": "Biè Nkyel AI nkwèl wa wé...",
     "send": "Tom",
     "regenerate": "Wule bè",
     "stopGenerating": "Fè tè",
     "newConversation": "Nkwèl é fam",
-    "thinking": "Gaboma AI a yèm...",
+    "thinking": "Nkyel AI a yèm...",
     "searching": "A zik...",
     "webSearch": "Zik na Internet",
     "ragSearch": "Zik na bèkalat",
@@ -100,14 +100,14 @@
   },
   "welcome": {
     "title": "Mbolo ! 🇬🇦",
-    "subtitle": "Mè ne Gaboma AI, nnom wa wé é yèm wa Gabon",
+    "subtitle": "Mè ne Nkyel AI, nnom wa wé é yèm wa Gabon",
     "suggestion1": "Yene mè loi bèkî wa Gabon",
     "suggestion2": "Kale « mbolo » na fang, punu mia mpongwé",
     "suggestion3": "Byane mam ma Gabon na 5 mam",
     "suggestion4": "Minkî mi Gabon bia bé ne ?"
   },
   "meta": {
-    "title": "GabomaGPT — IA é Mvôl wa Gabon",
+    "title": "Nkyel AI — IA é Mvôl wa Gabon",
     "description": "IA é mvôl wa Gabon — SmartANDJ AI Technologies"
   }
 }

@@ -1,6 +1,6 @@
-# Gaboma AI — Design System V3 (Fusion Claude × Gemini)
+# Nkyel AI — Design System V3 (Fusion Claude × Gemini)
 
-Ce document est la source de vérité unique pour le design system de Gaboma AI (web Next.js 15, Kotlin Android, Swift iOS).
+Ce document est la source de vérité unique pour le design system de Nkyel AI (web Next.js 15, Kotlin Android, Swift iOS).
 
 ## 1. Typographie
 
@@ -242,4 +242,4 @@ Différences natives autorisées (navigation, transitions, haptique) ailleurs.
 
 ---
 
-Ce document est la base unique à respecter sur tout le stack Gaboma AI (web, Android, iOS). Toute nouvelle couleur ou taille doit être vérifiée au contraste (WCAG 2.2) avant merge.
+Ce document est la base unique à respecter sur tout le stack Nkyel AI (web, Android, iOS). Toute nouvelle couleur ou taille doit être vérifiée au contraste (WCAG 2.2) avant merge.

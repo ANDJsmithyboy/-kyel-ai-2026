@@ -121,7 +121,7 @@ export default function AdminHeader({
                 className="absolute right-0 mt-2 w-56 rounded-xl bg-[var(--bg-card)] border border-[var(--glass-border)] shadow-2xl py-1.5 z-50 overflow-hidden"
               >
                 <div className="px-3 py-1.5 border-b border-[var(--divider)] mb-1">
-                  <p className="text-[10px] font-semibold text-[var(--text-muted)] uppercase tracking-widest antialiased">Thèmes Gaboma</p>
+                  <p className="text-[10px] font-semibold text-[var(--text-muted)] uppercase tracking-widest antialiased">Thèmes Nkyel</p>
                 </div>
                 <div className="p-1 flex flex-col gap-0.5">
                   {(Object.keys(adminThemes) as AdminThemeName[]).map((key) => {

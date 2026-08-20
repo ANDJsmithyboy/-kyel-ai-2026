@@ -1,9 +1,9 @@
 /**
- * Gaboma AI · Service Worker
+ * Nkyel AI · Service Worker
  * Offline shell + cache-first for static, network-first for API
  */
 
-const CACHE_NAME = 'gaboma-ai-v1';
+const CACHE_NAME = 'nkyel-ai-v1';
 const STATIC_ASSETS = [
   '/',
   '/manifest.json',

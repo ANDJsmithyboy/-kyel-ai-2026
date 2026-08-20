@@ -27,7 +27,7 @@ const kpis = [
 ];
 
 const systemStatus = [
-  { label: 'Nœud Gaboma-Core', status: 'Opérationnel', uptime: '99.99%', load: '42%', isHigh: false },
+  { label: 'Nœud Nkyel-Core', status: 'Opérationnel', uptime: '99.99%', load: '42%', isHigh: false },
   { label: 'DB Vectorielle (RAG)', status: 'Opérationnel', uptime: '100%', load: '18%', isHigh: false },
   { label: 'AUTOMATA V2.0', status: 'Haute Charge', uptime: '99.95%', load: '89%', isHigh: true },
   { label: 'Pactes (Billing)', status: 'Opérationnel', uptime: '99.98%', load: '34%', isHigh: false },

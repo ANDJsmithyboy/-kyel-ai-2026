@@ -303,7 +303,7 @@ export default function Sidebar() {
               />
             )}
             <div className="flex items-baseline gap-0 min-w-0">
-              <span className="text-[15px] font-semibold tracking-tight text-[var(--accent)]">Gaboma</span>
+              <span className="text-[15px] font-semibold tracking-tight text-[var(--accent)]">Nkyel</span>
               <span className="text-[15px] font-semibold tracking-tight text-[var(--gabon-blue,#38BDF8)]">AI</span>
             </div>
           </a>

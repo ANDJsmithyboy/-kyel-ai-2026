@@ -1,4 +1,4 @@
-/* GabomaGPT · Sentry Edge Config · SmartANDJ AI Technologies */
+/* Nkyel AI · Sentry Edge Config · SmartANDJ AI Technologies */
 import * as Sentry from '@sentry/nextjs';
 
 if (process.env.NEXT_PUBLIC_SENTRY_DSN) {
