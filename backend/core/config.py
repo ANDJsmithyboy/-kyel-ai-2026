@@ -16,7 +16,7 @@ class Settings(BaseSettings):
     app_name: str = "Ñkyel AI"
     app_version: str = "2.0.0"
     company_name: str = "SmartANDJ AI Technologies"
-    founder: str = "Daniel Jonathan ANDJ"
+    founder: str = "Akare Ntoutoume Daniel Jonathan"
     environment: str = "development"
     debug: bool = True
 
