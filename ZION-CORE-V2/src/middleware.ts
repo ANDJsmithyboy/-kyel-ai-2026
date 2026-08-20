@@ -2,6 +2,9 @@
    Clerk auth + error-resilient Edge middleware + onboarding redirect
    Fondateur : Daniel Jonathan ANDJ */
 
+export const runtime = 'nodejs';
+
+
 import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
