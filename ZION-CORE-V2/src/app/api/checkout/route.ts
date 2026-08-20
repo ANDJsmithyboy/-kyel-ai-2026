@@ -7,8 +7,6 @@ import { NextResponse } from 'next/server';
 import { ebillingProvider } from '@/lib/payments/e-billing';
 import { PLANS, type PaymentRequest } from '@/lib/payments/provider';
 
-export const dynamic = 'force-dynamic';
-
 export async function POST(req: Request) {
   try {
     // -- 1. Auth --

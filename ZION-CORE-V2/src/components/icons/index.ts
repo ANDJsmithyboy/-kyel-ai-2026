@@ -8,9 +8,9 @@ export { IconEnPiste } from './IconEnPiste';
 export * from './RenduIcon';
 export * from './JonathanDanielIcon';
 export * from './SmartAndJTechIcon';
-export * from './Nkyel AILogo';
+export * from './NkyelAILogo';
 export * from './ProjetIcon';
-export { SonarIcon, NkyelIcon } from './SonarIcon';
+export { SonarIcon } from './SonarIcon';
 export { IbogaAiIcon } from './IbogaAiIcon';
 export { EnPisteIcon } from './EnPisteIcon';
 export { LoxoIcon } from './LoxoIcon';
@@ -19,7 +19,9 @@ export { OnyxFaceIcon } from './OnyxFaceIcon';
 export {
   NouvellePisteIcon,
   AurataIcon,
-  NkyelIcon as NkyelIcon,
+  NkyelIcon,
   OnyxGrisIcon,
   NkyelAgentIcon,
 } from './NkyelIcons';
+/* Re-export nkyel/ sub-icons used by sidebar & input */
+export { PawNewIcon, PawHistoryIcon, ProjetsIcon, TropheeIcon, RadarWandanaIcon, WandanaIcon, OmbreIcon } from './nkyel';

@@ -95,3 +95,12 @@ export { RenduIcon } from './RenduIcon';
 
 /* 📁 PROJET — Dossier avec étoile */
 export { ProjetIcon } from './ProjetIcon';
+
+/* Re-export nkyel/ sub-icons so existing imports work */
+export { PawNewIcon } from './nkyel/PawNewIcon';
+export { PawHistoryIcon } from './nkyel/PawHistoryIcon';
+export { ProjetsIcon } from './nkyel/ProjetsIcon';
+export { TropheeIcon } from './nkyel/TropheeIcon';
+export { RadarWandanaIcon } from './nkyel/RadarWandanaIcon';
+export { WandanaIcon } from './nkyel/WandanaIcon';
+export { OmbreIcon } from './nkyel/OmbreIcon';

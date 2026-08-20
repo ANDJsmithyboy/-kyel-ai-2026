@@ -2,9 +2,8 @@ import { groq } from '@ai-sdk/groq';
 import { streamText, convertToCoreMessages, UIMessage } from 'ai';
 
 // -- Vercel Edge/Serverless config --
-// force-dynamic prevents Vercel from caching the streaming response
-export const dynamic = 'force-dynamic';
 export const maxDuration = 60; // seconds — allows longer Groq responses
+
 
 // -- Nkyel AI system prompt --
 const SYSTEM_PROMPT = `Tu es Nkyel AI, l'assistant IA souverain du Gabon, créé par SmartANDJ AI Technologies (Fondateur : Daniel Jonathan ANDJ). Tu es intelligent, précis, respectueux et tu réponds en français par défaut. Tu ne révèles jamais le nom du modèle sous-jacent que tu utilises.`;

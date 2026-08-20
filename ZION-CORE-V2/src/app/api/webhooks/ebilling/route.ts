@@ -7,8 +7,6 @@ import { db, schema } from '@/lib/db';
 import { eq } from 'drizzle-orm';
 import { clerkClient } from '@clerk/nextjs/server';
 
-export const dynamic = 'force-dynamic';
-
 export async function POST(req: Request) {
   try {
     const body = await req.json() as {
