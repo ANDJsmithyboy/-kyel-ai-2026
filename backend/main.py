@@ -27,12 +27,19 @@ async def lifespan(app: FastAPI):
     """Gère le démarrage et l'arrêt de l'application."""
     # Démarrage
     print(f"🚀 Démarrage de Ñkyel AI ({settings.app_name}) v{settings.app_version}...")
-    await init_db()
-    print("✅ Connexion à Neon PostgreSQL établie.")
+    try:
+        await init_db()
+        print("✅ Connexion à Neon PostgreSQL établie.")
+    except Exception as e:
+        print(f"⚠️ Note DB: {e}. Le serveur continue de tourner.")
     yield
     # Arrêt
     print("🛑 Arrêt du backend Ñkyel AI...")
-    await close_db()
+    try:
+        await close_db()
+    except Exception:
+        pass
+
 
 
 app = FastAPI(

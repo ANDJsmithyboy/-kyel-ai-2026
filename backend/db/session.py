@@ -16,6 +16,11 @@ db_url = settings.database_url
 if db_url.startswith("postgresql://"):
     db_url = db_url.replace("postgresql://", "postgresql+asyncpg://", 1)
 
+# Nettoyage des paramètres libpq incompatibles avec asyncpg
+db_url = db_url.replace("sslmode=require", "ssl=require").replace("channel_binding=require", "")
+if db_url.endswith("&") or db_url.endswith("?"):
+    db_url = db_url[:-1]
+
 engine = create_async_engine(
     db_url,
     echo=settings.debug,
@@ -23,6 +28,7 @@ engine = create_async_engine(
     max_overflow=10,
     pool_pre_ping=True,
 )
+
 
 
 # ── Session factory ──────────────────────────────────────────
