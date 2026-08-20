@@ -198,7 +198,7 @@ export default function InputBar({
           onClick={() => setIsSheetOpen(true)}
           className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full shrink-0 transition-all hover:bg-[var(--accent-10)] bg-[var(--accent-06)] border border-[var(--border)]"
         >
-          <span style={{ color: getModelColor(model) }}>{getModelIcon(model)}</span>
+          <span style={{ color: getTierAccent(model) }}>{getTierIcon(model)}</span>
           <span
             className="text-[12px] font-bold tracking-wide"
             style={{ color: 'var(--text-primary)' }}
