@@ -2,12 +2,9 @@
    Clerk auth + error-resilient Edge middleware + onboarding redirect
    Fondateur : Daniel Jonathan ANDJ */
 
-export const runtime = 'nodejs';
-
-
 import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
 import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
+import type { NextFetchEvent, NextRequest } from 'next/server';
 
 // -- Route matchers ------------------------------------------
 const isPublicRoute = createRouteMatcher([
@@ -31,7 +28,7 @@ const isAdminRoute = createRouteMatcher([
 ]);
 
 // -- Middleware -----------------------------------------------
-export default clerkMiddleware(async (auth, req: NextRequest) => {
+const clerk = clerkMiddleware(async (auth, req: NextRequest) => {
   try {
     const { userId, sessionClaims } = await auth();
 
@@ -48,8 +45,6 @@ export default clerkMiddleware(async (auth, req: NextRequest) => {
     }
 
     // -- Onboarding check --
-    // If the user hasn't completed onboarding, redirect to /onboarding
-    // (except if they're already on the onboarding page or its API)
     const publicMeta = (sessionClaims?.metadata as { onboardingComplete?: boolean }) || {};
     if (!publicMeta.onboardingComplete && !isOnboardingRoute(req)) {
       return NextResponse.redirect(new URL('/onboarding', req.url));
@@ -70,16 +65,23 @@ export default clerkMiddleware(async (auth, req: NextRequest) => {
 
     return NextResponse.next();
   } catch (error) {
-    // If Clerk auth fails (missing keys, network issue), allow public routes
-    // and redirect others to sign-in gracefully
     if (isPublicRoute(req)) {
       return NextResponse.next();
     }
-    // Fallback: let the request through rather than crash the middleware
     console.error('[Middleware] Auth error:', error);
     return NextResponse.next();
   }
 });
+
+export default function middleware(req: NextRequest, event: NextFetchEvent) {
+  // Prevent Vercel 500 crash if Clerk env vars are missing
+  if (!process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY || !process.env.CLERK_SECRET_KEY) {
+    console.warn('⚠️ Clerk keys missing in Vercel environment. Bypassing middleware.');
+    return NextResponse.next();
+  }
+  return clerk(req, event);
+}
+
 
 export const config = {
   matcher: [
