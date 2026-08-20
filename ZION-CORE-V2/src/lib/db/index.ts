@@ -6,10 +6,10 @@ import { neon } from '@neondatabase/serverless';
 import { drizzle } from 'drizzle-orm/neon-http';
 import * as schema from './schema';
 
-// ── Neon serverless connection ──────────────────────────────
+// -- Neon serverless connection ------------------------------
 const sql = neon(process.env.DATABASE_URL || 'postgres://dummy:dummy@localhost/dummy');
 
-// ── Drizzle ORM instance ────────────────────────────────────
+// -- Drizzle ORM instance ------------------------------------
 export const db = drizzle(sql, { schema });
 
 // Re-export schema for convenience

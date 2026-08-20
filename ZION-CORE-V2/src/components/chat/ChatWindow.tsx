@@ -16,7 +16,7 @@ import { streamChatCompletion, type ChatMessage } from '@/services/api';
 import { v4 as uuidv4 } from 'uuid';
 import { cn } from '@/lib/utils';
 
-/* ── Salutations gabonaises ── */
+/* -- Salutations gabonaises -- */
 function getTimeGreeting(name: string): string {
   const h = new Date().getHours();
   if (h >= 5 && h < 12) return `Mbolo ! Bonjour ${name}`;
@@ -25,7 +25,7 @@ function getTimeGreeting(name: string): string {
   return `C'est tard ${name}, mais Ñkyel AI veille`;
 }
 
-/* ── Messages d'erreur gabonais ── */
+/* -- Messages d'erreur gabonais -- */
 function getErrorMessage(error: string): string {
   if (error.includes('network') || error.includes('fetch')) return 'Wolo wolo, connexion perdue. On réessaie ?';
   if (error.includes('500') || error.includes('server')) return 'Le serveur fait la sieste. Patience frère.';
@@ -34,7 +34,7 @@ function getErrorMessage(error: string): string {
   return `Erreur : ${error}`;
 }
 
-/* ── Suggestions de démarrage ── */
+/* -- Suggestions de démarrage -- */
 const SUGGESTIONS = [
   { icon: '🇬🇦', text: "Parle-moi de l'histoire du Gabon" },
   { icon: '💻', text: 'Écris un script Python pour analyser des données' },
@@ -73,7 +73,7 @@ export default function ChatWindow({ conversationId, model }: ChatWindowProps) {
     if (user) setTimeGreeting(getTimeGreeting(user.name.split(' ')[0]));
   }, [user]);
 
-  /* ── useChat Integration ── */
+  /* -- useChat Integration -- */
   const { messages: aiMessages, append, stop, isLoading } = useChat({
     api: '/api/chat',
     initialMessages: (conversation?.messages || []).map(m => ({
@@ -134,7 +134,7 @@ export default function ChatWindow({ conversationId, model }: ChatWindowProps) {
     // For now, if we want to regenerate, we can just log or implement later.
   }, []);
 
-  /* ── État vide — écran d'accueil ── */
+  /* -- État vide — écran d'accueil -- */
   if (!conversationId || displayMessages.length === 0) {
     return (
       <div className="flex flex-col h-full">
@@ -181,7 +181,7 @@ export default function ChatWindow({ conversationId, model }: ChatWindowProps) {
     );
   }
 
-  /* ── Chat avec messages ── */
+  /* -- Chat avec messages -- */
   return (
     <div className="flex flex-col h-full relative">
       {/* Messages */}

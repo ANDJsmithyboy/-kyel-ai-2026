@@ -114,7 +114,7 @@ export default function WideSearchInterface() {
   return (
     <div className="flex flex-col h-full bg-[var(--bg)] font-sans">
       
-      {/* ── Entête minimaliste ── */}
+      {/* -- Entête minimaliste -- */}
       <header className="flex-none px-6 py-4 border-b border-[var(--border)] bg-[var(--bg-elevated)]/80 backdrop-blur-md">
         <h1 className="text-lg font-semibold tracking-tight flex items-center gap-2 text-[var(--text-primary)]" style={{ fontFamily: 'var(--font-heading)' }}>
           <Sparkles className="text-[var(--accent)]" size={18} />
@@ -122,7 +122,7 @@ export default function WideSearchInterface() {
         </h1>
       </header>
 
-      {/* ── Zone de contenu principal (Thought Blocks & Chat) ── */}
+      {/* -- Zone de contenu principal (Thought Blocks & Chat) -- */}
       <div className="flex-1 overflow-y-auto px-4 md:px-12 py-8 space-y-6">
         
         {messages.length === 0 && (
@@ -175,7 +175,7 @@ export default function WideSearchInterface() {
         <div ref={messagesEndRef} />
       </div>
 
-      {/* ── Barre de saisie (Deep Search Input) ── */}
+      {/* -- Barre de saisie (Deep Search Input) -- */}
       <div className="flex-none p-4 md:p-6 bg-gradient-to-t from-[var(--bg)] to-transparent">
         <div className="max-w-4xl mx-auto relative">
           <form 

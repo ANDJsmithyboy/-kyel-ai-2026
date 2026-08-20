@@ -11,7 +11,7 @@ import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { IconAurata, IconNkyel, IconOnyxGris, IconWandana, IconBlackPanther, IconBluePanther } from '@/components/icons';
 
-/* ── Types ────────────────────────────────────────── */
+/* -- Types ------------------------------------------ */
 export type TierKey = 'NKYEL_CHUI' | 'NKYEL_TAI' | 'RECHERCHE_WEB' | 'NKYEL_RADI' | 'BLUE_PANTHER';
 
 interface Tier {
@@ -31,7 +31,7 @@ const TIERS: Tier[] = [
   { key: 'BLUE_PANTHER',  label: 'Blue Panther',  description: 'Mode Créateur Illimité',             badge: 'CRÉATEUR',   available: true, accentColor: '#0070F3' },
 ];
 
-/* ── Props ────────────────────────────────────────── */
+/* -- Props ------------------------------------------ */
 interface TierPickerProps {
   isOpen: boolean;
   onClose: () => void;
@@ -39,7 +39,7 @@ interface TierPickerProps {
   onSelect: (tier: TierKey) => void;
 }
 
-/* ── Component ───────────────────────────────────── */
+/* -- Component ------------------------------------- */
 export default function TierPicker({ isOpen, onClose, selectedTier, onSelect }: TierPickerProps) {
   const shouldReduceMotion = useReducedMotion();
   const containerRef = useRef<HTMLDivElement>(null);

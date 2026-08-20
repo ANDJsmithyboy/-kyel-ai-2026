@@ -6,7 +6,7 @@
 
 import { create } from 'zustand';
 
-// ── Types ──────────────────────────────────────────
+// -- Types ------------------------------------------
 export type AgentPhase =
   | 'idle'
   | 'planning'
@@ -79,7 +79,7 @@ export interface AgentState {
   reset: () => void;
 }
 
-// ── Initial State ──────────────────────────────────
+// -- Initial State ----------------------------------
 const initialState = {
   sessionId: null,
   threadId: null,
@@ -96,7 +96,7 @@ const initialState = {
   error: null,
 };
 
-// ── Store ──────────────────────────────────────────
+// -- Store ------------------------------------------
 export const useAgentStore = create<AgentState>((set) => ({
   ...initialState,
 

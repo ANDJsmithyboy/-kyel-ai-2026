@@ -39,7 +39,7 @@ export async function POST(req: NextRequest) {
   // 3. Forward to Groq directly (Temporary bypass)
   const groqApiKey = process.env.GROQ_API_KEY;
   if (!groqApiKey) {
-    // ── FALLBACK : Mock Stream IA sans backend ──
+    // -- FALLBACK : Mock Stream IA sans backend --
     const stream = new ReadableStream({
       async start(controller) {
         const encoder = new TextEncoder();

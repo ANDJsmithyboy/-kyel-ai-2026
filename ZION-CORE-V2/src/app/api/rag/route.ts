@@ -1,11 +1,11 @@
 /**
- * ╔══════════════════════════════════════════════════════════════╗
- * ║  Ñkyel AI — RAG Qdrant Cloud Query API                     ║
- * ║  SmartANDJ AI Technologies · Constitution Zion Core          ║
- * ║                                                              ║
- * ║  Hybrid Search: Dense (sémantique) + Sparse (mots-clés)      ║
- * ║  Filtrage par langue: fang, punu, nzebi, omyene              ║
- * ╚══════════════════════════════════════════════════════════════╝
+ * ----------------------------------------------------------------
+ * -  Ñkyel AI — RAG Qdrant Cloud Query API                     -
+ * -  SmartANDJ AI Technologies · Constitution Zion Core          -
+ * -                                                              -
+ * -  Hybrid Search: Dense (sémantique) + Sparse (mots-clés)      -
+ * -  Filtrage par langue: fang, punu, nzebi, omyene              -
+ * ----------------------------------------------------------------
  */
 
 import { NextRequest, NextResponse } from 'next/server';
@@ -34,7 +34,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Query parameter is required' }, { status: 400 });
     }
 
-    // ─── Construction du filtre Qdrant ───
+    // --- Construction du filtre Qdrant ---
     const filter: Record<string, unknown> = {};
     if (language && language !== 'all') {
       filter.must = [
@@ -42,7 +42,7 @@ export async function POST(req: NextRequest) {
       ];
     }
 
-    // ─── Scroll/Search via REST API Qdrant Cloud ───
+    // --- Scroll/Search via REST API Qdrant Cloud ---
     // On utilise l'endpoint /points/query pour la recherche textuelle
     const scrollResponse = await fetch(`${QDRANT_URL}/collections/${COLLECTION_NAME}/points/scroll`, {
       method: 'POST',
@@ -66,7 +66,7 @@ export async function POST(req: NextRequest) {
 
     const data = await scrollResponse.json();
 
-    // ─── Formatage des résultats ───
+    // --- Formatage des résultats ---
     const results = (data.result?.points || []).map((point: QdrantSearchResult) => ({
       id: point.id,
       score: point.score || 0,
@@ -89,7 +89,7 @@ export async function POST(req: NextRequest) {
   }
 }
 
-// ─── GET: Info sur la collection ───
+// --- GET: Info sur la collection ---
 export async function GET() {
   try {
     const response = await fetch(`${QDRANT_URL}/collections/${COLLECTION_NAME}`, {

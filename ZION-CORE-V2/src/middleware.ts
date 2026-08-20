@@ -6,7 +6,7 @@ import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
-// ── Route matchers ──────────────────────────────────────────
+// -- Route matchers ------------------------------------------
 const isPublicRoute = createRouteMatcher([
   '/',
   '/sign-in(.*)',
@@ -27,7 +27,7 @@ const isAdminRoute = createRouteMatcher([
   '/admin(.*)',
 ]);
 
-// ── Middleware ───────────────────────────────────────────────
+// -- Middleware -----------------------------------------------
 export default clerkMiddleware(async (auth, req: NextRequest) => {
   try {
     const { userId, sessionClaims } = await auth();
@@ -44,7 +44,7 @@ export default clerkMiddleware(async (auth, req: NextRequest) => {
       return NextResponse.redirect(signInUrl);
     }
 
-    // ── Onboarding check ──
+    // -- Onboarding check --
     // If the user hasn't completed onboarding, redirect to /onboarding
     // (except if they're already on the onboarding page or its API)
     const publicMeta = (sessionClaims?.metadata as { onboardingComplete?: boolean }) || {};

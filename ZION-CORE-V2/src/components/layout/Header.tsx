@@ -14,7 +14,7 @@ import { useAuthStore } from '@/stores/auth.store';
 import { cn } from '@/lib/utils';
 import { IconAurata, IconNkyel, IconWandana, Ñkyel AILogo } from '@/components/icons';
 
-/* ── Modèles disponibles ── */
+/* -- Modèles disponibles -- */
 const MODELS = [
   { id: 'aurata-spark', icon: IconAurata, color: '#C5A059', label: 'Aurata' },
   { id: 'nyel-deep', icon: IconNkyel, color: '#94A3B8', label: 'Ñkyel' },

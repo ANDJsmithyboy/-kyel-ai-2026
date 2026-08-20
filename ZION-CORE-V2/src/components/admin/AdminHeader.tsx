@@ -53,7 +53,7 @@ export default function AdminHeader({
 
   return (
     <header className="sticky top-0 z-40 h-14 bg-glass border-b border-[var(--divider)] flex items-center justify-between px-4 lg:px-6 transition-colors duration-500">
-      {/* ── Mobile Hamburger & Title ─────────────────────── */}
+      {/* -- Mobile Hamburger & Title ----------------------- */}
       <div className="flex items-center gap-3">
         {isMobile && (
           <button 
@@ -71,7 +71,7 @@ export default function AdminHeader({
         </div>
       </div>
 
-      {/* ── Search (Desktop only) ────────────────────────── */}
+      {/* -- Search (Desktop only) -------------------------- */}
       {!isMobile && (
         <div className="flex-1 max-w-md mx-8">
           <div className="relative group">
@@ -85,7 +85,7 @@ export default function AdminHeader({
         </div>
       )}
 
-      {/* ── Actions ──────────────────────────────────────── */}
+      {/* -- Actions ---------------------------------------- */}
       <div className="flex items-center gap-2 relative">
         {/* System status (Desktop only) */}
         {!isMobile && (

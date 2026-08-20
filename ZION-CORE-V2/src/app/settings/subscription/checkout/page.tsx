@@ -75,7 +75,7 @@ export default function CheckoutPage() {
           <p className="checkout-subtitle">Débloquez toute la puissance de l&apos;IA gabonaise</p>
         </header>
 
-        {/* ── STEP: PLAN SELECTION ── */}
+        {/* -- STEP: PLAN SELECTION -- */}
         {state === 'plan' && (
           <div className="checkout-step">
             <div className="checkout-plans">
@@ -109,7 +109,7 @@ export default function CheckoutPage() {
           </div>
         )}
 
-        {/* ── STEP: PAYMENT METHOD ── */}
+        {/* -- STEP: PAYMENT METHOD -- */}
         {state === 'method' && (
           <div className="checkout-step">
             <h2 className="checkout-step-title">Mode de paiement</h2>
@@ -170,7 +170,7 @@ export default function CheckoutPage() {
           </div>
         )}
 
-        {/* ── STEP: PROCESSING ── */}
+        {/* -- STEP: PROCESSING -- */}
         {state === 'processing' && (
           <div className="checkout-step checkout-center">
             <div className="checkout-spinner" />
@@ -181,7 +181,7 @@ export default function CheckoutPage() {
           </div>
         )}
 
-        {/* ── STEP: SUCCESS ── */}
+        {/* -- STEP: SUCCESS -- */}
         {state === 'success' && (
           <div className="checkout-step checkout-center">
             <div className="checkout-success-icon">✓</div>
@@ -199,7 +199,7 @@ export default function CheckoutPage() {
           </div>
         )}
 
-        {/* ── STEP: ERROR ── */}
+        {/* -- STEP: ERROR -- */}
         {state === 'error' && (
           <div className="checkout-step checkout-center">
             <div className="checkout-error-icon">✗</div>

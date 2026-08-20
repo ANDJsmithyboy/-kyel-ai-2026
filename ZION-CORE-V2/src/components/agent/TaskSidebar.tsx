@@ -40,7 +40,7 @@ export default function TaskSidebar() {
         overflow: 'hidden',
       }}
     >
-      {/* ── Header ── */}
+      {/* -- Header -- */}
       <div
         style={{
           display: 'flex',
@@ -91,7 +91,7 @@ export default function TaskSidebar() {
         )}
       </div>
 
-      {/* ── Task List ── */}
+      {/* -- Task List -- */}
       <div
         className="scroll-fade"
         style={{

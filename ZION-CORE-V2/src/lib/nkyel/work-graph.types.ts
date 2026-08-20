@@ -7,7 +7,7 @@
  * @version 1.0.0
  */
 
-// ─── Node Types ─────────────────────────────────────────
+// --- Node Types -----------------------------------------
 
 export type WorkNodeType =
   | 'goal'
@@ -86,7 +86,7 @@ export interface WorkNode {
   metadata?: Record<string, unknown>;
 }
 
-// ─── Edge Types ─────────────────────────────────────────
+// --- Edge Types -----------------------------------------
 
 export type WorkEdgeType =
   | 'decomposes_into'
@@ -120,7 +120,7 @@ export interface WorkEdge {
   metadata?: Record<string, unknown>;
 }
 
-// ─── Work Graph ─────────────────────────────────────────
+// --- Work Graph -----------------------------------------
 
 export interface WorkGraph {
   /** Run/mission identifier */
@@ -137,7 +137,7 @@ export interface WorkGraph {
   updatedAt: string;
 }
 
-// ─── Event Types ────────────────────────────────────────
+// --- Event Types ----------------------------------------
 
 export type NkyelEventType =
   | 'run.created'
@@ -204,7 +204,7 @@ export interface NkyelEvent {
   redacted?: boolean;
 }
 
-// ─── Snapshot for Replay ────────────────────────────────
+// --- Snapshot for Replay --------------------------------
 
 export interface WorkGraphSnapshot {
   /** Snapshot identifier */

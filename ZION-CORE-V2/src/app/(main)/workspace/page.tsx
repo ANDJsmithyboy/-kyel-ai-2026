@@ -18,7 +18,7 @@ const NkyelWorkspaceCanvas = dynamic(
   { ssr: false, loading: () => <div className="nkyel-loading">Loading workspace...</div> }
 );
 
-// ─── Demo Orchestrator ──────────────────────────────────
+// --- Demo Orchestrator ----------------------------------
 // For the P0 demo, we can run the agent via the backend SSE endpoint
 // or simulate events locally for offline testing.
 
@@ -326,7 +326,7 @@ function generateDemoEvents(runId: string, goal: string) {
   return events;
 }
 
-// ─── Main Page Component ────────────────────────────────
+// --- Main Page Component --------------------------------
 
 export default function NkyelWorkspacePage() {
   const [goalInput, setGoalInput] = useState('');

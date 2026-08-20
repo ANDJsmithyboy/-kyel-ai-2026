@@ -35,7 +35,7 @@ export default function ChatHome({ firstName = 'Citoyen' }: ChatHomeProps) {
 
   return (
     <div className="flex h-full flex-1 flex-col items-center justify-center px-4">
-      {/* ── Center content ────────────────────────── */}
+      {/* -- Center content -------------------------- */}
       <div className="flex w-full max-w-2xl flex-1 flex-col items-center justify-center">
         
         {/* Logo + fluctuating greeting for all screen sizes */}
@@ -79,7 +79,7 @@ export default function ChatHome({ firstName = 'Citoyen' }: ChatHomeProps) {
         </div>
       </div>
 
-      {/* ── InputBar (bottom, full width) ─────────── */}
+      {/* -- InputBar (bottom, full width) ----------- */}
       <div className="w-full max-w-2xl pb-6">
         <InputBar onSend={handleSend} />
       </div>

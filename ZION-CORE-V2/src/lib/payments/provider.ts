@@ -2,10 +2,10 @@
    Abstract payment provider — all concrete providers implement this.
    Fondateur : Daniel Jonathan ANDJ */
 
-// ── Payment Method Types ─────────────────────────────────────
+// -- Payment Method Types -------------------------------------
 export type PaymentMethodType = 'mobile_money' | 'e_billing' | 'card';
 
-// ── Plan Tiers ───────────────────────────────────────────────
+// -- Plan Tiers -----------------------------------------------
 export interface PlanTier {
   id: string;
   name: string;
@@ -20,7 +20,7 @@ export interface PlanTier {
   popular?: boolean;
 }
 
-// ── Plans Configuration ──────────────────────────────────────
+// -- Plans Configuration --------------------------------------
 export const PLANS: PlanTier[] = [
   {
     id: 'free',
@@ -78,7 +78,7 @@ export const PLANS: PlanTier[] = [
   },
 ];
 
-// ── Payment Request / Response ───────────────────────────────
+// -- Payment Request / Response -------------------------------
 export interface PaymentRequest {
   planId: string;
   userId: string;
@@ -110,7 +110,7 @@ export interface PaymentStatusResult {
   currency: string;
 }
 
-// ── Provider Interface ───────────────────────────────────────
+// -- Provider Interface ---------------------------------------
 export interface PaymentProvider {
   /** Unique identifier for this provider */
   readonly id: string;
@@ -131,7 +131,7 @@ export interface PaymentProvider {
   verifyWebhookSignature(payload: string, signature: string): boolean;
 }
 
-// ── Format helpers ───────────────────────────────────────────
+// -- Format helpers -------------------------------------------
 export function formatXAF(amount: number): string {
   return new Intl.NumberFormat('fr-GA', {
     style: 'currency',

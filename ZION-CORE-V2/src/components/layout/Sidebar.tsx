@@ -20,7 +20,7 @@ import { cn } from '@/lib/utils';
 import { v4 as uuidv4 } from 'uuid';
 import { useClerk } from '@clerk/nextjs';
 
-/* ── Salutations gabonaises par heure ── */
+/* -- Salutations gabonaises par heure -- */
 function getGreeting(name: string, style: string): string {
   const h = new Date().getHours();
   if (style === 'formel') {
@@ -158,7 +158,7 @@ export default function Sidebar() {
   if (weekItems.length) groups.push({ label: '7 derniers jours', items: weekItems });
   if (olderItems.length) groups.push({ label: 'Plus ancien', items: olderItems });
 
-  /* ── Collapsed sidebar (desktop, fermé) ── */
+  /* -- Collapsed sidebar (desktop, fermé) -- */
   if (!isOpen && !isMobile) {
     return (
       <div className="fixed top-0 left-0 z-50 h-screen w-[48px] flex flex-col items-center py-2 border-r border-[var(--border)] bg-[var(--zc-surface)]" suppressHydrationWarning>
@@ -286,7 +286,7 @@ export default function Sidebar() {
           'transition-transform duration-250',
           isMobile ? 'shadow-2xl' : '',
         )}        suppressHydrationWarning      >
-        {/* ── En-tête : Logo + Ñkyel AI + Iboga toggle ── */}
+        {/* -- En-tête : Logo + Ñkyel AI + Iboga toggle -- */}
         <div className="flex items-center gap-2 px-3 pt-3 pb-2 relative">
           {/* Dot indicator lumineux */}
           <div className="absolute top-4 left-4 w-1.5 h-1.5 rounded-full bg-[var(--accent)] shadow-[0_0_10px_var(--accent)]" />
@@ -316,7 +316,7 @@ export default function Sidebar() {
           </button>
         </div>
 
-        {/* ── Boutons rapides : Nouveau chat + Recherche ── */}
+        {/* -- Boutons rapides : Nouveau chat + Recherche -- */}
         <div className="px-2 pb-1 space-y-0.5">
           <button
             onClick={handleNewChat}
@@ -337,7 +337,7 @@ export default function Sidebar() {
           </button>
         </div>
 
-        {/* ── Barre de recherche ── */}
+        {/* -- Barre de recherche -- */}
         {showSearch && (
           <div className="px-3 pb-2 animate-fade-in">
             <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-[var(--zc-input)] border border-[var(--border)]">
@@ -354,7 +354,7 @@ export default function Sidebar() {
           </div>
         )}
 
-        {/* ── Liste des conversations ── */}
+        {/* -- Liste des conversations -- */}
         <div className="flex-1 overflow-y-auto scroll-fade scrollbar-hidden px-2 pt-1 pb-2">
           {groups.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-12 text-center">
@@ -406,7 +406,7 @@ export default function Sidebar() {
           )}
         </div>
 
-        {/* ── Footer : profil utilisateur + paramètres ── */}
+        {/* -- Footer : profil utilisateur + paramètres -- */}
         <div className="px-2 py-2 border-t border-white/[0.03]">
           {/* Black Panther badge */}
           {blackPantherMode ? (

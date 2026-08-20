@@ -103,7 +103,7 @@ export function useAgentSSE() {
   return { startSSE, stopSSE };
 }
 
-// ── Dispatch des événements SSE ──────────────────
+// -- Dispatch des événements SSE ------------------
 function handleEvent(event: Record<string, unknown>) {
   const store = useAgentStore.getState();
 

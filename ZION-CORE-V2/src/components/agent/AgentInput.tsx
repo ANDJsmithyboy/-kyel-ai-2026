@@ -105,7 +105,7 @@ export default function AgentInput() {
         background: 'var(--bg-panel)',
       }}
     >
-      {/* ── Mode selector ── */}
+      {/* -- Mode selector -- */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
         {(['onyx', 'black-panther'] as AgentMode[]).map((m) => (
           <button
@@ -151,7 +151,7 @@ export default function AgentInput() {
         )}
       </div>
 
-      {/* ── Input area ── */}
+      {/* -- Input area -- */}
       <div
         className="input-bar"
         style={{

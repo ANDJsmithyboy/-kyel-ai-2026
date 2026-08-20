@@ -47,7 +47,7 @@ export default function SandboxViewer({
       animate={{ opacity: 1, y: 0 }}
       className="w-full mt-4 mb-4 rounded-xl overflow-hidden glass-elevated border border-[var(--glass-border)]"
     >
-      {/* ── Header ── */}
+      {/* -- Header -- */}
       <div className="flex items-center justify-between px-3 py-2 bg-[var(--surface)]/60 border-b border-[var(--border)] backdrop-blur-md">
         <div className="flex items-center gap-2">
           <Server className="w-4 h-4 text-accent" />
@@ -68,7 +68,7 @@ export default function SandboxViewer({
         </div>
       </div>
 
-      {/* ── Tabs ── */}
+      {/* -- Tabs -- */}
       <div className="flex bg-[var(--surface)]/30 border-b border-[var(--border)] px-2">
         <button
           onClick={() => setActiveTab('terminal')}
@@ -94,7 +94,7 @@ export default function SandboxViewer({
         </button>
       </div>
 
-      {/* ── Content ── */}
+      {/* -- Content -- */}
       <div className="h-48 bg-[#020304]/80 overflow-y-auto custom-scrollbar">
         {activeTab === 'terminal' ? (
           <div className="p-3 font-mono text-[11px] leading-relaxed text-[#A0A0A0] space-y-1">

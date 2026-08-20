@@ -11,13 +11,13 @@ export const dynamic = 'force-dynamic';
 
 export async function POST(req: Request) {
   try {
-    // ── 1. Auth ──
+    // -- 1. Auth --
     const { userId: clerkId } = await auth();
     if (!clerkId) {
       return NextResponse.json({ error: 'Non authentifié' }, { status: 401 });
     }
 
-    // ── 2. Parse body ──
+    // -- 2. Parse body --
     const body = await req.json() as {
       planId: string;
       provider: string;
@@ -27,7 +27,7 @@ export async function POST(req: Request) {
 
     const { planId, provider, email } = body;
 
-    // ── 3. Validate plan ──
+    // -- 3. Validate plan --
     const plan = PLANS.find(p => p.id === planId);
     if (!plan || plan.price === 0) {
       return NextResponse.json(
@@ -36,7 +36,7 @@ export async function POST(req: Request) {
       );
     }
 
-    // ── 4. Build payment request ──
+    // -- 4. Build payment request --
     const paymentRequest: PaymentRequest = {
       planId: plan.id,
       userId: clerkId,
@@ -49,7 +49,7 @@ export async function POST(req: Request) {
       },
     };
 
-    // ── 5. Route to provider ──
+    // -- 5. Route to provider --
     let result;
     switch (provider) {
       case 'e-billing':

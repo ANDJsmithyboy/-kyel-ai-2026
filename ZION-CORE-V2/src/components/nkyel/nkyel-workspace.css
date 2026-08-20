@@ -3,7 +3,7 @@
  * Premium dark theme with indigo/platinum palette
  */
 
-/* ─── Workspace Container ────────────────────────────── */
+/* --- Workspace Container ------------------------------ */
 .nkyel-workspace {
   display: flex;
   flex-direction: column;
@@ -53,7 +53,7 @@
   gap: 0.5rem;
 }
 
-/* ─── Canvas Container ───────────────────────────────── */
+/* --- Canvas Container --------------------------------- */
 .nkyel-canvas-container {
   position: relative;
   flex: 1;
@@ -78,7 +78,7 @@
   background: transparent !important;
 }
 
-/* ─── Node Styles ────────────────────────────────────── */
+/* --- Node Styles -------------------------------------- */
 .nkyel-node {
   position: relative;
   min-width: 200px;
@@ -192,7 +192,7 @@
   background: rgba(255, 255, 255, 0.1);
 }
 
-/* ─── Activity Feed ──────────────────────────────────── */
+/* --- Activity Feed ------------------------------------ */
 .nkyel-activity-feed {
   width: 280px;
   max-height: 260px;
@@ -240,7 +240,7 @@
   color: rgba(255, 255, 255, 0.6);
 }
 
-/* ─── Controls Override ──────────────────────────────── */
+/* --- Controls Override -------------------------------- */
 .nkyel-controls {
   background: rgba(5, 7, 12, 0.85) !important;
   border: 1px solid rgba(255, 255, 255, 0.08) !important;
@@ -252,7 +252,7 @@
   fill: white !important;
 }
 
-/* ─── Buttons ────────────────────────────────────────── */
+/* --- Buttons ------------------------------------------ */
 .nkyel-btn {
   padding: 0.5rem 1rem;
   border-radius: 0.75rem;
@@ -282,7 +282,7 @@
   background: rgba(255, 255, 255, 0.1);
 }
 
-/* ─── Responsive ─────────────────────────────────────── */
+/* --- Responsive --------------------------------------- */
 @media (max-width: 768px) {
   .nkyel-workspace {
     border-radius: 0;
@@ -304,7 +304,7 @@
   }
 }
 
-/* ─── Reduced Motion ─────────────────────────────────── */
+/* --- Reduced Motion ----------------------------------- */
 @media (prefers-reduced-motion: reduce) {
   .nkyel-node,
   .nkyel-btn {

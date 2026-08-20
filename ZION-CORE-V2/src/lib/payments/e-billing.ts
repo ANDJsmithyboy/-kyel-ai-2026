@@ -9,7 +9,7 @@ import type {
   PaymentStatusResult,
 } from './provider';
 
-// ── Token cache ──────────────────────────────────────────────
+// -- Token cache ----------------------------------------------
 let cachedToken: { token: string; expiresAt: number } | null = null;
 
 async function getAccessToken(): Promise<string> {
@@ -53,7 +53,7 @@ async function getAccessToken(): Promise<string> {
   return cachedToken.token;
 }
 
-// ── API call helper ──────────────────────────────────────────
+// -- API call helper ------------------------------------------
 async function ebillingFetch(
   path: string,
   options: RequestInit = {},
@@ -72,7 +72,7 @@ async function ebillingFetch(
   });
 }
 
-// ── E-Billing Provider Implementation ────────────────────────
+// -- E-Billing Provider Implementation ------------------------
 export class EBillingProvider implements PaymentProvider {
   readonly id = 'e-billing';
   readonly name = 'E-Billing Gabon';
@@ -186,5 +186,5 @@ export class EBillingProvider implements PaymentProvider {
   }
 }
 
-// ── Singleton export ─────────────────────────────────────────
+// -- Singleton export -----------------------------------------
 export const ebillingProvider = new EBillingProvider();

@@ -11,7 +11,7 @@ import SettingsToggle from '@/components/settings/SettingsToggle';
 import UpsellCard from '@/components/settings/UpsellCard';
 import { IconAurata, IconNkyel, IconWandana, IconOnyxGris, IconBlackPanther, IconBluePanther } from '@/components/icons';
 
-/* ── Placeholder icons (20px thin) ─────────────────────── */
+/* -- Placeholder icons (20px thin) ----------------------- */
 const Icon = ({ d }: { d: string }) => (
   <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
     <path d={d} stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
@@ -43,7 +43,7 @@ const ChevronLeftIcon = () => (
   </svg>
 );
 
-/* ── Dummy user (server-side) ──────────────────────────── */
+/* -- Dummy user (server-side) ---------------------------- */
 const user = {
   email: 'jean.moussavou@smartandj.com',
   name: 'Jean Moussavou',

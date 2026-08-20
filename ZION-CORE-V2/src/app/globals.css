@@ -8,9 +8,9 @@
 
 @import "tailwindcss";
 
-/* ════════════════════════════════════════════
+/* --------------------------------------------
    INVARIANT TOKENS (shared across all themes)
-   ════════════════════════════════════════════ */
+   -------------------------------------------- */
 
 @layer base {
   :root {
@@ -34,10 +34,10 @@
   }
 }
 
-/* ════════════════════════════════════════════
+/* --------------------------------------------
    COMPAT ALIASES (legacy components)
    Remove once all components are migrated.
-   ════════════════════════════════════════════ */
+   -------------------------------------------- */
 
 [data-theme] {
   --bg-panel: var(--bg);
@@ -46,9 +46,9 @@
   --accent-08: var(--accent-06);
 }
 
-/* ════════════════════════════════════════════
+/* --------------------------------------------
    THEME 1: BLACK PANTHER (default)
-   ════════════════════════════════════════════ */
+   -------------------------------------------- */
 
 [data-theme="black-panther"],
 :root {
@@ -69,9 +69,9 @@
   --glass-border: rgba(237, 234, 227, 0.06);
 }
 
-/* ════════════════════════════════════════════
+/* --------------------------------------------
    THEME 2: NUIT LOPÉ (OLED)
-   ════════════════════════════════════════════ */
+   -------------------------------------------- */
 
 [data-theme="nuit-lope"] {
   --bg: #050507;
@@ -92,9 +92,9 @@
   --glass-border: rgba(237, 236, 230, 0.05);
 }
 
-/* ════════════════════════════════════════════
+/* --------------------------------------------
    THEME 3: AURORE OGOOUÉ (blanc émeraude)
-   ════════════════════════════════════════════ */
+   -------------------------------------------- */
 
 [data-theme="aurore-ogoue"] {
   --bg: #F8F8F4;
@@ -115,9 +115,9 @@
   --glass-border: rgba(24, 24, 27, 0.05);
 }
 
-/* ════════════════════════════════════════════
+/* --------------------------------------------
    THEME 4: BLEU NUIT (Atlantique)
-   ════════════════════════════════════════════ */
+   -------------------------------------------- */
 
 [data-theme="bleu-nuit"] {
   --bg: #060A14;
@@ -138,9 +138,9 @@
   --glass-border: rgba(239, 246, 255, 0.05);
 }
 
-/* ════════════════════════════════════════════
+/* --------------------------------------------
    THEME 5: VIOLETTE MANDRILLE (SmartandJ)
-   ════════════════════════════════════════════ */
+   -------------------------------------------- */
 
 [data-theme="violette-mandrille"] {
   --bg: #08060F;
@@ -162,9 +162,9 @@
   --glass-border: rgba(245, 243, 255, 0.05);
 }
 
-/* ════════════════════════════════════════════
+/* --------------------------------------------
    THEME 6: NÉO BLANC (Apple minimal)
-   ════════════════════════════════════════════ */
+   -------------------------------------------- */
 
 [data-theme="neo-blanc"] {
   --bg: #FAFAF8;
@@ -185,9 +185,9 @@
   --glass-border: rgba(9, 9, 11, 0.05);
 }
 
-/* ════════════════════════════════════════════
+/* --------------------------------------------
    BASE RESETS
-   ════════════════════════════════════════════ */
+   -------------------------------------------- */
 
 *,
 *::before,
@@ -213,7 +213,7 @@ body {
   overflow-x: hidden;
 }
 
-/* ── Typography ── */
+/* -- Typography -- */
 
 h1 { font-family: var(--font-heading); font-size: 2.369rem; line-height: 1.1; font-weight: 600; letter-spacing: -0.02em; }
 h2 { font-family: var(--font-heading); font-size: 1.777rem; line-height: 1.2; font-weight: 600; letter-spacing: -0.01em; }
@@ -225,7 +225,7 @@ code, pre, kbd, samp {
   font-size: 0.875rem;
 }
 
-/* ── Focus Visible (WCAG 2.2) ── */
+/* -- Focus Visible (WCAG 2.2) -- */
 
 :focus-visible {
   outline: 2px solid var(--accent);
@@ -233,14 +233,14 @@ code, pre, kbd, samp {
   border-radius: var(--radius-sm);
 }
 
-/* ── Selection ── */
+/* -- Selection -- */
 
 ::selection {
   background: var(--accent-35);
   color: var(--text-primary);
 }
 
-/* ── Scrollbar ── */
+/* -- Scrollbar -- */
 
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
@@ -250,7 +250,7 @@ code, pre, kbd, samp {
 .scrollbar-hidden { -ms-overflow-style: none; scrollbar-width: none; }
 .scrollbar-hidden::-webkit-scrollbar { display: none; }
 
-/* ── Animations ── */
+/* -- Animations -- */
 
 @keyframes pulse-luxe {
   0%, 100% { box-shadow: 0 0 0 0 var(--accent-35); }
@@ -267,7 +267,7 @@ code, pre, kbd, samp {
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* ── prefers-reduced-motion ── */
+/* -- prefers-reduced-motion -- */
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
@@ -277,7 +277,7 @@ code, pre, kbd, samp {
   }
 }
 
-/* ── Utilities ── */
+/* -- Utilities -- */
 
 .glass {
   background: var(--bg-glass);
@@ -296,11 +296,11 @@ code, pre, kbd, samp {
 
 .gb-live-pulse { animation: pulse-luxe 2.4s ease-out infinite; }
 
-/* ════════════════════════════════════════════
+/* --------------------------------------------
    PREMIUM 2026 — Glassmorphism 2.0 + Micro-Animations
-   ════════════════════════════════════════════ */
+   -------------------------------------------- */
 
-/* ── Glassmorphism 2.0 (layered depth) ── */
+/* -- Glassmorphism 2.0 (layered depth) -- */
 
 .glass-panel {
   background: var(--bg-glass);
@@ -331,7 +331,7 @@ code, pre, kbd, samp {
   border: 0.5px solid rgba(255, 255, 255, 0.04);
 }
 
-/* ── Split-View Layout ── */
+/* -- Split-View Layout -- */
 
 .split-view {
   display: grid;
@@ -359,7 +359,7 @@ code, pre, kbd, samp {
   }
 }
 
-/* ── Agent Panel ── */
+/* -- Agent Panel -- */
 
 .agent-panel {
   border-left: 0.5px solid var(--border);
@@ -379,7 +379,7 @@ code, pre, kbd, samp {
   gap: 8px;
 }
 
-/* ── Mode Indicator Chip ── */
+/* -- Mode Indicator Chip -- */
 
 .mode-chip {
   display: inline-flex;
@@ -407,7 +407,7 @@ code, pre, kbd, samp {
   color: #90CAF9;
 }
 
-/* ── Tool Call Card ── */
+/* -- Tool Call Card -- */
 
 .tool-card {
   background: rgba(255, 255, 255, 0.02);
@@ -433,7 +433,7 @@ code, pre, kbd, samp {
   border-left: 2px solid var(--color-error);
 }
 
-/* ── Generative UI Artifact ── */
+/* -- Generative UI Artifact -- */
 
 .artifact-card {
   border-radius: var(--radius-lg);
@@ -465,7 +465,7 @@ code, pre, kbd, samp {
   padding: 16px;
 }
 
-/* ── Task Checklist (Manus-style) ── */
+/* -- Task Checklist (Manus-style) -- */
 
 .task-checklist-item {
   display: flex;
@@ -486,7 +486,7 @@ code, pre, kbd, samp {
   color: var(--text-primary);
 }
 
-/* ── Takeover Button ── */
+/* -- Takeover Button -- */
 
 .takeover-btn {
   display: inline-flex;
@@ -507,7 +507,7 @@ code, pre, kbd, samp {
   transform: scale(1.02);
 }
 
-/* ── Micro-animations ── */
+/* -- Micro-animations -- */
 
 @keyframes shimmer {
   0% { background-position: -200% center; }
@@ -544,7 +544,7 @@ code, pre, kbd, samp {
 .animate-slide-in-right { animation: slide-in-right 0.3s ease-out; }
 .animate-scale-in { animation: scale-in 0.2s ease-out; }
 
-/* ── Verification Badge ── */
+/* -- Verification Badge -- */
 
 .verification-badge {
   display: inline-flex;
@@ -564,7 +564,7 @@ code, pre, kbd, samp {
   color: var(--color-warning);
 }
 
-/* ── Progressive Disclosure ── */
+/* -- Progressive Disclosure -- */
 
 .disclosure {
   overflow: hidden;
@@ -579,7 +579,7 @@ code, pre, kbd, samp {
   opacity: 1;
 }
 
-/* ── Focus States (Accessibility) ── */
+/* -- Focus States (Accessibility) -- */
 
 :focus-visible {
   outline: 2px solid var(--accent);

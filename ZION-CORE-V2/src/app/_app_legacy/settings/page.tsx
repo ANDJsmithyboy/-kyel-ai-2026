@@ -50,7 +50,7 @@ const GREETING_STYLES = [
   { key: 'argot' as const, label: 'Argot urbain', example: 'Wesh Daniel, on gère ?' },
 ];
 
-/* ── Toggle Switch réutilisable ── */
+/* -- Toggle Switch réutilisable -- */
 function Toggle({ checked, onChange, label }: { checked: boolean; onChange: () => void; label: string }) {
   return (
     <button onClick={onChange} className="flex items-center justify-between w-full py-3 group">
@@ -246,7 +246,7 @@ export default function SettingsPage() {
         <div className="flex-1 overflow-y-auto p-6">
           <div className="max-w-xl mx-auto space-y-8">
 
-            {/* ═══════ APPARENCE ═══════ */}
+            {/* ------- APPARENCE ------- */}
             {activeTab === 'apparence' && (
               <>
                 {/* Thèmes */}
@@ -353,7 +353,7 @@ export default function SettingsPage() {
               </>
             )}
 
-            {/* ═══════ Ñkyel AI ═══════ */}
+            {/* ------- Ñkyel AI ------- */}
             {activeTab === 'Ñkyel AI' && (
               <>
                 {/* Black Panther */}
@@ -419,7 +419,7 @@ export default function SettingsPage() {
               </>
             )}
 
-            {/* ═══════ CHAT ═══════ */}
+            {/* ------- CHAT ------- */}
             {activeTab === 'chat' && (
               <>
                 <section className="space-y-0 divide-y divide-[var(--border)]">
@@ -431,7 +431,7 @@ export default function SettingsPage() {
               </>
             )}
 
-            {/* ═══════ AUDIO ═══════ */}
+            {/* ------- AUDIO ------- */}
             {activeTab === 'audio' && (
               <section>
                 <h2 className="text-sm font-semibold text-[var(--text-primary)] mb-3">Entrée vocale</h2>
@@ -445,7 +445,7 @@ export default function SettingsPage() {
               </section>
             )}
 
-            {/* ═══════ À PROPOS ═══════ */}
+            {/* ------- À PROPOS ------- */}
             {activeTab === 'about' && (
               <section className="space-y-4">
                 <div className="flex items-center gap-4">

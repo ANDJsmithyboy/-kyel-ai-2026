@@ -9,7 +9,7 @@ import { IconAurata, IconNkyel, IconOnyxGris, IconBlackPanther } from '@/compone
 import { WandanaIcon, RenduIcon } from '@/components/icons/NkyelIcons';
 import { saveDraft, getDraft } from '@/lib/indexedDB';
 
-/* ── Types ────────────────────────────────────────── */
+/* -- Types ------------------------------------------ */
 type ModelKey = 'aurata' | 'nkyel' | 'onyx-gris' | 'black-panther' | 'wandana';
 
 interface Model {
@@ -33,7 +33,7 @@ interface InputBarProps {
   isGenerating?: boolean;
 }
 
-/* ── Ñkyel Waves ───────────────────── */
+/* -- Ñkyel Waves --------------------- */
 function NkyelWaves({ isLive }: { isLive?: boolean }) {
   const bars = isLive ? Array.from({ length: 24 }) : [0, 1, 2, 3];
   return (
@@ -59,7 +59,7 @@ function NkyelWaves({ isLive }: { isLive?: boolean }) {
   );
 }
 
-/* ── STT Mic Icon ─────────────────────────────────── */
+/* -- STT Mic Icon ----------------------------------- */
 function MicIcon() {
   return (
     <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
@@ -70,7 +70,7 @@ function MicIcon() {
   );
 }
 
-/* ── Send Arrow Icon ──────────────────────────────── */
+/* -- Send Arrow Icon -------------------------------- */
 function SendIcon() {
   return (
     <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
@@ -79,7 +79,7 @@ function SendIcon() {
   );
 }
 
-/* ── Plus Icon ────────────────────────────────────── */
+/* -- Plus Icon -------------------------------------- */
 function PlusIcon() {
   return (
     <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
@@ -96,7 +96,7 @@ function ChevronDown() {
   );
 }
 
-/* ── Main InputBar ────────────────────────────────── */
+/* -- Main InputBar ---------------------------------- */
 export default function InputBar({ onSend, onStop, isGenerating }: InputBarProps) {
   const [text, setText] = useState('');
   const [selectedModel, setSelectedModel] = useState<ModelKey | null>(null);
@@ -270,7 +270,7 @@ export default function InputBar({ onSend, onStop, isGenerating }: InputBarProps
           )}
         </AnimatePresence>
 
-        {/* ── The Pill (Haze Glassmorphism 2.0) ─────────────────────────────── */}
+        {/* -- The Pill (Haze Glassmorphism 2.0) ------------------------------- */}
         <motion.div
           layout
           className="flex items-center gap-2 rounded-full shadow-2xl backdrop-blur-2xl"

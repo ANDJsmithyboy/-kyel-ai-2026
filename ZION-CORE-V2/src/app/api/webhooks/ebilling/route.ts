@@ -25,7 +25,7 @@ export async function POST(req: Request) {
 
     console.log('[E-Billing Webhook] Received:', JSON.stringify(body));
 
-    // ── Verify the payment is completed ──
+    // -- Verify the payment is completed --
     if (body.status !== 'paid' && body.status !== 'completed') {
       console.log('[E-Billing Webhook] Payment not completed, status:', body.status);
       return NextResponse.json({ received: true });
@@ -39,7 +39,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Missing metadata' }, { status: 400 });
     }
 
-    // ── Update user subscription in database ──
+    // -- Update user subscription in database --
     const existingUsers = await db
       .select()
       .from(schema.users)
@@ -68,7 +68,7 @@ export async function POST(req: Request) {
         .where(eq(schema.users.clerkId, userId));
     }
 
-    // ── Update Clerk publicMetadata for fast middleware checks ──
+    // -- Update Clerk publicMetadata for fast middleware checks --
     const clerk = await clerkClient();
     await clerk.users.updateUserMetadata(userId, {
       publicMetadata: {

@@ -12,7 +12,7 @@ import type { WorkNode, WorkEdge, NkyelEvent, NkyelEventType } from './work-grap
 import { eventStore } from './event-store';
 import { AgUiStreamAdapter } from './ag-ui-adapter';
 
-// ─── Store State ────────────────────────────────────────
+// --- Store State ----------------------------------------
 
 interface WorkGraphState {
   /** Current run ID */
@@ -32,7 +32,7 @@ interface WorkGraphState {
   /** Selected node ID */
   selectedNodeId: string | null;
 
-  // ── Actions ─────────────────────────────────────────
+  // -- Actions -----------------------------------------
   /** Start a new mission/run */
   startRun: (goalTitle: string, goalSummary?: string) => string;
   /** Emit an event and update the graph */
@@ -55,14 +55,14 @@ interface WorkGraphState {
   reset: () => void;
 }
 
-// ─── ID Generator ───────────────────────────────────────
+// --- ID Generator ---------------------------------------
 
 let idCounter = 0;
 function generateId(prefix: string): string {
   return `${prefix}_${Date.now()}_${++idCounter}`;
 }
 
-// ─── Store ──────────────────────────────────────────────
+// --- Store ----------------------------------------------
 
 export const useWorkGraphStore = create<WorkGraphState>((set, get) => {
   // Subscribe to all events from the event store

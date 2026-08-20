@@ -5,7 +5,7 @@
 
 import { BarChart3, TrendingUp, Clock, MessageSquare, Users, Cpu } from 'lucide-react';
 
-/* ── Carte de statistique ── */
+/* -- Carte de statistique -- */
 function StatCard({ icon: Icon, label, value, color }: {
   icon: typeof BarChart3; label: string; value: string; color: string;
 }) {
@@ -20,7 +20,7 @@ function StatCard({ icon: Icon, label, value, color }: {
   );
 }
 
-/* ── Barre de progression horizontale ── */
+/* -- Barre de progression horizontale -- */
 function ProgressBar({ label, value, max, color }: {
   label: string; value: number; max: number; color: string;
 }) {

@@ -4,7 +4,7 @@
 
 import { create } from 'zustand';
 
-/* ── Types ────────────────────────────────────────── */
+/* -- Types ------------------------------------------ */
 export type Mode = 'flash' | 'pro' | 'research' | 'agent' | 'superagent' | 'vision';
 
 export interface ModeConfig {
@@ -18,7 +18,7 @@ export interface ModeConfig {
   tokenCost: number;
 }
 
-/* ── Mapping modèles → fournisseurs ─────────────── */
+/* -- Mapping modèles → fournisseurs --------------- */
 export const MODEL_MAP: Record<Mode, ModeConfig> = {
   flash: {
     label: 'Aurata (Flash)',
@@ -82,7 +82,7 @@ export const MODEL_MAP: Record<Mode, ModeConfig> = {
   },
 };
 
-/* ── Store Zustand ─────────────────────────────── */
+/* -- Store Zustand ------------------------------- */
 interface ModeState {
   activeMode: Mode;
   setMode: (mode: Mode) => void;
@@ -110,6 +110,6 @@ if (typeof window !== 'undefined') {
   useModeStore.setState({ activeMode: saved });
 }
 
-/* ── Helpers ──────────────────────────────────────── */
+/* -- Helpers ---------------------------------------- */
 export const getActiveConfig = (mode: Mode) => MODEL_MAP[mode];
 export const isBPMode = (mode: Mode) => mode === 'superagent';

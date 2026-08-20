@@ -17,7 +17,7 @@ import { useAdminTheme, adminThemes } from '@/stores/adminTheme';
 import { IbogaAiIcon } from '@/components/icons/IbogaAiIcon';
 import { AndjSovereignIcon } from '@/components/icons/AndjSovereignIcon';
 
-// ── Nav items ───────────────────────────────────────────────
+// -- Nav items -----------------------------------------------
 const navGroups = [
   {
     label: 'PRINCIPAL',
@@ -105,7 +105,7 @@ export default function AdminSidebar({
           flex flex-col shadow-2xl overflow-hidden
         `}
       >
-        {/* ── Header / Logo ─────────────────────────────────────────── */}
+        {/* -- Header / Logo ------------------------------------------- */}
         <div className="flex items-center gap-3 px-4 py-4 border-b border-[var(--divider)] h-14 shrink-0">
           <div className="relative flex items-center justify-center text-[var(--text-primary)] w-6 h-6 flex-shrink-0">
             <img src="/Ñkyel AI-logo.jpeg" alt="Ñkyel AI" className="w-full h-full rounded" />
@@ -138,7 +138,7 @@ export default function AdminSidebar({
           )}
         </div>
 
-        {/* ── Navigation ───────────────────────────────────── */}
+        {/* -- Navigation ------------------------------------- */}
         <nav className="flex-1 overflow-y-auto py-6 space-y-6 scrollbar-none px-2">
           {navGroups.map((group) => (
             <div key={group.label} className="space-y-1">
@@ -201,7 +201,7 @@ export default function AdminSidebar({
           ))}
         </nav>
 
-        {/* ── Footer ───────────────────────────────────────── */}
+        {/* -- Footer ----------------------------------------- */}
         <div className="border-t border-[var(--glass-border)] px-4 py-4 shrink-0 bg-transparent">
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 rounded-md bg-[var(--bg-card2)] border border-[var(--glass-border)] flex items-center justify-center text-[var(--text-primary)] shadow-inner">

@@ -29,7 +29,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Server misconfigured' }, { status: 500 });
   }
 
-  // ── Verify webhook signature ──────────────────────────────
+  // -- Verify webhook signature ------------------------------
   const headerPayload = await headers();
   const svixId = headerPayload.get('svix-id');
   const svixTimestamp = headerPayload.get('svix-timestamp');
@@ -55,7 +55,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Invalid signature' }, { status: 400 });
   }
 
-  // ── Handle events ─────────────────────────────────────────
+  // -- Handle events -----------------------------------------
   const { type, data } = event;
   const email = data.email_addresses?.[0]?.email_address;
   const name = [data.first_name, data.last_name].filter(Boolean).join(' ') || 'Utilisateur';

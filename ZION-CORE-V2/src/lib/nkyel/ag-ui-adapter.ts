@@ -19,7 +19,7 @@
 import type { NkyelEvent, NkyelEventType, WorkNode } from './work-graph.types';
 import { eventStore } from './event-store';
 
-// ─── AG-UI Event Types (mapped from backend SSE) ────────
+// --- AG-UI Event Types (mapped from backend SSE) --------
 
 interface AgUiRawEvent {
   type: string;
@@ -28,14 +28,14 @@ interface AgUiRawEvent {
   [key: string]: unknown;
 }
 
-// ─── ID Generator ───────────────────────────────────────
+// --- ID Generator ---------------------------------------
 
 let agUiIdCounter = 0;
 function genId(prefix: string): string {
   return `${prefix}_${Date.now()}_${++agUiIdCounter}`;
 }
 
-// ─── AG-UI to Ñkyel Event Mapper ────────────────────────
+// --- AG-UI to Ñkyel Event Mapper ------------------------
 
 function mapAgUiEventToNkyelEvent(raw: AgUiRawEvent, runId: string): NkyelEvent | null {
   const baseEvent = {
@@ -45,7 +45,7 @@ function mapAgUiEventToNkyelEvent(raw: AgUiRawEvent, runId: string): NkyelEvent 
   };
 
   switch (raw.type) {
-    // ── Native NkyelEvents (Pass-through) ──
+    // -- Native NkyelEvents (Pass-through) --
     case 'goal.received':
     case 'plan.created':
     case 'plan.updated':
@@ -81,7 +81,7 @@ function mapAgUiEventToNkyelEvent(raw: AgUiRawEvent, runId: string): NkyelEvent 
         payload: raw.data?.payload as any,
       };
 
-    // ── Run Lifecycle ──
+    // -- Run Lifecycle --
     case 'run_started':
     case 'lifecycle':
       if (raw.data?.status === 'started' || raw.data?.phase === 'start') {
@@ -95,7 +95,7 @@ function mapAgUiEventToNkyelEvent(raw: AgUiRawEvent, runId: string): NkyelEvent 
       }
       return null;
 
-    // ── Planning ──
+    // -- Planning --
     case 'plan_created':
     case 'coordinator':
       return {
@@ -116,7 +116,7 @@ function mapAgUiEventToNkyelEvent(raw: AgUiRawEvent, runId: string): NkyelEvent 
         },
       };
 
-    // ── Task Events ──
+    // -- Task Events --
     case 'task_started':
     case 'agent_step':
       return {
@@ -137,7 +137,7 @@ function mapAgUiEventToNkyelEvent(raw: AgUiRawEvent, runId: string): NkyelEvent 
         },
       };
 
-    // ── Tool Calls ──
+    // -- Tool Calls --
     case 'tool_call':
     case 'tool_started':
       return {
@@ -169,7 +169,7 @@ function mapAgUiEventToNkyelEvent(raw: AgUiRawEvent, runId: string): NkyelEvent 
         payload: { result: raw.data?.result },
       };
 
-    // ── Web Search / Source ──
+    // -- Web Search / Source --
     case 'wandana_search':
     case 'web_search':
     case 'tavily_search':
@@ -192,7 +192,7 @@ function mapAgUiEventToNkyelEvent(raw: AgUiRawEvent, runId: string): NkyelEvent 
         },
       };
 
-    // ── Text Message (AI Response) ──
+    // -- Text Message (AI Response) --
     case 'messages-tuple':
     case 'text_message':
       if (raw.data?.type === 'ai' && raw.data?.content) {
@@ -216,7 +216,7 @@ function mapAgUiEventToNkyelEvent(raw: AgUiRawEvent, runId: string): NkyelEvent 
       }
       return null;
 
-    // ── Approval Requests ──
+    // -- Approval Requests --
     case 'approval_request':
       return {
         ...baseEvent,
@@ -236,7 +236,7 @@ function mapAgUiEventToNkyelEvent(raw: AgUiRawEvent, runId: string): NkyelEvent 
         },
       };
 
-    // ── Errors ──
+    // -- Errors --
     case 'error':
       return {
         ...baseEvent,
@@ -256,7 +256,7 @@ function mapAgUiEventToNkyelEvent(raw: AgUiRawEvent, runId: string): NkyelEvent 
         },
       };
 
-    // ── Run End ──
+    // -- Run End --
     case 'run_completed':
     case 'final':
       return {
@@ -274,7 +274,7 @@ function mapAgUiEventToNkyelEvent(raw: AgUiRawEvent, runId: string): NkyelEvent 
   }
 }
 
-// ─── SSE Stream Processor ───────────────────────────────
+// --- SSE Stream Processor -------------------------------
 
 export class AgUiStreamAdapter {
   private runId: string;

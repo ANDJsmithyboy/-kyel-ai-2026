@@ -9,7 +9,7 @@ import { useUser } from '@clerk/nextjs';
 import { useRouter } from 'next/navigation';
 import { DURATION, EASE_CSS } from '@/lib/motion';
 
-// ── Languages gabonaises ──
+// -- Languages gabonaises --
 const ÑKYEL_LANGUAGES = [
   { code: 'fr-GA', name: 'Français (Gabon)', native: 'Français', flag: '🇬🇦' },
   { code: 'fan',   name: 'Fang',             native: 'Fang',     flag: '🌿' },
@@ -18,7 +18,7 @@ const ÑKYEL_LANGUAGES = [
   { code: 'nzb',   name: 'Nzébi',            native: 'Nzébi',    flag: '🏔️' },
 ];
 
-// ── Sectors / Domaines ──
+// -- Sectors / Domaines --
 const SECTORS = [
   { value: 'tech',        label: 'Tech & Développement',        emoji: '💻' },
   { value: 'business',    label: 'Business & Entrepreneuriat',  emoji: '📊' },
@@ -47,7 +47,7 @@ export default function OnboardingPage() {
   const { user, isLoaded } = useUser();
   const router = useRouter();
 
-  // ── Form state ──
+  // -- Form state --
   const [step, setStep] = useState(0);
   const [tosAccepted, setTosAccepted] = useState(false);
   const [fullName, setFullName] = useState('');
@@ -68,7 +68,7 @@ export default function OnboardingPage() {
     }
   }, [isLoaded, user]);
 
-  // ── Validation per step ──
+  // -- Validation per step --
   const canProceed = (): boolean => {
     switch (STEPS[step]?.key) {
       case 'consent':   return tosAccepted;
@@ -81,7 +81,7 @@ export default function OnboardingPage() {
     }
   };
 
-  // ── Navigation ──
+  // -- Navigation --
   function goNext() {
     if (step < STEPS.length - 1) {
       setStep(s => s + 1);
@@ -97,7 +97,7 @@ export default function OnboardingPage() {
     }
   }
 
-  // ── Language helpers ──
+  // -- Language helpers --
   function toggleLang(code: string) {
     setSelectedLangs(prev => {
       const next = new Set(prev);
@@ -120,7 +120,7 @@ export default function OnboardingPage() {
     setPrimaryLocale(code);
   }
 
-  // ── Submit ──
+  // -- Submit --
   async function handleSubmit() {
     if (submitting) return;
     setSubmitting(true);
@@ -154,7 +154,7 @@ export default function OnboardingPage() {
     }
   }
 
-  // ── Loading ──
+  // -- Loading --
   if (!isLoaded) {
     return (
       <div className="onboarding-loader">
@@ -195,7 +195,7 @@ export default function OnboardingPage() {
           <h2 className="onboarding-step-title">{currentStep.title}</h2>
           <p className="onboarding-step-subtitle">{currentStep.subtitle}</p>
 
-          {/* ── STEP: CONSENT ── */}
+          {/* -- STEP: CONSENT -- */}
           {currentStep.key === 'consent' && (
             <div className="onboarding-card">
               <p className="onboarding-card-text">
@@ -218,7 +218,7 @@ export default function OnboardingPage() {
             </div>
           )}
 
-          {/* ── STEP: NAME ── */}
+          {/* -- STEP: NAME -- */}
           {currentStep.key === 'name' && (
             <div className="onboarding-card">
               <input
@@ -237,7 +237,7 @@ export default function OnboardingPage() {
             </div>
           )}
 
-          {/* ── STEP: BIRTH ── */}
+          {/* -- STEP: BIRTH -- */}
           {currentStep.key === 'birth' && (
             <div className="onboarding-card">
               <input
@@ -250,7 +250,7 @@ export default function OnboardingPage() {
             </div>
           )}
 
-          {/* ── STEP: LANGUAGE ── */}
+          {/* -- STEP: LANGUAGE -- */}
           {currentStep.key === 'language' && (
             <div className="onboarding-card">
               <div className="onboarding-lang-grid">
@@ -295,7 +295,7 @@ export default function OnboardingPage() {
             </div>
           )}
 
-          {/* ── STEP: SECTOR ── */}
+          {/* -- STEP: SECTOR -- */}
           {currentStep.key === 'sector' && (
             <div className="onboarding-card">
               <div className="onboarding-sectors">
@@ -314,7 +314,7 @@ export default function OnboardingPage() {
             </div>
           )}
 
-          {/* ── STEP: TELEMETRY ── */}
+          {/* -- STEP: TELEMETRY -- */}
           {currentStep.key === 'telemetry' && (
             <div className="onboarding-card">
               <p className="onboarding-card-text">
@@ -373,7 +373,7 @@ export default function OnboardingPage() {
       </div>
 
       <style>{`
-        /* ─── ROOT ─── */
+        /* --- ROOT --- */
         .onboarding-root {
           min-height: 100vh;
           display: flex;
@@ -405,7 +405,7 @@ export default function OnboardingPage() {
           gap: 24px;
         }
 
-        /* ─── LOADER ─── */
+        /* --- LOADER --- */
         .onboarding-loader {
           min-height: 100vh;
           display: flex;
@@ -423,7 +423,7 @@ export default function OnboardingPage() {
         }
         @keyframes onb-spin { to { transform: rotate(360deg); } }
 
-        /* ─── HEADER ─── */
+        /* --- HEADER --- */
         .onboarding-header {
           text-align: center;
           display: flex;
@@ -463,7 +463,7 @@ export default function OnboardingPage() {
           margin: 0;
         }
 
-        /* ─── PROGRESS DOTS ─── */
+        /* --- PROGRESS DOTS --- */
         .onboarding-dots {
           display: flex;
           gap: 12px;
@@ -488,7 +488,7 @@ export default function OnboardingPage() {
           opacity: 1;
         }
 
-        /* ─── STEP CONTENT ─── */
+        /* --- STEP CONTENT --- */
         .onboarding-step-content {
           width: 100%;
           animation: onb-fade 0.22s ${EASE_CSS.decelerate};
@@ -509,7 +509,7 @@ export default function OnboardingPage() {
           margin: 0 0 16px;
         }
 
-        /* ─── CARD ─── */
+        /* --- CARD --- */
         .onboarding-card {
           background: var(--surface, #0A0908);
           border: 1px solid rgba(197, 160, 89, 0.08);
@@ -523,7 +523,7 @@ export default function OnboardingPage() {
           margin: 0 0 16px;
         }
 
-        /* ─── LEGAL LINKS ─── */
+        /* --- LEGAL LINKS --- */
         .onboarding-legal-links {
           display: flex;
           gap: 8px;
@@ -549,7 +549,7 @@ export default function OnboardingPage() {
           background: rgba(197, 160, 89, 0.08);
         }
 
-        /* ─── CHECKBOX ─── */
+        /* --- CHECKBOX --- */
         .onboarding-checkbox-row {
           display: flex;
           align-items: center;
@@ -567,7 +567,7 @@ export default function OnboardingPage() {
           cursor: pointer;
         }
 
-        /* ─── INPUT ─── */
+        /* --- INPUT --- */
         .onboarding-input {
           width: 100%;
           padding: 14px 16px;
@@ -595,7 +595,7 @@ export default function OnboardingPage() {
           margin-top: 8px;
         }
 
-        /* ─── LANGUAGE GRID ─── */
+        /* --- LANGUAGE GRID --- */
         .onboarding-lang-grid {
           display: flex;
           flex-direction: column;
@@ -679,7 +679,7 @@ export default function OnboardingPage() {
           justify-content: center;
         }
 
-        /* ─── SECTORS ─── */
+        /* --- SECTORS --- */
         .onboarding-sectors {
           display: grid;
           grid-template-columns: repeat(2, 1fr);
@@ -709,7 +709,7 @@ export default function OnboardingPage() {
           font-weight: 600;
         }
 
-        /* ─── TOGGLE ─── */
+        /* --- TOGGLE --- */
         .onboarding-toggle-row {
           display: flex;
           align-items: center;
@@ -746,7 +746,7 @@ export default function OnboardingPage() {
           transform: translateX(20px);
         }
 
-        /* ─── ERROR ─── */
+        /* --- ERROR --- */
         .onboarding-error {
           background: rgba(224, 88, 75, 0.08);
           border: 1px solid rgba(224, 88, 75, 0.2);
@@ -759,7 +759,7 @@ export default function OnboardingPage() {
           box-sizing: border-box;
         }
 
-        /* ─── BUTTONS ─── */
+        /* --- BUTTONS --- */
         .onboarding-buttons {
           display: flex;
           gap: 12px;
@@ -801,7 +801,7 @@ export default function OnboardingPage() {
           cursor: not-allowed;
         }
 
-        /* ─── FOOTER ─── */
+        /* --- FOOTER --- */
         .onboarding-footer {
           font-size: 10px;
           font-weight: 600;
@@ -811,7 +811,7 @@ export default function OnboardingPage() {
           margin: 0;
         }
 
-        /* ─── RESPONSIVE ─── */
+        /* --- RESPONSIVE --- */
         @media (max-width: 480px) {
           .onboarding-sectors {
             grid-template-columns: 1fr;

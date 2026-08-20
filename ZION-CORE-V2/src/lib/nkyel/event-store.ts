@@ -16,7 +16,7 @@ import type {
   WorkGraphSnapshot,
 } from './work-graph.types';
 
-// ─── Event Store ────────────────────────────────────────
+// --- Event Store ----------------------------------------
 
 type EventListener = (event: NkyelEvent) => void;
 
@@ -196,5 +196,5 @@ export class NkyelEventStore {
   }
 }
 
-// ─── Singleton instance ─────────────────────────────────
+// --- Singleton instance ---------------------------------
 export const eventStore = new NkyelEventStore();

@@ -57,7 +57,7 @@ export default function FilesPanel() {
         overflow: 'hidden',
       }}
     >
-      {/* ── Header ── */}
+      {/* -- Header -- */}
       <div
         style={{
           display: 'flex',
@@ -87,7 +87,7 @@ export default function FilesPanel() {
         )}
       </div>
 
-      {/* ── File list ── */}
+      {/* -- File list -- */}
       <div
         className="scroll-fade"
         style={{ flex: 1, overflowY: 'auto', padding: '8px' }}

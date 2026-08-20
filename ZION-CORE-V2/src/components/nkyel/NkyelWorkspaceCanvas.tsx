@@ -27,7 +27,7 @@ import '@xyflow/react/dist/style.css';
 import { useWorkGraphStore } from '@/lib/nkyel/work-graph-store';
 import type { WorkNode, WorkEdge, WorkNodeType, NkyelEvent } from '@/lib/nkyel/work-graph.types';
 
-// ─── Node Colors by Type ────────────────────────────────
+// --- Node Colors by Type --------------------------------
 
 const NODE_COLORS: Record<WorkNodeType, string> = {
   goal: '#C0A062',       // Gold
@@ -75,7 +75,7 @@ const STATUS_INDICATORS: Record<string, string> = {
   waiting_approval: '⊙',
 };
 
-// ─── Custom Node Component ──────────────────────────────
+// --- Custom Node Component ------------------------------
 
 interface NkyelNodeData {
   workNode: WorkNode;
@@ -149,7 +149,7 @@ function NkyelNode({ data }: { data: NkyelNodeData }) {
   );
 }
 
-// ─── Edge Type Colors ───────────────────────────────────
+// --- Edge Type Colors -----------------------------------
 
 const EDGE_COLORS: Record<string, string> = {
   decomposes_into: '#6B8AE0',
@@ -167,7 +167,7 @@ const EDGE_COLORS: Record<string, string> = {
   resumes_from: '#90A4AE',
 };
 
-// ─── Layout Engine ──────────────────────────────────────
+// --- Layout Engine --------------------------------------
 
 function computeLayout(
   nodes: Map<string, WorkNode>,
@@ -224,7 +224,7 @@ function computeLayout(
   return nodesArray.map(n => positions.get(n.id) || { x: 0, y: 0 });
 }
 
-// ─── Main Canvas Component ──────────────────────────────
+// --- Main Canvas Component ------------------------------
 
 const nodeTypes = { nkyel: NkyelNode };
 

@@ -13,7 +13,7 @@ import { PostHogProvider } from '@/lib/posthog';
 import GlobalShortcuts from '@/components/shortcuts/GlobalShortcuts';
 import './globals.css';
 
-/* ── V3 TYPOGRAPHIE ── */
+/* -- V3 TYPOGRAPHIE -- */
 const sora = Sora({ 
   subsets: ['latin'], 
   variable: '--font-sora',

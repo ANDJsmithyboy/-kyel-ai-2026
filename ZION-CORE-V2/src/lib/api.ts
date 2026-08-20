@@ -14,7 +14,7 @@ interface ChatRequest {
   stream?: boolean;
 }
 
-/* ── Envoi de message au backend (streaming SSE) ── */
+/* -- Envoi de message au backend (streaming SSE) -- */
 export async function sendChatMessage(
   req: ChatRequest,
   onChunk: (text: string) => void,
@@ -62,7 +62,7 @@ export async function sendChatMessage(
   }
 }
 
-/* ── Health check ── */
+/* -- Health check -- */
 export async function checkHealth(): Promise<boolean> {
   try {
     const res = await fetch('/health', { signal: AbortSignal.timeout(5000) });
@@ -72,14 +72,14 @@ export async function checkHealth(): Promise<boolean> {
   }
 }
 
-/* ── Liste des modèles ── */
+/* -- Liste des modèles -- */
 export async function getModels() {
   const res = await fetch(`${BASE}/models`);
   if (!res.ok) throw new Error('Échec récupération modèles');
   return res.json();
 }
 
-/* ── Liste des conversations ── */
+/* -- Liste des conversations -- */
 export async function getChats() {
   const res = await fetch(`${BASE}/chats`);
   if (!res.ok) return [];

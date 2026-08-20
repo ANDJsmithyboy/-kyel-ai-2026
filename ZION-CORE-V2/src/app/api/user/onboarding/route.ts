@@ -8,7 +8,7 @@ import { NextResponse } from 'next/server';
 import { db, schema } from '@/lib/db';
 import { eq } from 'drizzle-orm';
 
-// ── Type guard ──
+// -- Type guard --
 interface OnboardingPayload {
   fullName: string;
   birthDate: string;  // YYYY-MM-DD
@@ -32,13 +32,13 @@ function isValidPayload(body: unknown): body is OnboardingPayload {
 
 export async function POST(req: Request) {
   try {
-    // ── 1. Auth ──
+    // -- 1. Auth --
     const { userId: clerkId } = await auth();
     if (!clerkId) {
       return NextResponse.json({ error: 'Non authentifié' }, { status: 401 });
     }
 
-    // ── 2. Parse & validate ──
+    // -- 2. Parse & validate --
     const body = await req.json();
     if (!isValidPayload(body)) {
       return NextResponse.json(
@@ -49,7 +49,7 @@ export async function POST(req: Request) {
 
     const { fullName, birthDate, sector, tosAccepted, languages, primaryLocale, telemetryEnabled } = body;
 
-    // ── 3. Build meta object ──
+    // -- 3. Build meta object --
     const onboardingMeta = {
       onboardingComplete: true,
       onboardingCompletedAt: new Date().toISOString(),
@@ -61,7 +61,7 @@ export async function POST(req: Request) {
       telemetryEnabled: telemetryEnabled ?? false,
     };
 
-    // ── 4. Upsert user in database ──
+    // -- 4. Upsert user in database --
     // First try to find existing user
     const existingUsers = await db
       .select()
@@ -95,7 +95,7 @@ export async function POST(req: Request) {
       });
     }
 
-    // ── 5. Update Clerk publicMetadata (for middleware fast-path) ──
+    // -- 5. Update Clerk publicMetadata (for middleware fast-path) --
     const clerk = await clerkClient();
     await clerk.users.updateUserMetadata(clerkId, {
       publicMetadata: { onboardingComplete: true },

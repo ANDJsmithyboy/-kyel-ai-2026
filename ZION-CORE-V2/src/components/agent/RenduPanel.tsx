@@ -39,7 +39,7 @@ export default function RenduPanel() {
         overflow: 'hidden',
       }}
     >
-      {/* ── Header ── */}
+      {/* -- Header -- */}
       <div
         style={{
           display: 'flex',
@@ -69,7 +69,7 @@ export default function RenduPanel() {
         )}
       </div>
 
-      {/* ── Tabs des artifacts ── */}
+      {/* -- Tabs des artifacts -- */}
       {artifacts.length > 1 && (
         <div
           style={{
@@ -103,7 +103,7 @@ export default function RenduPanel() {
         </div>
       )}
 
-      {/* ── Contenu ── */}
+      {/* -- Contenu -- */}
       <div
         className="scroll-fade"
         style={{ flex: 1, overflowY: 'auto', padding: '16px' }}

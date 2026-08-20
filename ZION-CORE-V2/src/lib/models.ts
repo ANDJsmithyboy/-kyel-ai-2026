@@ -4,7 +4,7 @@
  * TypeScript strict — Taxonomie Officielle V3
  */
 
-// ── Modèles IA ────────────────────────────────
+// -- Modèles IA --------------------------------
 export type NkyelModel = 'NKYEL_CHUI' | 'NKYEL_TAI' | 'NKYEL_RADI' | 'RECHERCHE_WEB' | 'BLUE_PANTHER';
 
 export const MODEL_META: Record<NkyelModel, { label: string; icon: string; desc: string; credits: number; tier: number }> = {
@@ -15,7 +15,7 @@ export const MODEL_META: Record<NkyelModel, { label: string; icon: string; desc:
   BLUE_PANTHER:  { label: 'Blue Panther',  icon: '💎', desc: 'Mode Créateur Illimité',            credits: 0,  tier: 999 },
 };
 
-// ── Messages ──────────────────────────────────
+// -- Messages ----------------------------------
 export interface NkyelMessage {
   id: string;
   role: 'user' | 'assistant' | 'system';
@@ -34,7 +34,7 @@ export interface NkyelSource {
   type: 'loxo_web' | 'loxo_rag' | 'coffre_fort';
 }
 
-// ── Conversations ─────────────────────────────
+// -- Conversations -----------------------------
 export interface NkyelConversation {
   id: string;
   title: string;
@@ -44,7 +44,7 @@ export interface NkyelConversation {
   updated_at: number;
 }
 
-// ── Rendus (Artefacts) ────────────────────────
+// -- Rendus (Artefacts) ------------------------
 export type RenduType = 'markdown' | 'html' | 'pdf' | 'csv' | 'excel' | 'word' | 'code' | 'chart' | 'website';
 
 export interface NkyelRendu {
@@ -58,7 +58,7 @@ export interface NkyelRendu {
   created_at: number;
 }
 
-// ── Agent Events ──────────────────────────────
+// -- Agent Events ------------------------------
 export type AgentEventStatus = 'pending' | 'active' | 'done' | 'error';
 export type AgentPhase = 'idle' | 'planning' | 'executing' | 'done' | 'error';
 
@@ -80,7 +80,7 @@ export interface AgentFile {
   type: string;
 }
 
-// ── Utilisateur ───────────────────────────────
+// -- Utilisateur -------------------------------
 export interface NkyelUser {
   id: string;
   email: string;

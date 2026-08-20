@@ -8,7 +8,7 @@ import posthog from 'posthog-js';
 import { PostHogProvider as PHProvider } from 'posthog-js/react';
 import { useEffect } from 'react';
 
-// ── Initialize PostHog ──────────────────────────────────────
+// -- Initialize PostHog --------------------------------------
 function PostHogInit() {
   useEffect(() => {
     if (typeof window !== 'undefined' && process.env.NEXT_PUBLIC_POSTHOG_KEY) {
@@ -28,7 +28,7 @@ function PostHogInit() {
   return null;
 }
 
-// ── Provider ────────────────────────────────────────────────
+// -- Provider ------------------------------------------------
 export function PostHogProvider({ children }: { children: React.ReactNode }) {
   return (
     <PHProvider client={posthog}>
@@ -38,9 +38,9 @@ export function PostHogProvider({ children }: { children: React.ReactNode }) {
   );
 }
 
-// ══════════════════════════════════════════════════════════
+// ----------------------------------------------------------
 // EVENT HELPERS
-// ══════════════════════════════════════════════════════════
+// ----------------------------------------------------------
 
 export function trackEvent(event: string, properties?: Record<string, unknown>) {
   if (typeof window !== 'undefined') {
@@ -54,7 +54,7 @@ export function identifyUser(userId: string, traits?: Record<string, unknown>) {
   }
 }
 
-// ── Ñkyel-specific events ──────────────────────────────────
+// -- Ñkyel-specific events ----------------------------------
 export const nkyelEvents = {
   chatSent: (mode: string, lang: string) =>
     trackEvent('chat_message_sent', { mode, language: lang }),

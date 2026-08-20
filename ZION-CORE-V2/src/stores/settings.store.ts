@@ -3,7 +3,7 @@
 
 import { create } from 'zustand';
 
-/* ── Re-export theme types from single source ────── */
+/* -- Re-export theme types from single source ------ */
 export type { ThemeKey, AccentKey } from './theme';
 export { THEMES, ACCENTS } from './theme';
 
@@ -13,7 +13,7 @@ import { THEMES } from './theme';
 export type FontSize = 'small' | 'normal' | 'large';
 export type GreetingStyle = 'formel' | 'gabonais' | 'argot';
 
-/* ── Noms de modèles masqués (utilisateurs normaux) ── */
+/* -- Noms de modèles masqués (utilisateurs normaux) -- */
 export const MODEL_DISPLAY_NAMES: Record<string, string> = {
   'aurata-spark': 'Aurata (Flash)',
   'sonar-deep': 'Sonar (Pro)',
@@ -27,10 +27,10 @@ export function getDisplayModelName(realName: string, isAdmin: boolean): string 
   return MODEL_DISPLAY_NAMES[realName] || realName;
 }
 
-/* ── Light themes ────────────────────────────────── */
+/* -- Light themes ---------------------------------- */
 const LIGHT_THEMES = new Set<ThemeKey>(['aurore-ogoue', 'neo-blanc']);
 
-/* ── State ───────────────────────────────────────── */
+/* -- State ----------------------------------------- */
 interface SettingsState {
   theme: ThemeKey;
   accent: AccentKey;
@@ -56,7 +56,7 @@ interface SettingsState {
   hydrate: () => void;
 }
 
-/* ── Helpers ─────────────────────────────────────── */
+/* -- Helpers --------------------------------------- */
 function ls(key: string, fallback: string): string {
   if (typeof window === 'undefined') return fallback;
   return localStorage.getItem(key) || fallback;
@@ -92,7 +92,7 @@ function applyFontSizeToDOM(fs: FontSize) {
   document.documentElement.style.setProperty('--app-text-scale', String(scale));
 }
 
-/* ── Store ────────────────────────────────────────── */
+/* -- Store ------------------------------------------ */
 export const useSettingsStore = create<SettingsState>((set, get) => ({
   theme: 'black-panther' as ThemeKey,
   accent: 'foret' as AccentKey,

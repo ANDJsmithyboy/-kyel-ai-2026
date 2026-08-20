@@ -21,7 +21,7 @@ import {
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 
-/* ─── CUSTOM NODE ─── */
+/* --- CUSTOM NODE --- */
 const CustomNode = ({ data }: any) => {
   return (
     <div className="rounded-[1.35rem] border border-[rgba(255,255,255,0.08)] bg-[rgba(8,12,22,0.9)] p-4 shadow-[0_14px_60px_rgba(0,0,0,0.24)] min-w-[180px]">
@@ -42,7 +42,7 @@ const nodeTypes = {
   custom: CustomNode,
 };
 
-/* ─── INITIAL DATA ─── */
+/* --- INITIAL DATA --- */
 const initialNodes = [
   {
     id: 'prompt',

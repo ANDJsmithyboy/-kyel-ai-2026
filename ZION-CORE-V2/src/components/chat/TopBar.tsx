@@ -9,7 +9,7 @@ export default function TopBar({ onToggleSidebar, sidebarOpen }: { onToggleSideb
 
   return (
     <header className="flex h-[56px] flex-shrink-0 items-center justify-between px-4" style={{ borderBottom: ephemeral ? '1px solid rgba(255,59,48,0.2)' : 'none' }}>
-      {/* ── Gauche: Sidebar toggle (ibogAIicone) ──────────────────── */}
+      {/* -- Gauche: Sidebar toggle (ibogAIicone) -------------------- */}
       <div className="flex items-center gap-4">
         <button
           onClick={onToggleSidebar}
@@ -35,7 +35,7 @@ export default function TopBar({ onToggleSidebar, sidebarOpen }: { onToggleSideb
         )}
       </div>
 
-      {/* ── Droite: Header Cluster ───────────────────────── */}
+      {/* -- Droite: Header Cluster ------------------------- */}
       <div className="flex items-center gap-1.5 lg:gap-3">
         {/* 👻 Ombre (Ghost Mode) */}
         <button

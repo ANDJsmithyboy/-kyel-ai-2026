@@ -4,7 +4,7 @@
 
 import { Redis } from '@upstash/redis';
 
-// ── Singleton Redis client ──────────────────────────────────
+// -- Singleton Redis client ----------------------------------
 let redis: Redis | null = null;
 
 export function getRedis(): Redis {
@@ -17,9 +17,9 @@ export function getRedis(): Redis {
   return redis;
 }
 
-// ══════════════════════════════════════════════════════════
+// ----------------------------------------------------------
 // CACHE HELPERS
-// ══════════════════════════════════════════════════════════
+// ----------------------------------------------------------
 
 /** Cache a value with TTL (seconds) */
 export async function cacheSet(key: string, value: unknown, ttlSeconds = 3600): Promise<void> {
@@ -41,9 +41,9 @@ export async function cacheInvalidate(key: string): Promise<void> {
   await r.del(`nkyel:${key}`);
 }
 
-// ══════════════════════════════════════════════════════════
+// ----------------------------------------------------------
 // TOKEN COUNTING
-// ══════════════════════════════════════════════════════════
+// ----------------------------------------------------------
 
 /** Increment user token count */
 export async function incrementTokens(userId: string, tokens: number): Promise<number> {
@@ -62,9 +62,9 @@ export async function getDailyTokens(userId: string): Promise<number> {
   return (await r.get<number>(key)) ?? 0;
 }
 
-// ══════════════════════════════════════════════════════════
+// ----------------------------------------------------------
 // SESSION STATE
-// ══════════════════════════════════════════════════════════
+// ----------------------------------------------------------
 
 /** Store temporary session state */
 export async function setSessionState(sessionId: string, state: unknown, ttlSeconds = 1800): Promise<void> {

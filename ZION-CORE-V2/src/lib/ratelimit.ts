@@ -5,7 +5,7 @@
 import { Ratelimit } from '@upstash/ratelimit';
 import { getRedis } from './redis';
 
-// ── Rate limiters by tier ───────────────────────────────────
+// -- Rate limiters by tier -----------------------------------
 
 /** Free tier: 10 requests per minute */
 export const freeLimiter = new Ratelimit({
@@ -39,7 +39,7 @@ export const ipLimiter = new Ratelimit({
   prefix: 'nkyel:rl:ip',
 });
 
-// ── Helper ──────────────────────────────────────────────────
+// -- Helper --------------------------------------------------
 
 export function getLimiterForRole(role: string): Ratelimit {
   switch (role) {

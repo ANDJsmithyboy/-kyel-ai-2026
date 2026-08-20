@@ -10,7 +10,7 @@ import { AurataIcon } from '../icons/AurataIcon';
 import { cn } from '@/lib/utils';
 import { useSettingsStore } from '@/stores/settings.store';
 
-/* ── V3 Code Block — rayon 10px, JetBrains 14px, palette gabonaise ── */
+/* -- V3 Code Block — rayon 10px, JetBrains 14px, palette gabonaise -- */
 function CodeBlock({ children, className }: { children: ReactNode; className?: string }) {
   const [copied, setCopied] = useState(false);
   const language = className?.replace('language-', '') || '';
@@ -52,7 +52,7 @@ function CodeBlock({ children, className }: { children: ReactNode; className?: s
   );
 }
 
-/* ── V3 Inline code — 13px JetBrains ── */
+/* -- V3 Inline code — 13px JetBrains -- */
 function InlineCode({ children }: { children: ReactNode }) {
   return (
     <code
@@ -140,12 +140,12 @@ export default function MessageBubble({
 
         {/* V3: Message content — AI = flat (no bg), User = glass-user-msg */}
         {isUser ? (
-          /* ── TEXTE UTILISATEUR : aligné droite, max 70%, fond glass, SemiBold 600 ── */
+          /* -- TEXTE UTILISATEUR : aligné droite, max 70%, fond glass, SemiBold 600 -- */
           <div className="msg-user">
             <p style={{ whiteSpace: 'pre-wrap' }}>{content}</p>
           </div>
         ) : isStreaming && !content && !agentStep ? (
-          /* ── STREAMING INDICATOR ── */
+          /* -- STREAMING INDICATOR -- */
           <div className="flex items-center gap-2 py-1">
             <span className="eyebrow-label" style={{ animation: 'pulse-soft 1.5s infinite' }}>
               En piste…
@@ -162,7 +162,7 @@ export default function MessageBubble({
             />
           </div>
         ) : (
-          /* ── TEXTE IA : pleine largeur, zéro fond, Sora Medium 500 ── */
+          /* -- TEXTE IA : pleine largeur, zéro fond, Sora Medium 500 -- */
           <div className="msg-ai">
             {/* Agent step indicator */}
             {agentStep && (

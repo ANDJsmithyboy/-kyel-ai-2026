@@ -18,7 +18,7 @@ export default function AgentComputer() {
   const fps = useAgentStore((s) => s.fps);
   const phase = useAgentStore((s) => s.phase);
 
-  // ── Dessiner la frame JPEG sur le canvas ──
+  // -- Dessiner la frame JPEG sur le canvas --
   const drawFrame = useCallback(async (blob: Blob) => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -57,7 +57,7 @@ export default function AgentComputer() {
         background: 'var(--bg-panel)',
       }}
     >
-      {/* ── Barre d'URL style navigateur ── */}
+      {/* -- Barre d'URL style navigateur -- */}
       <div
         style={{
           display: 'flex',
@@ -142,7 +142,7 @@ export default function AgentComputer() {
         )}
       </div>
 
-      {/* ── Zone canvas ── */}
+      {/* -- Zone canvas -- */}
       <div
         style={{
           flex: 1,

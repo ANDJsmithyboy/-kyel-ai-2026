@@ -4,7 +4,7 @@
 
 const BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
-/* ── Types ────────────────────────────────────────── */
+/* -- Types ------------------------------------------ */
 
 export interface ChatMessage {
   role: 'system' | 'user' | 'assistant';
@@ -20,7 +20,7 @@ export interface StreamCallbacks {
   onError?: (error: string) => void;
 }
 
-/* ── Helpers ───────────────────────────────────────── */
+/* -- Helpers ----------------------------------------- */
 
 function getHeaders(token: string | null): HeadersInit {
   const h: Record<string, string> = { 'Content-Type': 'application/json' };
@@ -129,7 +129,7 @@ async function processStream(
   }
 }
 
-/* ── Endpoints ─────────────────────────────────────── */
+/* -- Endpoints --------------------------------------- */
 
 /**
  * Lance une conversation classique (AURATA / SONAR) via /v1/chat/completions

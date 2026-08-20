@@ -1,10 +1,10 @@
-/* ════════════════════════════════════════════
+/* --------------------------------------------
    GabomaAI · Sidebar Styles
    SmartANDJ AI Technologies
    Glassmorphism · Gemini-grade collapsed rail
-   ════════════════════════════════════════════ */
+   -------------------------------------------- */
 
-/* ── Root Panel ── */
+/* -- Root Panel -- */
 
 .sidebar {
   position: relative;
@@ -22,7 +22,7 @@
   z-index: 40;
 }
 
-/* ── Expanded / Collapsed widths (desktop) ── */
+/* -- Expanded / Collapsed widths (desktop) -- */
 
 .sidebar[data-collapsed="false"] {
   width: 260px;
@@ -32,7 +32,7 @@
   width: 64px;
 }
 
-/* ── Text labels: fade before collapse ── */
+/* -- Text labels: fade before collapse -- */
 
 .sidebarLabel {
   opacity: 1;
@@ -48,7 +48,7 @@
   transition: opacity 100ms ease, width 0ms linear 100ms;
 }
 
-/* ── Sidebar Item (shared interactive row) ── */
+/* -- Sidebar Item (shared interactive row) -- */
 
 .item {
   position: relative;
@@ -98,7 +98,7 @@
   color: var(--accent);
 }
 
-/* ── Collapsed item (icon-only, centered) ── */
+/* -- Collapsed item (icon-only, centered) -- */
 
 .itemCollapsed {
   width: 44px;
@@ -126,7 +126,7 @@
   color: var(--accent);
 }
 
-/* ── Tooltip (collapsed hover only) ── */
+/* -- Tooltip (collapsed hover only) -- */
 
 .tooltip {
   position: absolute;
@@ -152,7 +152,7 @@
   opacity: 1;
 }
 
-/* ── Primary action (Nouvelle Piste) ── */
+/* -- Primary action (Nouvelle Piste) -- */
 
 .actionPrimary {
   padding: 9px 10px;
@@ -165,7 +165,7 @@
   color: var(--accent);
 }
 
-/* ── Section label ── */
+/* -- Section label -- */
 
 .sectionLabel {
   font-size: 12px;
@@ -177,7 +177,7 @@
   font-family: var(--font-body);
 }
 
-/* ── Recent item text ── */
+/* -- Recent item text -- */
 
 .recentText {
   flex: 1;
@@ -202,7 +202,7 @@
   opacity: 1;
 }
 
-/* ── See all link ── */
+/* -- See all link -- */
 
 .seeAll {
   display: flex;
@@ -225,7 +225,7 @@
   background: var(--accent-06);
 }
 
-/* ── Energy card ── */
+/* -- Energy card -- */
 
 .energyCard {
   background: rgba(30, 30, 36, 0.65);
@@ -268,7 +268,7 @@
   will-change: width;
 }
 
-/* ── Profile row ── */
+/* -- Profile row -- */
 
 .profileRow {
   display: flex;
@@ -331,7 +331,7 @@
   background: var(--accent-06);
 }
 
-/* ── Settings dropdown ── */
+/* -- Settings dropdown -- */
 
 .settingsDropdown {
   position: absolute;
@@ -390,7 +390,7 @@
   padding: 12px 14px 8px;
 }
 
-/* ── Mobile drawer ── */
+/* -- Mobile drawer -- */
 
 @media (max-width: 767px) {
   .sidebar {
@@ -418,7 +418,7 @@
   }
 }
 
-/* ── Backdrop (mobile) ── */
+/* -- Backdrop (mobile) -- */
 
 .backdrop {
   display: none;
@@ -444,7 +444,7 @@
   }
 }
 
-/* ── Safe area padding for PWA ── */
+/* -- Safe area padding for PWA -- */
 
 .sidebarHeader {
   padding-top: max(6px, env(safe-area-inset-top));
@@ -454,7 +454,7 @@
   padding-bottom: max(14px, env(safe-area-inset-bottom));
 }
 
-/* ── Focus visible ── */
+/* -- Focus visible -- */
 
 .item:focus-visible,
 .itemCollapsed:focus-visible,
@@ -472,7 +472,7 @@
   outline: none;
 }
 
-/* ── Reduced motion ── */
+/* -- Reduced motion -- */
 
 @media (prefers-reduced-motion: reduce) {
   .sidebar,

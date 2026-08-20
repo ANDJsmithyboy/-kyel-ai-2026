@@ -18,7 +18,7 @@ import {
   BarChart, Bar, Cell 
 } from 'recharts';
 
-// ── Mock data ──────────
+// -- Mock data ----------
 const kpis = [
   { title: 'Meute (Utilisateurs)', value: 2847, change: '+12%', changeType: 'up' as const, icon: Users, subtitle: '143 cette semaine' },
   { title: 'Pistes (Conversations)', value: 18432, change: '+8%', changeType: 'up' as const, icon: ChatCircle, subtitle: '1,247 aujourd\'hui' },
@@ -94,7 +94,7 @@ export default function AdminDashboard() {
         subtitle="Aperçu global des performances du nœud ZION-CORE-V2."
       />
 
-      {/* ── KPIs Grid ─────────────────────────────────────── */}
+      {/* -- KPIs Grid --------------------------------------- */}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-5">
         {kpis.map((k) => (
           <KPICard key={k.title} {...k} />
@@ -103,7 +103,7 @@ export default function AdminDashboard() {
 
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-5">
         
-        {/* ── Gauche : Charts & Metrics ─────────────── */}
+        {/* -- Gauche : Charts & Metrics --------------- */}
         <div className="xl:col-span-2 space-y-5">
           <ChartCard title="Activité des Vecteurs IA" subtitle="Consommation de requêtes par modèle sur 7 jours">
             <div className="h-72 mt-6 w-full">
@@ -191,7 +191,7 @@ export default function AdminDashboard() {
           </ChartCard>
         </div>
 
-        {/* ── Droite : Live Agent Traces ───────────────────── */}
+        {/* -- Droite : Live Agent Traces --------------------- */}
         <div className="xl:col-span-1">
           <ChartCard title="Traces AUTOMATA V2.0" subtitle="Dernière exécution de l'agent" className="h-full">
             <div className="mt-8">
@@ -207,7 +207,7 @@ export default function AdminDashboard() {
         </div>
       </div>
 
-      {/* ── Recent Conversations ─────────────────────────── */}
+      {/* -- Recent Conversations --------------------------- */}
       <div className="mt-4">
         <SectionHeader
           title="Pistes en Direct"
@@ -221,7 +221,7 @@ export default function AdminDashboard() {
         <DataTable columns={columns} data={recentConversations} />
       </div>
 
-      {/* ── System Health ────────────────────────────────── */}
+      {/* -- System Health ---------------------------------- */}
       <div className="mt-8 pt-8 border-t border-[var(--glass-border)]">
         <SectionHeader title="Infrastructure Réseau" subtitle="Santé des micro-services et bases de données en temps réel" />
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">

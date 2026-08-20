@@ -3,7 +3,7 @@
 
 import { create } from 'zustand';
 
-/* ── Types ────────────────────────────────────────── */
+/* -- Types ------------------------------------------ */
 export type ThemeKey =
   | 'black-panther'
   | 'nuit-lope'
@@ -28,7 +28,7 @@ export interface AccentConfig {
   color: string;
 }
 
-/* ── 6 Themes ────────────────────────────────────── */
+/* -- 6 Themes -------------------------------------- */
 export const THEMES: ThemeConfig[] = [
   { key: 'black-panther',      name: 'Black Panther',      color: '#C5A059', description: 'Mode agent autonome par défaut', isLight: false },
   { key: 'nuit-lope',          name: 'Nuit Lopé',          color: '#C9A84C', description: 'Forêt équatoriale la nuit — OLED', isLight: false },
@@ -38,7 +38,7 @@ export const THEMES: ThemeConfig[] = [
   { key: 'neo-blanc',          name: 'Néo Blanc',          color: '#B8922A', description: 'Marbre de Libreville', isLight: true },
 ];
 
-/* ── 5 Accents (pétales du logo) ─────────────────── */
+/* -- 5 Accents (pétales du logo) ------------------- */
 export const ACCENTS: AccentConfig[] = [
   { key: 'foret',  name: 'Forêt Gabonaise',     color: '#22C55E' },
   { key: 'ocean',  name: 'Océan Atlantique',     color: '#38BDF8' },
@@ -47,7 +47,7 @@ export const ACCENTS: AccentConfig[] = [
   { key: 'nuit',   name: 'Nuit Tropicale',       color: '#7C3AED' },
 ];
 
-/* ── Meta colors (theme-color per theme) ─────────── */
+/* -- Meta colors (theme-color per theme) ----------- */
 const META_COLORS: Record<ThemeKey, string> = {
   'black-panther':      '#020304',
   'nuit-lope':          '#050507',
@@ -57,10 +57,10 @@ const META_COLORS: Record<ThemeKey, string> = {
   'neo-blanc':          '#FAFAF8',
 };
 
-/* ── Light themes set ────────────────────────────── */
+/* -- Light themes set ------------------------------ */
 const LIGHT_THEMES = new Set<ThemeKey>(['aurore-ogoue', 'neo-blanc']);
 
-/* ── DOM helpers ─────────────────────────────────── */
+/* -- DOM helpers ----------------------------------- */
 function applyTheme(theme: ThemeKey) {
   if (typeof window === 'undefined') return;
   document.documentElement.setAttribute('data-theme', theme);
@@ -74,12 +74,12 @@ function applyAccent(accent: AccentKey) {
   document.documentElement.setAttribute('data-accent', accent);
 }
 
-/* ── Validate theme key ──────────────────────────── */
+/* -- Validate theme key ---------------------------- */
 function isValidTheme(t: string): t is ThemeKey {
   return THEMES.some((theme) => theme.key === t);
 }
 
-/* ── Store ────────────────────────────────────────── */
+/* -- Store ------------------------------------------ */
 interface ThemeState {
   theme: ThemeKey;
   accent: AccentKey;
@@ -106,7 +106,7 @@ export const useThemeStore = create<ThemeState>((set) => ({
   },
 }));
 
-/* ── Initialize from localStorage ────────────────── */
+/* -- Initialize from localStorage ------------------ */
 if (typeof window !== 'undefined') {
   const storedTheme = localStorage.getItem('Ñkyel AI_theme') || 'black-panther';
   const initial: ThemeKey = isValidTheme(storedTheme) ? storedTheme : 'black-panther';

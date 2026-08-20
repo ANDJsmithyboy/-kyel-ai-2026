@@ -51,7 +51,7 @@ if (typeof window !== 'undefined') {
   }
 }
 
-/* ── API Auth helpers ──────────────────────────────── */
+/* -- API Auth helpers -------------------------------- */
 const BASE = '/api/v1';
 
 export async function signIn(email: string, password: string) {

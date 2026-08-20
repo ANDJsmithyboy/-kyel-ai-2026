@@ -6,7 +6,7 @@
 import { pgTable, index, unique, check, uuid, text, integer, boolean, jsonb, timestamp, foreignKey, serial } from "drizzle-orm/pg-core";
 import { sql, relations } from "drizzle-orm";
 
-// ── Users ───────────────────────────────────────────────
+// -- Users -----------------------------------------------
 export const users = pgTable("users", {
   id: uuid("id").default(sql`uuid_generate_v4()`).primaryKey().notNull(),
   clerkId: text("clerk_id").notNull(),
@@ -34,7 +34,7 @@ export const users = pgTable("users", {
   check("users_tier_check", sql`tier = ANY (ARRAY['NKYEL_CHUI'::text, 'SONAR'::text, 'NKYEL_RADI'::text, 'BLACK_PANTHER'::text, 'BLUE_PANTHER'::text])`),
 ]);
 
-// ── Conversations ───────────────────────────────────────
+// -- Conversations ---------------------------------------
 export const conversations = pgTable("conversations", {
   id: uuid("id").default(sql`uuid_generate_v4()`).primaryKey().notNull(),
   userId: uuid("user_id").notNull(),
@@ -58,7 +58,7 @@ export const conversations = pgTable("conversations", {
   check("conversations_mode_check", sql`mode = ANY (ARRAY['chat'::text, 'agent'::text])`),
 ]);
 
-// ── Messages ────────────────────────────────────────────
+// -- Messages --------------------------------------------
 export const messages = pgTable("messages", {
   id: uuid("id").default(sql`uuid_generate_v4()`).primaryKey().notNull(),
   conversationId: uuid("conversation_id").notNull(),
@@ -91,7 +91,7 @@ export const messages = pgTable("messages", {
   check("messages_role_check", sql`role = ANY (ARRAY['user'::text, 'assistant'::text, 'system'::text])`),
 ]);
 
-// ── Agent Sessions ──────────────────────────────────────
+// -- Agent Sessions --------------------------------------
 export const agentSessions = pgTable("agent_sessions", {
   id: uuid("id").default(sql`uuid_generate_v4()`).primaryKey().notNull(),
   userId: uuid("user_id").notNull(),
@@ -117,7 +117,7 @@ export const agentSessions = pgTable("agent_sessions", {
   }).onDelete("cascade"),
 ]);
 
-// ── Rendus (Documents) ──────────────────────────────────
+// -- Rendus (Documents) ----------------------------------
 export const rendus = pgTable("rendus", {
   id: uuid("id").default(sql`uuid_generate_v4()`).primaryKey().notNull(),
   userId: uuid("user_id").notNull(),
@@ -153,7 +153,7 @@ export const rendus = pgTable("rendus", {
   unique("rendus_share_token_key").on(table.shareToken),
 ]);
 
-// ── Credits Ledger ──────────────────────────────────────
+// -- Credits Ledger --------------------------------------
 export const creditsLedger = pgTable("credits_ledger", {
   id: uuid("id").default(sql`uuid_generate_v4()`).primaryKey().notNull(),
   userId: uuid("user_id").notNull(),
@@ -174,7 +174,7 @@ export const creditsLedger = pgTable("credits_ledger", {
   }).onDelete("cascade"),
 ]);
 
-// ── Waitlist ────────────────────────────────────────────
+// -- Waitlist --------------------------------------------
 export const waitlist = pgTable("waitlist", {
   id: uuid("id").default(sql`uuid_generate_v4()`).primaryKey().notNull(),
   email: text("email").notNull(),
@@ -193,7 +193,7 @@ export const waitlist = pgTable("waitlist", {
   unique("waitlist_email_key").on(table.email),
 ]);
 
-// ── Audit Logs ──────────────────────────────────────────
+// -- Audit Logs ------------------------------------------
 export const auditLogs = pgTable("audit_logs", {
   id: uuid("id").default(sql`uuid_generate_v4()`).primaryKey().notNull(),
   userId: uuid("user_id"),
@@ -215,7 +215,7 @@ export const auditLogs = pgTable("audit_logs", {
   }).onDelete("set null"),
 ]);
 
-// ── Feature Flags ───────────────────────────────────────
+// -- Feature Flags ---------------------------------------
 export const featureFlags = pgTable("feature_flags", {
   id: uuid("id").default(sql`uuid_generate_v4()`).primaryKey().notNull(),
   key: text("key").notNull(),

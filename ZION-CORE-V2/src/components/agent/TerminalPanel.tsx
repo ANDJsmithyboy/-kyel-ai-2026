@@ -49,7 +49,7 @@ export default function TerminalPanel() {
         overflow: 'hidden',
       }}
     >
-      {/* ── Header ── */}
+      {/* -- Header -- */}
       <div
         style={{
           display: 'flex',
@@ -84,7 +84,7 @@ export default function TerminalPanel() {
         )}
       </div>
 
-      {/* ── Terminal output — V3: JetBrains Mono 13px ── */}
+      {/* -- Terminal output — V3: JetBrains Mono 13px -- */}
       <div
         ref={scrollRef}
         style={{

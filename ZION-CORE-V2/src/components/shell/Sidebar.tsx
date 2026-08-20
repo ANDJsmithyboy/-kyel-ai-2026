@@ -90,7 +90,7 @@ export default function Sidebar() {
       className="flex flex-col h-full overflow-hidden w-[260px] z-40"
       style={{ background: 'var(--bg-elevated)', borderRight: '1px solid var(--border)' }}
     >
-      {/* ── Header: Logo Ñkyel AI ── */}
+      {/* -- Header: Logo Ñkyel AI -- */}
       <div className="px-4 pt-4 pb-3 flex items-center gap-2.5">
         <Image
           src="/nkyel-logo.png"
@@ -107,7 +107,7 @@ export default function Sidebar() {
         </span>
       </div>
 
-      {/* ── Nouvelle Piste (CTA) ── */}
+      {/* -- Nouvelle Piste (CTA) -- */}
       <div className="px-3 pb-2">
         <motion.button
           whileHover={{ scale: 1.02 }}
@@ -120,14 +120,14 @@ export default function Sidebar() {
         </motion.button>
       </div>
 
-      {/* ── Primary Nav — stacked vertically ── */}
+      {/* -- Primary Nav — stacked vertically -- */}
       <div className="px-2 pb-2 space-y-0.5">
         <SidebarItem label="Projet" icon={<ProjetIcon className="w-4 h-4" />} />
         <SidebarItem label="Le Rendu" icon={<RenduIcon className="w-4 h-4" />} />
         <SidebarItem label="En Piste" icon={<EnPisteIcon className="w-4 h-4" />} active />
       </div>
 
-      {/* ── Scrollable content ── */}
+      {/* -- Scrollable content -- */}
       <div className="flex-1 overflow-y-auto" style={{ scrollbarWidth: 'thin' }}>
         {/* EN PISTE — Recent conversations */}
         <div className="px-4 pt-3 pb-1">
@@ -165,9 +165,9 @@ export default function Sidebar() {
         <MeuteLinks />
       </div>
 
-      {/* ══════════════════════════════════════════
+      {/* ------------------------------------------
          L'ANTRE — Floating Panel — Opens UPWARD (Gemini Style)
-         ══════════════════════════════════════════ */}
+         ------------------------------------------ */}
       <div className="p-2 mt-auto" style={{ borderTop: '1px solid var(--border)' }}>
         <DropdownMenu open={isAntreOpen} onOpenChange={setIsAntreOpen}>
           <DropdownMenuTrigger asChild>
@@ -279,7 +279,7 @@ export default function Sidebar() {
         </DropdownMenu>
       </div>
 
-      {/* ── Footer ── */}
+      {/* -- Footer -- */}
       <div className="px-4 py-2" style={{ borderTop: '1px solid var(--border)' }}>
         <p className="text-[10px] text-center tracking-widest font-semibold uppercase text-[var(--text-tertiary)]">
           BY ANDJ • SMARTANDJ AI TECH
@@ -387,7 +387,7 @@ export default function Sidebar() {
   );
 }
 
-/* ── Toggle Row ── */
+/* -- Toggle Row -- */
 function ToggleRow({ label, active, onToggle, pulse }: { label: string; active: boolean; onToggle: () => void; pulse?: boolean }) {
   return (
     <button
