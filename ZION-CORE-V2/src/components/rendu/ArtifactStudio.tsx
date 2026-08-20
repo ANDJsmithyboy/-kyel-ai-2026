@@ -35,6 +35,7 @@ import {
   SlidersHorizontal,
   X,
   ListDashes,
+  Graph,
 } from '@phosphor-icons/react';
 import { useRenduPanel } from '@/hooks/useRenduPanel';
 import NkyelMarkdown from '@/components/markdown/NkyelMarkdown';
