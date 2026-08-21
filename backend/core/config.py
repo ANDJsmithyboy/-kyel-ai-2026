@@ -22,13 +22,21 @@ class Settings(BaseSettings):
 
     # ── Base de données Neon PostgreSQL ──────────────────────
     database_url: str = "postgresql+asyncpg://localhost:5432/nkyelai"
+    database_url_unpooled: str = ""
 
     # ── Redis (Upstash) ─────────────────────────────────────
     redis_url: str = "redis://localhost:6379"
+    upstash_redis_rest_url: str = ""
+    upstash_redis_rest_token: str = ""
+
+    # ── QStash ──────────────────────────────────────────────
+    qstash_url: str = ""
+    qstash_token: str = ""
 
     # ── Clerk Auth (JWKS RS256) ─────────────────────────────
     clerk_domain: str = "clerk.nkyel.ai"
     clerk_secret_key: str = ""
+    clerk_webhook_secret: str = ""
 
     # ── Groq (AURATA / SONAR) ───────────────────────────────
     groq_api_key: str = ""
@@ -45,6 +53,7 @@ class Settings(BaseSettings):
 
     # ── Gemini (Primary Model) ──────────────────────────────
     google_api_key: str = ""
+    google_generative_ai_api_key: str = ""
     nkyel_primary_model: str = "gemini-2.5-flash"
     nkyel_planning_model: str = "gemini-2.5-pro"
 
@@ -54,8 +63,28 @@ class Settings(BaseSettings):
     # ── Sentry ──────────────────────────────────────────────
     sentry_dsn: str = ""
 
+    # ── Multimedia Providers ────────────────────────────────
+    pollinations_api_key: str = ""
+    cloudflare_account_id: str = ""
+    cloudflare_api_token: str = ""
+    pexels_api_key: str = ""
+    pixabay_api_key: str = ""
+    runpod_api_key: str = ""
+    comfyui_url: str = "http://localhost:8188"
+    comfyui_api_key: str = ""
+
+    # ── Stockage d'Artefacts & R2 ───────────────────────────
+    artifacts_storage_path: str = "./storage/artifacts"
+    cloudflare_r2_bucket: str = "nkyel-media-sovereign"
+    cloudflare_r2_public_domain: str = "https://media.nkyel.ai"
+    r2_account_id: str = ""
+    r2_access_key_id: str = ""
+    r2_secret_access_key: str = ""
+    r2_bucket_name: str = "nkyel-artifacts"
+    r2_public_url: str = "https://artifacts.nkyel.ai"
+
     # ── CORS ────────────────────────────────────────────────
-    cors_origins: str = "http://localhost:3000,http://localhost:8081"
+    cors_origins: str = "http://localhost:3000,http://localhost:8081,http://localhost:5173,http://localhost:5175"
 
     @property
     def cors_origins_list(self) -> List[str]:
@@ -78,3 +107,4 @@ class Settings(BaseSettings):
 
 
 settings = Settings()
+

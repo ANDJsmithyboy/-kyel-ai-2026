@@ -23,6 +23,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 FRONTEND_BUILD = BASE_DIR / "apps" / "web" / "build"
 FRONTEND_STATIC = BASE_DIR / "apps" / "web" / "static"
 
+from api.v1.media import router as media_router
+from api.v1.wide_research import router as wide_research_router
+
 # ── Application FastAPI ──────────────────────────────────────
 app = FastAPI(
     title="Ñkyel AI API",
@@ -38,6 +41,9 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+app.include_router(media_router)
+app.include_router(wide_research_router, prefix="/api/v1")
 
 # ── Models ───────────────────────────────────────────────────
 class Message(BaseModel):
@@ -293,6 +299,11 @@ async def list_mcp_tools():
             {"error": str(e)},
             status_code=500,
         )
+
+# ── Montage du Routeur Multimédia ──────────────────────────────
+from api.v1.media import router as media_router
+app.include_router(media_router)
+
 
 # ── Servir les fichiers statiques ──────────────────────────────
 if FRONTEND_STATIC.exists():

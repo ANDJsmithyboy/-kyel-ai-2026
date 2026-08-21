@@ -5,9 +5,10 @@
   "description": "Ñkyel AI — An autonomous agent whose work becomes a living, verifiable, user-editable visual workspace",
   "scripts": {
     "dev": "next dev --port 3000",
-    "build": "next build",
+    "build": "next build --webpack",
     "start": "next start --port 3000",
     "lint": "next lint"
+
   },
   "dependencies": {
     "@ai-sdk/groq": "^4.0.5",

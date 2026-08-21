@@ -23,11 +23,13 @@ if db_url.endswith("&") or db_url.endswith("?"):
 
 engine = create_async_engine(
     db_url,
-    echo=settings.debug,
+    echo=False,
     pool_size=5,
     max_overflow=10,
     pool_pre_ping=True,
+    connect_args={"timeout": 3.0} if "asyncpg" in db_url else {},
 )
+
 
 
 

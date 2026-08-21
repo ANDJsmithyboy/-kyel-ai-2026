@@ -9,7 +9,7 @@ import TextareaAutosize from 'react-textarea-autosize';
 import { Send } from 'lucide-react';
 import { toast } from 'sonner';
 import { useModeStore, MODEL_MAP } from '@/stores/mode';
-import { useGabomaStore } from '@/stores/nkyelgpt';
+import { useNkyelStore } from '@/stores/nkyelgpt';
 import ModeSelector from './ModeSelector';
 
 interface MessageInputProps {
@@ -21,7 +21,7 @@ export default function MessageInput({ onSubmit, disabled }: MessageInputProps) 
   const [prompt, setPrompt] = useState('');
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const activeMode = useModeStore((s) => s.activeMode);
-  const consumeTokens = useGabomaStore((s) => s.consumeTokens);
+  const consumeTokens = useNkyelStore((s) => s.consumeTokens);
 
   /* Token gating — vérifie les jetons avant envoi */
   const guardedSubmit = useCallback(

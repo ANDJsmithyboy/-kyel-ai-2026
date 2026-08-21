@@ -63,7 +63,7 @@ const EVENT_ICONS: Record<string, string> = {
 
 interface ReplayTimelineProps {
   /** The run ID to replay */
-  runId: string;
+  runId?: string;
   /** Callback when a specific event is selected */
   onEventSelect?: (event: NkyelEvent, index: number) => void;
   /** Callback when the replay position changes (graph should update) */
@@ -75,7 +75,7 @@ interface ReplayTimelineProps {
 // --- Component ------------------------------------------
 
 export default function ReplayTimeline({
-  runId,
+  runId = 'default-run',
   onEventSelect,
   onPositionChange,
   autoPlaySpeed = 0,

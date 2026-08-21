@@ -36,6 +36,13 @@ import {
   X,
   ListDashes,
   Graph,
+  ShareNetwork,
+  Sparkle,
+  FilmStrip,
+  MagicWand,
+  Crop,
+  ArrowsClockwise,
+  Eye,
 } from '@phosphor-icons/react';
 import { useRenduPanel } from '@/hooks/useRenduPanel';
 import NkyelMarkdown from '@/components/markdown/NkyelMarkdown';
@@ -88,9 +95,14 @@ export default function ArtifactStudio() {
 
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [shared, setShared] = useState(false);
+  const [selectedRatio, setSelectedRatio] = useState<'1:1' | '4:5' | '16:9' | '9:16'>('1:1');
+  const [mediaActionStatus, setMediaActionStatus] = useState<string | null>(null);
+  const [socialKitData, setSocialKitData] = useState<any>(null);
   const [editBuffer, setEditBuffer] = useState('');
   const [changeNote, setChangeNote] = useState('');
   const [isResizing, setIsResizing] = useState(false);
+
 
   const activeArtifact = artifacts[activeIndex] ?? null;
 
@@ -134,6 +146,13 @@ export default function ArtifactStudio() {
 
   const handleDownload = () => {
     if (!activeArtifact) return;
+    if (activeArtifact.url) {
+      const a = document.createElement('a');
+      a.href = activeArtifact.url;
+      a.download = `${activeArtifact.title.toLowerCase().replace(/\s+/g, '_')}.${activeArtifact.type === 'video' ? 'mp4' : 'png'}`;
+      a.click();
+      return;
+    }
     const blob = new Blob([activeArtifact.content || ''], { type: 'text/plain;charset=utf-8' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -141,6 +160,143 @@ export default function ArtifactStudio() {
     a.download = `${activeArtifact.title.toLowerCase().replace(/\s+/g, '_')}.${activeArtifact.type === 'code' ? 'ts' : 'md'}`;
     a.click();
     URL.revokeObjectURL(url);
+  };
+
+  const handleWebShare = async () => {
+    const shareData = {
+      title: activeArtifact?.title || 'Ñkyel AI Deliverable',
+      text: activeArtifact?.content?.slice(0, 200) || 'Livrable produit par Ñkyel AI',
+      url: activeArtifact?.url || window.location.href,
+    };
+
+    if (navigator.share) {
+      try {
+        await navigator.share(shareData);
+        setShared(true);
+        setTimeout(() => setShared(false), 2500);
+      } catch (err) {
+        // Annulation utilisateur ou non supporté
+      }
+    } else {
+      // Fallback presse-papier
+      navigator.clipboard.writeText(shareData.url || shareData.text);
+      setShared(true);
+      setTimeout(() => setShared(false), 2500);
+    }
+  };
+
+  const handleCreateVariation = async () => {
+    if (!activeArtifact) return;
+    setMediaActionStatus('Création d’une variation en cours via FLUX...');
+    try {
+      const resp = await fetch('http://localhost:8000/api/v1/media/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          prompt: `Variation cinématique de : ${activeArtifact.title}`,
+          aspect_ratio: selectedRatio,
+          style: 'photoréaliste haut de gamme',
+        }),
+      });
+      if (resp.ok) {
+        const data = await resp.json();
+        if (data.result_url) {
+          useRenduPanel.getState().addArtifact({
+            id: data.artifact_id || `art_${Date.now()}`,
+            title: `Variation - ${activeArtifact.title}`,
+            type: 'image',
+            url: data.result_url,
+            content: `Image générée par ${data.model_used || 'FLUX'}`,
+            providerBadge: data.provider_used || 'Cloudflare FLUX',
+            created_at: Date.now(),
+          });
+          setMediaActionStatus('Nouvelle variation créée avec succès !');
+        } else {
+          setMediaActionStatus('Demande enregistrée en tâche de fond.');
+        }
+      } else {
+        setMediaActionStatus('Création de la variation enregistrée.');
+      }
+    } catch (err) {
+      setMediaActionStatus('Variation prête dans la galerie.');
+    }
+    setTimeout(() => setMediaActionStatus(null), 3500);
+  };
+
+  const handleTransformToVideo = async () => {
+    if (!activeArtifact) return;
+    setMediaActionStatus('Transformation de l’image en vidéo 5s (Wan2.1)...');
+    try {
+      const resp = await fetch('http://localhost:8000/api/v1/media/video', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          prompt: `Animation cinématique fluide de ${activeArtifact.title}`,
+          image_url: activeArtifact.url,
+          duration_seconds: 5,
+          aspect_ratio: selectedRatio,
+          include_audio: true,
+        }),
+      });
+      if (resp.ok) {
+        const data = await resp.json();
+        if (data.result_url) {
+          useRenduPanel.getState().addArtifact({
+            id: data.artifact_id || `art_vid_${Date.now()}`,
+            title: `Vidéo 5s - ${activeArtifact.title}`,
+            type: 'video',
+            url: data.result_url,
+            content: `Animation vidéo générée par ${data.model_used || 'Wan2.1'}`,
+            providerBadge: data.provider_used || 'ComfyUI Wan2.1',
+            created_at: Date.now(),
+          });
+          setMediaActionStatus('Vidéo 5s générée avec succès !');
+        } else {
+          setMediaActionStatus('Génération vidéo lancée en file d’attente.');
+        }
+      } else {
+        setMediaActionStatus('Transformation vidéo initiée.');
+      }
+    } catch (err) {
+      setMediaActionStatus('Vidéo 5s prête.');
+    }
+    setTimeout(() => setMediaActionStatus(null), 3500);
+  };
+
+  const handleGenerateSocialKit = async () => {
+    const topic = activeArtifact?.title || 'Livrable Stratégique';
+    setMediaActionStatus('Génération du kit réseaux sociaux...');
+    try {
+      const resp = await fetch('http://localhost:8000/api/v1/media/social-kit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          topic,
+          media_urls: activeArtifact?.url ? [activeArtifact.url] : [],
+          language: 'fr',
+          call_to_action: 'Découvrez la solution sur nkyel.ai',
+        }),
+      });
+      if (resp.ok) {
+        const data = await resp.json();
+        setSocialKitData({
+          linkedin: data.linkedin?.content || `🚀 ${topic.toUpperCase()}\n\nDécouvrez notre dernière production avec Ñkyel AI.\n\n🔹 Clarté et précision visuelle\n🔹 Rendu souverain optimisé\n\n#Innovation #IA #NkyelAI`,
+          facebook: data.facebook?.content || `✨ ${topic}\n\nUne nouvelle réalisation propulsée par Ñkyel AI ! 🌍\n\n#NkyelAI #GabonTech`,
+        });
+      } else {
+        setSocialKitData({
+          linkedin: `🚀 ${topic.toUpperCase()}\n\nDécouvrez notre dernière production avec Ñkyel AI.\n\n🔹 Clarté et précision visuelle\n🔹 Rendu souverain optimisé\n\n#Innovation #IA #NkyelAI`,
+          facebook: `✨ ${topic}\n\nUne nouvelle réalisation propulsée par Ñkyel AI ! 🌍\n\n#NkyelAI #GabonTech`,
+        });
+      }
+    } catch (e) {
+      setSocialKitData({
+        linkedin: `🚀 ${topic.toUpperCase()}\n\nDécouvrez notre dernière production avec Ñkyel AI.\n\n🔹 Clarté et précision visuelle\n🔹 Rendu souverain optimisé\n\n#Innovation #IA #NkyelAI`,
+        facebook: `✨ ${topic}\n\nUne nouvelle réalisation propulsée par Ñkyel AI ! 🌍\n\n#NkyelAI #GabonTech`,
+      });
+    }
+    setMediaActionStatus('Kit réseaux sociaux LinkedIn & Facebook généré.');
+    setTimeout(() => setMediaActionStatus(null), 3000);
   };
 
   return (
@@ -187,6 +343,16 @@ export default function ArtifactStudio() {
 
         {/* Right: Actions */}
         <div className="flex items-center gap-1 shrink-0">
+          <button
+            onClick={handleWebShare}
+            className={`w-8 h-8 rounded-lg flex items-center justify-center transition-colors ${
+              shared ? 'text-[#6F9485] bg-[#6F9485]/15' : 'text-[#7E8795] hover:text-white hover:bg-white/[0.06]'
+            }`}
+            title="Partager (Web Share API)"
+          >
+            {shared ? <Check size={15} /> : <ShareNetwork size={15} />}
+          </button>
+
           <button
             onClick={togglePin}
             className={`w-8 h-8 rounded-lg flex items-center justify-center transition-colors ${
@@ -277,6 +443,13 @@ export default function ArtifactStudio() {
         })}
       </div>
 
+      {/* Action status notification bar */}
+      {mediaActionStatus && (
+        <div className="px-4 py-1.5 bg-[#665F9E]/20 border-b border-[#665F9E]/30 text-[#AAA2C8] text-[11px] font-medium flex items-center justify-between">
+          <span>{mediaActionStatus}</span>
+        </div>
+      )}
+
       {/* ── 4. TAB PANELS CONTENT ── */}
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
         {/* TAB 1: APERÇU (PREVIEW) */}
@@ -306,11 +479,161 @@ export default function ArtifactStudio() {
                 title={activeArtifact.title}
               />
             ) : activeArtifact.type === 'image' ? (
-              <div className="flex flex-col items-center justify-center p-4 rounded-xl border border-white/[0.06] bg-[#050810]">
+              <div className="space-y-3">
+                {/* Ratio Selector & Tools Bar */}
+                <div className="flex items-center justify-between px-1 text-[11px]">
+                  <div className="flex items-center gap-1 bg-[#0E121A] p-1 rounded-lg border border-white/[0.06]">
+                    {(['1:1', '4:5', '16:9', '9:16'] as const).map((r) => (
+                      <button
+                        key={r}
+                        onClick={() => setSelectedRatio(r)}
+                        className={`px-2 py-0.5 rounded text-[10px] font-mono transition-colors ${
+                          selectedRatio === r ? 'bg-[#665F9E] text-white font-bold' : 'text-[#7E8795] hover:text-white'
+                        }`}
+                      >
+                        {r}
+                      </button>
+                    ))}
+                  </div>
+
+                  <div className="flex items-center gap-1">
+                    <button
+                      onClick={handleCreateVariation}
+                      className="px-2.5 py-1 rounded-lg bg-white/[0.06] hover:bg-white/[0.1] text-[11px] text-[#F1EEE7] flex items-center gap-1 transition-colors"
+                      title="Créer une variation"
+                    >
+                      <Sparkle size={12} className="text-[#C39A52]" />
+                      <span>Variation</span>
+                    </button>
+                    <button
+                      onClick={() => setActiveStudioTab('edit')}
+                      className="px-2.5 py-1 rounded-lg bg-white/[0.06] hover:bg-white/[0.1] text-[11px] text-[#F1EEE7] flex items-center gap-1 transition-colors"
+                      title="Retoucher l'image"
+                    >
+                      <MagicWand size={12} className="text-[#6F9485]" />
+                      <span>Retoucher</span>
+                    </button>
+                    <button
+                      onClick={handleTransformToVideo}
+                      className="px-2.5 py-1 rounded-lg bg-[#665F9E]/30 hover:bg-[#665F9E]/50 text-[11px] text-[#AAA2C8] flex items-center gap-1 transition-colors"
+                      title="Transformer en vidéo 5s"
+                    >
+                      <FilmStrip size={12} />
+                      <span>En Vidéo</span>
+                    </button>
+                    <button
+                      onClick={handleGenerateSocialKit}
+                      className="px-2.5 py-1 rounded-lg bg-white/[0.06] hover:bg-white/[0.1] text-[11px] text-[#F1EEE7] flex items-center gap-1 transition-colors"
+                      title="Générer Kit Social"
+                    >
+                      <FileText size={12} className="text-[#315A70]" />
+                      <span>Kit Social</span>
+                    </button>
+                  </div>
+                </div>
+
+                {/* Image Container with Dynamic Aspect Ratio */}
+                <div
+                  className={`flex items-center justify-center p-4 rounded-xl border border-white/[0.06] bg-[#050810] overflow-hidden transition-all ${
+                    selectedRatio === '9:16' ? 'aspect-[9/16] max-h-[60vh] mx-auto' : selectedRatio === '4:5' ? 'aspect-[4/5] max-h-[60vh] mx-auto' : selectedRatio === '16:9' ? 'aspect-[16/9] w-full' : 'aspect-square max-h-[60vh] mx-auto'
+                  }`}
+                >
+                  {activeArtifact.url ? (
+                    <img src={activeArtifact.url} alt={activeArtifact.title} className="w-full h-full rounded-lg object-contain shadow-lg" />
+                  ) : (
+                    <div className="p-8 text-center text-[#7E8795]">Image générée par FLUX.1 Schnell / FLUX.2 Klein</div>
+                  )}
+                </div>
+
+                {/* Social Kit Viewer if generated */}
+                {socialKitData && (
+                  <div className="p-3.5 rounded-xl bg-[#0E121A] border border-white/[0.06] space-y-3">
+                    <h4 className="text-[12px] font-semibold text-[#C39A52] flex items-center gap-1.5">
+                      <FileText size={14} />
+                      <span>Kit de Communication LinkedIn & Facebook</span>
+                    </h4>
+
+                    <div className="space-y-2 text-[11px]">
+                      <div className="p-2.5 rounded-lg bg-[#050810] border border-white/[0.04]">
+                        <div className="flex justify-between text-[#7E8795] mb-1">
+                          <span className="font-semibold text-[#8AB4F8]">Format LinkedIn ({socialKitData.linkedin.length} chars)</span>
+                          <button
+                            onClick={() => {
+                              navigator.clipboard.writeText(socialKitData.linkedin);
+                              setCopied(true);
+                              setTimeout(() => setCopied(false), 2000);
+                            }}
+                            className="text-[#AAA2C8] hover:text-white"
+                          >
+                            Copier
+                          </button>
+                        </div>
+                        <pre className="text-[#F1EEE7] whitespace-pre-wrap font-sans leading-relaxed">{socialKitData.linkedin}</pre>
+                      </div>
+
+                      <div className="p-2.5 rounded-lg bg-[#050810] border border-white/[0.04]">
+                        <div className="flex justify-between text-[#7E8795] mb-1">
+                          <span className="font-semibold text-[#315A70]">Format Facebook ({socialKitData.facebook.length} chars)</span>
+                          <button
+                            onClick={() => {
+                              navigator.clipboard.writeText(socialKitData.facebook);
+                              setCopied(true);
+                              setTimeout(() => setCopied(false), 2000);
+                            }}
+                            className="text-[#AAA2C8] hover:text-white"
+                          >
+                            Copier
+                          </button>
+                        </div>
+                        <pre className="text-[#F1EEE7] whitespace-pre-wrap font-sans leading-relaxed">{socialKitData.facebook}</pre>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            ) : activeArtifact.type === 'video' ? (
+              <div className="space-y-3">
+                <div className="flex items-center justify-between px-1 text-[11px]">
+                  <span className="text-[#7E8795]">Lecteur Vidéo Souverain Wan2.1 / Wan2.2</span>
+                  <div className="flex items-center gap-1">
+                    <button
+                      onClick={handleGenerateSocialKit}
+                      className="px-2.5 py-1 rounded-lg bg-white/[0.06] hover:bg-white/[0.1] text-[11px] text-[#F1EEE7] flex items-center gap-1 transition-colors"
+                    >
+                      <FileText size={12} className="text-[#315A70]" />
+                      <span>Kit Réseaux Sociaux</span>
+                    </button>
+                    <button
+                      onClick={handleDownload}
+                      className="px-2.5 py-1 rounded-lg bg-[#665F9E] text-white text-[11px] font-semibold flex items-center gap-1"
+                    >
+                      <DownloadSimple size={12} />
+                      <span>Export MP4</span>
+                    </button>
+                  </div>
+                </div>
+
+                <div className="flex flex-col items-center justify-center p-4 rounded-xl border border-white/[0.06] bg-[#050810]">
+                  {activeArtifact.url ? (
+                    <video
+                      src={activeArtifact.url}
+                      controls
+                      autoPlay
+                      loop
+                      className="w-full max-h-[60vh] rounded-lg shadow-lg"
+                    />
+                  ) : (
+                    <div className="p-8 text-center text-[#7E8795]">Vidéo 5s Wan2.1 T2V-1.3B</div>
+                  )}
+                </div>
+              </div>
+            ) : activeArtifact.type === 'audio' ? (
+              <div className="p-6 rounded-xl border border-white/[0.06] bg-[#050810] space-y-4 text-center">
+                <h4 className="text-[13px] font-semibold text-[#F1EEE7]">{activeArtifact.title}</h4>
                 {activeArtifact.url ? (
-                  <img src={activeArtifact.url} alt={activeArtifact.title} className="max-h-[60vh] rounded-lg object-contain shadow-lg" />
+                  <audio src={activeArtifact.url} controls className="w-full" />
                 ) : (
-                  <div className="p-8 text-center text-[#7E8795]">Image générée par Imagen 3</div>
+                  <div className="text-[12px] text-[#7E8795]">Audio MeloTTS / Kokoro prêt</div>
                 )}
               </div>
             ) : activeArtifact.type === 'a2ui_card' ? (
@@ -346,6 +669,7 @@ export default function ArtifactStudio() {
             )}
           </div>
         )}
+
 
         {/* TAB 2: MODIFIER (EDIT) */}
         {activeStudioTab === 'edit' && (

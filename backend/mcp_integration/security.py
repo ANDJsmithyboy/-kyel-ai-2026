@@ -22,9 +22,38 @@ class MCPPermissionGate:
     # Role → list of granted permission strings
     ROLE_PERMISSIONS: Dict[str, List[str]] = {
         "admin": ["*"],
-        "user": ["search:web", "file:read", "events:read"],
-        "demo": ["search:web"],
-        "anonymous": ["search:web"],
+        "user": [
+            "search:web",
+            "file:read",
+            "events:read",
+            "media:generate",
+            "media:edit",
+            "media:brand",
+            "media:stock",
+            "media:video",
+            "media:analysis",
+            "media:content",
+        ],
+        "demo": [
+            "search:web",
+            "media:generate",
+            "media:edit",
+            "media:brand",
+            "media:stock",
+            "media:video",
+            "media:analysis",
+            "media:content",
+        ],
+        "anonymous": [
+            "search:web",
+            "media:generate",
+            "media:edit",
+            "media:brand",
+            "media:stock",
+            "media:video",
+            "media:analysis",
+            "media:content",
+        ],
     }
 
     @classmethod
@@ -58,10 +87,15 @@ class MCPNetworkAllowlist:
         "api.groq.com",
         "api.clerk.com",
         "api.sentry.io",
+        "api.cloudflare.com",
+        "gen.pollinations.ai",
+        "api.pexels.com",
+        "pixabay.com",
         "modelcontextprotocol.io",
         "a2a-protocol.org",
         "docs.ag-ui.com",
     ]
+
 
     @classmethod
     def is_allowed(cls, host: str) -> bool:

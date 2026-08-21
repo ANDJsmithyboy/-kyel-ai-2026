@@ -132,17 +132,19 @@ def _retry_with_backoff(fn, *args, **kwargs) -> Any:
 # ─── Client Init ─────────────────────────────────────────
 
 def _get_gemini_client():
-    """Lazily initialize the Gemini client."""
+    """Lazily initialize the Gemini client with multi-key rotator."""
     try:
         import google.generativeai as genai
-        api_key = os.getenv("GOOGLE_GENERATIVE_AI_API_KEY", "")
+        from core.key_rotator import gemini_rotator
+        api_key = gemini_rotator.get_active_key() or os.getenv("GOOGLE_GENERATIVE_AI_API_KEY", "") or os.getenv("GOOGLE_API_KEY", "")
         if not api_key:
-            raise ValueError("GOOGLE_GENERATIVE_AI_API_KEY not set")
+            raise ValueError("GOOGLE_GENERATIVE_AI_API_KEY or GOOGLE_API_KEY not set")
         genai.configure(api_key=api_key)
         return genai
     except ImportError:
         # Fallback: use the OpenAI-compatible endpoint
         return None
+
 
 
 # ─── Core Call ───────────────────────────────────────────

@@ -60,13 +60,35 @@ async def get_current_user(
 
 
 
+async def get_current_user_optional(
+    credentials: Optional[HTTPAuthorizationCredentials] = Depends(security_scheme),
+) -> Optional[dict]:
+    """Retourne l'utilisateur connecté s'il existe, ou None si non authentifié."""
+    if not credentials or not credentials.credentials:
+        return None
+    return await get_current_user(credentials)
+
+
+async def require_current_user(
+    user: dict = Depends(get_current_user),
+) -> dict:
+    """Exige un utilisateur connecté."""
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Authentification requise",
+        )
+    return user
+
+
 async def require_admin(
     user: dict = Depends(get_current_user),
 ) -> dict:
     """Dépendance qui vérifie que l'utilisateur est admin (Daniel uniquement)."""
-    if not user.get("is_admin", False):
+    if not user.get("is_admin", False) and user.get("role") != "admin":
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Accès réservé aux administrateurs",
         )
     return user
+

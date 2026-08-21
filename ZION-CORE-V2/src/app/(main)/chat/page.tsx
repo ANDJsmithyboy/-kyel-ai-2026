@@ -10,17 +10,27 @@
 
 'use client';
 
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useChat } from '@/hooks/useChat';
 import ConversationStream, { type MessageItem } from '@/components/conversation/ConversationStream';
 import MissionComposer from '@/components/composer/MissionComposer';
 import type { AgenticFeaturesState } from '@/components/composer/AgenticToggles';
+import { fetchBetaStatus, type BetaStatusResponse } from '@/lib/betaStateMachine';
 
 export default function ChatPage() {
   const router = useRouter();
   const [conversationId, setConversationId] = useState<string | null>(null);
   const [initialPrompt, setInitialPrompt] = useState<string>('');
+  const [betaStatus, setBetaStatus] = useState<BetaStatusResponse | null>(null);
+
+  useEffect(() => {
+    fetchBetaStatus()
+      .then((res) => setBetaStatus(res))
+      .catch(() => {});
+  }, []);
+
+  const isClosed = betaStatus?.state === 'PUBLIC_CLOSED';
 
   const chat = useChat({
     conversationId,
@@ -31,7 +41,12 @@ export default function ChatPage() {
 
   const handleSend = useCallback(
     async (content: string, engineId: string, features: AgenticFeaturesState) => {
+      if (isClosed) {
+        alert("La bêta privée est terminée. L'historique est disponible en lecture seule.");
+        return;
+      }
       setInitialPrompt('');
+
 
       // Créer une conversation persistée si nouveau thread
       if (!conversationId) {

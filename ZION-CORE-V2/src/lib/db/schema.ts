@@ -226,3 +226,108 @@ export const featureFlags = pgTable("feature_flags", {
 }, (table) => [
   unique("feature_flags_key_key").on(table.key),
 ]);
+
+// -- Beta Campaigns --------------------------------------
+export const betaCampaigns = pgTable("beta_campaigns", {
+  id: uuid("id").default(sql`uuid_generate_v4()`).primaryKey().notNull(),
+  slug: text("slug").notNull(),
+  name: text("name").notNull(),
+  startsAt: timestamp("starts_at", { withTimezone: true, mode: 'string' }).notNull(),
+  publicEndsAt: timestamp("public_ends_at", { withTimezone: true, mode: 'string' }).notNull(),
+  maxSeats: integer("max_seats").default(100).notNull(),
+  claimedSeats: integer("claimed_seats").default(0).notNull(),
+  feedbackRequired: boolean("feedback_required").default(true).notNull(),
+  forcedState: text("forced_state"),
+  isActive: boolean("is_active").default(true).notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true, mode: 'string' }).defaultNow().notNull(),
+  updatedAt: timestamp("updated_at", { withTimezone: true, mode: 'string' }).defaultNow().notNull(),
+}, (table) => [
+  unique("beta_campaigns_slug_key").on(table.slug),
+]);
+
+// -- Beta Enrollments (100 Places Max) -------------------
+export const betaEnrollments = pgTable("beta_enrollments", {
+  id: uuid("id").default(sql`uuid_generate_v4()`).primaryKey().notNull(),
+  campaignId: uuid("campaign_id").notNull(),
+  userId: uuid("user_id").notNull(),
+  clerkUserId: text("clerk_user_id").notNull(),
+  seatNumber: integer("seat_number").notNull(),
+  status: text("status").default('enrolled').notNull(),
+  enrolledAt: timestamp("enrolled_at", { withTimezone: true, mode: 'string' }).defaultNow().notNull(),
+  firstTaskAt: timestamp("first_task_at", { withTimezone: true, mode: 'string' }),
+  lastActivityAt: timestamp("last_activity_at", { withTimezone: true, mode: 'string' }),
+  feedbackCompletedAt: timestamp("feedback_completed_at", { withTimezone: true, mode: 'string' }),
+  termsVersion: text("terms_version").default('1.0').notNull(),
+  locale: text("locale").default('fr').notNull(),
+  metadata: jsonb("metadata"),
+  createdAt: timestamp("created_at", { withTimezone: true, mode: 'string' }).defaultNow().notNull(),
+  updatedAt: timestamp("updated_at", { withTimezone: true, mode: 'string' }).defaultNow().notNull(),
+}, (table) => [
+  index("idx_beta_enrollments_user").using("btree", table.userId),
+  index("idx_beta_enrollments_clerk").using("btree", table.clerkUserId),
+  unique("uq_beta_campaign_user").on(table.campaignId, table.userId),
+  unique("uq_beta_campaign_seat").on(table.campaignId, table.seatNumber),
+  foreignKey({
+    columns: [table.campaignId],
+    foreignColumns: [betaCampaigns.id],
+    name: "beta_enrollments_campaign_id_fkey"
+  }).onDelete("cascade"),
+  foreignKey({
+    columns: [table.userId],
+    foreignColumns: [users.id],
+    name: "beta_enrollments_user_id_fkey"
+  }).onDelete("cascade"),
+]);
+
+// -- Beta Events (Telemetry) -----------------------------
+export const betaEvents = pgTable("beta_events", {
+  id: uuid("id").default(sql`uuid_generate_v4()`).primaryKey().notNull(),
+  idempotencyKey: text("idempotency_key").notNull(),
+  campaignId: uuid("campaign_id"),
+  enrollmentId: uuid("enrollment_id"),
+  userId: uuid("user_id"),
+  eventName: text("event_name").notNull(),
+  threadId: text("thread_id"),
+  runId: text("run_id"),
+  metadata: jsonb("metadata"),
+  occurredAt: timestamp("occurred_at", { withTimezone: true, mode: 'string' }).defaultNow().notNull(),
+}, (table) => [
+  unique("beta_events_idempotency_key_key").on(table.idempotencyKey),
+  index("idx_beta_events_name").using("btree", table.eventName),
+  index("idx_beta_events_user").using("btree", table.userId),
+  index("idx_beta_events_run").using("btree", table.runId),
+  index("idx_beta_events_occurred").using("btree", table.occurredAt),
+]);
+
+// -- Beta Feedback Records (Structured) ------------------
+export const betaFeedbackRecords = pgTable("beta_feedback_records", {
+  id: uuid("id").default(sql`uuid_generate_v4()`).primaryKey().notNull(),
+  campaignId: uuid("campaign_id"),
+  enrollmentId: uuid("enrollment_id"),
+  userId: uuid("user_id").notNull(),
+  clerkUserId: text("clerk_user_id").notNull(),
+  overallRating: integer("overall_rating").notNull(),
+  goalAttempted: text("goal_attempted").notNull(),
+  taskSucceeded: boolean("task_succeeded").notNull(),
+  favoriteFeature: text("favorite_feature").notNull(),
+  issuesEncountered: text("issues_encountered"),
+  priorityImprovement: text("priority_improvement").notNull(),
+  likelyToReuse: integer("likely_to_reuse").notNull(),
+  npsScore: integer("nps_score").notNull(),
+  willingnessToPay: text("willingness_to_pay").notNull(),
+  priceBracket: text("price_bracket"),
+  africanContextInterest: text("african_context_interest").notNull(),
+  localeUsed: text("locale_used").default('fr').notNull(),
+  quoteConsent: boolean("quote_consent").default(false).notNull(),
+  submittedAt: timestamp("submitted_at", { withTimezone: true, mode: 'string' }).defaultNow().notNull(),
+}, (table) => [
+  index("idx_beta_feedback_user").using("btree", table.userId),
+  index("idx_beta_feedback_rating").using("btree", table.overallRating),
+  index("idx_beta_feedback_nps").using("btree", table.npsScore),
+  foreignKey({
+    columns: [table.userId],
+    foreignColumns: [users.id],
+    name: "beta_feedback_records_user_id_fkey"
+  }).onDelete("cascade"),
+]);
+

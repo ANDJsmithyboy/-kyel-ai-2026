@@ -15,6 +15,16 @@ from unittest.mock import patch, MagicMock
 # Ensure backend is importable
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "..", "backend"))
 
+try:
+    import langchain
+    if not hasattr(langchain, "debug"):
+        langchain.debug = False
+    if not hasattr(langchain, "verbose"):
+        langchain.verbose = False
+except ImportError:
+    pass
+
+
 
 # ─── Fixtures ───────────────────────────────────────────
 
@@ -90,14 +100,15 @@ class TestEndToEndGraph:
     """Full pipeline: receive_goal → plan → research → analyze → synthesize → deliver."""
 
     @patch("services.gemini_service._call_gemini", side_effect=_mock_gemini_call)
-    @patch("mcp.tools.tavily_tool.tavily_search", side_effect=_mock_tavily_search)
+    @patch("mcp_integration.tools.tavily_tool.tavily_search", side_effect=_mock_tavily_search)
     def test_full_pipeline_completes(self, mock_tavily, mock_gemini):
         """The graph should run to completion and produce a final response."""
         # Patch the registry's tool handler for tavily_search
-        from mcp.registry import registry
+        from mcp_integration.registry import registry
         tavily_tool = registry.get_tool("tavily_search")
-        original_handler = tavily_tool.handler
-        tavily_tool.handler = _mock_tavily_search
+        original_handler = tavily_tool.handler if tavily_tool else None
+        if tavily_tool:
+            tavily_tool.handler = _mock_tavily_search
 
         try:
             from agents.nkyel_graph import build_nkyel_graph
@@ -132,16 +143,18 @@ class TestEndToEndGraph:
             assert result.get("run_id", "").startswith("run_")
 
         finally:
-            tavily_tool.handler = original_handler
+            if tavily_tool and original_handler:
+                tavily_tool.handler = original_handler
 
     @patch("services.gemini_service._call_gemini", side_effect=_mock_gemini_call)
-    @patch("mcp.tools.tavily_tool.tavily_search", side_effect=_mock_tavily_search)
+    @patch("mcp_integration.tools.tavily_tool.tavily_search", side_effect=_mock_tavily_search)
     def test_events_persisted_to_sqlite(self, mock_tavily, mock_gemini):
         """Events from a full run should be persisted to SQLite."""
-        from mcp.registry import registry
+        from mcp_integration.registry import registry
         tavily_tool = registry.get_tool("tavily_search")
-        original_handler = tavily_tool.handler
-        tavily_tool.handler = _mock_tavily_search
+        original_handler = tavily_tool.handler if tavily_tool else None
+        if tavily_tool:
+            tavily_tool.handler = _mock_tavily_search
 
         try:
             from agents.nkyel_graph import build_nkyel_graph
@@ -166,16 +179,18 @@ class TestEndToEndGraph:
             assert snapshot.get("goal_title") is not None
 
         finally:
-            tavily_tool.handler = original_handler
+            if tavily_tool and original_handler:
+                tavily_tool.handler = original_handler
 
     @patch("services.gemini_service._call_gemini", side_effect=_mock_gemini_call)
-    @patch("mcp.tools.tavily_tool.tavily_search", side_effect=_mock_tavily_search)
+    @patch("mcp_integration.tools.tavily_tool.tavily_search", side_effect=_mock_tavily_search)
     def test_plan_structure(self, mock_tavily, mock_gemini):
         """The plan should contain structured tasks."""
-        from mcp.registry import registry
+        from mcp_integration.registry import registry
         tavily_tool = registry.get_tool("tavily_search")
-        original_handler = tavily_tool.handler
-        tavily_tool.handler = _mock_tavily_search
+        original_handler = tavily_tool.handler if tavily_tool else None
+        if tavily_tool:
+            tavily_tool.handler = _mock_tavily_search
 
         try:
             from agents.nkyel_graph import build_nkyel_graph
@@ -191,4 +206,5 @@ class TestEndToEndGraph:
             assert all("title" in t for t in plan), "All tasks should have a title"
 
         finally:
-            tavily_tool.handler = original_handler
+            if tavily_tool and original_handler:
+                tavily_tool.handler = original_handler

@@ -20,6 +20,14 @@ from api.v1.admin import router as admin_router
 from api.v1.users import router as users_router
 from api.v1.feedback import router as feedback_router
 from api.v1.nkyel_agent import router as nkyel_router
+from api.v1.media import router as media_router
+from api.v1.wide_research import router as wide_research_router
+from api.v1.workgraph_intervention import router as workgraph_router
+from api.v1.clerk_webhook import router as clerk_webhook_router
+from api.v1.beta import router as beta_router
+from api.v1.google_demo import router as google_demo_router
+from services.language_registry_service import language_service
+
 
 
 @asynccontextmanager
@@ -80,6 +88,25 @@ app.include_router(admin_router)
 app.include_router(users_router)
 app.include_router(feedback_router)
 app.include_router(nkyel_router)
+app.include_router(media_router)
+app.include_router(wide_research_router, prefix="/api/v1")
+app.include_router(workgraph_router)
+app.include_router(clerk_webhook_router)
+app.include_router(beta_router)
+app.include_router(google_demo_router)
+
+
+
+# ── Route Registre Linguistique Dynamique ─────────────────────
+@app.get("/api/v1/languages", tags=["Languages"])
+async def get_supported_languages():
+    """Retourne l'ensemble des capacités linguistiques mondiales et prioritaires africaines."""
+    return {
+        "success": True,
+        "languages": [cap.model_dump() for cap in language_service.get_all_capabilities()],
+        "african_priority_count": sum(1 for cap in language_service.get_all_capabilities() if cap.is_african_priority),
+        "total_count": len(language_service.get_all_capabilities()),
+    }
 
 
 # ── Route Healthcheck ────────────────────────────────────────

@@ -23,4 +23,10 @@ training/
 package-lock.json
 *.exe
 .temp_sync_*
+.temp_*
+*.sqlite3
+events.sqlite3
+storage/
+fast_push_fd.py
+push_separate_frontend.py
 *.tsbuildinfo

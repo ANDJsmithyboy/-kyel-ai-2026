@@ -119,7 +119,7 @@ class TestResearchNode:
     @patch("services.gemini_service._call_gemini", side_effect=_mock_gemini)
     def test_adds_sources(self, mock):
         from agents.nkyel_graph import research
-        from mcp.registry import registry
+        from mcp_integration.registry import registry
         tool = registry.get_tool("tavily_search")
         original = tool.handler
         tool.handler = _mock_tavily
@@ -201,7 +201,7 @@ class TestPipelineVariations:
     @patch("services.gemini_service._call_gemini", side_effect=_mock_gemini)
     def test_short_goal(self, mock):
         from agents.nkyel_graph import build_nkyel_graph
-        from mcp.registry import registry
+        from mcp_integration.registry import registry
         tool = registry.get_tool("tavily_search")
         original = tool.handler
         tool.handler = _mock_tavily
@@ -215,7 +215,7 @@ class TestPipelineVariations:
     @patch("services.gemini_service._call_gemini", side_effect=_mock_gemini)
     def test_long_goal(self, mock):
         from agents.nkyel_graph import build_nkyel_graph
-        from mcp.registry import registry
+        from mcp_integration.registry import registry
         tool = registry.get_tool("tavily_search")
         original = tool.handler
         tool.handler = _mock_tavily
@@ -230,7 +230,7 @@ class TestPipelineVariations:
     @patch("services.gemini_service._call_gemini", side_effect=_mock_gemini)
     def test_english_goal(self, mock):
         from agents.nkyel_graph import build_nkyel_graph
-        from mcp.registry import registry
+        from mcp_integration.registry import registry
         tool = registry.get_tool("tavily_search")
         original = tool.handler
         tool.handler = _mock_tavily

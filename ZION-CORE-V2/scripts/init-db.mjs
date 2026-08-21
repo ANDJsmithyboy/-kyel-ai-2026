@@ -172,7 +172,7 @@ CREATE INDEX IF NOT EXISTS "idx_audit_logs_user_created" ON "audit_logs" ("user_
 `;
 
 async function main() {
-  console.log("🚀 Création des tables GabomaAI dans Neon...");
+  console.log("🚀 Création des tables Ñkyel AI dans Neon...");
 
   // Split by semicolons and execute each statement
   const statements = SCHEMA.split(";")
@@ -196,7 +196,7 @@ async function main() {
   }
 
   await pool.end();
-  console.log("\n🎉 Base de données GabomaAI initialisée !");
+  console.log("\n🎉 Base de données Ñkyel AI initialisée !");
 }
 
 main().catch(console.error);

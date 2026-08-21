@@ -91,7 +91,7 @@ const defaults: Omit<NkyelState, 'consumeTokens' | 'creditTokens' | 'setPlan' | 
   thinkingMessage: '',
 };
 
-export const useGabomaStore = create<NkyelState>((set, get) => ({
+export const useNkyelStore = create<NkyelState>((set, get) => ({
   ...defaults,
   ...loadPersisted(),
 
@@ -152,5 +152,5 @@ export const selectTokensPercent = (s: NkyelState) =>
 export const selectIsLowTokens = (s: NkyelState) =>
   s.tokensMax > 0 ? s.tokens / s.tokensMax < 0.2 : false;
 
-/* Alias pour migration progressive Nkyel → Nkyel */
-export const useNkyelStore = useGabomaStore;
+/* Alias de compatibilité */
+export const useGabomaStore = useNkyelStore;

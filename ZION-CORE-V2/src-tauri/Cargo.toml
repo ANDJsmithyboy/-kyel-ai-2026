@@ -1,8 +1,9 @@
 [package]
-name = "gaboma-ai-desktop"
+name = "nkyel-ai-desktop"
 version = "2.0.0"
-description = "GabomaGPT — IA Souveraine du Gabon"
+description = "Ñkyel AI — Système Agentique Souverain"
 authors = ["SmartANDJ AI Technologies"]
+
 edition = "2021"
 
 [build-dependencies]
