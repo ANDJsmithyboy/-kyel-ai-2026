@@ -47,22 +47,22 @@ const CAPABILITIES = [
   { id: 'reasoning', label: 'Raisonnement Approfondi', model: 'DeepSeek R1 / o1', latency: '400ms' },
   { id: 'code', label: 'Code Architect', model: 'Codestral FR / Qwen 2.5 Coder', latency: '180ms' },
   { id: 'vision', label: 'Vision & Multimodal', model: 'Pixtral Large / Gemini Pro', latency: '220ms' },
-  { id: 'african', label: 'Langues Gabonaises & Africaines', model: 'Gaboma AI / Lelapa / Fang', latency: '150ms' },
-  { id: 'sovereign', label: 'Souveraineté Dédiée', model: 'RunPod GPU / Mistral EU', latency: '90ms' },
+  { id: 'multilingual', label: 'Polyglotte & Langues Mondiales', model: 'Multilingual MoE (100+ Langues)', latency: '150ms' },
+  { id: 'sovereign', label: 'Souveraineté & Cloud Privé', model: 'RunPod Dedicated GPU / Mistral EU', latency: '90ms' },
 ];
 
 const GLOBAL_ECOSYSTEMS = [
   { region: 'France (Prioritaire)', providers: ['Mistral AI', 'Scaleway AI', 'OVHcloud AI'], flag: '🇫🇷', badge: 'Souveraineté UE' },
   { region: 'USA & Global', providers: ['OpenAI', 'Anthropic', 'Google Gemini', 'Meta Llama', 'Groq LPU', 'Fireworks', 'Cohere'], flag: '🌐', badge: 'Puissance Brute' },
   { region: 'Chine', providers: ['DeepSeek', 'Alibaba Qwen', 'Zhipu GLM', 'Moonshot Kimi', 'MiniMax', 'Baidu ERNIE', 'ByteDance'], flag: '🇨🇳', badge: 'Raisonnement & Code' },
-  { region: 'Afrique & Gabon', providers: ['Gaboma AI', 'Lelapa AI', 'Masakhane', 'Ñkyel Sovereign MoE', 'Fang / Punu / Myènè'], flag: '🇬🇦', badge: 'Patrimoine & Langues' },
+  { region: 'Afrique & Émergents', providers: ['Gaboma AI', 'Lelapa AI', 'Masakhane', 'Ñkyel Universal MoE', 'Fang / Swahili / Lingala'], flag: '🌍', badge: 'Multilinguisme Natif' },
   { region: 'Asie & Moyen-Orient', providers: ['NTT tsuzumi', 'NAVER HyperCLOVA X', 'Upstage Solar', 'Sarvam AI', 'Falcon TII', 'Jais Arabic'], flag: '🌏', badge: 'RTL & Spécialités' },
   { region: 'Self-Hosted & Local', providers: ['vLLM Cluster', 'TGI Engine', 'SGLang', 'Ollama Local', 'RunPod Dedicated GPU'], flag: '⚡', badge: 'Confidentialité 100%' },
 ];
 
 const SAMPLE_MISSIONS = [
   "Créer une application React complète avec backend FastAPI et base Neon",
-  "Analyser ce rapport financier et traduire la synthèse en Fang et Français",
+  "Analyser ce rapport financier international et générer la synthèse multilingue",
   "Développer un agent autonome de veille concurrentielle avec WorkGraph",
   "Générer une interface UI interactive en direct dans le studio d'artefacts VIE",
 ];
@@ -203,7 +203,7 @@ export default function ManusLandingPage() {
                 rows={3}
                 value={promptText}
                 onChange={(e) => setPromptText(e.target.value)}
-                placeholder="Décrivez votre mission complexe à Ñkyel (code, recherche arborescente, analyse documentaire, traduction gabonaise...)"
+                placeholder="Décrivez votre mission complexe à Ñkyel (code fullstack, recherche arborescente, analyse documentaire, traduction multilingue internationale...)"
                 className="w-full p-3 bg-transparent text-sm text-white placeholder-white/40 focus:outline-none resize-none"
               />
             </div>
@@ -379,9 +379,9 @@ export default function ManusLandingPage() {
 
             <div className="p-6 rounded-2xl border border-white/[0.08] bg-white/[0.01] space-y-3">
               <Globe size={28} className="text-purple-400" />
-              <h3 className="font-bold text-sm text-white">4. Langues Gabonaises & RTL</h3>
+              <h3 className="font-bold text-sm text-white">4. Polyglotte & Multilinguisme Mondial</h3>
               <p className="text-xs text-white/60 leading-relaxed">
-                Support BCP-47 de pointe pour le Fang, Punu, Myènè, Nzebi, Swahili, Lingala, Wolof et inversion RTL complète pour l&apos;arabe.
+                Support BCP-47 universel pour plus de 100 langues mondiales, inversion RTL complète pour l&apos;arabe, l&apos;hébreu, et intégration native des langues africaines.
               </p>
             </div>
 
@@ -417,7 +417,7 @@ export default function ManusLandingPage() {
             Ñ
           </div>
           <blockquote className="text-lg sm:text-2xl font-bold text-white tracking-tight leading-snug max-w-3xl mx-auto">
-            « L&apos;intelligence artificielle ne doit appartenir à aucun cartel. Ñkyel est le pont souverain vers l&apos;intelligence universelle pour l&apos;Afrique et le monde. »
+            « L&apos;intelligence artificielle ne doit appartenir à aucun cartel. Ñkyel est le pont souverain vers l&apos;intelligence universelle pour tous les continents. »
           </blockquote>
           <p className="text-xs text-white/60 font-mono">
             SmartANDJ AI Technologies · Fondateur & Architecte en Chef : Daniel Jonathan ANDJ
@@ -439,7 +439,7 @@ export default function ManusLandingPage() {
               Propulsé par SmartANDJ AI Technologies. Architecture agnostique mondiale et souveraineté d&apos;intelligence artificielle.
             </p>
             <p className="text-[10px] text-white/30 font-mono">
-              Libreville, Gabon · Édition Production 2026.1
+              SmartANDJ AI Technologies · Édition Mondiale Production 2026
             </p>
           </div>
 

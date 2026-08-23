@@ -17,14 +17,14 @@ const THINKING_STATES: Record<ThinkingMode, {
 }> = {
   default: {
     icon: '🌿',
-    label: 'Nkyel AI réfléchit',
+    label: 'Ñkyel AI réfléchit',
     auraColors: ['#22C55E', '#38BDF8', '#FACC15'],
     phrases: [
-      'Nkyel AI consulte les savoirs gabonais...',
-      'Connexion aux mémoires de nos ancêtres...',
-      'Les esprits de l\'Iboga guident la réponse...',
-      'Synthèse des connaissances du Gabon profond...',
-      'Analyse depuis Libreville en cours...'
+      'Ñkyel AI orchestre le réseau mondial...',
+      'Raisonnement arborescent et vérification croisée...',
+      'Activation des modèles de raisonnement profond...',
+      'Synthèse des connaissances universelles...',
+      'Analyse multi-modèles et inférence en cours...'
     ]
   },
   search: {
@@ -32,11 +32,11 @@ const THINKING_STATES: Record<ThinkingMode, {
     label: 'Recherche en cours',
     auraColors: ['#38BDF8', '#22C55E', '#06B6D4'],
     phrases: [
-      'Sondage des courants profonds de l\'Ogooué...',
-      'Navigation à travers la brume de Lambaréné...',
-      'Remontée du fleuve vers la source des informations...',
-      'Traversée du delta vers les données fraîches...',
-      'Consultation des archives de Port-Gentil...'
+      'Exploration du web en temps réel...',
+      'Indexation des sources scientifiques et documentaires...',
+      'Vérification croisée des données mondiales...',
+      'Extraction des faits vérifiés et citations...',
+      'Filtrage des informations haute confiance...'
     ]
   },
   legal: {
@@ -44,35 +44,35 @@ const THINKING_STATES: Record<ThinkingMode, {
     label: 'Analyse juridique',
     auraColors: ['#A78BFA', '#7C3AED', '#D4A417'],
     phrases: [
-      'Consultation silencieuse des anciens...',
-      'Ouverture des archives sacrées du Mvett...',
-      'Traduction des murmures de la forêt équatoriale...',
-      'Convocation du conseil des sages sous l\'arbre à palabre...',
-      'Lecture des tablettes du droit OHADA...'
+      'Consultation des corpus juridiques internationaux...',
+      'Vérification de conformité réglementaire...',
+      'Analyse comparative des clauses contractuelles...',
+      'Contrôle de conformité RGPD et droit des affaires...',
+      'Synthèse juridique structurée...'
     ]
   },
   panther: {
     icon: '⚫',
-    label: 'Panthère en mission',
+    label: 'Agent en mission',
     auraColors: ['#D4A417', '#FF6B00', '#00FF87'],
     phrases: [
-      'La Panthère piste la transaction dans l\'ombre...',
-      'Affût nocturne dans la forêt des Abeilles...',
-      'Alignement des réseaux... L\'œil de la Panthère est fixé.',
-      'Traversée silencieuse de la canopée numérique...',
-      'La Panthère approche de sa cible. Patience...'
+      'Orchestration des sous-agents autonomes...',
+      'Exécution des étapes du WorkGraph...',
+      'Contrôle des métriques de précision...',
+      'Traversée des protocoles de communication...',
+      'Finalisation de la mission...'
     ]
   },
   payment: {
     icon: '💫',
-    label: 'Sécurisation du paiement',
+    label: 'Sécurisation de la transaction',
     auraColors: ['#22C55E', '#D4A417', '#00FF87'],
     phrases: [
-      'La Panthère sécurise ta transaction...',
-      'Vérification des canaux Airtel Money en cours...',
-      'Traversée sécurisée du pont financier gabonais...',
-      'Validation de la transaction par les gardiens...',
-      'Tes jetons sont en route, frère. Patience un instant.'
+      'Sécurisation de la transaction...',
+      'Vérification des passerelles de paiement...',
+      'Chiffrement bancaire de bout en bout...',
+      'Validation de la transaction par les serveurs sécurisés...',
+      'Attribution immédiate de vos crédits.'
     ]
   },
   language: {
@@ -80,11 +80,11 @@ const THINKING_STATES: Record<ThinkingMode, {
     label: 'Traduction en cours',
     auraColors: ['#22C55E', '#FACC15', '#EF4444'],
     phrases: [
-      'Consultation des anciens locuteurs Fang...',
-      'Harmonisation avec la phonologie Mpongwé...',
-      'Recherche dans les archives linguistiques Punu...',
-      'Alignement des structures grammaticales Bantu...',
-      'Traduction depuis les profondeurs de la forêt équatoriale...'
+      'Alignement des structures linguistiques universelles...',
+      'Traitement phonologique et sémantique multilingue...',
+      'Recherche dans les corpus de langues mondiales & africaines...',
+      'Harmonisation contextuelle et nuances culturelles...',
+      'Traduction fidèle haute fidélité en cours...'
     ]
   },
   image: {
@@ -92,11 +92,11 @@ const THINKING_STATES: Record<ThinkingMode, {
     label: 'Création en cours',
     auraColors: ['#EF4444', '#FACC15', '#A78BFA'],
     phrases: [
-      'L\'artiste numérique puise dans l\'imaginaire gabonais...',
-      'Fusion des couleurs de la forêt équatoriale...',
-      'Modelage des pixels sur l\'enclume du créateur...',
-      'L\'image prend forme depuis les profondeurs...',
-      'Peinture numérique en cours depuis Libreville...'
+      'L\'artiste numérique compose la scène...',
+      'Génération haute résolution par le studio VIE...',
+      'Modelage des pixels et rendu texturé...',
+      'L\'image prend forme sur la toile...',
+      'Rendu final de l\'artéfact visuel...'
     ]
   },
   analytics: {
@@ -104,11 +104,11 @@ const THINKING_STATES: Record<ThinkingMode, {
     label: 'Analyse des données',
     auraColors: ['#38BDF8', '#22C55E', '#FACC15'],
     phrases: [
-      'ANDJ Analytics traite les données gabonaises...',
-      'Croisement des flux économiques de l\'Afrique centrale...',
-      'Cartographie des tendances du marché gabonais...',
-      'Synthèse des indicateurs de Libreville à Port-Gentil...',
-      'L\'intelligence des données au service du Gabon...'
+      'ANDJ Analytics traite les flux de données mondiaux...',
+      'Croisement des indicateurs économiques et financiers...',
+      'Cartographie des tendances de marché globales...',
+      'Synthèse des métriques de performance...',
+      'L\'intelligence des données au service de la décision...'
     ]
   }
 };

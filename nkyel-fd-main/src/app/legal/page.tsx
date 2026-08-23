@@ -47,7 +47,7 @@ export default function LegalPage() {
             <div className="p-3 rounded-xl bg-black/40 border border-white/5 text-white/90 space-y-1">
               <p className="font-bold text-white">SmartANDJ AI Technologies</p>
               <p>Fondateur & Architecte en Chef : <strong>Daniel Jonathan ANDJ</strong></p>
-              <p>Siège social : Libreville, République Gabonaise</p>
+              <p>Société Technologique d&apos;Intelligence Artificielle Mondiale</p>
               <p>Email officiel : <a href="mailto:contact@smartandj.ai" className="text-[#D5AE57] hover:underline">contact@smartandj.ai</a> / <a href="mailto:jonathanakarentoutoume@gmail.com" className="text-[#D5AE57] hover:underline">jonathanakarentoutoume@gmail.com</a></p>
               <p>Site web éditeur : <a href="https://smartandj.ai" target="_blank" rel="noopener noreferrer" className="text-[#D5AE57] hover:underline">smartandj.ai</a></p>
             </div>

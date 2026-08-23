@@ -13,7 +13,7 @@ import { ArrowLeft, FileText, Scales, ShieldCheck, UserCheck, CreditCard, LockKe
 const SECTIONS = [
   {
     title: '1. Acceptation des Conditions',
-    content: `En accédant à Ñkyel AI ou en l'utilisant, vous acceptez d'être lié par les présentes Conditions Générales d'Utilisation (« CGU »). Si vous n'acceptez pas ces CGU, veuillez ne pas utiliser le Service. Ñkyel AI est édité par SmartANDJ AI Technologies, société enregistrée au Gabon, fondée par Daniel Jonathan ANDJ.`,
+    content: `En accédant à Ñkyel AI ou en l'utilisant, vous acceptez d'être lié par les présentes Conditions Générales d'Utilisation (« CGU »). Si vous n'acceptez pas ces CGU, veuillez ne pas utiliser le Service. Ñkyel AI est édité par SmartANDJ AI Technologies, entreprise technologique d'intelligence artificielle fondée par Daniel Jonathan ANDJ.`,
   },
   {
     title: '2. Description du Service & Architecture Fabric',

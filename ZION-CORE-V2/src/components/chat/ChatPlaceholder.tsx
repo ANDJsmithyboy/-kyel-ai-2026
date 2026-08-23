@@ -56,7 +56,7 @@ export default function ChatPlaceholder({ userName }: ChatPlaceholderProps) {
           </span>
         </div>
         <div className="text-sm sm:text-base text-[var(--text-secondary)] tracking-wide font-light opacity-80">
-          Votre IA souveraine. Propulsée par l'intelligence gabonaise.
+          Votre IA souveraine. L&apos;Agent d&apos;Intelligence Universel & Mondial.
         </div>
       </div>
 
