@@ -21,17 +21,18 @@
   --font-sans: var(--font-geist), ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
   --font-mono: var(--font-geist-mono), "SF Mono", "Cascadia Code", monospace;
 
-  /* ── Type Scale (Geist) ─────────────────────────────── */
-  --text-xs:     12px;
-  --text-sm:     13px;
-  --text-base:   14px;
-  --text-md:     15px;
-  --text-lg:     16px;
-  --text-xl:     18px;
-  --text-2xl:    20px;
-  --text-3xl:    24px;
-  --text-4xl:    28px;
-  --text-5xl:    32px;
+  /* ── Type Scale (Responsive with --app-text-scale) ────────── */
+  --app-text-scale: 1;
+  --text-xs:     calc(12px * var(--app-text-scale, 1));
+  --text-sm:     calc(13px * var(--app-text-scale, 1));
+  --text-base:   calc(14px * var(--app-text-scale, 1));
+  --text-md:     calc(15px * var(--app-text-scale, 1));
+  --text-lg:     calc(16px * var(--app-text-scale, 1));
+  --text-xl:     calc(18px * var(--app-text-scale, 1));
+  --text-2xl:    calc(20px * var(--app-text-scale, 1));
+  --text-3xl:    calc(24px * var(--app-text-scale, 1));
+  --text-4xl:    calc(28px * var(--app-text-scale, 1));
+  --text-5xl:    calc(32px * var(--app-text-scale, 1));
 
   --leading-tight:   1.2;
   --leading-snug:    1.35;

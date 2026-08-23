@@ -38,3 +38,4 @@ backend/__pycache__/
 backend/.env
 backend/.pytest_cache/
 tmp/
+*.tsbuildinfo

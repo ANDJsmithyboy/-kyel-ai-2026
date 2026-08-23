@@ -411,3 +411,115 @@ async def get_feedback_statistics() -> dict:
         "top_motifs": top_motifs,
     }
 
+
+# ── User Preferences (Neon PostgreSQL) ───────────────────────
+
+_IN_MEMORY_USER_PREFS: dict[str, dict] = {}
+
+async def get_user_preferences(user_id: str) -> Optional[dict]:
+    """Récupère les préférences de l'utilisateur depuis Neon PostgreSQL ou la mémoire cache."""
+    try:
+        async with async_session() as session:
+            result = await session.execute(
+                text("SELECT * FROM user_preferences WHERE user_id = :uid LIMIT 1"),
+                {"uid": user_id},
+            )
+            row = result.mappings().first()
+            if row:
+                return dict(row)
+    except Exception as e:
+        pass
+    return _IN_MEMORY_USER_PREFS.get(str(user_id))
+
+
+async def upsert_user_preferences(user_id: str, prefs: dict) -> dict:
+    """Insère ou met à jour les préférences de l'utilisateur dans Neon."""
+    now_utc = datetime.now(timezone.utc)
+    prefs_to_save = {
+        "user_id": user_id,
+        "ui_locale": prefs.get("ui_locale", "fr-FR"),
+        "agent_language": prefs.get("agent_language", "auto"),
+        "region": prefs.get("region", "GA"),
+        "timezone": prefs.get("timezone", "Africa/Libreville"),
+        "date_format": prefs.get("date_format", "DD/MM/YYYY"),
+        "time_format": prefs.get("time_format", "24h"),
+        "number_format": prefs.get("number_format", "space_comma"),
+        "currency_display": prefs.get("currency_display", "XAF"),
+        "first_day_of_week": prefs.get("first_day_of_week", "monday"),
+        "theme": prefs.get("theme", "black-panther"),
+        "reduced_motion": prefs.get("reduced_motion", False),
+        "density": prefs.get("density", "comfortable"),
+        "response_depth": prefs.get("response_depth", "balanced"),
+        "research_depth": prefs.get("research_depth", "deep"),
+        "citation_preferences": prefs.get("citation_preferences", "always"),
+        "autonomy_level": prefs.get("autonomy_level", "semi_autonomous"),
+        "ask_before_sensitive_actions": prefs.get("ask_before_sensitive_actions", True),
+        "memory_enabled": prefs.get("memory_enabled", True),
+        "automatic_memory": prefs.get("automatic_memory", True),
+        "ask_before_remembering": prefs.get("ask_before_remembering", False),
+        "memory_policy": prefs.get("memory_policy", "auto_preferences"),
+        "data_residency": prefs.get("data_residency", "GLOBAL"),
+        "notifications_json": prefs.get("notifications_json", "{}"),
+        "default_tools_json": prefs.get("default_tools_json", "[]"),
+        "visual_intelligence_level": prefs.get("visual_intelligence_level", "enhanced"),
+        "workgraph_visibility": prefs.get("workgraph_visibility", "full"),
+        "updated_at": now_utc,
+    }
+
+    try:
+        async with async_session() as session:
+            await session.execute(
+                text("""
+                    INSERT INTO user_preferences (
+                        user_id, ui_locale, agent_language, region, timezone, date_format, time_format,
+                        number_format, currency_display, first_day_of_week, theme, reduced_motion, density,
+                        response_depth, research_depth, citation_preferences, autonomy_level,
+                        ask_before_sensitive_actions, memory_enabled, automatic_memory, ask_before_remembering,
+                        memory_policy, data_residency, notifications_json, default_tools_json,
+                        visual_intelligence_level, workgraph_visibility, updated_at
+                    ) VALUES (
+                        :user_id, :ui_locale, :agent_language, :region, :timezone, :date_format, :time_format,
+                        :number_format, :currency_display, :first_day_of_week, :theme, :reduced_motion, :density,
+                        :response_depth, :research_depth, :citation_preferences, :autonomy_level,
+                        :ask_before_sensitive_actions, :memory_enabled, :automatic_memory, :ask_before_remembering,
+                        :memory_policy, :data_residency, :notifications_json, :default_tools_json,
+                        :visual_intelligence_level, :workgraph_visibility, :updated_at
+                    )
+                    ON CONFLICT (user_id) DO UPDATE SET
+                        ui_locale = EXCLUDED.ui_locale,
+                        agent_language = EXCLUDED.agent_language,
+                        region = EXCLUDED.region,
+                        timezone = EXCLUDED.timezone,
+                        date_format = EXCLUDED.date_format,
+                        time_format = EXCLUDED.time_format,
+                        number_format = EXCLUDED.number_format,
+                        currency_display = EXCLUDED.currency_display,
+                        first_day_of_week = EXCLUDED.first_day_of_week,
+                        theme = EXCLUDED.theme,
+                        reduced_motion = EXCLUDED.reduced_motion,
+                        density = EXCLUDED.density,
+                        response_depth = EXCLUDED.response_depth,
+                        research_depth = EXCLUDED.research_depth,
+                        citation_preferences = EXCLUDED.citation_preferences,
+                        autonomy_level = EXCLUDED.autonomy_level,
+                        ask_before_sensitive_actions = EXCLUDED.ask_before_sensitive_actions,
+                        memory_enabled = EXCLUDED.memory_enabled,
+                        automatic_memory = EXCLUDED.automatic_memory,
+                        ask_before_remembering = EXCLUDED.ask_before_remembering,
+                        memory_policy = EXCLUDED.memory_policy,
+                        data_residency = EXCLUDED.data_residency,
+                        notifications_json = EXCLUDED.notifications_json,
+                        default_tools_json = EXCLUDED.default_tools_json,
+                        visual_intelligence_level = EXCLUDED.visual_intelligence_level,
+                        workgraph_visibility = EXCLUDED.workgraph_visibility,
+                        updated_at = EXCLUDED.updated_at
+                """),
+                prefs_to_save,
+            )
+            await session.commit()
+    except Exception:
+        pass
+
+    _IN_MEMORY_USER_PREFS[str(user_id)] = prefs_to_save
+    return prefs_to_save
+

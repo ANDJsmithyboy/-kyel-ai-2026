@@ -36,6 +36,8 @@ from api.v1.visual_agent import router as visual_agent_router
 from api.v1.memory import router as memory_router
 from api.v1.world_model import router as world_model_router
 from api.v1.vision_engine import router as vision_engine_router
+from api.v1.providers import router as providers_router
+from api.auth import router as auth_router
 from services.language_registry_service import language_service
 
 logger = logging.getLogger(__name__)
@@ -176,6 +178,8 @@ app.include_router(visual_agent_router)
 app.include_router(memory_router)
 app.include_router(world_model_router)
 app.include_router(vision_engine_router)
+app.include_router(providers_router)
+app.include_router(auth_router)
 
 
 

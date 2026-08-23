@@ -605,7 +605,46 @@ class BetaFeedbackRecord(Base):
     african_context_interest: Mapped[str] = mapped_column(Text, nullable=False)
     locale_used: Mapped[str] = mapped_column(String(16), default="fr", nullable=False)
     quote_consent: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
-    submitted_at: Mapped[datetime] = mapped_column(
+
+# ── 16. Modèle UserPreference (Paramètres Production 100% Fonctionnels) ──
+class UserPreference(Base):
+    __tablename__ = "user_preferences"
+
+    user_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), primary_key=True
+    )
+    ui_locale: Mapped[str] = mapped_column(String(32), default="fr-FR", nullable=False)
+    agent_language: Mapped[str] = mapped_column(String(32), default="auto", nullable=False)
+    region: Mapped[str] = mapped_column(String(16), default="GA", nullable=False)
+    timezone: Mapped[str] = mapped_column(String(64), default="Africa/Libreville", nullable=False)
+    date_format: Mapped[str] = mapped_column(String(16), default="DD/MM/YYYY", nullable=False)
+    time_format: Mapped[str] = mapped_column(String(8), default="24h", nullable=False)
+    number_format: Mapped[str] = mapped_column(String(16), default="space_comma", nullable=False)
+    currency_display: Mapped[str] = mapped_column(String(8), default="XAF", nullable=False)
+    first_day_of_week: Mapped[str] = mapped_column(String(16), default="monday", nullable=False)
+    theme: Mapped[str] = mapped_column(String(32), default="black-panther", nullable=False)
+    reduced_motion: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
+    density: Mapped[str] = mapped_column(String(16), default="comfortable", nullable=False)
+    response_depth: Mapped[str] = mapped_column(String(16), default="balanced", nullable=False)
+    research_depth: Mapped[str] = mapped_column(String(16), default="deep", nullable=False)
+    citation_preferences: Mapped[str] = mapped_column(String(32), default="always", nullable=False)
+    autonomy_level: Mapped[str] = mapped_column(String(32), default="semi_autonomous", nullable=False)
+    ask_before_sensitive_actions: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
+    memory_enabled: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
+    automatic_memory: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
+    ask_before_remembering: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
+    memory_policy: Mapped[str] = mapped_column(String(32), default="auto_preferences", nullable=False)
+    data_residency: Mapped[str] = mapped_column(String(32), default="GLOBAL", nullable=False)
+    notifications_json: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    default_tools_json: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    visual_intelligence_level: Mapped[str] = mapped_column(String(32), default="enhanced", nullable=False)
+    workgraph_visibility: Mapped[str] = mapped_column(String(32), default="full", nullable=False)
+    created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), default=lambda: datetime.now(timezone.utc)
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        default=lambda: datetime.now(timezone.utc),
+        onupdate=lambda: datetime.now(timezone.utc),
     )
 

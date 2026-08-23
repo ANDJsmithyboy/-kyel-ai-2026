@@ -78,10 +78,10 @@ function CustomWorkNode({ data }: { data: WorkNode }) {
 
   return (
     <div
-      className={`p-3 rounded-2xl border bg-[#0E121A]/95 text-[#F1EEE7] min-w-[220px] max-w-[280px] shadow-xl backdrop-blur-md transition-all ${
+      className={`p-3 rounded-2xl border bg-[var(--bg-elevated)] text-[var(--text-primary)] min-w-[220px] max-w-[280px] shadow-xl backdrop-blur-md transition-all ${
         isActive
-          ? 'border-[#C39A52] shadow-[0_0_20px_rgba(195,154,82,0.25)] ring-1 ring-[#C39A52]/50'
-          : 'border-white/[0.08] hover:border-white/[0.18]'
+          ? 'border-[var(--accent)] shadow-[0_0_20px_rgba(195,154,82,0.25)] ring-1 ring-[var(--accent)]'
+          : 'border-[var(--border)] hover:border-[var(--border-strong)]'
       }`}
     >
       <div className="flex items-center justify-between gap-2 mb-1.5">
@@ -93,24 +93,24 @@ function CustomWorkNode({ data }: { data: WorkNode }) {
         </span>
         {isActive && (
           <span className="flex h-2 w-2 relative">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#C39A52] opacity-75" />
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-[#C39A52]" />
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[var(--accent)] opacity-75" />
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-[var(--accent)]" />
           </span>
         )}
       </div>
 
-      <h4 className="text-[13px] font-semibold text-[#F1EEE7] leading-snug line-clamp-2">
+      <h4 className="text-[13px] font-semibold text-[var(--text-primary)] leading-snug line-clamp-2">
         {data.title}
       </h4>
 
       {data.summary && (
-        <p className="text-[11px] text-[#B8C0CC] mt-1 line-clamp-2 leading-relaxed">
+        <p className="text-[11px] text-[var(--text-secondary)] mt-1 line-clamp-2 leading-relaxed">
           {data.summary}
         </p>
       )}
 
       {data.provider && (
-        <div className="mt-2 pt-1.5 border-t border-white/[0.04] flex items-center justify-between text-[10px] text-[#7E8795] font-mono">
+        <div className="mt-2 pt-1.5 border-t border-[var(--border)] flex items-center justify-between text-[10px] text-[var(--text-tertiary)] font-mono">
           <span className="truncate">{data.provider}</span>
           {data.latencyMs && <span>{data.latencyMs}ms</span>}
         </div>
@@ -181,6 +181,14 @@ export default function VIECanvas() {
         <div className="pointer-events-auto flex items-center gap-2">
           <button
             type="button"
+            onClick={resetGraph}
+            className="p-2.5 rounded-xl bg-[var(--surface)] backdrop-blur-md border border-[var(--border)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--hover)] transition-colors shadow-lg"
+            title="Réinitialiser la vue"
+          >
+            <ArrowsClockwise size={16} />
+          </button>
+          <button
+            type="button"
             onClick={() => setIsFullscreen(!isFullscreen)}
             className="p-2.5 rounded-xl bg-[#0E121A]/90 backdrop-blur-md border border-white/[0.08] text-[#B8C0CC] hover:text-[#F1EEE7] hover:bg-[#151922] transition-colors shadow-lg"
             title={isFullscreen ? 'Quitter le plein écran' : 'Passer en plein écran'}
@@ -200,10 +208,10 @@ export default function VIECanvas() {
           nodeTypes={nodeTypes}
           onNodeClick={(_, node) => selectNode(node.id)}
           fitView
-          className="bg-[#08090D]"
+          className="bg-transparent"
         >
-          <Background color="#F1EEE7" gap={32} size={1} className="opacity-[0.03]" />
-          <Controls className="bg-[#0E121A] border-white/[0.08] text-[#F1EEE7] rounded-xl fill-[#F1EEE7]" />
+          <Background color="var(--border)" gap={24} size={1.5} />
+          <Controls className="bg-[var(--surface-raised)] border border-[var(--border)] text-[var(--text-primary)] rounded-xl fill-[var(--text-primary)] shadow-md" />
           <MiniMap
             nodeColor={(n) => NODE_COLORS[(n.data as WorkNode)?.type] || '#665F9E'}
             className="bg-[#0E121A] border border-white/[0.08] rounded-xl overflow-hidden shadow-2xl"

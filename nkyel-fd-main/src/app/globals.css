@@ -53,7 +53,7 @@
   }
 
   html {
-    font-size: 16px;
+    font-size: calc(16px * var(--app-text-scale, 1));
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;

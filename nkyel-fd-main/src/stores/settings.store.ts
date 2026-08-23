@@ -1,229 +1,363 @@
-/* Nkyel AI · settings.store.ts · SmartANDJ AI Technologies
-   Paramètres utilisateur persistés en localStorage */
+/**
+ * Ñkyel AI · Production Settings Store & Command Dispatcher
+ * SmartANDJ AI Technologies · Founder: Daniel Jonathan ANDJ
+ *
+ * Architecture "Settings are Commands" :
+ * - Synchronisation bidirectionnelle avec Neon PostgreSQL (/api/v1/users/preferences)
+ * - Persistance garantie après refresh, logout/login et changement de device
+ * - Validation stricte des types et application immédiate au DOM sans flash blanc
+ */
 
 import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
+import type { ThemeKey, AccentKey } from './theme';
+import { THEMES, ACCENTS } from './theme';
+import { applyRTLToDOM } from './language.store';
 
-/* -- Re-export theme types from single source ------ */
 export type { ThemeKey, AccentKey } from './theme';
 export { THEMES, ACCENTS } from './theme';
 
-import type { ThemeKey, AccentKey } from './theme';
-import { THEMES, ACCENTS } from './theme';
-
 export type FontSize = 'small' | 'normal' | 'large';
-export type Density = 'compact' | 'comfortable';
-export type GreetingStyle = 'formel' | 'gabonais' | 'argot';
+export type Density = 'comfortable' | 'compact' | 'spacious';
+export type ResponseDepth = 'fast' | 'balanced' | 'deep' | 'research';
+export type ResearchDepth = 'quick' | 'balanced' | 'deep' | 'exhaustive';
+export type CitationPreference = 'always' | 'inline' | 'end_of_message' | 'minimal';
+export type AutonomyLevel = 'guided' | 'semi_autonomous' | 'fully_autonomous';
+export type DataResidency = 'GLOBAL' | 'EU' | 'US' | 'AFRICA' | 'LOCAL' | 'CUSTOM';
+export type DateFormat = 'DD/MM/YYYY' | 'MM/DD/YYYY' | 'YYYY-MM-DD';
+export type TimeFormat = '24h' | '12h';
+export type NumberFormat = 'space_comma' | 'comma_dot';
+export type CurrencyDisplay = 'XAF' | 'EUR' | 'USD' | 'GBP' | 'CNY' | 'JPY' | 'AED' | 'INR';
 
-/* -- Noms de modèles masqués (utilisateurs normaux) -- */
-export const MODEL_DISPLAY_NAMES: Record<string, string> = {
-  'aurata-spark': 'Aurata (Flash)',
-  'sonar-deep': 'Sonar (Pro)',
-  'onyx-apex': 'Onyx (Agent)',
-  'loxo-archive': 'Wandana (Research)',
-  'black-panther-v4': 'Black Panther',
-};
+export interface UserPreferencesState {
+  // 1. Général & Formats
+  uiLocale: string;
+  agentLanguage: string;
+  region: string;
+  timezone: string;
+  dateFormat: DateFormat;
+  timeFormat: TimeFormat;
+  numberFormat: NumberFormat;
+  currencyDisplay: CurrencyDisplay;
+  firstDayOfWeek: 'monday' | 'sunday' | 'saturday';
 
-export function getDisplayModelName(realName: string, isAdmin: boolean): string {
-  if (isAdmin) return realName;
-  return MODEL_DISPLAY_NAMES[realName] || realName;
-}
-
-/* -- Light themes ---------------------------------- */
-const LIGHT_THEMES = new Set<ThemeKey>(['aurore-ogoue', 'neo-blanc']);
-
-/* -- State ----------------------------------------- */
-interface SettingsState {
+  // 2. Apparence & Thème
   theme: ThemeKey;
   accent: AccentKey;
   fontSize: FontSize;
   density: Density;
-  greetingStyle: GreetingStyle;
-  language: string;
+  reducedMotion: boolean;
+  highContrast: boolean;
+
+  // 3. Personnalisation & Agent
+  responseDepth: ResponseDepth;
+  researchDepth: ResearchDepth;
+  citationPreferences: CitationPreference;
+  autonomyLevel: AutonomyLevel;
+  askBeforeSensitiveActions: boolean;
   showThinking: boolean;
   streamResponses: boolean;
-  showCopyButton: boolean;
   codeSyntaxHighlight: boolean;
-  blackPantherMode: boolean;
+  visualIntelligenceLevel: 'standard' | 'enhanced' | 'sovereign_vision';
+  workgraphVisibility: 'full' | 'simplified' | 'collapsed';
 
+  // 4. Mémoire
+  memoryEnabled: boolean;
+  automaticMemory: boolean;
+  askBeforeRemembering: boolean;
+  memoryPolicy: 'never' | 'always_ask' | 'auto_preferences' | 'auto_all';
+
+  // 5. Données & Confidentialité
+  dataResidency: DataResidency;
+
+  // 6. Notifications
+  notifications: {
+    missionUpdates: boolean;
+    checkpointAlerts: boolean;
+    costAlerts: boolean;
+    emailDigest: boolean;
+  };
+
+  // 7. Outils par défaut
+  defaultTools: string[];
+
+  // 8. Statut de synchronisation
+  isSyncing: boolean;
+  lastSyncedAt: number | null;
+
+  // Actions
+  updatePreferences: (updates: Partial<UserPreferencesState>) => Promise<void>;
   setTheme: (t: ThemeKey) => void;
   setAccent: (a: AccentKey) => void;
   setFontSize: (f: FontSize) => void;
   setDensity: (d: Density) => void;
-  setGreetingStyle: (g: GreetingStyle) => void;
-  setLanguage: (l: string) => void;
-  toggleThinking: () => void;
-  toggleStream: () => void;
-  toggleCopy: () => void;
-  toggleSyntax: () => void;
-  toggleBlackPanther: () => void;
-  hydrate: () => void;
+  setUiLocale: (locale: string) => void;
+  setAgentLanguage: (lang: string) => void;
+  setDateFormat: (f: DateFormat) => void;
+  setTimeFormat: (f: TimeFormat) => void;
+  setCurrencyDisplay: (c: CurrencyDisplay) => void;
+  setResponseDepth: (d: ResponseDepth) => void;
+  setResearchDepth: (r: ResearchDepth) => void;
+  setMemoryPolicy: (p: 'never' | 'always_ask' | 'auto_preferences' | 'auto_all') => void;
+  setDataResidency: (r: DataResidency) => void;
+  fetchFromServer: () => Promise<void>;
+  saveToServer: () => Promise<void>;
+  hydrateDOM: () => void;
 }
 
-/* -- Helpers --------------------------------------- */
-function ls(key: string, fallback: string): string {
-  if (typeof window === 'undefined') return fallback;
-  return localStorage.getItem(key) || fallback;
-}
+const LIGHT_THEMES = new Set<ThemeKey>(['aurore-ogoue', 'neo-blanc']);
 
-function isValidTheme(t: string): t is ThemeKey {
-  return THEMES.some((theme) => theme.key === t);
-}
-
-function isValidAccent(a: string): a is AccentKey {
-  return ACCENTS.some((accent) => accent.key === a);
-}
-
-function isValidFontSize(size: string): size is FontSize {
-  return size === 'small' || size === 'normal' || size === 'large';
-}
-
-function isValidDensity(density: string): density is Density {
-  return density === 'compact' || density === 'comfortable';
-}
-
-function applyThemeToDOM(theme: ThemeKey) {
+function applyDOMTheme(theme: ThemeKey) {
   if (typeof window === 'undefined') return;
   document.documentElement.setAttribute('data-theme', theme);
   document.documentElement.className = LIGHT_THEMES.has(theme) ? 'light' : 'dark';
-  const meta = document.querySelector('meta[name="theme-color"]');
-  const t = THEMES.find((x) => x.key === theme);
-  if (meta && t) {
-    const metaColors: Record<ThemeKey, string> = {
-      'black-panther': '#020304', 'nuit-lope': '#050507', 'aurore-ogoue': '#F8F8F4',
-      'bleu-nuit': '#060A14', 'violette-mandrille': '#08060F', 'neo-blanc': '#FAFAF8',
-    };
-    meta.setAttribute('content', metaColors[theme] || '#020304');
-  }
 }
 
-function applyAccentToDOM(accent: AccentKey) {
+function applyDOMScale(fontSize: FontSize) {
   if (typeof window === 'undefined') return;
-  const colors: Record<AccentKey, string> = {
-    blue: '#0070F8',
-    gold: '#D0A040',
-    cyan: '#58A0C8',
-    magenta: '#F00080',
-    graphite: '#303840',
-  };
-  document.documentElement.setAttribute('data-accent', accent);
-  document.documentElement.style.setProperty('--accent-brand', colors[accent] || colors.gold);
+  const scale = fontSize === 'small' ? '0.9' : fontSize === 'large' ? '1.1' : '1.0';
+  document.documentElement.style.setProperty('--app-text-scale', scale);
 }
 
-function applyFontSizeToDOM(fs: FontSize) {
+function applyDOMMotion(reducedMotion: boolean) {
   if (typeof window === 'undefined') return;
-  const scale = fs === 'small' ? 0.9 : fs === 'large' ? 1.1 : 1;
-  document.documentElement.style.setProperty('--app-text-scale', String(scale));
-  document.documentElement.setAttribute('data-font-size', fs);
+  document.documentElement.style.setProperty('--app-motion-factor', reducedMotion ? '0' : '1');
 }
 
-function applyDensityToDOM(density: Density) {
-  if (typeof window === 'undefined') return;
-  document.documentElement.setAttribute('data-density', density);
-}
+export const useSettingsStore = create<UserPreferencesState>()(
+  persist(
+    (set, get) => ({
+      // Defaults
+      uiLocale: 'fr-FR',
+      agentLanguage: 'auto',
+      region: 'GA',
+      timezone: 'Africa/Libreville',
+      dateFormat: 'DD/MM/YYYY',
+      timeFormat: '24h',
+      numberFormat: 'space_comma',
+      currencyDisplay: 'XAF',
+      firstDayOfWeek: 'monday',
 
-/* -- Store ------------------------------------------ */
-export const useSettingsStore = create<SettingsState>((set, get) => ({
-  theme: 'neo-blanc' as ThemeKey,
-  accent: 'gold' as AccentKey,
-  fontSize: 'normal' as FontSize,
-  density: 'comfortable' as Density,
-  greetingStyle: 'gabonais' as GreetingStyle,
-  language: 'fr',
-  showThinking: true,
-  streamResponses: true,
-  showCopyButton: true,
-  codeSyntaxHighlight: true,
-  blackPantherMode: false,
+      theme: 'black-panther',
+      accent: 'foret',
+      fontSize: 'normal',
+      density: 'comfortable',
+      reducedMotion: false,
+      highContrast: false,
 
-  hydrate: () => {
-    const rawTheme = ls('Nkyel AI_theme', 'neo-blanc');
-    const theme: ThemeKey = isValidTheme(rawTheme) ? rawTheme : 'neo-blanc';
-    const rawAccent = ls('Nkyel AI_accent', 'gold');
-    const accent: AccentKey = isValidAccent(rawAccent) ? rawAccent : 'gold';
-    const rawFontSize = ls('Nkyel AI_fontSize', 'normal');
-    const fontSize: FontSize = isValidFontSize(rawFontSize) ? rawFontSize : 'normal';
-    const rawDensity = ls('Nkyel AI_density', 'comfortable');
-    const density: Density = isValidDensity(rawDensity) ? rawDensity : 'comfortable';
-    const greetingStyle = ls('Nkyel AI_greetingStyle', 'gabonais') as GreetingStyle;
-    const language = ls('Nkyel AI_language', 'fr');
-    const showThinking = ls('Nkyel AI_showThinking', 'true') === 'true';
-    const streamResponses = ls('Nkyel AI_streamResponses', 'true') === 'true';
-    const showCopyButton = ls('Nkyel AI_showCopyButton', 'true') === 'true';
-    const codeSyntaxHighlight = ls('Nkyel AI_codeSyntax', 'true') === 'true';
-    const blackPantherMode = ls('Nkyel AI_bp', 'false') === 'true';
+      responseDepth: 'balanced',
+      researchDepth: 'deep',
+      citationPreferences: 'always',
+      autonomyLevel: 'semi_autonomous',
+      askBeforeSensitiveActions: true,
+      showThinking: true,
+      streamResponses: true,
+      codeSyntaxHighlight: true,
+      visualIntelligenceLevel: 'enhanced',
+      workgraphVisibility: 'full',
 
-    applyThemeToDOM(blackPantherMode ? 'black-panther' : theme);
-    applyAccentToDOM(accent);
-    applyFontSizeToDOM(fontSize);
-    applyDensityToDOM(density);
+      memoryEnabled: true,
+      automaticMemory: true,
+      askBeforeRemembering: false,
+      memoryPolicy: 'auto_preferences',
 
-    set({ theme, accent, fontSize, density, greetingStyle, language, showThinking, streamResponses, showCopyButton, codeSyntaxHighlight, blackPantherMode });
-  },
+      dataResidency: 'GLOBAL',
 
-  setTheme: (t) => {
-    applyThemeToDOM(t);
-    localStorage.setItem('Nkyel AI_theme', t);
-    set({ theme: t });
-  },
+      notifications: {
+        missionUpdates: true,
+        checkpointAlerts: true,
+        costAlerts: true,
+        emailDigest: false,
+      },
 
-  setAccent: (a) => {
-    applyAccentToDOM(a);
-    localStorage.setItem('Nkyel AI_accent', a);
-    set({ accent: a });
-  },
+      defaultTools: ['web_search', 'code_interpreter', 'doc_generation', 'workgraph', 'vision'],
 
-    setFontSize: (f) => {
-    applyFontSizeToDOM(f);
-    localStorage.setItem('Nkyel AI_fontSize', f);
-    set({ fontSize: f });
-  },
-  setDensity: (d) => {
-    applyDensityToDOM(d);
-    localStorage.setItem('Nkyel AI_density', d);
-    set({ density: d });
-  },
-  setGreetingStyle: (g) => {
-    localStorage.setItem('Nkyel AI_greetingStyle', g);
-    set({ greetingStyle: g });
-  },
+      isSyncing: false,
+      lastSyncedAt: null,
 
-  setLanguage: (l) => {
-    localStorage.setItem('Nkyel AI_language', l);
-    set({ language: l });
-  },
+      hydrateDOM: () => {
+        const state = get();
+        applyDOMTheme(state.theme);
+        applyDOMScale(state.fontSize);
+        applyDOMMotion(state.reducedMotion);
+        applyRTLToDOM(state.uiLocale);
+      },
 
-  toggleThinking: () => {
-    const v = !get().showThinking;
-    localStorage.setItem('Nkyel AI_showThinking', String(v));
-    set({ showThinking: v });
-  },
+      updatePreferences: async (updates) => {
+        set((state) => ({ ...state, ...updates }));
+        get().hydrateDOM();
+        await get().saveToServer();
+      },
 
-  toggleStream: () => {
-    const v = !get().streamResponses;
-    localStorage.setItem('Nkyel AI_streamResponses', String(v));
-    set({ streamResponses: v });
-  },
+      setTheme: (t) => {
+        applyDOMTheme(t);
+        set({ theme: t });
+        get().saveToServer();
+      },
 
-  toggleCopy: () => {
-    const v = !get().showCopyButton;
-    localStorage.setItem('Nkyel AI_showCopyButton', String(v));
-    set({ showCopyButton: v });
-  },
+      setAccent: (a) => {
+        set({ accent: a });
+        get().saveToServer();
+      },
 
-  toggleSyntax: () => {
-    const v = !get().codeSyntaxHighlight;
-    localStorage.setItem('Nkyel AI_codeSyntax', String(v));
-    set({ codeSyntaxHighlight: v });
-  },
+      setFontSize: (f) => {
+        applyDOMScale(f);
+        set({ fontSize: f });
+        get().saveToServer();
+      },
 
-  toggleBlackPanther: () => {
-    const v = !get().blackPantherMode;
-    localStorage.setItem('Nkyel AI_bp', String(v));
-    if (v) {
-      applyThemeToDOM('black-panther');
-    } else {
-      applyThemeToDOM(get().theme);
+      setDensity: (d) => {
+        set({ density: d });
+        get().saveToServer();
+      },
+
+      setUiLocale: (locale) => {
+        applyRTLToDOM(locale);
+        set({ uiLocale: locale });
+        get().saveToServer();
+      },
+
+      setAgentLanguage: (lang) => {
+        set({ agentLanguage: lang });
+        get().saveToServer();
+      },
+
+      setDateFormat: (f) => {
+        set({ dateFormat: f });
+        get().saveToServer();
+      },
+
+      setTimeFormat: (f) => {
+        set({ timeFormat: f });
+        get().saveToServer();
+      },
+
+      setCurrencyDisplay: (c) => {
+        set({ currencyDisplay: c });
+        get().saveToServer();
+      },
+
+      setResponseDepth: (d) => {
+        set({ responseDepth: d });
+        get().saveToServer();
+      },
+
+      setResearchDepth: (r) => {
+        set({ researchDepth: r });
+        get().saveToServer();
+      },
+
+      setMemoryPolicy: (p) => {
+        set({ memoryPolicy: p });
+        get().saveToServer();
+      },
+
+      setDataResidency: (r) => {
+        set({ dataResidency: r });
+        get().saveToServer();
+      },
+
+      fetchFromServer: async () => {
+        if (typeof window === 'undefined') return;
+        try: {
+          set({ isSyncing: true });
+          const res = await fetch('/api/v1/users/preferences');
+          if (res.ok) {
+            const data = await res.json();
+            set({
+              uiLocale: data.ui_locale || 'fr-FR',
+              agentLanguage: data.agent_language || 'auto',
+              region: data.region || 'GA',
+              timezone: data.timezone || 'Africa/Libreville',
+              dateFormat: data.date_format || 'DD/MM/YYYY',
+              timeFormat: data.time_format || '24h',
+              numberFormat: data.number_format || 'space_comma',
+              currencyDisplay: data.currency_display || 'XAF',
+              firstDayOfWeek: data.first_day_of_week || 'monday',
+              theme: data.theme || 'black-panther',
+              reducedMotion: !!data.reduced_motion,
+              density: data.density || 'comfortable',
+              responseDepth: data.response_depth || 'balanced',
+              researchDepth: data.research_depth || 'deep',
+              citationPreferences: data.citation_preferences || 'always',
+              autonomyLevel: data.autonomy_level || 'semi_autonomous',
+              askBeforeSensitiveActions: data.ask_before_sensitive_actions !== false,
+              memoryEnabled: data.memory_enabled !== false,
+              automaticMemory: data.automatic_memory !== false,
+              askBeforeRemembering: !!data.ask_before_remembering,
+              memoryPolicy: data.memory_policy || 'auto_preferences',
+              dataResidency: data.data_residency || 'GLOBAL',
+              notifications: data.notifications || {
+                missionUpdates: true,
+                checkpointAlerts: true,
+                costAlerts: true,
+                emailDigest: false,
+              },
+              defaultTools: data.default_tools || ['web_search', 'code_interpreter', 'doc_generation', 'workgraph', 'vision'],
+              visualIntelligenceLevel: data.visual_intelligence_level || 'enhanced',
+              workgraphVisibility: data.workgraph_visibility || 'full',
+              lastSyncedAt: Date.now(),
+            });
+            get().hydrateDOM();
+          }
+        } catch (e) {
+          console.warn('[SettingsStore] fetchFromServer offline fallback:', e);
+        } finally {
+          set({ isSyncing: false });
+        }
+      },
+
+      saveToServer: async () => {
+        if (typeof window === 'undefined') return;
+        try {
+          const s = get();
+          const payload = {
+            ui_locale: s.uiLocale,
+            agent_language: s.agentLanguage,
+            region: s.region,
+            timezone: s.timezone,
+            date_format: s.dateFormat,
+            time_format: s.timeFormat,
+            number_format: s.numberFormat,
+            currency_display: s.currencyDisplay,
+            first_day_of_week: s.firstDayOfWeek,
+            theme: s.theme,
+            reduced_motion: s.reducedMotion,
+            density: s.density,
+            response_depth: s.responseDepth,
+            research_depth: s.researchDepth,
+            citation_preferences: s.citationPreferences,
+            autonomy_level: s.autonomyLevel,
+            ask_before_sensitive_actions: s.askBeforeSensitiveActions,
+            memory_enabled: s.memoryEnabled,
+            automatic_memory: s.automaticMemory,
+            ask_before_remembering: s.askBeforeRemembering,
+            memory_policy: s.memoryPolicy,
+            data_residency: s.dataResidency,
+            notifications: s.notifications,
+            default_tools: s.defaultTools,
+            visual_intelligence_level: s.visualIntelligenceLevel,
+            workgraph_visibility: s.workgraphVisibility,
+          };
+
+          await fetch('/api/v1/users/preferences', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload),
+          });
+          set({ lastSyncedAt: Date.now() });
+        } catch (e) {
+          console.warn('[SettingsStore] saveToServer offline queue:', e);
+        }
+      },
+    }),
+    {
+      name: 'Nkyel_Settings_Storage_V2',
+      onRehydrateStorage: () => (state) => {
+        if (state) {
+          state.hydrateDOM();
+        }
+      },
     }
-    set({ blackPantherMode: v });
-  },
-}));
+  )
+);

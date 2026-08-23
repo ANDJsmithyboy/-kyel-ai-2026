@@ -3,8 +3,8 @@
  * SmartANDJ AI Technologies · Founder: Daniel Jonathan ANDJ
  *
  * Bulle de message unifiée avec :
- * - Typographie soignée (Outfit / Sora / JetBrains Mono)
- * - Rendu Markdown réactif (tables, code blocks, listes)
+ * - Typographie soignée (Geist / SF Mono)
+ * - Rendu Markdown réactif compatible Mode Clair & Mode Sombre
  * - Intégration de ResponseActions sous chaque réponse
  * - Identité souveraine de l'agent sans modèle figé en dur
  */
@@ -31,12 +31,12 @@ function CodeBlock({ children, className }: { children: React.ReactNode; classNa
   }, [code]);
 
   return (
-    <div className="nkyel-code-block my-3 rounded-xl border border-white/[0.08] bg-[#0E121A] overflow-hidden text-[13px] font-mono shadow-md">
+    <div className="nkyel-code-block my-3 rounded-xl border border-[var(--border-strong)] bg-[var(--bg-inset)] overflow-hidden text-[13px] font-mono shadow-md">
       {/* Code Header */}
-      <div className="flex items-center justify-between px-3.5 py-1.5 bg-[#151922] border-b border-white/[0.06] text-[#7E8795]">
+      <div className="flex items-center justify-between px-3.5 py-1.5 bg-[var(--surface-raised)] border-b border-[var(--border)] text-[var(--text-secondary)]">
         <div className="flex items-center gap-2">
-          <Terminal size={14} className="text-[#665F9E]" />
-          <span className="text-[11px] font-semibold uppercase tracking-wider text-[#B8C0CC]">
+          <Terminal size={14} className="text-[var(--accent)]" />
+          <span className="text-[11px] font-semibold uppercase tracking-wider text-[var(--text-secondary)]">
             {language}
           </span>
         </div>
@@ -44,12 +44,12 @@ function CodeBlock({ children, className }: { children: React.ReactNode; classNa
         <button
           type="button"
           onClick={handleCopy}
-          className="flex items-center gap-1 px-2 py-0.5 rounded text-[11px] text-[#7E8795] hover:text-[#F1EEE7] hover:bg-white/[0.06] transition-colors"
+          className="flex items-center gap-1 px-2 py-0.5 rounded text-[11px] text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--hover)] transition-colors"
         >
           {copied ? (
             <>
-              <Check size={12} className="text-[#6F9485]" weight="bold" />
-              <span className="text-[#6F9485]">Copié</span>
+              <Check size={12} className="text-[var(--success)]" weight="bold" />
+              <span className="text-[var(--success)]">Copié</span>
             </>
           ) : (
             <>
@@ -61,7 +61,7 @@ function CodeBlock({ children, className }: { children: React.ReactNode; classNa
       </div>
 
       {/* Code Body */}
-      <pre className="p-4 overflow-x-auto text-[#F1EEE7] leading-relaxed scrollbar-thin scrollbar-thumb-white/10">
+      <pre className="p-4 overflow-x-auto text-[var(--text-primary)] leading-relaxed scrollbar-thin">
         <code className={className}>{code}</code>
       </pre>
     </div>
@@ -103,8 +103,8 @@ export default function MessageBubble({
     >
       {/* Avatar Agent */}
       {!isUser && (
-        <div className="nkyel-message-avatar flex h-8 w-8 shrink-0 items-center justify-center rounded-xl border border-white/[0.10] bg-[#2A2A2A] text-[#C8C8C8] mt-0.5">
-          <Sparkle size={16} weight="regular" />
+        <div className="nkyel-message-avatar flex h-8 w-8 shrink-0 items-center justify-center rounded-xl border border-[var(--border)] bg-[var(--surface-raised)] text-[var(--accent)] mt-0.5 shadow-sm">
+          <Sparkle size={16} weight="fill" />
         </div>
       )}
 
@@ -116,12 +116,12 @@ export default function MessageBubble({
         )}
       >
         {/* En-tête du message */}
-        <div className="nkyel-message-meta flex items-center gap-2 mb-1 text-[11px] text-[#7E8795] font-mono">
-          <span className="nkyel-message-author">{isUser ? 'Vous' : modelName}</span>
+        <div className="nkyel-message-meta flex items-center gap-2 mb-1 text-[11px] text-[var(--text-tertiary)] font-mono">
+          <span className="nkyel-message-author font-medium text-[var(--text-secondary)]">{isUser ? 'Vous' : modelName}</span>
           {!isUser && !isStreaming && <span className="nkyel-message-kind">Réponse de l’agent</span>}
           {isStreaming && !isUser && (
-            <span className="nkyel-agent-work-indicator inline-flex items-center gap-1 text-[var(--accent-brand)]">
-              <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent-brand)] animate-ping" />
+            <span className="nkyel-agent-work-indicator inline-flex items-center gap-1 text-[var(--accent)] font-sans font-medium">
+              <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent)] animate-ping" />
               Travail de l’agent · en cours
             </span>
           )}
@@ -130,16 +130,16 @@ export default function MessageBubble({
         {/* Bulle de contenu */}
         <div
           className={cn(
-            'nkyel-message-content rounded-2xl px-4 py-3 text-[14px] leading-relaxed select-text transition-all',
+            'nkyel-message-content rounded-2xl px-4 py-3 text-[var(--text-base)] leading-relaxed select-text transition-all',
             isUser
-              ? 'nkyel-message-user-surface bg-[#151922] text-[#F1EEE7] border border-white/[0.08] rounded-tr-sm shadow-sm'
-              : 'nkyel-message-assistant-surface bg-transparent text-[#F1EEE7] w-full p-0'
+              ? 'nkyel-message-user-surface bg-[var(--surface-raised)] text-[var(--text-primary)] border border-[var(--border-strong)] rounded-tr-sm shadow-sm'
+              : 'nkyel-message-assistant-surface bg-transparent text-[var(--text-primary)] w-full p-0'
           )}
         >
           {isUser ? (
             <p className="whitespace-pre-wrap">{content}</p>
           ) : (
-            <div className="nkyel-assistant-body prose prose-invert max-w-none prose-p:my-2 prose-headings:text-[#F1EEE7] prose-headings:font-semibold prose-a:text-[#665F9E] prose-code:font-mono prose-pre:p-0 prose-pre:bg-transparent">
+            <div className="nkyel-assistant-body max-w-none text-[var(--text-primary)] prose-headings:text-[var(--text-primary)] prose-headings:font-semibold prose-a:text-[var(--accent)] prose-a:underline prose-code:font-mono prose-pre:p-0 prose-pre:bg-transparent space-y-2">
               <ReactMarkdown
                 remarkPlugins={[remarkGfm]}
                 components={{
@@ -149,7 +149,7 @@ export default function MessageBubble({
                     if (isInline) {
                       return (
                         <code
-                          className="px-1.5 py-0.5 mx-0.5 rounded bg-white/[0.06] text-[#C39A52] font-mono text-[13px] border border-white/[0.04]"
+                          className="px-1.5 py-0.5 mx-0.5 rounded bg-[var(--surface-raised)] text-[var(--accent)] font-mono text-[13px] border border-[var(--border)]"
                           {...props}
                         >
                           {children}
@@ -180,7 +180,7 @@ export default function MessageBubble({
 
       {/* Avatar Utilisateur */}
       {isUser && (
-        <div className="nkyel-message-avatar w-8 h-8 rounded-xl bg-[#151922] border border-white/[0.08] flex items-center justify-center shrink-0 mt-0.5 text-[#B8C0CC]">
+        <div className="nkyel-message-avatar w-8 h-8 rounded-xl bg-[var(--surface-raised)] border border-[var(--border)] flex items-center justify-center shrink-0 mt-0.5 text-[var(--text-secondary)] shadow-sm">
           <User size={16} />
         </div>
       )}

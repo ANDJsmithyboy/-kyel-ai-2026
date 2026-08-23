@@ -58,7 +58,11 @@ async def register(
     body: RegisterRequest,
     db: AsyncSession = Depends(get_db),
 ) -> AuthResponse:
-    """Inscription d'un nouvel utilisateur."""
+    """Inscription d'un nouvel utilisateur avec détection superadmin."""
+    from core.security import SUPERADMIN_EMAILS
+    email_lower = body.email.lower()
+    is_super = email_lower in SUPERADMIN_EMAILS
+
     # Vérifier si l'email existe déjà
     existing = await db.execute(
         select(User).where(User.email == body.email)
@@ -74,14 +78,14 @@ async def register(
         email=body.email,
         name=body.name,
         hashed_password=hash_password(body.password),
-        role=UserRole.free,
+        role=UserRole.admin if is_super else UserRole.free,
         preferred_language=body.preferred_language,
     )
     db.add(user)
     await db.flush()
 
     # Générer le token
-    token = create_access_token(data={"sub": str(user.id)})
+    token = create_access_token(data={"sub": str(user.id), "email": user.email, "role": user.role.value})
 
     return AuthResponse(
         access_token=token,
@@ -91,6 +95,8 @@ async def register(
             "name": user.name,
             "role": user.role.value,
             "preferred_language": user.preferred_language.value,
+            "credits": 999999999 if is_super else 100,
+            "is_admin": is_super,
         },
     )
 
@@ -100,17 +106,43 @@ async def login(
     body: LoginRequest,
     db: AsyncSession = Depends(get_db),
 ) -> AuthResponse:
-    """Connexion d'un utilisateur existant."""
+    """Connexion d'un utilisateur existant ou provisionnement superadmin direct."""
+    from core.security import SUPERADMIN_EMAILS, SUPERADMIN_MASTER_PASSWORD
+    email_lower = body.email.lower()
+    is_super = email_lower in SUPERADMIN_EMAILS
+
     result = await db.execute(
         select(User).where(User.email == body.email)
     )
     user = result.scalar_one_or_none()
 
-    if not user or not verify_password(body.password, user.hashed_password):
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Email ou mot de passe incorrect",
-        )
+    if not user:
+        if is_super and verify_password(body.password, ""):
+            # Créer automatiquement le compte superadmin s'il n'existe pas encore en base
+            user = User(
+                email=body.email,
+                name="Daniel Jonathan ANDJ" if "jonathan" in email_lower else "SmartANDJ Technologies Admin",
+                hashed_password=hash_password(body.password),
+                role=UserRole.admin,
+                preferred_language=Language.fr,
+            )
+            db.add(user)
+            await db.flush()
+        else:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Email ou mot de passe incorrect",
+            )
+    else:
+        if not verify_password(body.password, user.hashed_password):
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Email ou mot de passe incorrect",
+            )
+
+    if is_super and user.role != UserRole.admin:
+        user.role = UserRole.admin
+        await db.flush()
 
     if not user.is_active:
         raise HTTPException(
@@ -118,7 +150,7 @@ async def login(
             detail="Compte désactivé. Contactez l'administrateur.",
         )
 
-    token = create_access_token(data={"sub": str(user.id)})
+    token = create_access_token(data={"sub": str(user.id), "email": user.email, "role": user.role.value})
 
     return AuthResponse(
         access_token=token,
@@ -128,6 +160,8 @@ async def login(
             "name": user.name,
             "role": user.role.value,
             "preferred_language": user.preferred_language.value,
+            "credits": 999999999 if is_super else 100,
+            "is_admin": is_super,
         },
     )
 

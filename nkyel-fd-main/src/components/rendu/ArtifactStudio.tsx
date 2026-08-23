@@ -320,22 +320,22 @@ export default function ArtifactStudio() {
       )}
 
       {/* ── 1. STUDIO HEADER ── */}
-      <div className="flex items-center justify-between px-4 h-14 flex-shrink-0 border-b border-white/[0.06] bg-[#0E121A]">
+      <div className="flex items-center justify-between px-4 h-14 flex-shrink-0 border-b border-[var(--border)] bg-[var(--bg-elevated)] text-[var(--text-primary)]">
         {/* Left: Type icon, title, version, badge */}
         <div className="flex items-center gap-2.5 min-w-0">
-          <span className="w-8 h-8 rounded-xl bg-white/[0.04] border border-white/[0.06] flex items-center justify-center shrink-0">
-            {TYPE_ICONS[activeArtifact.type] || <FileText size={18} className="text-[#C39A52]" />}
+          <span className="w-8 h-8 rounded-xl bg-[var(--surface)] border border-[var(--border)] flex items-center justify-center shrink-0 text-[var(--accent)]">
+            {TYPE_ICONS[activeArtifact.type] || <FileText size={18} />}
           </span>
           <div className="min-w-0">
             <div className="flex items-center gap-2">
-              <h3 className="text-[13px] font-semibold text-[#F1EEE7] truncate">{activeArtifact.title}</h3>
-              <span className="text-[10px] px-1.5 py-0.2 rounded-md bg-[#C39A52]/15 text-[#C39A52] font-mono font-semibold">
+              <h3 className="text-[13px] font-semibold text-[var(--text-primary)] truncate">{activeArtifact.title}</h3>
+              <span className="text-[10px] px-1.5 py-0.2 rounded-md bg-[var(--accent-subtle)] text-[var(--accent)] font-mono font-semibold">
                 v{activeArtifact.version || 1}.0
               </span>
             </div>
             {activeArtifact.providerBadge && (
-              <span className="text-[10px] text-[#7E8795] block truncate">
-                Moteur : <span className="text-[#B8C0CC]">{activeArtifact.providerBadge}</span>
+              <span className="text-[10px] text-[var(--text-tertiary)] block truncate">
+                Moteur : <span className="text-[var(--text-secondary)]">{activeArtifact.providerBadge}</span>
               </span>
             )}
           </div>
