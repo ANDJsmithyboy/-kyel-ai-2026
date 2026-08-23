@@ -49,6 +49,7 @@ import {
 import { useUser } from '@clerk/nextjs';
 import { useLanguageStore } from '@/stores/language.store';
 import { useSettingsStore } from '@/stores/settings.store';
+import { useWorkspaceLayout } from '@/hooks/useWorkspaceLayout';
 
 export interface CommandItem {
   id: string;
@@ -75,6 +76,7 @@ export default function CommandPalette() {
 
   const { locale, setLocale } = useLanguageStore();
   const { preferences, updatePreference, setTheme } = useSettingsStore();
+  const { toggleFocusMode, toggleRight, toggleLeft, setRightTab } = useWorkspaceLayout();
 
   const isSuperAdmin = useMemo(() => {
     const email = user?.primaryEmailAddress?.emailAddress?.toLowerCase() || '';
@@ -183,6 +185,43 @@ export default function CommandPalette() {
         keywords: ['parametres', 'settings', 'configuration', 'compte', 'preferences'],
         handler: () => {
           router.push('/settings');
+          setIsOpen(false);
+        },
+      },
+
+      {
+        id: 'action-toggle-focus',
+        label: 'Basculer le Mode Focus (Plein Écran Calme)',
+        category: 'Actions & Missions',
+        icon: Eye,
+        shortcut: '⌘F',
+        keywords: ['focus', 'calme', 'plein ecran', 'masquer panneaux'],
+        handler: () => {
+          toggleFocusMode();
+          showToast('Mode Focus basculé');
+          setIsOpen(false);
+        },
+      },
+      {
+        id: 'action-toggle-inspector',
+        label: 'Afficher / Masquer l\'Inspecteur Contextuel (Sources / Tools / Run)',
+        category: 'Actions & Missions',
+        icon: Activity,
+        shortcut: '⌘I',
+        keywords: ['contexte', 'inspector', 'sources', 'outils', 'tools', 'skills', 'mcp'],
+        handler: () => {
+          toggleRight();
+          setIsOpen(false);
+        },
+      },
+      {
+        id: 'action-show-sources',
+        label: 'Inspecter les Sources & Preuves de la Mission',
+        category: 'Actions & Missions',
+        icon: Globe,
+        keywords: ['sources', 'preuves', 'citations', 'references'],
+        handler: () => {
+          setRightTab('sources');
           setIsOpen(false);
         },
       },
