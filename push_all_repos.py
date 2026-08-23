@@ -77,8 +77,13 @@ def push_frontend():
     status = subprocess.run(["git", "status", "--porcelain"], cwd=temp_dir, capture_output=True, text=True)
     if status.stdout.strip():
         commit_msg = (
-            "feat(frontend): Production Integration -- Real API client, Canonical Events, "
-            "Vision & Visual Agent Studio, VIECanvas, Wada Sanzo Design System (nkyel-fd-main)"
+            "feat(frontend): Manus-Grade Sovereign Landing Page, Clerk Gateway & Complete Legal Policy Suite (nkyel-fd)\n\n"
+            "- Manus-Style Hero & Interactive Prompt Composer with live model capability routing\n"
+            "- Real-time WorkGraph 4-step execution simulator\n"
+            "- Global 38 AI Providers Matrix (France, US, Europe, China, Japan, Korea, India, Middle East, Africa, Local)\n"
+            "- 6 Legal & Compliance Policies (/terms, /privacy, /security, /acceptable-use, /legal, /cookies)\n"
+            "- Seamless Clerk Authentication (Modal Sign In / Sign Up)\n\n"
+            "SmartANDJ AI Technologies - Fondateur : Daniel Jonathan ANDJ"
         )
         subprocess.run(["git", "commit", "-m", commit_msg], cwd=temp_dir, check=True)
         log("[*] Push vers origin main de nkyel-fd...")
@@ -113,15 +118,10 @@ def push_backend():
     status = subprocess.run(["git", "status", "--porcelain"], cwd=root_dir, capture_output=True, text=True)
     if status.stdout.strip():
         commit_msg = (
-            "feat(backend): Mission OPUS & Vision Engine Complete Integration\n\n"
-            "- The Vision Engine: 6-pillar VisionMap, Make-It-Real compiler, Temporal Simulation Engine\n"
-            "- Human Node: first-class WorkGraph arbitration & timeouts\n"
-            "- Agent Pulse: 8-state presence machine\n"
-            "- Innovation Core: AgentSpec (vN+1), AgentCompiler, Memory Engine (9 scopes), WorldModel\n"
-            "- Production Auth & Security: strict Clerk JWKS RS256, 401 on missing/invalid token\n"
-            "- Protocols: MCP, A2A, AG-UI, A2UI, SSE canonical adapters\n"
-            "- Real Feedback loop & Neon PostgreSQL persistence\n"
-            "- Test suite: 232/232 passing tests (100%)\n\n"
+            "feat(platform): Manus-Grade Sovereign Landing Page, Clerk Gateway & Complete Legal Policy Suite\n\n"
+            "- Manus Landing Page & Clerk Gateway (/welcome & root smart router)\n"
+            "- 6 Legal & Compliance Policies (/terms, /privacy, /security, /acceptable-use, /legal, /cookies)\n"
+            "- Global AI Fabric (38 Providers) & 100% Functional Production Settings (13 sections)\n\n"
             "SmartANDJ AI Technologies - Fondateur : Daniel Jonathan ANDJ"
         )
         subprocess.run(["git", "commit", "-m", commit_msg], cwd=root_dir, check=True)

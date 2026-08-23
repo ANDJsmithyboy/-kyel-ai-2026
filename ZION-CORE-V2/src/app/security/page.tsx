@@ -71,6 +71,17 @@ export default function SecurityPage() {
             </p>
           </section>
         </div>
+
+        <footer className="mt-12 pt-6 border-t border-white/[0.08] flex flex-col sm:flex-row items-center justify-between text-[11px] text-white/40 gap-4">
+          <p>© 2026 SmartANDJ AI Technologies · Fondateur : Daniel Jonathan ANDJ</p>
+          <div className="flex items-center gap-4">
+            <Link href="/terms" className="hover:text-white transition-colors">CGU</Link>
+            <Link href="/privacy" className="hover:text-white transition-colors">Confidentialité</Link>
+            <Link href="/acceptable-use" className="hover:text-white transition-colors">Usage Acceptable</Link>
+            <Link href="/legal" className="hover:text-white transition-colors">Mentions Légales</Link>
+            <Link href="/cookies" className="hover:text-white transition-colors">Cookies</Link>
+          </div>
+        </footer>
       </div>
     </div>
   );
