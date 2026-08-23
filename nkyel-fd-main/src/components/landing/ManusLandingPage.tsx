@@ -1,11 +1,13 @@
 /**
- * Ñkyel AI · Manus-Grade Sovereign Landing Page & Clerk Gateway
+ * Ñkyel AI · Manus-Grade & Apple-Precision Sovereign Landing Page
+ * Powered by Google Gemini Ecosystem & Private Sovereign Fabric
  * SmartANDJ AI Technologies · Founder: Daniel Jonathan ANDJ
  *
- * Esthétique d'élite : Manus AI + Linear + Apple Design
+ * Élite Visuelle : Manus AI + Apple Precision + Linear
  * - Hero lumineux avec prompt composer interactif
- * - Simulation temps réel du WorkGraph & VIE Canvas
- * - Matrice dynamique des 38 fournisseurs mondiaux d'IA
+ * - Simulateur temps réel du WorkGraph & VIE Canvas propulsé par Google Gemini
+ * - Écosystème Google (Gemini Flash, Gemini Pro, Imagen 3, Veo, Cloud TPU)
+ * - Moteur d'inférence privé (38 fournisseurs orchestrés en coulisses)
  * - Intégration Clerk fluide (Sign In, Sign Up, User State)
  * - Hub légal exhaustif reliant toutes les politiques
  */
@@ -38,33 +40,72 @@ import {
   ChatCircleText,
   PlugsConnected,
   ChartLineUp,
+  Image,
+  VideoCamera,
+  Infinity as InfinityIcon,
 } from '@phosphor-icons/react';
 import { useUser, SignInButton, SignUpButton, UserButton } from '@clerk/nextjs';
 import { useRouter } from 'next/navigation';
 
-const CAPABILITIES = [
-  { id: 'fast', label: 'Fast (Éclair)', model: 'Groq LPU / Gemini Flash', latency: '<100ms' },
-  { id: 'reasoning', label: 'Raisonnement Approfondi', model: 'DeepSeek R1 / o1', latency: '400ms' },
-  { id: 'code', label: 'Code Architect', model: 'Codestral FR / Qwen 2.5 Coder', latency: '180ms' },
-  { id: 'vision', label: 'Vision & Multimodal', model: 'Pixtral Large / Gemini Pro', latency: '220ms' },
-  { id: 'multilingual', label: 'Polyglotte & Langues Mondiales', model: 'Multilingual MoE (100+ Langues)', latency: '150ms' },
-  { id: 'sovereign', label: 'Souveraineté & Cloud Privé', model: 'RunPod Dedicated GPU / Mistral EU', latency: '90ms' },
-];
-
-const GLOBAL_ECOSYSTEMS = [
-  { region: 'France (Prioritaire)', providers: ['Mistral AI', 'Scaleway AI', 'OVHcloud AI'], flag: '🇫🇷', badge: 'Souveraineté UE' },
-  { region: 'USA & Global', providers: ['OpenAI', 'Anthropic', 'Google Gemini', 'Meta Llama', 'Groq LPU', 'Fireworks', 'Cohere'], flag: '🌐', badge: 'Puissance Brute' },
-  { region: 'Chine', providers: ['DeepSeek', 'Alibaba Qwen', 'Zhipu GLM', 'Moonshot Kimi', 'MiniMax', 'Baidu ERNIE', 'ByteDance'], flag: '🇨🇳', badge: 'Raisonnement & Code' },
-  { region: 'Afrique & Émergents', providers: ['Gaboma AI', 'Lelapa AI', 'Masakhane', 'Ñkyel Universal MoE', 'Fang / Swahili / Lingala'], flag: '🌍', badge: 'Multilinguisme Natif' },
-  { region: 'Asie & Moyen-Orient', providers: ['NTT tsuzumi', 'NAVER HyperCLOVA X', 'Upstage Solar', 'Sarvam AI', 'Falcon TII', 'Jais Arabic'], flag: '🌏', badge: 'RTL & Spécialités' },
-  { region: 'Self-Hosted & Local', providers: ['vLLM Cluster', 'TGI Engine', 'SGLang', 'Ollama Local', 'RunPod Dedicated GPU'], flag: '⚡', badge: 'Confidentialité 100%' },
+const GEMINI_CAPABILITIES = [
+  { id: 'flash', label: '⚡ Gemini 2.5 Flash', desc: 'Ultra-rapide <80ms', badge: 'Vitesse Éclair' },
+  { id: 'pro', label: '🧠 Gemini 3.1 Pro', desc: 'Raisonnement 2M Tokens', badge: 'Raisonnement Élite' },
+  { id: 'code', label: '💻 Gemini Code Architect', desc: 'Génération & Compilation Fullstack', badge: 'Code Pro' },
+  { id: 'vision', label: '👁️ Gemini Vision Pro', desc: 'Analyse Multimodale Vidéo/Image', badge: 'Multimodal' },
+  { id: 'imagen', label: '🎨 Imagen 3 & Veo Studio', desc: 'Génération Image & Vidéo HD', badge: 'Création Visuelle' },
+  { id: 'multilingual', label: '🌍 Polyglotte Mondial', desc: '100+ Langues & Dialectes', badge: 'Universel' },
 ];
 
 const SAMPLE_MISSIONS = [
   "Créer une application React complète avec backend FastAPI et base Neon",
-  "Analyser ce rapport financier international et générer la synthèse multilingue",
-  "Développer un agent autonome de veille concurrentielle avec WorkGraph",
+  "Analyser ce rapport financier de 500 pages grâce au contexte 2M de Gemini",
+  "Développer un agent de recherche autonome avec WorkGraph et simulation temporelle",
   "Générer une interface UI interactive en direct dans le studio d'artefacts VIE",
+];
+
+const APPLE_CORE_PILLARS = [
+  {
+    icon: Brain,
+    color: '#D5AE57',
+    title: "1. Puissance Multimodale Google Gemini",
+    desc: "Fenêtre de contexte jusqu'à 2 millions de tokens. Ingestion fluide de documents massifs, de vidéos brutes, d'audios et de codebases complètes en une seule requête.",
+    tag: "Gemini 3.1 / 2.5 Pro",
+  },
+  {
+    icon: TreeStructure,
+    color: '#6F9485',
+    title: "2. WorkGraph & Human Node",
+    desc: "Exécution agentique transparente décomposée en étapes vérifiables avec arbitrages humains à tout moment et checkpoints de retour en arrière.",
+    tag: "Orchestration V2",
+  },
+  {
+    icon: Image,
+    color: '#3B82F6',
+    title: "3. Studio d'Artefacts & Création Multimodale",
+    desc: "Génération d'images haute fidélité via Imagen 3, vidéo dynamique via Veo et compilation d'applications interactives exécutables en direct dans VIE Canvas.",
+    tag: "Imagen 3 · Veo",
+  },
+  {
+    icon: Database,
+    color: '#A78BFA',
+    title: "4. Mémoire Souveraine DeerMem",
+    desc: "9 niveaux de mémoire persistante contextuelle. Vos préférences, instructions et projets restent gravés sous votre contrôle strict sans fuite.",
+    tag: "9 Niveaux de Contexte",
+  },
+  {
+    icon: Globe,
+    color: '#EC4899',
+    title: "5. Polyglotte Universel & RTL",
+    desc: "Compréhension et génération natives en plus de 100 langues mondiales, inversion complète de l'interface en RTL (Arabe, Hébreu) et respect des nuances culturelles.",
+    tag: "100+ Langues",
+  },
+  {
+    icon: ShieldCheck,
+    color: '#10B981',
+    title: "6. Sécurité de Rang Bancaire & Cloud Privé",
+    desc: "Authentification Clerk RS256, isolation multi-tenant Row-Level Security sur Neon PostgreSQL, chiffrement de bout en bout et zéro clé API exposée en clair.",
+    tag: "Clerk · Neon RLS",
+  },
 ];
 
 export default function ManusLandingPage() {
@@ -72,14 +113,13 @@ export default function ManusLandingPage() {
   const router = useRouter();
 
   const [promptText, setPromptText] = useState('');
-  const [selectedCapability, setSelectedCapability] = useState('reasoning');
+  const [selectedCapability, setSelectedCapability] = useState('pro');
   const [simulatedStep, setSimulatedStep] = useState(0);
-  const [activeRegionFilter, setActiveRegionFilter] = useState('all');
 
   useEffect(() => {
     const timer = setInterval(() => {
       setSimulatedStep((prev) => (prev + 1) % 4);
-    }, 3000);
+    }, 3200);
     return () => clearInterval(timer);
   }, []);
 
@@ -92,29 +132,29 @@ export default function ManusLandingPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#06070B] text-[#EDEDEC] selection:bg-[#D5AE57]/30 selection:text-white relative overflow-x-hidden" style={{ fontFamily: 'var(--font-sans, "Geist", system-ui, sans-serif)' }}>
-      {/* ── Dynamic Ambient Background Glows ── */}
+    <div className="min-h-screen bg-[#05060A] text-[#EDEDEC] selection:bg-[#D5AE57]/30 selection:text-white relative overflow-x-hidden" style={{ fontFamily: 'var(--font-sans, "Geist", system-ui, -apple-system, sans-serif)' }}>
+      {/* ── Apple-Grade Ambient Aurora Mesh ── */}
       <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
-        <div className="absolute -top-40 left-1/2 -translate-x-1/2 w-[900px] h-[500px] bg-gradient-to-b from-[#D5AE57]/15 via-[#6F9485]/10 to-transparent blur-[120px] rounded-full" />
-        <div className="absolute top-[30%] -left-40 w-[600px] h-[600px] bg-[#3B82F6]/5 blur-[150px] rounded-full" />
-        <div className="absolute top-[60%] -right-40 w-[600px] h-[600px] bg-[#D5AE57]/10 blur-[150px] rounded-full" />
-        <div className="absolute inset-0 bg-[radial-gradient(#ffffff08_1px,transparent_1px)] [background-size:24px_24px] opacity-40" />
+        <div className="absolute -top-32 left-1/2 -translate-x-1/2 w-[1000px] h-[600px] bg-gradient-to-b from-[#D5AE57]/20 via-[#6F9485]/10 to-transparent blur-[140px] rounded-full" />
+        <div className="absolute top-[25%] -left-48 w-[650px] h-[650px] bg-[#3B82F6]/10 blur-[160px] rounded-full" />
+        <div className="absolute top-[55%] -right-48 w-[650px] h-[650px] bg-[#D5AE57]/15 blur-[160px] rounded-full" />
+        <div className="absolute inset-0 bg-[radial-gradient(#ffffff08_1px,transparent_1px)] [background-size:28px_28px] opacity-30" />
       </div>
 
-      {/* ── Sticky Luxury Header ── */}
-      <header className="sticky top-0 z-50 border-b border-white/[0.06] bg-[#06070B]/80 backdrop-blur-xl">
+      {/* ── Frosted Glass Sticky Header ── */}
+      <header className="sticky top-0 z-50 border-b border-white/[0.06] bg-[#05060A]/85 backdrop-blur-2xl transition-all">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2.5 group">
-            <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-[#D5AE57] to-amber-200 text-black flex items-center justify-center font-black text-sm shadow-[0_0_20px_rgba(213,174,87,0.4)] group-hover:scale-105 transition-transform">
+            <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-[#D5AE57] to-amber-200 text-black flex items-center justify-center font-black text-sm shadow-[0_0_25px_rgba(213,174,87,0.4)] group-hover:scale-105 transition-transform">
               Ñ
             </div>
             <span className="font-bold text-base tracking-tight text-white flex items-center gap-1.5">
-              Ñkyel <span className="text-[#D5AE57] text-xs font-mono font-normal px-1.5 py-0.5 rounded bg-[#D5AE57]/10 border border-[#D5AE57]/20">AI FABRIC</span>
+              Ñkyel <span className="text-[#D5AE57] text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-[#D5AE57]/10 border border-[#D5AE57]/30 tracking-wider">GEMINI CORE</span>
             </span>
           </Link>
 
-          <nav className="hidden md:flex items-center gap-6 text-xs font-medium text-white/70">
-            <a href="#fabric" className="hover:text-white transition-colors">Global Fabric</a>
+          <nav className="hidden md:flex items-center gap-7 text-xs font-medium text-white/70">
+            <a href="#gemini" className="hover:text-white transition-colors">Écosystème Gemini</a>
             <a href="#workgraph" className="hover:text-white transition-colors">WorkGraph</a>
             <a href="#capabilities" className="hover:text-white transition-colors">Capacités</a>
             <a href="#sovereignty" className="hover:text-white transition-colors">Souveraineté</a>
@@ -127,7 +167,7 @@ export default function ManusLandingPage() {
               <div className="flex items-center gap-3">
                 <Link
                   href="/chat"
-                  className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-[#D5AE57] hover:bg-[#C5A059] text-black font-bold text-xs shadow-lg transition-transform active:scale-95"
+                  className="flex items-center gap-1.5 px-4 py-1.5 rounded-xl bg-gradient-to-r from-[#D5AE57] to-amber-300 hover:opacity-95 text-black font-extrabold text-xs shadow-[0_0_20px_rgba(213,174,87,0.35)] transition-transform active:scale-95"
                 >
                   <Lightning size={14} weight="fill" />
                   <span>Ouvrir l&apos;Agent</span>
@@ -143,7 +183,7 @@ export default function ManusLandingPage() {
                 </SignInButton>
 
                 <SignUpButton mode="modal">
-                  <button className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-[#D5AE57] hover:bg-[#C5A059] text-black font-bold text-xs shadow-[0_0_15px_rgba(213,174,87,0.3)] transition-transform active:scale-95">
+                  <button className="flex items-center gap-1.5 px-4 py-1.5 rounded-xl bg-gradient-to-r from-[#D5AE57] to-amber-300 hover:opacity-95 text-black font-extrabold text-xs shadow-[0_0_20px_rgba(213,174,87,0.4)] transition-transform active:scale-95">
                     <span>Créer un compte</span>
                     <ArrowRight size={13} weight="bold" />
                   </button>
@@ -154,20 +194,20 @@ export default function ManusLandingPage() {
         </div>
       </header>
 
-      {/* ── Main Hero Section (Manus AI Vibe) ── */}
-      <main className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 pt-16 sm:pt-24 pb-24 space-y-24">
+      {/* ── Main Hero Section (Manus AI × Apple Vibe) ── */}
+      <main className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 pt-16 sm:pt-24 pb-24 space-y-28">
         <section className="text-center space-y-8 max-w-4xl mx-auto">
-          {/* Luminous Pill */}
+          {/* Luminous Apple Pill */}
           <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/[0.04] border border-white/10 text-[11px] font-medium text-white/80 shadow-inner"
+            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/[0.04] border border-white/10 text-[11px] font-medium text-white/90 shadow-[0_0_30px_rgba(213,174,87,0.15)] backdrop-blur-md"
           >
             <Sparkle size={14} weight="fill" className="text-[#D5AE57] animate-pulse" />
-            <span>Ñkyel Global AI Fabric · 38 Fournisseurs Mondiaux · Souveraineté & Multilinguisme</span>
+            <span>Propulsé par Google Gemini Ecosystem & l&apos;Orchestrateur Souverain Ñkyel</span>
           </motion.div>
 
-          {/* Grand Headline */}
+          {/* Grand Apple/Manus Headline */}
           <motion.h1
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
@@ -176,7 +216,7 @@ export default function ManusLandingPage() {
           >
             L&apos;Agent IA Généraliste <br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#D5AE57] via-amber-100 to-[#6F9485]">
-              Universel & Souverain
+              Universel & Multimodal
             </span>
           </motion.h1>
 
@@ -185,10 +225,9 @@ export default function ManusLandingPage() {
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="text-sm sm:text-base md:text-lg text-white/60 max-w-2xl mx-auto leading-relaxed"
+            className="text-sm sm:text-base md:text-lg text-white/70 max-w-2xl mx-auto leading-relaxed"
           >
-            Une architecture agnostique mondiale qui demande une <strong>capacité</strong> et non un nom commercial.
-            Ñkyel choisit dynamiquement le moteur parfait parmi 38 écosystèmes pour exécuter n&apos;importe quelle mission avec précision et mémoire.
+            Exécutez vos missions complexes grâce à la puissance multimodale de <strong>Google Gemini (Flash, Pro, Imagen 3, Veo)</strong> orchestrée par une architecture souveraine privée avec mémoire contextuelle et restitution d&apos;artefacts en direct.
           </motion.p>
 
           {/* ── Interactive Manus-Style Prompt Composer ── */}
@@ -196,44 +235,44 @@ export default function ManusLandingPage() {
             initial={{ opacity: 0, scale: 0.98, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             transition={{ delay: 0.3 }}
-            className="w-full max-w-3xl mx-auto p-2 sm:p-3 rounded-2xl border border-white/10 bg-[#0E1118]/90 backdrop-blur-2xl shadow-[0_20px_50px_rgba(0,0,0,0.6)] space-y-3 text-left"
+            className="w-full max-w-3xl mx-auto p-3 sm:p-4 rounded-3xl border border-white/10 bg-[#0C0E14]/90 backdrop-blur-2xl shadow-[0_25px_60px_rgba(0,0,0,0.7)] space-y-3.5 text-left"
           >
             <div className="relative">
               <textarea
                 rows={3}
                 value={promptText}
                 onChange={(e) => setPromptText(e.target.value)}
-                placeholder="Décrivez votre mission complexe à Ñkyel (code fullstack, recherche arborescente, analyse documentaire, traduction multilingue internationale...)"
+                placeholder="Décrivez votre mission complexe à Ñkyel (développement fullstack, analyse d'un PDF de 500 pages avec Gemini 2M, recherche arborescente, rendu visuel...)"
                 className="w-full p-3 bg-transparent text-sm text-white placeholder-white/40 focus:outline-none resize-none"
               />
             </div>
 
             {/* Quick Sample Prompts */}
-            <div className="flex items-center gap-1.5 overflow-x-auto pb-1 custom-scrollbar">
+            <div className="flex items-center gap-2 overflow-x-auto pb-1 custom-scrollbar">
               {SAMPLE_MISSIONS.map((s, idx) => (
                 <button
                   key={idx}
                   onClick={() => setPromptText(s)}
-                  className="px-2.5 py-1 rounded-lg bg-white/[0.04] hover:bg-white/[0.08] border border-white/5 text-[10px] text-white/60 hover:text-white whitespace-nowrap transition-colors"
+                  className="px-3 py-1 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/5 text-[11px] text-white/70 hover:text-white whitespace-nowrap transition-colors"
                 >
-                  {s.slice(0, 38)}...
+                  {s.slice(0, 42)}...
                 </button>
               ))}
             </div>
 
-            {/* Capability Selector & Execution CTA */}
-            <div className="pt-2 border-t border-white/[0.06] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-              <div className="flex items-center gap-1.5 overflow-x-auto">
-                {CAPABILITIES.map((cap) => {
+            {/* Gemini Capability Switcher & Execution CTA */}
+            <div className="pt-3 border-t border-white/[0.06] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div className="flex items-center gap-1.5 overflow-x-auto pb-1 custom-scrollbar">
+                {GEMINI_CAPABILITIES.map((cap) => {
                   const isSel = selectedCapability === cap.id;
                   return (
                     <button
                       key={cap.id}
                       onClick={() => setSelectedCapability(cap.id)}
-                      className={`px-2.5 py-1 rounded-lg text-[10px] font-bold transition-all ${
+                      className={`px-3 py-1.5 rounded-xl text-[11px] font-bold transition-all whitespace-nowrap ${
                         isSel
-                          ? 'bg-[#D5AE57]/20 border border-[#D5AE57]/50 text-[#D5AE57]'
-                          : 'bg-black/30 border border-white/5 text-white/50 hover:text-white'
+                          ? 'bg-[#D5AE57]/20 border border-[#D5AE57]/60 text-[#D5AE57] shadow-sm'
+                          : 'bg-black/40 border border-white/5 text-white/60 hover:text-white'
                       }`}
                     >
                       {cap.label}
@@ -244,7 +283,7 @@ export default function ManusLandingPage() {
 
               <button
                 onClick={handleLaunch}
-                className="flex items-center justify-center gap-2 px-5 py-2 rounded-xl bg-[#D5AE57] hover:bg-[#C5A059] text-black font-extrabold text-xs transition-transform active:scale-95 shadow-[0_0_20px_rgba(213,174,87,0.4)]"
+                className="flex items-center justify-center gap-2 px-6 py-2.5 rounded-2xl bg-gradient-to-r from-[#D5AE57] to-amber-300 hover:opacity-95 text-black font-black text-xs transition-transform active:scale-95 shadow-[0_0_25px_rgba(213,174,87,0.4)] shrink-0"
               >
                 <span>Lancer la Mission</span>
                 <ArrowRight size={14} weight="bold" />
@@ -253,167 +292,93 @@ export default function ManusLandingPage() {
           </motion.div>
         </section>
 
-        {/* ── Live Agent Execution Simulation Showcase ── */}
-        <section id="workgraph" className="p-6 sm:p-8 rounded-3xl border border-white/10 bg-white/[0.01] backdrop-blur-md space-y-6">
+        {/* ── Live Agent Execution Simulation Showcase (Manus Vibe) ── */}
+        <section id="workgraph" className="p-6 sm:p-10 rounded-3xl border border-white/10 bg-white/[0.015] backdrop-blur-xl space-y-7 shadow-2xl">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/[0.06] pb-6">
             <div>
               <div className="flex items-center gap-2 text-xs font-mono text-[#D5AE57]">
                 <TreeStructure size={16} />
-                <span>WORKGRAPH ARBITRATION ENGINE 2.0</span>
+                <span>WORKGRAPH AGENT ENGINE 2.0 · GOOGLE GEMINI BACKBONE</span>
               </div>
               <h2 className="text-xl sm:text-2xl font-bold text-white mt-1">
                 Exécution Agentique Décomposable & Vérifiable
               </h2>
             </div>
-            <span className="text-xs px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 flex items-center gap-1.5 self-start">
+            <span className="text-xs px-3.5 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 flex items-center gap-2 self-start font-medium">
               <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
-              Routage Actif : Mistral Large + DeepSeek R1 + Gemini Pro
+              Cœur Actif : Google Gemini 3.1 Pro (2M Contexte)
             </span>
           </div>
 
           {/* 4 Interactive Progress Cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {[
-              { title: '1. Planification Arborescente', desc: 'Décomposition autonome en 4 sous-objectifs et points de contrôle.', engine: 'DeepSeek R1', state: simulatedStep >= 0 ? 'completed' : 'pending' },
-              { title: '2. Routage Spécialisé', desc: 'Distribution parallèle : Codestral (Code) & Pixtral (Vision).', engine: 'Mistral AI FR', state: simulatedStep >= 1 ? 'completed' : 'pending' },
-              { title: '3. Exécution Sandbox E2B', desc: 'Environnement isolé, validation de types et tests unitaires.', engine: 'E2B Sandbox', state: simulatedStep >= 2 ? 'completed' : 'pending' },
-              { title: '4. Compilation d’Artefacts', desc: 'Rendu temps réel dans le studio VIE Canvas avec interaction humaine.', engine: 'VIE Studio', state: simulatedStep >= 3 ? 'completed' : 'pending' },
+              { title: '1. Ingestion & Raisonnement 2M', desc: 'Gemini Pro analyse instantanément l’ensemble du contexte sans perte d’information.', engine: 'Google Gemini Pro', state: simulatedStep >= 0 ? 'completed' : 'pending' },
+              { title: '2. Décomposition WorkGraph', desc: 'Planification arborescente dynamique et allocation des sous-tâches spécialisées.', engine: 'WorkGraph Orchestrator', state: simulatedStep >= 1 ? 'completed' : 'pending' },
+              { title: '3. Exécution Sandbox & Outils', desc: 'Génération de code, validation TypeScript et exécution d’APIs dans un environnement isolé.', engine: 'E2B Sandbox + Gemini', state: simulatedStep >= 2 ? 'completed' : 'pending' },
+              { title: '4. Restitution Interactive VIE', desc: 'Compilation temps réel d’artefacts complets (React, UI, documents) directement utilisables.', engine: 'VIE Studio Canvas', state: simulatedStep >= 3 ? 'completed' : 'pending' },
             ].map((node, i) => (
               <div
                 key={i}
-                className={`p-4 rounded-2xl border transition-all ${
+                className={`p-5 rounded-2xl border transition-all ${
                   simulatedStep === i
-                    ? 'bg-[#D5AE57]/10 border-[#D5AE57] text-white shadow-lg'
-                    : 'bg-black/30 border-white/5 text-white/70'
+                    ? 'bg-[#D5AE57]/10 border-[#D5AE57] text-white shadow-[0_0_20px_rgba(213,174,87,0.2)]'
+                    : 'bg-black/35 border-white/5 text-white/70'
                 }`}
               >
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-white/5 text-[#D5AE57]">
+                <div className="flex items-center justify-between mb-2.5">
+                  <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-white/5 text-[#D5AE57]">
                     {node.engine}
                   </span>
-                  <CheckCircle size={16} className={simulatedStep >= i ? 'text-emerald-400' : 'text-white/20'} weight="fill" />
+                  <CheckCircle size={17} className={simulatedStep >= i ? 'text-emerald-400' : 'text-white/20'} weight="fill" />
                 </div>
                 <h3 className="font-bold text-xs text-white">{node.title}</h3>
-                <p className="text-[11px] text-white/50 mt-1">{node.desc}</p>
+                <p className="text-[11px] text-white/50 mt-1 leading-relaxed">{node.desc}</p>
               </div>
             ))}
           </div>
         </section>
 
-        {/* ── 38 Global Providers Matrix Showcase ── */}
-        <section id="fabric" className="space-y-6">
+        {/* ── Google Ecosystem & Sovereign Core (Apple Grid) ── */}
+        <section id="gemini" className="space-y-8">
           <div className="text-center space-y-2 max-w-2xl mx-auto">
             <h2 className="text-2xl sm:text-3xl font-extrabold text-white">
-              Le Registre Mondial des Fournisseurs
+              L&apos;Écosystème d&apos;Intelligence Google Gemini
             </h2>
             <p className="text-xs sm:text-sm text-white/60">
-              Ñkyel unifie 38 écosystèmes internationaux sous une interface standardisée sans aucun compromis de sécurité.
+              Une alliance parfaite entre la technologie de pointe de Google et l&apos;orchestration souveraine privée de SmartANDJ.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {GLOBAL_ECOSYSTEMS.map((eco, idx) => (
-              <div
-                key={idx}
-                className="p-5 rounded-2xl border border-white/[0.08] bg-white/[0.01] hover:bg-white/[0.03] transition-all space-y-3"
-              >
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <span className="text-lg">{eco.flag}</span>
-                    <h3 className="font-bold text-xs text-white">{eco.region}</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+            {APPLE_CORE_PILLARS.map((p, idx) => {
+              const Icon = p.icon;
+              return (
+                <div
+                  key={idx}
+                  className="p-6 rounded-3xl border border-white/[0.08] bg-white/[0.015] hover:bg-white/[0.03] hover:border-white/[0.15] transition-all space-y-4 shadow-lg flex flex-col justify-between"
+                >
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <div className="w-10 h-10 rounded-2xl flex items-center justify-center border border-white/10" style={{ background: `${p.color}15`, color: p.color }}>
+                        <Icon size={22} weight="bold" />
+                      </div>
+                      <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-white/5 text-white/60 border border-white/10">
+                        {p.tag}
+                      </span>
+                    </div>
+                    <h3 className="font-bold text-sm text-white">{p.title}</h3>
+                    <p className="text-xs text-white/60 leading-relaxed">{p.desc}</p>
                   </div>
-                  <span className="text-[9px] font-mono px-2 py-0.5 rounded bg-[#D5AE57]/10 text-[#D5AE57] border border-[#D5AE57]/20">
-                    {eco.badge}
-                  </span>
                 </div>
-                <div className="flex flex-wrap gap-1.5">
-                  {eco.providers.map((p, pIdx) => (
-                    <span
-                      key={pIdx}
-                      className="px-2 py-1 rounded-lg bg-black/40 border border-white/5 text-[10px] text-white/80 font-mono"
-                    >
-                      {p}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </section>
 
-        {/* ── 5 Core Pillars Section ── */}
-        <section id="capabilities" className="space-y-6">
-          <div className="text-center space-y-2 max-w-2xl mx-auto">
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-white">
-              Les 5 Piliers Fondamentaux de Ñkyel
-            </h2>
-            <p className="text-xs sm:text-sm text-white/60">
-              Conçu pour l&apos;autonomie, la mémoire persistante et la protection absolue de vos données.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            <div className="p-6 rounded-2xl border border-white/[0.08] bg-white/[0.01] space-y-3">
-              <TreeStructure size={28} className="text-[#D5AE57]" />
-              <h3 className="font-bold text-sm text-white">1. WorkGraph & Human Node</h3>
-              <p className="text-xs text-white/60 leading-relaxed">
-                Visualisation arborescente transparente, arbitrages humains à tout moment et retour en arrière grâce aux checkpoints d&apos;état LangGraph.
-              </p>
-            </div>
-
-            <div className="p-6 rounded-2xl border border-white/[0.08] bg-white/[0.01] space-y-3">
-              <Eye size={28} className="text-[#6F9485]" />
-              <h3 className="font-bold text-sm text-white">2. Visual Intelligence & VIE</h3>
-              <p className="text-xs text-white/60 leading-relaxed">
-                Moteur Make-It-Real avec simulation temporelle, analyse d&apos;images et rendu d&apos;applications interactives complètes en temps réel.
-              </p>
-            </div>
-
-            <div className="p-6 rounded-2xl border border-white/[0.08] bg-white/[0.01] space-y-3">
-              <Database size={28} className="text-blue-400" />
-              <h3 className="font-bold text-sm text-white">3. Mémoire Souveraine DeerMem</h3>
-              <p className="text-xs text-white/60 leading-relaxed">
-                9 niveaux de mémoire persistante avec politiques strictes. Vous gardez le contrôle total sur ce dont Ñkyel se souvient.
-              </p>
-            </div>
-
-            <div className="p-6 rounded-2xl border border-white/[0.08] bg-white/[0.01] space-y-3">
-              <Globe size={28} className="text-purple-400" />
-              <h3 className="font-bold text-sm text-white">4. Polyglotte & Multilinguisme Mondial</h3>
-              <p className="text-xs text-white/60 leading-relaxed">
-                Support BCP-47 universel pour plus de 100 langues mondiales, inversion RTL complète pour l&apos;arabe, l&apos;hébreu, et intégration native des langues africaines.
-              </p>
-            </div>
-
-            <div className="p-6 rounded-2xl border border-white/[0.08] bg-white/[0.01] space-y-3">
-              <ShieldCheck size={28} className="text-emerald-400" />
-              <h3 className="font-bold text-sm text-white">5. Sécurité de Rang Bancaire</h3>
-              <p className="text-xs text-white/60 leading-relaxed">
-                Authentification Clerk RS256, isolation multi-tenant Row-Level Security sur Neon PostgreSQL et zéro clé API exposée en clair.
-              </p>
-            </div>
-
-            <div className="p-6 rounded-2xl border border-[#D5AE57]/20 bg-[#D5AE57]/5 space-y-3 flex flex-col justify-between">
-              <div>
-                <Sparkle size={28} className="text-[#D5AE57]" weight="fill" />
-                <h3 className="font-bold text-sm text-white mt-3">Prêt à transformer vos missions ?</h3>
-                <p className="text-xs text-white/70 mt-1">
-                  Créez votre compte en 30 secondes et découvrez la puissance de l&apos;intelligence souveraine.
-                </p>
-              </div>
-              <button
-                onClick={handleLaunch}
-                className="w-full py-2 rounded-xl bg-[#D5AE57] hover:bg-[#C5A059] text-black font-extrabold text-xs transition-transform active:scale-95"
-              >
-                Commencer l&apos;expérience Ñkyel
-              </button>
-            </div>
-          </div>
-        </section>
-
-        {/* ── Sovereign Manifesto ── */}
-        <section id="sovereignty" className="p-8 sm:p-12 rounded-3xl border border-[#D5AE57]/30 bg-gradient-to-b from-[#D5AE57]/10 to-transparent text-center space-y-4 max-w-4xl mx-auto">
-          <div className="w-10 h-10 rounded-xl bg-[#D5AE57] text-black font-black text-lg mx-auto flex items-center justify-center">
+        {/* ── Sovereign Manifesto (Apple Vibe) ── */}
+        <section id="sovereignty" className="p-8 sm:p-14 rounded-3xl border border-[#D5AE57]/30 bg-gradient-to-b from-[#D5AE57]/10 via-transparent to-transparent text-center space-y-5 max-w-4xl mx-auto shadow-2xl">
+          <div className="w-12 h-12 rounded-2xl bg-[#D5AE57] text-black font-black text-xl mx-auto flex items-center justify-center shadow-[0_0_30px_rgba(213,174,87,0.4)]">
             Ñ
           </div>
           <blockquote className="text-lg sm:text-2xl font-bold text-white tracking-tight leading-snug max-w-3xl mx-auto">
@@ -426,45 +391,45 @@ export default function ManusLandingPage() {
       </main>
 
       {/* ── Enterprise Footer with ALL Policies ── */}
-      <footer className="border-t border-white/[0.08] bg-[#030407] py-12 px-4 sm:px-6">
+      <footer className="border-t border-white/[0.08] bg-[#030407] py-14 px-4 sm:px-6">
         <div className="max-w-7xl mx-auto grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-8 text-xs">
-          <div className="col-span-2 space-y-3">
+          <div className="col-span-2 space-y-3.5">
             <div className="flex items-center gap-2">
-              <div className="w-6 h-6 rounded-lg bg-[#D5AE57] text-black flex items-center justify-center font-bold text-xs">
+              <div className="w-7 h-7 rounded-xl bg-[#D5AE57] text-black flex items-center justify-center font-black text-xs">
                 Ñ
               </div>
               <span className="font-bold text-sm text-white">Ñkyel AI</span>
             </div>
             <p className="text-[11px] text-white/50 max-w-xs leading-relaxed">
-              Propulsé par SmartANDJ AI Technologies. Architecture agnostique mondiale et souveraineté d&apos;intelligence artificielle.
+              Propulsé par SmartANDJ AI Technologies. Moteur d&apos;intelligence artificielle universelle et souveraine orchestrant l&apos;écosystème Google Gemini.
             </p>
             <p className="text-[10px] text-white/30 font-mono">
               SmartANDJ AI Technologies · Édition Mondiale Production 2026
             </p>
           </div>
 
-          <div className="space-y-2">
+          <div className="space-y-2.5">
             <span className="font-bold text-white text-[11px] uppercase tracking-wider text-[#D5AE57]">Produit</span>
             <ul className="space-y-1.5 text-white/60">
               <li><Link href="/chat" className="hover:text-white transition-colors">Conversation & Chat</Link></li>
               <li><Link href="/workspace" className="hover:text-white transition-colors">WorkGraph Studio</Link></li>
               <li><Link href="/settings" className="hover:text-white transition-colors">Paramètres Souverains</Link></li>
-              <li><Link href="/onboarding" className="hover:text-white transition-colors">Onboarding</Link></li>
+              <li><Link href="/welcome" className="hover:text-white transition-colors">Vitrine Manus-Grade</Link></li>
             </ul>
           </div>
 
-          <div className="space-y-2">
-            <span className="font-bold text-white text-[11px] uppercase tracking-wider text-[#D5AE57]">Écosystème</span>
+          <div className="space-y-2.5">
+            <span className="font-bold text-white text-[11px] uppercase tracking-wider text-[#D5AE57]">Cœur IA</span>
             <ul className="space-y-1.5 text-white/60">
-              <li><span className="text-white/40">Mistral AI (FR)</span></li>
-              <li><span className="text-white/40">Google Gemini</span></li>
-              <li><span className="text-white/40">DeepSeek R1</span></li>
-              <li><span className="text-white/40">Gaboma AI (Langues)</span></li>
-              <li><span className="text-white/40">RunPod Sovereign</span></li>
+              <li><span className="text-white/40">Google Gemini 3.1 Pro</span></li>
+              <li><span className="text-white/40">Google Gemini 2.5 Flash</span></li>
+              <li><span className="text-white/40">Google Imagen 3 Studio</span></li>
+              <li><span className="text-white/40">Google Veo Video Engine</span></li>
+              <li><span className="text-white/40">Souveraineté Cloud Privé</span></li>
             </ul>
           </div>
 
-          <div className="space-y-2">
+          <div className="space-y-2.5">
             <span className="font-bold text-white text-[11px] uppercase tracking-wider text-[#D5AE57]">Politiques & Légal</span>
             <ul className="space-y-1.5 text-white/60">
               <li><Link href="/terms" className="hover:text-white transition-colors">Conditions Générales (CGU)</Link></li>
@@ -477,11 +442,11 @@ export default function ManusLandingPage() {
           </div>
         </div>
 
-        <div className="max-w-7xl mx-auto mt-10 pt-6 border-t border-white/[0.06] flex flex-col sm:flex-row items-center justify-between text-[10px] text-white/40 gap-4">
+        <div className="max-w-7xl mx-auto mt-12 pt-6 border-t border-white/[0.06] flex flex-col sm:flex-row items-center justify-between text-[10px] text-white/40 gap-4">
           <p>© 2026 SmartANDJ AI Technologies · Fondateur : Daniel Jonathan ANDJ · Tous droits réservés.</p>
           <div className="flex items-center gap-3">
             <span className="w-2 h-2 rounded-full bg-emerald-500" />
-            <span>38 Fournisseurs Connectés · Statut Opérationnel 100%</span>
+            <span>Moteur Google Gemini Connecté · Infrastructure Privée Opérationnelle</span>
           </div>
         </div>
       </footer>

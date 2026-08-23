@@ -1,17 +1,17 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { cn } from '@/lib/utils';
+import { Sparkle, Code, Brain, Image, Globe, Lightning } from '@phosphor-icons/react';
 
 interface ChatPlaceholderProps {
   userName?: string;
 }
 
-const SUGGESTIONS = [
-  { icon: '📜', label: 'Explique-moi le droit OHADA', category: 'legal' },
-  { icon: '🌍', label: "L'histoire du Gabon en résumé", category: 'default' },
-  { icon: '💼', label: 'Rédige un business plan FCRA', category: 'default' },
-  { icon: '🗣️', label: 'Apprends-moi le Fang basique', category: 'language' }
+const GLOBAL_SUGGESTIONS = [
+  { icon: Code, label: 'Développer une application React & FastAPI complète', category: 'code' },
+  { icon: Brain, label: 'Analyser un rapport massif avec le contexte 2M de Gemini', category: 'research' },
+  { icon: Image, label: 'Générer une interface UI interactive dans le studio VIE', category: 'design' },
+  { icon: Globe, label: 'Synthétiser un dossier multilingue en 5 langues mondiales', category: 'multilingual' },
 ];
 
 function getGreeting(): string {
@@ -32,55 +32,56 @@ export default function ChatPlaceholder({ userName }: ChatPlaceholderProps) {
   if (!mounted) return null;
 
   const name = userName?.split(' ')[0] || '';
-  const greeting = `Mbolo ! ${getGreeting()}${name ? `, ${name}` : ''}`;
+  const greeting = `${getGreeting()}${name ? `, ${name}` : ''}`;
 
   return (
-    <div className="flex flex-col items-center justify-center h-full px-4 py-8">
-      {/* Logo */}
-      <div className="mb-6 animate-fade-in-up" style={{ animationDelay: '100ms' }}>
-        <img
-          src="/Nkyel AI-logo.jpeg"
-          alt="Nkyel AI"
-          className="w-20 h-20 sm:w-28 sm:h-28 rounded-2xl shadow-lg ring-1 ring-white/10"
-        />
+    <div className="flex flex-col items-center justify-center h-full px-4 py-8 max-w-2xl mx-auto text-center">
+      {/* Apple-Grade Luminous Logo */}
+      <div className="mb-6 relative group">
+        <div className="absolute -inset-2 bg-gradient-to-r from-[#D5AE57] to-[#6F9485] rounded-3xl blur-xl opacity-30 group-hover:opacity-60 transition duration-500" />
+        <div className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-gradient-to-tr from-[#D5AE57] to-amber-200 text-black flex items-center justify-center font-black text-2xl sm:text-3xl shadow-[0_0_35px_rgba(213,174,87,0.4)] border border-amber-300/40">
+          Ñ
+        </div>
       </div>
 
       {/* Greeting */}
-      <div className="text-center mb-10 animate-fade-in-up" style={{ animationDelay: '200ms' }}>
-        <div className="text-2xl sm:text-4xl font-bold tracking-tight mb-2">
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-[var(--gabon-green,#1DB954)] via-[var(--gabon-yellow,#F5C518)] to-[var(--gabon-blue,#00A8E8)] pr-2">
-            {greeting.split('!')[0]}!
-          </span>
-          <span className="text-[var(--text-primary)]">
-            {greeting.split('!').slice(1).join('!')}
-          </span>
+      <div className="mb-8 space-y-2">
+        <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white/[0.04] border border-white/10 text-[11px] font-mono text-[#D5AE57] mb-2">
+          <Sparkle size={13} weight="fill" />
+          <span>Propulsé par Google Gemini Ecosystem</span>
         </div>
-        <div className="text-sm sm:text-base text-[var(--text-secondary)] tracking-wide font-light opacity-80">
-          Votre IA souveraine. L&apos;Agent d&apos;Intelligence Universel & Mondial.
-        </div>
+        <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-white">
+          {greeting}
+        </h1>
+        <p className="text-xs sm:text-sm text-white/60 font-light max-w-md mx-auto">
+          Comment puis-je orchestrer votre mission aujourd&apos;hui ?
+        </p>
       </div>
 
       {/* Suggestions Grid */}
-      <div className="w-full max-w-2xl animate-fade-in-up" style={{ animationDelay: '300ms' }}>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          {SUGGESTIONS.map((s, i) => (
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full text-left">
+        {GLOBAL_SUGGESTIONS.map((item, idx) => {
+          const Icon = item.icon;
+          return (
             <button
-              key={i}
-              className={cn(
-                'flex items-center gap-3 rounded-2xl border px-4 py-3.5',
-                'text-left text-sm font-medium',
-                'transition-all duration-300',
-                'hover:bg-[var(--bg-surface)]/60 hover:border-white/[0.08] active:scale-[0.98]',
-                'border-white/[0.04] bg-[var(--bg-surface)]/40 backdrop-blur-md',
-                'text-[var(--text-secondary)] hover:text-[var(--text-primary)] group'
-              )}
-              style={{ animationDelay: `${400 + i * 100}ms` }}
+              key={idx}
+              onClick={() => {
+                const input = document.querySelector('textarea');
+                if (input) {
+                  input.value = item.label;
+                  input.dispatchEvent(new Event('input', { bubbles: true }));
+                  input.focus();
+                }
+              }}
+              className="p-3.5 rounded-2xl border border-white/[0.08] bg-white/[0.02] hover:bg-white/[0.06] hover:border-white/[0.18] transition-all flex items-center gap-3 text-xs text-white/80 hover:text-white group active:scale-[0.99]"
             >
-              <span className="text-lg shrink-0 group-hover:scale-110 transition-transform">{s.icon}</span>
-              <span className="line-clamp-2 leading-relaxed">{s.label}</span>
+              <div className="w-8 h-8 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-[#D5AE57] group-hover:scale-110 transition-transform">
+                <Icon size={16} weight="bold" />
+              </div>
+              <span className="leading-snug">{item.label}</span>
             </button>
-          ))}
-        </div>
+          );
+        })}
       </div>
     </div>
   );

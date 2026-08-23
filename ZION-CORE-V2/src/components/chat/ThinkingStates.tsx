@@ -17,14 +17,14 @@ const THINKING_STATES: Record<ThinkingMode, {
 }> = {
   default: {
     icon: '🌿',
-    label: 'Ñkyel AI réfléchit',
-    auraColors: ['#22C55E', '#38BDF8', '#FACC15'],
+    label: 'Google Gemini & Ñkyel AI en réflexion',
+    auraColors: ['#D5AE57', '#38BDF8', '#6F9485'],
     phrases: [
-      'Ñkyel AI orchestre le réseau mondial...',
-      'Raisonnement arborescent et vérification croisée...',
-      'Activation des modèles de raisonnement profond...',
-      'Synthèse des connaissances universelles...',
-      'Analyse multi-modèles et inférence en cours...'
+      'Google Gemini 3.1 Pro analyse le contexte 2M...',
+      'Raisonnement arborescent et orchestration du WorkGraph...',
+      'Activation du moteur d\'inférence multimodale...',
+      'Synthèse des connaissances universelles et vérification croisée...',
+      'Génération d\'artefacts interactifs dans le studio VIE...'
     ]
   },
   search: {
