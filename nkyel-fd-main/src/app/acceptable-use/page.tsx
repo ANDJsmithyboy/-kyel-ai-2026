@@ -1,119 +1,82 @@
-/* Nkyel AI · Acceptable Use Policy · SmartANDJ AI Technologies
-   Politique d'Utilisation Acceptable — page publique
-   Fondateur : Daniel Jonathan ANDJ */
+/**
+ * Ñkyel AI · Politique d'Utilisation Acceptable & Éthique IA
+ * SmartANDJ AI Technologies · Fondateur : Daniel Jonathan ANDJ
+ * Route : /acceptable-use
+ */
 
-import type { Metadata } from 'next';
+'use client';
 
-export const metadata: Metadata = {
-  title: 'Utilisation Acceptable — Nkyel AI',
-  description: 'Politique d\'Utilisation Acceptable de Nkyel AI par SmartANDJ AI Technologies.',
-};
+import React from 'react';
+import Link from 'next/link';
+import { ArrowLeft, CheckCircle, WarningOctagon, Prohibit, HandPalm, Scales } from '@phosphor-icons/react';
 
 const SECTIONS = [
   {
-    title: 'Introduction',
-    content: `Cette Politique d'Utilisation Acceptable définit les comportements attendus et interdits lors de l'utilisation de Nkyel AI. Le non-respect de cette politique peut entraîner la suspension ou la suppression de votre compte.`,
+    title: '1. Principes Fondamentaux & Éthique de l\'IA',
+    content: `Ñkyel AI est conçu pour amplifier le génie créatif, technique, scientifique et entrepreneurial humain dans le respect absolu de la dignité, des libertés fondamentales et de la légalité.`,
   },
   {
-    title: 'Utilisations Interdites',
-    content: `Il est interdit d'utiliser Nkyel AI pour :\n\n• Générer du contenu illégal, haineux, discriminatoire ou incitant à la violence.\n• Usurper l'identité d'une personne ou d'une organisation.\n• Harceler, menacer ou intimider d'autres personnes.\n• Générer de la désinformation ou des « fake news » dans l'intention de nuire.\n• Tenter de contourner les mesures de sécurité ou les filtres de contenu.\n• Utiliser le Service pour du spam, du phishing ou des activités frauduleuses.\n• Collecter ou stocker des données personnelles de tiers sans leur consentement.\n• Effectuer du reverse engineering, décompiler ou tenter d'extraire le code source des modèles.\n• Utiliser le Service de manière à surcharger intentionnellement les infrastructures.`,
+    title: '2. Usages Formellement Interdits',
+    content: `Sont formellement prohibés sur l'ensemble de l'infrastructure Ñkyel AI :\n• La création, dissémination ou facilitation de contenus illégaux, haineux, violents, terroristes ou pédopornographiques.\n• Les cyberattaques, génération de logiciels malveillants, scans de vulnérabilités non autorisés ou exploits zero-day.\n• Les tentatives d'ingérence politique, de désinformation massive automatisée ou d'usurpation d'identité.\n• Le contournement des filtres de sécurité des modèles d'inférence (jailbreak hostile).\n• L'extraction non autorisée de données personnelles de tiers (scraping massif illégal).`,
   },
   {
-    title: 'Contenu Généré',
-    content: `Vous êtes responsable de l'utilisation que vous faites du contenu généré par Nkyel AI. Nous vous rappelons que :\n\n• Les réponses de l'IA peuvent contenir des inexactitudes — vérifiez toujours les informations critiques.\n• Le contenu généré ne constitue pas un conseil juridique, médical, financier ou professionnel.\n• Vous ne devez pas présenter le contenu généré comme provenant d'un humain lorsque la distinction est importante.`,
+    title: '3. Responsabilité sur les Sorties & Artefacts',
+    content: `L'utilisateur demeure l'unique arbitre des livrables générés par les agents Ñkyel avant tout déploiement en production ou prise de décision critique (médicale, financière, légale).`,
   },
   {
-    title: 'Signalement',
-    content: `Si vous constatez une utilisation abusive de Nkyel AI ou un contenu inapproprié, merci de le signaler via l'icône de signalement dans le chat ou par e-mail à abuse@nkyel.ai.`,
-  },
-  {
-    title: 'Sanctions',
-    content: `En cas de violation de cette politique :\n\n• Premier avertissement : notification par e-mail.\n• Récidive : suspension temporaire du compte (24h à 30 jours).\n• Violation grave : suppression définitive du compte sans remboursement.`,
-  },
-  {
-    title: 'Contact',
-    content: `SmartANDJ AI Technologies\nLibreville, Gabon\nabuse@nkyel.ai`,
+    title: '4. Procédure de Signalement & Sanctions',
+    content: `Tout abus peut être signalé immédiatement à abuse@smartandj.ai. SmartANDJ AI Technologies se réserve le droit de suspendre ou clôturer tout compte en cas de violation manifeste sans préavis.`,
   },
 ];
 
 export default function AcceptableUsePage() {
   return (
-    <div className="legal-root">
-      <div className="legal-glow" />
-      <div className="legal-container">
-        <header className="legal-header">
-          <a href="/onboarding" className="legal-back">← Retour</a>
-          <h1 className="legal-title">Politique d&apos;Utilisation Acceptable</h1>
-          <p className="legal-meta">Dernière mise à jour : Juillet 2026 · SmartANDJ AI Technologies</p>
-        </header>
+    <div className="min-h-screen bg-[#08090D] text-[#EDEDEC] p-6 md:p-12 overflow-y-auto selection:bg-[#D5AE57]/30 selection:text-white" style={{ fontFamily: 'var(--font-sans, "Geist", system-ui, sans-serif)' }}>
+      <div className="max-w-4xl mx-auto">
+        <Link
+          href="/"
+          className="inline-flex items-center gap-2 text-xs text-white/50 hover:text-white mb-8 transition-colors"
+        >
+          <ArrowLeft size={14} /> Retour à l&apos;accueil
+        </Link>
 
-        <div className="legal-sections">
-          {SECTIONS.map(s => (
-            <section key={s.title} className="legal-section">
-              <h2 className="legal-section-title">{s.title}</h2>
-              <p className="legal-section-content">{s.content}</p>
+        <div className="mb-10 pb-6 border-b border-white/[0.08]">
+          <div className="flex items-center gap-3">
+            <span className="w-12 h-12 rounded-2xl bg-amber-500/15 text-amber-400 flex items-center justify-center border border-amber-500/30">
+              <Scales size={28} weight="bold" />
+            </span>
+            <div>
+              <h1 className="text-2xl font-bold tracking-tight text-white">Politique d&apos;Utilisation Acceptable & Éthique</h1>
+              <p className="text-xs text-white/50 mt-1">
+                Dernière mise à jour : Août 2026 · SmartANDJ AI Technologies · Fondateur : Daniel Jonathan ANDJ
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div className="space-y-6 text-xs text-white/80 leading-relaxed">
+          {SECTIONS.map((s, idx) => (
+            <section key={idx} className="p-6 rounded-2xl bg-white/[0.02] border border-white/[0.06] space-y-2">
+              <h2 className="text-sm font-bold text-white flex items-center gap-2">
+                <CheckCircle size={18} className="text-[#D5AE57]" />
+                {s.title}
+              </h2>
+              <p className="text-white/70 whitespace-pre-line leading-relaxed">{s.content}</p>
             </section>
           ))}
         </div>
 
-        <footer className="legal-footer">SMARTANDJ AI TECHNOLOGIES · Nkyel AI 2026</footer>
+        <footer className="mt-12 pt-6 border-t border-white/[0.08] flex flex-col sm:flex-row items-center justify-between text-[11px] text-white/40 gap-4">
+          <p>© 2026 SmartANDJ AI Technologies · Fondateur : Daniel Jonathan ANDJ</p>
+          <div className="flex items-center gap-4">
+            <Link href="/terms" className="hover:text-white transition-colors">CGU</Link>
+            <Link href="/privacy" className="hover:text-white transition-colors">Confidentialité</Link>
+            <Link href="/security" className="hover:text-white transition-colors">Sécurité</Link>
+            <Link href="/legal" className="hover:text-white transition-colors">Mentions Légales</Link>
+            <Link href="/cookies" className="hover:text-white transition-colors">Cookies</Link>
+          </div>
+        </footer>
       </div>
-
-      <style>{`
-        .legal-root {
-          min-height: 100vh;
-          background: var(--bg, #020304);
-          color: var(--text, #EDEAE3);
-          padding: 24px 20px;
-          position: relative;
-          overflow: hidden;
-        }
-        .legal-glow {
-          position: absolute; top: -200px; left: 50%; transform: translateX(-50%);
-          width: 500px; height: 500px;
-          background: radial-gradient(circle, var(--accent, #C5A059) 0%, transparent 70%);
-          opacity: 0.04; pointer-events: none;
-        }
-        .legal-container {
-          max-width: 640px; margin: 0 auto; position: relative;
-        }
-        .legal-header { margin-bottom: 32px; }
-        .legal-back {
-          display: inline-block;
-          font-size: 13px; color: var(--accent, #C5A059);
-          text-decoration: none; margin-bottom: 16px;
-          transition: opacity 0.15s;
-        }
-        .legal-back:hover { opacity: 0.8; }
-        .legal-title {
-          font-size: 24px; font-weight: 700;
-          margin: 0 0 8px; color: var(--text, #EDEAE3);
-        }
-        .legal-meta {
-          font-size: 12px; color: var(--text-secondary, #8A8378);
-          margin: 0;
-        }
-        .legal-sections { display: flex; flex-direction: column; gap: 12px; }
-        .legal-section {
-          background: var(--surface, #0A0908);
-          border: 1px solid rgba(197, 160, 89, 0.08);
-          border-radius: 12px; padding: 20px;
-        }
-        .legal-section-title {
-          font-size: 15px; font-weight: 600;
-          color: var(--text, #EDEAE3); margin: 0 0 8px;
-        }
-        .legal-section-content {
-          font-size: 13px; line-height: 1.7;
-          color: var(--text-secondary, #8A8378);
-          margin: 0; white-space: pre-line;
-        }
-        .legal-footer {
-          text-align: center; font-size: 10px; font-weight: 600;
-          letter-spacing: 0.5px; color: var(--text-tertiary, #5C5648);
-          margin-top: 40px; padding: 20px 0;
-        }
-      `}</style>
     </div>
   );
 }

@@ -1,139 +1,86 @@
-/* Nkyel AI · Privacy Policy · SmartANDJ AI Technologies
-   Politique de Confidentialité — page publique
-   Fondateur : Daniel Jonathan ANDJ */
+/**
+ * Ñkyel AI · Politique de Confidentialité & Protection des Données (RGPD & Souveraineté)
+ * SmartANDJ AI Technologies · Fondateur : Daniel Jonathan ANDJ
+ * Route : /privacy
+ */
 
-import type { Metadata } from 'next';
+'use client';
 
-export const metadata: Metadata = {
-  title: 'Confidentialité — Nkyel AI',
-  description: 'Politique de Confidentialité de Nkyel AI par SmartANDJ AI Technologies.',
-};
+import React from 'react';
+import Link from 'next/link';
+import { ArrowLeft, ShieldCheck, LockKey, Database, UserSwitch, FileText, Globe } from '@phosphor-icons/react';
 
 const SECTIONS = [
   {
-    title: '1. Responsable du Traitement',
-    content: `SmartANDJ AI Technologies, société basée à Libreville, Gabon, est responsable du traitement de vos données personnelles dans le cadre de l'utilisation de Nkyel AI.`,
+    title: '1. Responsable du Traitement & Délégué aux Données',
+    content: `SmartANDJ AI Technologies, société fondée par Daniel Jonathan ANDJ, est responsable du traitement des données personnelles collectées lors de l'utilisation de la plateforme Ñkyel AI. Contact DPO : privacy@smartandj.ai.`,
   },
   {
-    title: '2. Données Collectées',
-    content: `Nous collectons les données suivantes :\n\n• Informations d'identité : nom, adresse e-mail, photo de profil (via Clerk).\n• Données d'onboarding : nom d'affichage, date de naissance, secteur d'activité, préférences linguistiques.\n• Données d'utilisation : historique des conversations, modèles utilisés, fréquence d'utilisation.\n• Données techniques : adresse IP, type d'appareil, système d'exploitation, identifiants de session.\n• Données de paiement : traitées par nos prestataires (E-Billing, opérateurs Mobile Money). Nous ne stockons jamais les numéros de carte bancaire.`,
+    title: '2. Données Collectées & Minimalisme',
+    content: `Nous appliquons le principe de minimisation des données :\n• Identité : Nom, email et identifiant utilisateur (gérés via Clerk JWKS RS256).\n• Préférences : Paramètres de locale BCP-47, devise, timezone, thème et granularité de recherche.\n• Mémoire Souveraine (DeerMem) : Faits et préférences mémorisés sous votre contrôle strict (modifiables et supprimables à tout moment).\n• Télémétrie & Logs : Latence anonymisée, modèles interrogés (zéro contenu de prompt archivé à des fins publicitaires).`,
   },
   {
-    title: '3. Finalités du Traitement',
-    content: `Vos données sont utilisées pour :\n\n• Fournir et améliorer le Service Nkyel AI.\n• Personnaliser votre expérience (langue, modèle, préférences).\n• Gérer votre compte et vos abonnements.\n• Assurer la sécurité et prévenir les abus.\n• Si vous y consentez : entraîner et améliorer les modèles d'IA Nkyel (données anonymisées).`,
+    title: '3. Résidence des Données & Politique de Souveraineté',
+    content: `Ñkyel AI offre un contrôle granulaire de résidence des données dans les paramètres utilisateur :\n• GLOBAL : Routage optimisé vers le modèle le plus performant mondialement.\n• EU ONLY : Traitement et inférence exclusivement au sein de l'Union Européenne (Mistral AI, Scaleway, OVHcloud).\n• AFRIQUE : Traitement et inférence orientés vers la souveraineté africaine.\n• LOCAL / PRIVATE : Inférence exclusive sur cluster privé dédié (RunPod / vLLM on-premise).`,
   },
   {
-    title: '4. Base Légale du Traitement',
-    content: `• Exécution du contrat : pour fournir le Service.\n• Consentement : pour l'utilisation de vos données à des fins d'amélioration des modèles IA (opt-in uniquement, modifiable à tout moment dans les paramètres).\n• Intérêt légitime : pour la sécurité et la prévention des abus.\n• Obligation légale : pour la conformité avec les lois gabonaises.`,
+    title: '4. Vos Droits d\'Accès, de Rectification et d\'Effacement',
+    content: `Conformément aux réglementations sur la protection des données personnelles, vous disposez des droits d'accès, de rectification, de portabilité et d'effacement de l'intégralité de vos données. L'exportation de votre historique et la purge de votre mémoire s'effectuent directement depuis l'interface des paramètres.`,
   },
   {
-    title: '5. Partage des Données',
-    content: `Nous ne vendons jamais vos données personnelles. Nous pouvons partager des données avec :\n\n• Nos sous-traitants techniques (hébergement, authentification, paiement) dans le cadre strict de la fourniture du Service.\n• Les autorités compétentes en cas d'obligation légale.\n• Des tiers après anonymisation complète à des fins de recherche.`,
-  },
-  {
-    title: '6. Conservation des Données',
-    content: `• Données de compte : conservées tant que votre compte est actif, puis supprimées dans les 30 jours suivant la suppression du compte.\n• Historique de conversations : conservé tant que votre compte est actif. Vous pouvez supprimer des conversations individuellement à tout moment.\n• Données anonymisées pour l'entraînement IA : conservées indéfiniment sous forme anonymisée.`,
-  },
-  {
-    title: '7. Vos Droits',
-    content: `Conformément à la législation gabonaise et aux réglementations applicables, vous disposez des droits suivants :\n\n• Droit d'accès à vos données personnelles.\n• Droit de rectification de vos données.\n• Droit de suppression (« droit à l'oubli »).\n• Droit de retirer votre consentement à tout moment.\n• Droit à la portabilité de vos données.\n• Droit d'opposition au traitement.\n\nPour exercer ces droits, contactez-nous à privacy@nkyel.ai.`,
-  },
-  {
-    title: '8. Sécurité',
-    content: `Nous mettons en œuvre des mesures techniques et organisationnelles appropriées pour protéger vos données : chiffrement en transit (TLS) et au repos, accès restreint aux données, audits de sécurité réguliers.`,
-  },
-  {
-    title: '9. Transferts Internationaux',
-    content: `Certaines données peuvent être traitées en dehors du Gabon (hébergement cloud). Nous nous assurons que ces transferts respectent un niveau de protection adéquat.`,
-  },
-  {
-    title: '10. Modifications',
-    content: `Cette Politique peut être modifiée. Toute modification significative vous sera notifiée dans l'application.`,
-  },
-  {
-    title: 'Contact — Délégué à la Protection des Données',
-    content: `SmartANDJ AI Technologies\nLibreville, Gabon\nprivacy@nkyel.ai`,
+    title: '5. Sécurité, Isolation & Chiffrement',
+    content: `Toutes les données sont chiffrées en transit (TLS 1.3) et au repos (AES-256). Notre base de données Neon PostgreSQL applique le Row-Level Security (RLS) garantissant une étanchéité multi-tenant absolue.`,
   },
 ];
 
 export default function PrivacyPage() {
   return (
-    <div className="legal-root">
-      <div className="legal-glow" />
-      <div className="legal-container">
-        <header className="legal-header">
-          <a href="/onboarding" className="legal-back">← Retour</a>
-          <h1 className="legal-title">Politique de Confidentialité</h1>
-          <p className="legal-meta">Dernière mise à jour : Juillet 2026 · SmartANDJ AI Technologies</p>
-        </header>
+    <div className="min-h-screen bg-[#08090D] text-[#EDEDEC] p-6 md:p-12 overflow-y-auto selection:bg-[#D5AE57]/30 selection:text-white" style={{ fontFamily: 'var(--font-sans, "Geist", system-ui, sans-serif)' }}>
+      <div className="max-w-4xl mx-auto">
+        <Link
+          href="/"
+          className="inline-flex items-center gap-2 text-xs text-white/50 hover:text-white mb-8 transition-colors"
+        >
+          <ArrowLeft size={14} /> Retour à l&apos;accueil
+        </Link>
 
-        <div className="legal-sections">
-          {SECTIONS.map(s => (
-            <section key={s.title} className="legal-section">
-              <h2 className="legal-section-title">{s.title}</h2>
-              <p className="legal-section-content">{s.content}</p>
+        <div className="mb-10 pb-6 border-b border-white/[0.08]">
+          <div className="flex items-center gap-3">
+            <span className="w-12 h-12 rounded-2xl bg-[#6F9485]/15 text-[#6F9485] flex items-center justify-center border border-[#6F9485]/30">
+              <ShieldCheck size={28} weight="bold" />
+            </span>
+            <div>
+              <h1 className="text-2xl font-bold tracking-tight text-white">Politique de Confidentialité & Souveraineté</h1>
+              <p className="text-xs text-white/50 mt-1">
+                Dernière mise à jour : Août 2026 · SmartANDJ AI Technologies · Fondateur : Daniel Jonathan ANDJ
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div className="space-y-6 text-xs text-white/80 leading-relaxed">
+          {SECTIONS.map((s, idx) => (
+            <section key={idx} className="p-6 rounded-2xl bg-white/[0.02] border border-white/[0.06] space-y-2">
+              <h2 className="text-sm font-bold text-white flex items-center gap-2">
+                <LockKey size={18} className="text-[#D5AE57]" />
+                {s.title}
+              </h2>
+              <p className="text-white/70 whitespace-pre-line leading-relaxed">{s.content}</p>
             </section>
           ))}
         </div>
 
-        <footer className="legal-footer">SMARTANDJ AI TECHNOLOGIES · Nkyel AI 2026</footer>
+        <footer className="mt-12 pt-6 border-t border-white/[0.08] flex flex-col sm:flex-row items-center justify-between text-[11px] text-white/40 gap-4">
+          <p>© 2026 SmartANDJ AI Technologies · Fondateur : Daniel Jonathan ANDJ</p>
+          <div className="flex items-center gap-4">
+            <Link href="/terms" className="hover:text-white transition-colors">CGU</Link>
+            <Link href="/security" className="hover:text-white transition-colors">Sécurité</Link>
+            <Link href="/acceptable-use" className="hover:text-white transition-colors">Usage Acceptable</Link>
+            <Link href="/legal" className="hover:text-white transition-colors">Mentions Légales</Link>
+            <Link href="/cookies" className="hover:text-white transition-colors">Cookies</Link>
+          </div>
+        </footer>
       </div>
-
-      <style>{`
-        .legal-root {
-          min-height: 100vh;
-          background: var(--bg, #020304);
-          color: var(--text, #EDEAE3);
-          padding: 24px 20px;
-          position: relative;
-          overflow: hidden;
-        }
-        .legal-glow {
-          position: absolute; top: -200px; left: 50%; transform: translateX(-50%);
-          width: 500px; height: 500px;
-          background: radial-gradient(circle, var(--accent, #C5A059) 0%, transparent 70%);
-          opacity: 0.04; pointer-events: none;
-        }
-        .legal-container {
-          max-width: 640px; margin: 0 auto; position: relative;
-        }
-        .legal-header { margin-bottom: 32px; }
-        .legal-back {
-          display: inline-block;
-          font-size: 13px; color: var(--accent, #C5A059);
-          text-decoration: none; margin-bottom: 16px;
-          transition: opacity 0.15s;
-        }
-        .legal-back:hover { opacity: 0.8; }
-        .legal-title {
-          font-size: 24px; font-weight: 700;
-          margin: 0 0 8px; color: var(--text, #EDEAE3);
-        }
-        .legal-meta {
-          font-size: 12px; color: var(--text-secondary, #8A8378);
-          margin: 0;
-        }
-        .legal-sections { display: flex; flex-direction: column; gap: 12px; }
-        .legal-section {
-          background: var(--surface, #0A0908);
-          border: 1px solid rgba(197, 160, 89, 0.08);
-          border-radius: 12px; padding: 20px;
-        }
-        .legal-section-title {
-          font-size: 15px; font-weight: 600;
-          color: var(--text, #EDEAE3); margin: 0 0 8px;
-        }
-        .legal-section-content {
-          font-size: 13px; line-height: 1.7;
-          color: var(--text-secondary, #8A8378);
-          margin: 0; white-space: pre-line;
-        }
-        .legal-footer {
-          text-align: center; font-size: 10px; font-weight: 600;
-          letter-spacing: 0.5px; color: var(--text-tertiary, #5C5648);
-          margin-top: 40px; padding: 20px 0;
-        }
-      `}</style>
     </div>
   );
 }

@@ -1,9 +1,24 @@
+/**
+ * Ñkyel AI · NkyelSidebar
+ * SmartANDJ AI Technologies · Founder: Daniel Jonathan ANDJ
+ *
+ * Sovereign Navigation — 11 sections:
+ * Nouvelle mission · Conversation · Ñkyel VIE · Agents · Protocoles
+ * Connecteurs MCP · Skills · Missions planifiées · Mémoire · Espaces · Checkpoints
+ *
+ * Apple × Geist precision:
+ * — Strict 4/8px vertical rhythm
+ * — 44px minimum touch targets
+ * — Pixel-perfect icon alignment (18px optical)
+ * — Collapsed mode with tooltips
+ * — Mobile drawer with backdrop
+ */
+
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useUser } from '@clerk/nextjs';
 import {
   Plus,
   ChatCircleDots,
@@ -17,237 +32,333 @@ import {
   FolderSimpleStar,
   FloppyDisk,
   SidebarSimple,
-  Monitor,
-  Bell,
-  MagnifyingGlass,
-  CaretRight,
-  DotsThree,
+  Sparkle,
 } from '@phosphor-icons/react';
+import NkyelSeptBranchLogo from '@/components/icons/NkyelSeptBranchLogo';
 import { useSidebar } from '@/hooks/useSidebar';
-import { useIsMobile } from '@/hooks/useIsMobile';
-import { useSettingsModal } from '@/hooks/useSettingsModal';
 
-/* ── Navigation Config ─────────────────────────────────── */
-
-interface NavItemConfig {
+export interface NavItemConfig {
   id: string;
   label: string;
   href: string;
-  icon: React.ComponentType<{ size?: number; weight?: any; className?: string }>;
+  icon: React.ComponentType<any>;
   badge?: string;
+  isAction?: boolean;
 }
 
-const PRIMARY_ITEMS: NavItemConfig[] = [
+export const NAV_SECTIONS: NavItemConfig[] = [
+  { id: 'new-mission', label: 'Nouvelle mission', href: '/chat?new=true', icon: Plus, isAction: true },
+  { id: 'welcome', label: 'Accueil & Fabric', href: '/welcome', icon: Sparkle, badge: '38 IA' },
   { id: 'conversation', label: 'Conversation', href: '/chat', icon: ChatCircleDots },
+  { id: 'vie', label: 'Ñkyel VIE', href: '/workspace', icon: Graph, badge: 'Direct' },
   { id: 'agents', label: 'Agents', href: '/protocols?tab=a2a', icon: UsersThree },
   { id: 'protocols', label: 'Protocoles', href: '/protocols', icon: Cpu, badge: '8' },
-  { id: 'scheduled', label: 'Missions planifiées', href: '/scheduled', icon: CalendarCheck },
-  { id: 'memory', label: 'Mémoire Ñkyel', href: '/memory', icon: Brain },
-];
-
-const PROJECT_ITEMS: NavItemConfig[] = [
-  { id: 'spaces', label: 'Espaces', href: '/spaces', icon: FolderSimpleStar },
-];
-
-const TASK_ITEMS: NavItemConfig[] = [
-  { id: 'vie', label: 'Ñkyel VIE', href: '/workspace', icon: Graph, badge: 'Direct' },
   { id: 'mcp', label: 'Connecteurs MCP', href: '/protocols?tab=mcp', icon: PlugsConnected },
   { id: 'skills', label: 'Skills', href: '/protocols?tab=skills', icon: PuzzlePiece },
+  { id: 'scheduled', label: 'Missions planifiées', href: '/scheduled', icon: CalendarCheck },
+  { id: 'memory', label: 'Mémoire Ñkyel', href: '/memory', icon: Brain },
+  { id: 'spaces', label: 'Espaces', href: '/spaces', icon: FolderSimpleStar },
   { id: 'checkpoints', label: 'Checkpoints', href: '/workspace?view=checkpoints', icon: FloppyDisk },
 ];
 
-export const NAV_SECTIONS = [
-  { title: 'Principal', items: PRIMARY_ITEMS },
-  { title: 'Espaces', items: PROJECT_ITEMS },
-  { title: 'Tâches', items: TASK_ITEMS },
-];
-
-function initialsFor(name: string) {
-  return name.split(/\s+/).filter(Boolean).slice(0, 2).map((part) => part[0]).join('').toUpperCase() || 'N';
-}
-
-/* ── Component ─────────────────────────────────────────── */
-
 export default function NkyelSidebar() {
   const pathname = usePathname();
-  const { user } = useUser();
-  const { isCollapsed, toggleCollapse, isOpen, close } = useSidebar();
-  const isMobile = useIsMobile();
-  const openSettings = useSettingsModal((state) => state.open);
+  const { isCollapsed, toggleSidebar, isMobile, isOpen, closeMobileSidebar } = useSidebar();
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
-  const displayName = user?.fullName || user?.username || 'Utilisateur';
-  const email = user?.primaryEmailAddress?.emailAddress || 'Compte Ñkyel';
-  const initials = initialsFor(displayName);
 
-  const compact = isCollapsed && !isMobile;
+  const handleNavClick = useCallback(() => {
+    if (isMobile) closeMobileSidebar();
+  }, [isMobile, closeMobileSidebar]);
 
-  const renderItem = (item: NavItemConfig) => {
-    const Icon = item.icon;
-    const isActive = pathname === item.href.split('?')[0] || pathname.startsWith(`${item.href.split('?')[0]}/`);
-
-    return (
-      <Link
-        key={item.id}
-        href={item.href}
-        onClick={() => isMobile && close()}
-        onMouseEnter={() => setHoveredItem(item.id)}
-        onMouseLeave={() => setHoveredItem(null)}
-        className={`nkyel-nav-item ${compact ? 'justify-center px-0' : ''} ${isActive ? 'nkyel-nav-item--active' : ''}`}
-        aria-current={isActive ? 'page' : undefined}
-        title={compact ? item.label : undefined}
-        style={isActive ? {
-          background: 'var(--sidebar-active)',
-          color: 'var(--text-primary)',
-          borderColor: 'color-mix(in srgb, var(--accent-brand) 42%, transparent)',
-          boxShadow: 'inset 2px 0 0 var(--accent-brand)',
-        } : undefined}
-      >
-        <Icon
-          size={19}
-          weight={isActive ? 'fill' : 'regular'}
-          className={`nkyel-nav-icon shrink-0 ${isActive ? 'text-[var(--text-primary)]' : ''}`}
-        />
-        {!compact && (
-          <span className="nkyel-nav-label flex min-w-0 flex-1 items-center justify-between gap-3">
-            <span className="truncate">{item.label}</span>
-            {item.badge && <span className="shrink-0 text-[10px] font-mono text-[var(--text-tertiary)]">{item.badge}</span>}
-          </span>
-        )}
-        {compact && hoveredItem === item.id && (
-          <span className="nkyel-sidebar-tooltip">{item.label}</span>
-        )}
-      </Link>
-    );
-  };
-
-  const asideClass = isMobile
-    ? `nkyel-sidebar fixed inset-y-0 left-0 z-50 transition-transform duration-200 ${isOpen ? 'translate-x-0' : '-translate-x-full'}`
-    : `nkyel-sidebar relative h-full shrink-0`;
+  const sidebarW = isCollapsed ? 'var(--sidebar-collapsed)' : 'var(--sidebar-width)';
 
   return (
     <>
       {/* Mobile backdrop */}
       {isMobile && isOpen && (
-        <button
-          aria-label="Fermer la navigation"
-          onClick={close}
-          className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm"
+        <div
+          className="fixed inset-0"
+          style={{ background: 'rgba(0,0,0,0.5)', zIndex: 'var(--z-overlay)' }}
+          onClick={closeMobileSidebar}
+          aria-hidden="true"
         />
       )}
 
       <aside
-        className={asideClass}
-        data-collapsed={isCollapsed && !isMobile ? 'true' : 'false'}
+        className="h-full flex flex-col shrink-0 select-none"
+        style={{
+          width: sidebarW,
+          background: 'var(--bg)',
+          borderRight: '1px solid var(--border-subtle)',
+          zIndex: 'var(--z-sidebar)',
+          transition: `width var(--duration-slow) var(--ease-out)`,
+          ...(isMobile ? {
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            bottom: 0,
+            transform: isOpen ? 'translateX(0)' : 'translateX(-100%)',
+            width: 'var(--sidebar-width)',
+            boxShadow: isOpen ? 'var(--shadow-2xl)' : 'none',
+          } : {}),
+        }}
         aria-label="Navigation principale Ñkyel"
       >
-        {/* ── Header ────────────────────────────────────── */}
-        <div className={`nkyel-sidebar-header relative flex h-16 shrink-0 items-center ${compact ? 'justify-between px-2' : 'justify-between'}`} data-compact={compact ? 'true' : undefined}>
+        {/* ─── Header: Logo + Collapse Toggle ─── */}
+        <div
+          className="flex items-center justify-between shrink-0"
+          style={{
+            height: 'var(--header-height)',
+            paddingInline: 'var(--space-3)',
+            borderBottom: '1px solid var(--border-subtle)',
+          }}
+        >
           <Link
             href="/"
-            className="nkyel-brand-link flex min-w-0 items-center gap-2.5 rounded-lg px-1 py-1 transition-colors hover:bg-[var(--hover)]"
-            title="Ñkyel — Accueil"
+            className="flex items-center gap-3 overflow-hidden rounded-lg"
+            style={{ padding: 'var(--space-1)' }}
+            title="Ñkyel AI — Accueil"
+            onClick={handleNavClick}
           >
-            <img
-              src="/brand/nkyel-mark.svg"
-              alt=""
-              aria-hidden="true"
-              className="nkyel-brand-mark h-8 w-8 shrink-0 object-contain"
-            />
-            {!compact && (
-              <span className="truncate text-[20px] font-semibold tracking-[-0.035em] text-[var(--text-primary)]">
-                Ñkyel
-              </span>
+            <NkyelSeptBranchLogo size={28} />
+            {!isCollapsed && (
+              <div className="flex flex-col min-w-0">
+                <span
+                  className="font-semibold truncate flex items-center gap-2"
+                  style={{ fontSize: 'var(--text-base)', color: 'var(--fg)', letterSpacing: '-0.01em' }}
+                >
+                  Ñkyel AI
+                  <span
+                    className="font-mono"
+                    style={{
+                      fontSize: '9px',
+                      padding: '1px 6px',
+                      borderRadius: 'var(--radius-xs)',
+                      background: 'var(--accent-subtle)',
+                      color: 'var(--accent)',
+                      border: '1px solid var(--accent-muted)',
+                      letterSpacing: 'var(--tracking-wider)',
+                      textTransform: 'uppercase',
+                      fontWeight: 600,
+                    }}
+                  >
+                    PRO
+                  </span>
+                </span>
+                <span
+                  className="truncate"
+                  style={{ fontSize: '10px', color: 'var(--fg-subtle)', fontFamily: 'var(--font-mono)' }}
+                >
+                  SmartANDJ AI
+                </span>
+              </div>
             )}
           </Link>
-
-          {!compact && !isMobile && (
-            <button
-              type="button"
-              aria-label="Rechercher"
-              className="absolute left-1/2 top-1/2 flex h-9 w-9 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-lg text-[var(--text-tertiary)] transition-colors hover:bg-[var(--hover)] hover:text-[var(--text-primary)]"
-            >
-              <MagnifyingGlass size={21} weight="regular" />
-            </button>
-          )}
 
           {!isMobile && (
             <button
               type="button"
-              onClick={toggleCollapse}
+              onClick={toggleSidebar}
+              className="flex items-center justify-center rounded-lg"
+              style={{
+                width: 32,
+                height: 32,
+                color: 'var(--fg-subtle)',
+                transition: `all var(--transition-fast)`,
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.color = 'var(--fg)';
+                e.currentTarget.style.background = 'var(--accent-subtle)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.color = 'var(--fg-subtle)';
+                e.currentTarget.style.background = 'transparent';
+              }}
+              title={isCollapsed ? 'Développer la navigation' : 'Réduire la navigation'}
               aria-label={isCollapsed ? 'Développer' : 'Réduire'}
-              title={isCollapsed ? 'Développer' : 'Réduire'}
-              className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-[var(--border-strong)] bg-[var(--surface-raised)] text-[var(--text-secondary)] shadow-sm transition-colors hover:bg-[var(--active)] hover:text-[var(--text-primary)]"
             >
               <SidebarSimple size={18} weight={isCollapsed ? 'regular' : 'fill'} />
             </button>
           )}
         </div>
 
-        {/* ── New Mission ───────────────────────────────── */}
-        <div className={compact ? 'px-3 py-3' : 'px-4 py-3'}>
+        {/* ─── New Mission Button ─── */}
+        <div style={{ padding: 'var(--space-3)' }}>
           <Link
             href="/chat?new=true"
-            onClick={() => isMobile && close()}
-            className={`nkyel-new-mission group ${compact ? 'justify-center px-0' : 'gap-4 px-4 bg-[var(--surface-raised)]'}`}
-            title="Nouvelle mission"
+            className="group flex items-center gap-2 w-full font-medium"
+            style={{
+              borderRadius: 'var(--radius-md)',
+              padding: isCollapsed ? 'var(--space-3)' : '10px var(--space-3)',
+              fontSize: 'var(--text-sm)',
+              justifyContent: isCollapsed ? 'center' : 'flex-start',
+              background: 'var(--accent)',
+              color: 'var(--accent-fg)',
+              transition: `all var(--transition-fast)`,
+            }}
+            title="Lancer une nouvelle mission"
+            onClick={handleNavClick}
+            onMouseEnter={(e) => { e.currentTarget.style.opacity = '0.9'; }}
+            onMouseLeave={(e) => { e.currentTarget.style.opacity = '1'; }}
           >
-            <Plus size={19} weight="regular" className="nkyel-nav-icon shrink-0 transition-transform duration-200 group-hover:rotate-90" />
-            {!compact && <span>Nouvelle mission</span>}
+            <Plus size={16} weight="bold" className="shrink-0" />
+            {!isCollapsed && <span className="truncate">Nouvelle mission</span>}
           </Link>
         </div>
 
-        {/* ── Navigation ────────────────────────────────── */}
-        <div className={`nkyel-sidebar-nav flex-1 overflow-y-auto pb-3 ${compact ? 'px-3' : 'px-3'} no-scrollbar`}>
-          <div className="space-y-1">{PRIMARY_ITEMS.map((item) => renderItem(item))}</div>
+        {/* ─── Navigation Items ─── */}
+        <nav
+          className="flex-1 overflow-y-auto scrollbar-thin"
+          style={{ paddingInline: 'var(--space-2)', paddingBlock: 'var(--space-1)' }}
+        >
+          <div className="flex flex-col" style={{ gap: '2px' }}>
+            {NAV_SECTIONS.slice(1).map((item) => {
+              const Icon = item.icon;
+              const basePath = item.href.split('?')[0];
+              const isActive = pathname === basePath || (basePath !== '/' && pathname.startsWith(basePath));
 
-          <div className="my-3 border-t border-[var(--border-subtle)]" />
+              return (
+                <Link
+                  key={item.id}
+                  href={item.href}
+                  onMouseEnter={() => setHoveredItem(item.id)}
+                  onMouseLeave={() => setHoveredItem(null)}
+                  onClick={handleNavClick}
+                  className="group relative flex items-center font-medium"
+                  style={{
+                    gap: 'var(--space-3)',
+                    paddingInline: 'var(--space-3)',
+                    minHeight: 40,
+                    borderRadius: 'var(--radius-md)',
+                    fontSize: 'var(--text-sm)',
+                    justifyContent: isCollapsed ? 'center' : 'flex-start',
+                    color: isActive ? 'var(--fg)' : 'var(--fg-muted)',
+                    background: isActive ? 'var(--surface-raised)' : 'transparent',
+                    transition: `all var(--transition-fast)`,
+                  }}
+                  onMouseEnter={(e) => {
+                    if (!isActive) {
+                      e.currentTarget.style.background = 'var(--accent-subtle)';
+                      e.currentTarget.style.color = 'var(--fg)';
+                    }
+                    setHoveredItem(item.id);
+                  }}
+                  onMouseLeave={(e) => {
+                    if (!isActive) {
+                      e.currentTarget.style.background = 'transparent';
+                      e.currentTarget.style.color = 'var(--fg-muted)';
+                    }
+                    setHoveredItem(null);
+                  }}
+                  title={isCollapsed ? item.label : undefined}
+                >
+                  <Icon
+                    size={18}
+                    weight={isActive ? 'fill' : 'regular'}
+                    className="shrink-0"
+                    style={{
+                      color: isActive ? 'var(--accent)' : 'var(--fg-subtle)',
+                      transition: `color var(--transition-fast)`,
+                    }}
+                  />
 
-          {!compact && (
-            <div className="nkyel-nav-section-title mb-2 px-1">Espaces</div>
-          )}
-          <div className="space-y-1">{PROJECT_ITEMS.map((item) => renderItem(item))}</div>
+                  {!isCollapsed && (
+                    <div className="flex-1 flex items-center justify-between min-w-0">
+                      <span className="truncate">{item.label}</span>
+                      {item.badge && (
+                        <span
+                          className="font-mono"
+                          style={{
+                            fontSize: '10px',
+                            padding: '1px 6px',
+                            borderRadius: 'var(--radius-pill)',
+                            background: 'var(--accent-subtle)',
+                            color: 'var(--fg-muted)',
+                            border: '1px solid var(--border-subtle)',
+                            fontWeight: 500,
+                          }}
+                        >
+                          {item.badge}
+                        </span>
+                      )}
+                    </div>
+                  )}
 
-          {!compact && (
-            <div className="mb-2 mt-4 flex items-center justify-between px-1">
-              <span className="nkyel-nav-section-title">Tâches</span>
-              <CaretRight size={15} className="rotate-90 text-[var(--text-tertiary)]" />
-            </div>
-          )}
-          <div className="space-y-1">{TASK_ITEMS.map((item) => renderItem(item))}</div>
-        </div>
+                  {/* Tooltip for collapsed mode */}
+                  {isCollapsed && hoveredItem === item.id && (
+                    <div
+                      className="absolute whitespace-nowrap"
+                      style={{
+                        left: 'calc(var(--sidebar-collapsed) + 8px)',
+                        top: '50%',
+                        transform: 'translateY(-50%)',
+                        zIndex: 'var(--z-dropdown)',
+                        padding: '4px 10px',
+                        borderRadius: 'var(--radius-sm)',
+                        background: 'var(--surface-raised)',
+                        border: '1px solid var(--border-default)',
+                        color: 'var(--fg)',
+                        fontSize: 'var(--text-xs)',
+                        boxShadow: 'var(--shadow-md)',
+                        pointerEvents: 'none',
+                      }}
+                    >
+                      {item.label}
+                    </div>
+                  )}
+                </Link>
+              );
+            })}
+          </div>
+        </nav>
 
-        {/* ── Footer ────────────────────────────────────── */}
-        <div className={`nkyel-sidebar-footer shrink-0 ${compact ? 'px-3 py-4' : 'px-4 py-3'}`}>
-          <div className={compact ? 'flex flex-col items-center gap-4' : 'flex items-center gap-2'}>
-            {/* Avatar */}
-            <div className={`${compact ? 'order-3' : 'order-1'} flex h-[34px] w-[34px] shrink-0 items-center justify-center overflow-hidden rounded-full border border-[var(--border-strong)] bg-[var(--surface-raised)] text-[12px] font-semibold text-[var(--text-primary)]`}>
-              {user?.imageUrl
-                ? <img src={user.imageUrl} alt={displayName} className="h-full w-full object-cover" />
-                : initials
-              }
-            </div>
-
-            {/* User info */}
-            {!compact && (
-              <div className="order-2 min-w-0 flex-1">
-                <p className="truncate text-[13px] font-semibold text-[var(--text-primary)]">{displayName}</p>
-                <p className="truncate text-[10.5px] text-[var(--text-tertiary)]">{email}</p>
+        {/* ─── Footer: Protocol Status ─── */}
+        <div
+          className="shrink-0"
+          style={{
+            padding: 'var(--space-3)',
+            borderTop: '1px solid var(--border-subtle)',
+          }}
+        >
+          <Link
+            href="/protocols"
+            className="flex items-center gap-2 rounded-lg"
+            style={{
+              padding: '8px var(--space-3)',
+              fontSize: 'var(--text-xs)',
+              color: 'var(--fg-subtle)',
+              transition: `all var(--transition-fast)`,
+              minHeight: 36,
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = 'var(--accent-subtle)';
+              e.currentTarget.style.color = 'var(--fg-muted)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = 'transparent';
+              e.currentTarget.style.color = 'var(--fg-subtle)';
+            }}
+            title="Observatoire des Protocoles"
+          >
+            <Cpu size={16} className="shrink-0" style={{ color: 'var(--hue-success)' }} />
+            {!isCollapsed && (
+              <div className="flex items-center justify-between w-full min-w-0">
+                <span className="truncate" style={{ fontFamily: 'var(--font-mono)', fontSize: '11px' }}>
+                  8 Protocoles OK
+                </span>
+                <span
+                  className="animate-breathe"
+                  style={{
+                    width: 6,
+                    height: 6,
+                    borderRadius: 'var(--radius-pill)',
+                    background: 'var(--hue-success)',
+                    flexShrink: 0,
+                  }}
+                />
               </div>
             )}
-
-            {/* Actions */}
-            <button type="button" aria-label="Ñkyel Bureau" className={`${compact ? 'order-1' : 'order-3'} text-[var(--text-secondary)] transition-colors hover:text-[var(--text-primary)]`}>
-              <Monitor size={19} />
-            </button>
-            <button type="button" aria-label="Notifications" className={`${compact ? 'order-2' : 'order-4'} text-[var(--text-secondary)] transition-colors hover:text-[var(--text-primary)]`}>
-              <Bell size={19} />
-            </button>
-            {!compact && (
-              <button type="button" onClick={openSettings} aria-label="Ouvrir les paramètres" title="Ouvrir les paramètres" className="order-5 text-[var(--text-tertiary)] transition-colors hover:text-[var(--text-primary)]">
-                <DotsThree size={20} />
-              </button>
-            )}
-          </div>
+          </Link>
         </div>
       </aside>
     </>

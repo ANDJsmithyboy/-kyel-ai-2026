@@ -32,6 +32,7 @@ import {
   FolderSimpleStar,
   FloppyDisk,
   SidebarSimple,
+  Sparkle,
 } from '@phosphor-icons/react';
 import NkyelSeptBranchLogo from '@/components/icons/NkyelSeptBranchLogo';
 import { useSidebar } from '@/hooks/useSidebar';
@@ -47,6 +48,7 @@ export interface NavItemConfig {
 
 export const NAV_SECTIONS: NavItemConfig[] = [
   { id: 'new-mission', label: 'Nouvelle mission', href: '/chat?new=true', icon: Plus, isAction: true },
+  { id: 'welcome', label: 'Accueil & Fabric', href: '/welcome', icon: Sparkle, badge: '38 IA' },
   { id: 'conversation', label: 'Conversation', href: '/chat', icon: ChatCircleDots },
   { id: 'vie', label: 'Ñkyel VIE', href: '/workspace', icon: Graph, badge: 'Direct' },
   { id: 'agents', label: 'Agents', href: '/protocols?tab=a2a', icon: UsersThree },

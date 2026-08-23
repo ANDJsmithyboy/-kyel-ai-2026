@@ -1,139 +1,98 @@
-/* Nkyel AI · Terms of Service · SmartANDJ AI Technologies
-   Conditions Générales d'Utilisation — page publique
-   Fondateur : Daniel Jonathan ANDJ */
+/**
+ * Ñkyel AI · Conditions Générales d'Utilisation (CGU)
+ * SmartANDJ AI Technologies · Fondateur : Daniel Jonathan ANDJ
+ * Route : /terms
+ */
 
-import type { Metadata } from 'next';
+'use client';
 
-export const metadata: Metadata = {
-  title: 'CGU — Nkyel AI',
-  description: 'Conditions Générales d\'Utilisation de Nkyel AI par SmartANDJ AI Technologies.',
-};
+import React from 'react';
+import Link from 'next/link';
+import { ArrowLeft, FileText, Scales, ShieldCheck, UserCheck, CreditCard, LockKey } from '@phosphor-icons/react';
 
 const SECTIONS = [
   {
     title: '1. Acceptation des Conditions',
-    content: `En accédant à Nkyel AI ou en l'utilisant, vous acceptez d'être lié par les présentes Conditions Générales d'Utilisation (« CGU »). Si vous n'acceptez pas ces CGU, veuillez ne pas utiliser le Service. Nkyel AI est édité par SmartANDJ AI Technologies, société enregistrée au Gabon, fondée par Daniel Jonathan ANDJ.`,
+    content: `En accédant à Ñkyel AI ou en l'utilisant, vous acceptez d'être lié par les présentes Conditions Générales d'Utilisation (« CGU »). Si vous n'acceptez pas ces CGU, veuillez ne pas utiliser le Service. Ñkyel AI est édité par SmartANDJ AI Technologies, société enregistrée au Gabon, fondée par Daniel Jonathan ANDJ.`,
   },
   {
-    title: '2. Description du Service',
-    content: `Nkyel AI est une plateforme d'intelligence artificielle conversationnelle et agentique offrant des fonctionnalités de chat, recherche, génération de contenu, et exécution de tâches autonomes. Le Service est disponible via application mobile (Android) et application web.`,
+    title: '2. Description du Service & Architecture Fabric',
+    content: `Ñkyel AI est une plateforme d'intelligence artificielle universelle et souveraine opérant sur une architecture agnostique mondiale (38 fournisseurs d'inférence). Elle propose des capacités d'agent autonome (WorkGraph), de conversation multimodale, de génération d'artefacts (VIE Canvas) et de mémoire persistante (DeerMem).`,
   },
   {
-    title: '3. Inscription et Compte',
-    content: `Pour utiliser Nkyel AI, vous devez créer un compte en fournissant des informations exactes. Vous êtes responsable de la sécurité de votre compte et de toutes les activités qui s'y déroulent. Vous devez avoir au moins 16 ans pour utiliser le Service.`,
+    title: '3. Inscription, Authentification & Sécurité',
+    content: `L'accès à Ñkyel AI s'effectue via authentification sécurisée Clerk (JWKS RS256). Vous êtes responsable de la confidentialité de vos identifiants et de toutes les activités effectuées depuis votre compte. L'âge minimal requis pour utiliser la plateforme est de 16 ans.`,
   },
   {
-    title: '4. Utilisation Acceptable',
-    content: `Vous vous engagez à utiliser Nkyel AI de manière responsable et conforme à la loi gabonaise et aux lois applicables de votre pays de résidence. Toute utilisation abusive, frauduleuse, ou contraire à notre Politique d'Utilisation Acceptable est interdite et peut entraîner la suspension ou la suppression de votre compte.`,
+    title: '4. Propriété des Entrées et des Livrables',
+    content: `Vous conservez l'entière propriété intellectuelle des prompts, documents et instructions que vous soumettez à Ñkyel AI, ainsi que des artefacts de code et contenus générés par l'IA pour votre compte, sous réserve du respect des droits de tiers. L'infrastructure, le code source et les marques restent la propriété exclusive de SmartANDJ AI Technologies.`,
   },
   {
-    title: '5. Propriété Intellectuelle',
-    content: `Le contenu que vous générez via Nkyel AI vous appartient, sous réserve des droits préexistants des tiers. L'interface, le code source, les modèles d'IA, les marques, logos et le design de Nkyel AI restent la propriété exclusive de SmartANDJ AI Technologies.`,
+    title: '5. Abonnements, Crédits & Paiements',
+    content: `Ñkyel AI propose des formules d'accès et des forfaits de crédits. Les règlements s'effectuent par Mobile Money (Airtel Money, Moov Money), virement bancaire ou carte bancaire via nos prestataires agréés. Les forfaits et crédits consommés ne sont pas remboursables une fois la puissance de calcul mobilisée.`,
   },
   {
-    title: '6. Abonnements et Paiements',
-    content: `Nkyel AI propose des formules gratuites et payantes. Les paiements sont effectués via Mobile Money (Airtel Money, Moov Money), E-Billing, ou carte bancaire sur notre plateforme web. Les abonnements se renouvellent automatiquement sauf annulation. Les remboursements sont accordés conformément à la législation gabonaise en vigueur.`,
+    title: '6. Limitation de Responsabilité & IA',
+    content: `Ñkyel AI est fourni « en l'état ». Les réponses générées par les modèles d'IA sont fournies à titre indicatif et ne se substituent pas à un avis médical, juridique ou financier certifié. La responsabilité de SmartANDJ AI Technologies est plafonnée aux montants versés au cours des 12 derniers mois.`,
   },
   {
-    title: '7. Limitation de Responsabilité',
-    content: `Nkyel AI est fourni « en l'état ». SmartANDJ AI Technologies ne garantit pas que les réponses générées par l'IA soient exactes, complètes ou adaptées à un usage spécifique. Vous êtes responsable de vérifier les informations fournies. La responsabilité de SmartANDJ AI Technologies est limitée au montant que vous avez payé pour le Service au cours des 12 derniers mois.`,
+    title: '7. Résiliation & Suppression de Compte',
+    content: `Vous pouvez demander la suppression immédiate de votre compte et de toutes vos données associées à tout moment via les paramètres ou par email à privacy@smartandj.ai.`,
   },
   {
-    title: '8. Résiliation',
-    content: `Vous pouvez supprimer votre compte à tout moment depuis les paramètres de l'application. SmartANDJ AI Technologies se réserve le droit de suspendre ou supprimer votre compte en cas de violation des CGU, avec notification préalable sauf en cas d'urgence.`,
-  },
-  {
-    title: '9. Modifications des CGU',
-    content: `SmartANDJ AI Technologies peut modifier ces CGU à tout moment. Les modifications significatives seront communiquées par notification dans l'application. La poursuite de l'utilisation du Service après notification vaut acceptation des nouvelles CGU.`,
-  },
-  {
-    title: '10. Droit Applicable',
-    content: `Les présentes CGU sont régies par le droit gabonais. Tout litige sera soumis à la compétence exclusive des tribunaux de Libreville, Gabon.`,
-  },
-  {
-    title: 'Contact',
-    content: `SmartANDJ AI Technologies\nLibreville, Gabon\ncontact@nkyel.ai`,
+    title: '8. Droit Applicable & Juridiction',
+    content: `Les présentes CGU sont soumises au droit applicable. Tout litige relatif à leur interprétation relève de la compétence exclusive des tribunaux compétents de Libreville, Gabon.`,
   },
 ];
 
 export default function TermsPage() {
   return (
-    <div className="legal-root">
-      <div className="legal-glow" />
-      <div className="legal-container">
-        <header className="legal-header">
-          <a href="/onboarding" className="legal-back">← Retour</a>
-          <h1 className="legal-title">Conditions Générales d&apos;Utilisation</h1>
-          <p className="legal-meta">Dernière mise à jour : Juillet 2026 · SmartANDJ AI Technologies</p>
-        </header>
+    <div className="min-h-screen bg-[#08090D] text-[#EDEDEC] p-6 md:p-12 overflow-y-auto selection:bg-[#D5AE57]/30 selection:text-white" style={{ fontFamily: 'var(--font-sans, "Geist", system-ui, sans-serif)' }}>
+      <div className="max-w-4xl mx-auto">
+        <Link
+          href="/"
+          className="inline-flex items-center gap-2 text-xs text-white/50 hover:text-white mb-8 transition-colors"
+        >
+          <ArrowLeft size={14} /> Retour à l&apos;accueil
+        </Link>
 
-        <div className="legal-sections">
-          {SECTIONS.map(s => (
-            <section key={s.title} className="legal-section">
-              <h2 className="legal-section-title">{s.title}</h2>
-              <p className="legal-section-content">{s.content}</p>
+        <div className="mb-10 pb-6 border-b border-white/[0.08]">
+          <div className="flex items-center gap-3">
+            <span className="w-12 h-12 rounded-2xl bg-[#D5AE57]/15 text-[#D5AE57] flex items-center justify-center border border-[#D5AE57]/30">
+              <FileText size={28} weight="bold" />
+            </span>
+            <div>
+              <h1 className="text-2xl font-bold tracking-tight text-white">Conditions Générales d&apos;Utilisation (CGU)</h1>
+              <p className="text-xs text-white/50 mt-1">
+                Dernière mise à jour : Août 2026 · SmartANDJ AI Technologies · Fondateur : Daniel Jonathan ANDJ
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div className="space-y-6 text-xs text-white/80 leading-relaxed">
+          {SECTIONS.map((s, idx) => (
+            <section key={idx} className="p-6 rounded-2xl bg-white/[0.02] border border-white/[0.06] space-y-2">
+              <h2 className="text-sm font-bold text-white flex items-center gap-2">
+                <Scales size={18} className="text-[#D5AE57]" />
+                {s.title}
+              </h2>
+              <p className="text-white/70 whitespace-pre-line leading-relaxed">{s.content}</p>
             </section>
           ))}
         </div>
 
-        <footer className="legal-footer">SMARTANDJ AI TECHNOLOGIES · Nkyel AI 2026</footer>
+        <footer className="mt-12 pt-6 border-t border-white/[0.08] flex flex-col sm:flex-row items-center justify-between text-[11px] text-white/40 gap-4">
+          <p>© 2026 SmartANDJ AI Technologies · Fondateur : Daniel Jonathan ANDJ</p>
+          <div className="flex items-center gap-4">
+            <Link href="/privacy" className="hover:text-white transition-colors">Confidentialité</Link>
+            <Link href="/security" className="hover:text-white transition-colors">Sécurité</Link>
+            <Link href="/acceptable-use" className="hover:text-white transition-colors">Usage Acceptable</Link>
+            <Link href="/legal" className="hover:text-white transition-colors">Mentions Légales</Link>
+            <Link href="/cookies" className="hover:text-white transition-colors">Cookies</Link>
+          </div>
+        </footer>
       </div>
-
-      <style>{`
-        .legal-root {
-          min-height: 100vh;
-          background: var(--bg, #020304);
-          color: var(--text, #EDEAE3);
-          padding: 24px 20px;
-          position: relative;
-          overflow: hidden;
-        }
-        .legal-glow {
-          position: absolute; top: -200px; left: 50%; transform: translateX(-50%);
-          width: 500px; height: 500px;
-          background: radial-gradient(circle, var(--accent, #C5A059) 0%, transparent 70%);
-          opacity: 0.04; pointer-events: none;
-        }
-        .legal-container {
-          max-width: 640px; margin: 0 auto; position: relative;
-        }
-        .legal-header { margin-bottom: 32px; }
-        .legal-back {
-          display: inline-block;
-          font-size: 13px; color: var(--accent, #C5A059);
-          text-decoration: none; margin-bottom: 16px;
-          transition: opacity 0.15s;
-        }
-        .legal-back:hover { opacity: 0.8; }
-        .legal-title {
-          font-size: 24px; font-weight: 700;
-          margin: 0 0 8px; color: var(--text, #EDEAE3);
-        }
-        .legal-meta {
-          font-size: 12px; color: var(--text-secondary, #8A8378);
-          margin: 0;
-        }
-        .legal-sections { display: flex; flex-direction: column; gap: 12px; }
-        .legal-section {
-          background: var(--surface, #0A0908);
-          border: 1px solid rgba(197, 160, 89, 0.08);
-          border-radius: 12px; padding: 20px;
-        }
-        .legal-section-title {
-          font-size: 15px; font-weight: 600;
-          color: var(--text, #EDEAE3); margin: 0 0 8px;
-        }
-        .legal-section-content {
-          font-size: 13px; line-height: 1.7;
-          color: var(--text-secondary, #8A8378);
-          margin: 0; white-space: pre-line;
-        }
-        .legal-footer {
-          text-align: center; font-size: 10px; font-weight: 600;
-          letter-spacing: 0.5px; color: var(--text-tertiary, #5C5648);
-          margin-top: 40px; padding: 20px 0;
-        }
-      `}</style>
     </div>
   );
 }
