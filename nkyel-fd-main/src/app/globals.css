@@ -135,6 +135,63 @@ code, pre, kbd, samp {
 .no-scrollbar::-webkit-scrollbar { display: none; }
 
 /* ═══════════════════════════════════════════════════════
+   GLASSMORPHISM 2.0 & LUXURY MATERIAL SYSTEM (Apple × Geist)
+   ═══════════════════════════════════════════════════════ */
+
+.glass-subtle {
+  background: var(--bg-glass);
+  backdrop-filter: blur(14px) saturate(160%);
+  -webkit-backdrop-filter: blur(14px) saturate(160%);
+  border: 1px solid var(--glass-border);
+  box-shadow: inset 0 1px 0 var(--glass-highlight), var(--shadow-xs);
+}
+
+.glass-standard {
+  background: var(--surface-overlay);
+  backdrop-filter: blur(20px) saturate(170%);
+  -webkit-backdrop-filter: blur(20px) saturate(170%);
+  border: 1px solid var(--glass-border);
+  box-shadow: inset 0 1px 0 var(--glass-highlight), var(--shadow-sm);
+}
+
+.glass-elevated {
+  background: var(--surface-overlay);
+  backdrop-filter: blur(28px) saturate(180%);
+  -webkit-backdrop-filter: blur(28px) saturate(180%);
+  border: 1px solid var(--border-strong);
+  box-shadow: inset 0 1px 0 var(--glass-highlight), var(--shadow-lg);
+}
+
+.glass-floating {
+  background: var(--surface-overlay);
+  backdrop-filter: blur(32px) saturate(190%);
+  -webkit-backdrop-filter: blur(32px) saturate(190%);
+  border: 1px solid var(--border-strong);
+  box-shadow: inset 0 1px 0 var(--glass-highlight), var(--shadow-xl);
+}
+
+.glass-modal {
+  background: var(--surface-overlay);
+  backdrop-filter: blur(40px) saturate(200%);
+  -webkit-backdrop-filter: blur(40px) saturate(200%);
+  border: 1px solid var(--border-strong);
+  box-shadow: inset 0 1px 0 var(--glass-highlight), var(--shadow-xl);
+}
+
+/* ── Crisp High Contrast Utilities ── */
+.text-high-contrast {
+  color: var(--text-primary) !important;
+}
+
+.text-subtle-contrast {
+  color: var(--text-secondary) !important;
+}
+
+.text-muted-contrast {
+  color: var(--text-tertiary) !important;
+}
+
+/* ═══════════════════════════════════════════════════════
    SHELL LAYOUT — App Shell
    ═══════════════════════════════════════════════════════ */
 
@@ -407,9 +464,9 @@ code, pre, kbd, samp {
   border: 1px solid var(--composer-border);
   background: var(--composer-bg);
   padding: var(--space-3) 0;
-  box-shadow: var(--shadow-lg);
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
+  box-shadow: inset 0 1px 0 var(--glass-highlight), var(--shadow-composer);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
   transition: border-color var(--transition-base), box-shadow var(--transition-base);
 }
 
@@ -419,7 +476,7 @@ code, pre, kbd, samp {
 
 .nkyel-composer-card:focus-within {
   border-color: var(--border-strong);
-  box-shadow: var(--shadow-xl);
+  box-shadow: inset 0 1px 0 var(--glass-highlight), 0 8px 32px rgba(0, 0, 0, 0.45);
 }
 
 .nkyel-composer-input {
@@ -442,7 +499,8 @@ code, pre, kbd, samp {
 }
 
 .nkyel-composer-textarea::placeholder {
-  color: var(--text-tertiary);
+  color: var(--text-secondary);
+  opacity: 0.75;
 }
 
 .nkyel-composer-toolbar {
@@ -464,7 +522,7 @@ code, pre, kbd, samp {
    ═══════════════════════════════════════════════════════ */
 
 .nkyel-home-stage {
-  padding: 20vh var(--space-6) var(--space-8);
+  padding: 16vh var(--space-6) var(--space-8);
 }
 
 .nkyel-home-column {
@@ -488,9 +546,9 @@ code, pre, kbd, samp {
   margin: 0;
   text-align: center;
   font-family: var(--font-sans);
-  font-size: clamp(36px, 3.6vw, 48px);
-  line-height: 1.08;
-  letter-spacing: -0.04em;
+  font-size: clamp(34px, 3.5vw, 46px);
+  line-height: 1.1;
+  letter-spacing: -0.035em;
   font-weight: 600;
   color: var(--text-primary);
 }
@@ -512,25 +570,26 @@ code, pre, kbd, samp {
 .nkyel-quick-actions::-webkit-scrollbar { display: none; }
 
 .nkyel-quick-pill {
-  height: 40px;
+  height: 38px;
   flex-shrink: 0;
   display: flex;
   align-items: center;
   gap: var(--space-2);
   border-radius: var(--radius-pill);
   border: 1px solid var(--border);
-  background: transparent;
-  padding: 7px 14px;
+  background: var(--surface);
+  padding: 6px 14px;
   font-size: var(--text-base);
-  font-weight: 400;
+  font-weight: 450;
   color: var(--text-secondary);
+  box-shadow: inset 0 1px 0 var(--glass-highlight), var(--shadow-xs);
   transition: all var(--transition-base);
   cursor: pointer;
 }
 
 .nkyel-quick-pill:hover {
   border-color: var(--border-strong);
-  background: var(--hover);
+  background: var(--surface-raised);
   color: var(--text-primary);
 }
 
@@ -566,6 +625,7 @@ code, pre, kbd, samp {
   color: var(--text-secondary);
   font-size: var(--text-xs);
   font-weight: 600;
+  box-shadow: inset 0 1px 0 var(--glass-highlight);
 }
 
 .nkyel-message-column {
@@ -592,9 +652,10 @@ code, pre, kbd, samp {
 .nkyel-user-message .nkyel-message-user-surface {
   max-width: var(--user-msg-max-width);
   background: var(--surface-raised);
-  border: 1px solid var(--border-subtle);
+  border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   padding: var(--space-3) var(--space-4);
+  box-shadow: inset 0 1px 0 var(--glass-highlight), var(--shadow-xs);
 }
 
 /* Assistant message */
@@ -611,7 +672,7 @@ code, pre, kbd, samp {
 .nkyel-message-kind {
   font-size: var(--text-xs);
   font-weight: 500;
-  color: var(--text-tertiary);
+  color: var(--text-secondary);
   letter-spacing: var(--tracking-wide);
   text-transform: uppercase;
 }

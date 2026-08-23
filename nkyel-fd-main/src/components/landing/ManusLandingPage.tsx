@@ -235,7 +235,7 @@ export default function ManusLandingPage() {
             initial={{ opacity: 0, scale: 0.98, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             transition={{ delay: 0.3 }}
-            className="w-full max-w-3xl mx-auto p-3 sm:p-4 rounded-3xl border border-white/10 bg-[#0C0E14]/90 backdrop-blur-2xl shadow-[0_25px_60px_rgba(0,0,0,0.7)] space-y-3.5 text-left"
+            className="w-full max-w-3xl mx-auto p-3.5 sm:p-5 rounded-3xl border border-white/[0.12] bg-[#0A0C14]/95 backdrop-blur-3xl shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_30px_90px_rgba(0,0,0,0.8)] space-y-4 text-left"
           >
             <div className="relative">
               <textarea
@@ -243,7 +243,7 @@ export default function ManusLandingPage() {
                 value={promptText}
                 onChange={(e) => setPromptText(e.target.value)}
                 placeholder="Décrivez votre mission complexe à Ñkyel (développement fullstack, analyse d'un PDF de 500 pages avec Gemini 2M, recherche arborescente, rendu visuel...)"
-                className="w-full p-3 bg-transparent text-sm text-white placeholder-white/40 focus:outline-none resize-none"
+                className="w-full p-3 bg-transparent text-sm text-white placeholder-white/50 focus:outline-none resize-none leading-relaxed font-sans"
               />
             </div>
 
