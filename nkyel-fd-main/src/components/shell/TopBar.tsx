@@ -9,6 +9,8 @@ import {
   ChartBar,
   FileText,
   DotsThree,
+  MagnifyingGlass,
+  Command,
 } from '@phosphor-icons/react';
 import { useSidebar } from '@/hooks/useSidebar';
 import { useTerrainPanel } from '@/hooks/useTerrainPanel';
@@ -83,6 +85,22 @@ export default function TopBar({ onOpenCapabilities }: TopBarProps) {
         </div>
 
         <div className="nkyel-topbar-actions">
+          {/* Universal Command Palette Trigger */}
+          <button
+            type="button"
+            onClick={() => {
+              window.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', metaKey: true, bubbles: true }));
+            }}
+            className="flex h-8 items-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--surface-raised)] px-2.5 text-xs text-[var(--text-secondary)] transition-colors hover:border-[var(--accent-muted)] hover:text-[var(--text-primary)]"
+            title="Ouvrir la Command Palette (⌘K / Ctrl+K)"
+          >
+            <MagnifyingGlass size={14} className="text-[#D5AE57]" />
+            <span className="hidden sm:inline text-[11px]">Commandes</span>
+            <kbd className="hidden sm:inline-block px-1.5 py-0.5 rounded bg-white/10 text-[9px] font-mono text-[var(--text-tertiary)]">
+              ⌘K
+            </kbd>
+          </button>
+
           <button type="button" onClick={() => setIsUpgradeOpen(true)} className="hidden h-8 items-center gap-2 rounded-lg bg-[var(--hover)] px-3 font-medium text-[var(--text-secondary)] transition-colors hover:bg-[var(--active)] lg:flex">
             <Sparkle size={15} weight="regular" /> Mise à niveau
           </button>

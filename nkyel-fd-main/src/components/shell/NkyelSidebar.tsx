@@ -34,7 +34,16 @@ import {
   SidebarSimple,
   Sparkle,
   ShieldCheck,
+  DotsThreeVertical,
+  User,
+  Gear,
+  CreditCard,
+  Question,
+  SignOut,
+  Command,
+  Crown,
 } from '@phosphor-icons/react';
+import { useUser, SignOutButton } from '@clerk/nextjs';
 import { useSidebar } from '@/hooks/useSidebar';
 
 export interface NavItemConfig {
@@ -64,8 +73,20 @@ export const NAV_SECTIONS: NavItemConfig[] = [
 
 export default function NkyelSidebar() {
   const pathname = usePathname();
+  const { user } = useUser();
   const { isCollapsed, toggleSidebar, isMobile, isOpen, closeMobileSidebar } = useSidebar();
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
+  const [profileMenuOpen, setProfileMenuOpen] = useState(false);
+
+  const displayName = user?.fullName || user?.firstName || 'Daniel Jonathan ANDJ';
+  const userEmail = user?.primaryEmailAddress?.emailAddress || 'daniel@nkyel.ai';
+  const userInitials = (displayName.slice(0, 2) || 'DJ').toUpperCase();
+
+  const isSuperAdmin = Boolean(
+    userEmail.includes('jonathanakarentoutoume') ||
+    userEmail.includes('smartandjia') ||
+    userEmail.includes('nkyel.ai')
+  );
 
   const handleNavClick = useCallback(() => {
     if (isMobile) closeMobileSidebar();
@@ -313,11 +334,107 @@ export default function NkyelSidebar() {
           </div>
         </nav>
 
+        {/* ─── Bottom Footer: Luma-Style User Profile Anchor ─── */}
+        <div
+          className="shrink-0 relative"
+          style={{
+            padding: 'var(--space-2) var(--space-3)',
+            borderTop: '1px solid var(--border-subtle)',
+          }}
+        >
+          {/* Profile Menu Popover */}
+          {profileMenuOpen && (
+            <div
+              className="absolute left-3 right-3 bottom-full mb-2 p-2 rounded-2xl bg-[#0D0F17] border border-white/10 shadow-2xl z-50 text-xs space-y-1"
+              style={{ minWidth: 220 }}
+            >
+              {/* User Header */}
+              <div className="p-2 border-b border-white/[0.08] flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-[#D5AE57] to-amber-200 text-black flex items-center justify-center font-bold text-xs shrink-0">
+                  {userInitials}
+                </div>
+                <div className="min-w-0 flex-1">
+                  <div className="font-bold text-white truncate text-xs">{displayName}</div>
+                  <div className="text-[10px] text-white/40 truncate font-mono">{userEmail}</div>
+                </div>
+              </div>
+
+              {/* Main Actions */}
+              <div className="py-1 space-y-0.5">
+                <Link
+                  href="/settings"
+                  onClick={() => setProfileMenuOpen(false)}
+                  className="flex items-center gap-2.5 px-2.5 py-1.5 rounded-xl hover:bg-white/[0.06] text-white/80 hover:text-white transition-colors"
+                >
+                  <User size={14} className="text-[#D5AE57]" />
+                  <span>Mon Profil</span>
+                </Link>
+
+                <Link
+                  href="/settings"
+                  onClick={() => setProfileMenuOpen(false)}
+                  className="flex items-center gap-2.5 px-2.5 py-1.5 rounded-xl hover:bg-white/[0.06] text-white/80 hover:text-white transition-colors"
+                >
+                  <Gear size={14} className="text-white/60" />
+                  <span>Paramètres</span>
+                </Link>
+
+                <div className="flex items-center justify-between px-2.5 py-1.5 rounded-xl bg-white/[0.03] text-white/70">
+                  <span className="flex items-center gap-2 text-[11px]">
+                    <Crown size={14} className="text-[#D5AE57]" />
+                    <span>Crédits Inférence</span>
+                  </span>
+                  <span className="font-mono text-[10px] font-bold text-[#D5AE57]">Illimités</span>
+                </div>
+              </div>
+
+              {/* Sign Out */}
+              <div className="pt-1 border-t border-white/[0.06]">
+                <SignOutButton>
+                  <button
+                    onClick={() => setProfileMenuOpen(false)}
+                    className="w-full flex items-center gap-2.5 px-2.5 py-1.5 rounded-xl hover:bg-red-500/10 text-red-400 text-left transition-colors"
+                  >
+                    <SignOut size={14} />
+                    <span>Déconnexion</span>
+                  </button>
+                </SignOutButton>
+              </div>
+            </div>
+          )}
+
+          {/* Profile Trigger Button */}
+          <button
+            onClick={() => setProfileMenuOpen((prev) => !prev)}
+            className="w-full flex items-center justify-between p-1.5 rounded-xl hover:bg-white/[0.04] transition-colors text-left"
+          >
+            <div className="flex items-center gap-2.5 min-w-0">
+              <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-[#D5AE57] to-amber-200 text-black flex items-center justify-center font-bold text-[11px] shrink-0 shadow-sm">
+                {userInitials}
+              </div>
+              {!isCollapsed && (
+                <div className="min-w-0 flex-1">
+                  <div className="text-xs font-medium text-white truncate">{displayName}</div>
+                  <div className="flex items-center gap-1">
+                    <span className="text-[9px] font-mono px-1.5 py-0.2 rounded bg-[#D5AE57]/15 border border-[#D5AE57]/30 text-[#D5AE57] font-bold">
+                      {isSuperAdmin ? 'SUPER ADMIN' : 'PRO'}
+                    </span>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {!isCollapsed && (
+              <DotsThreeVertical size={16} className="text-white/40 shrink-0" />
+            )}
+          </button>
+        </div>
+
         {/* ─── Footer: Protocol Status ─── */}
         <div
           className="shrink-0"
           style={{
-            padding: 'var(--space-3)',
+            padding: 'var(--space-2) var(--space-3)',
             borderTop: '1px solid var(--border-subtle)',
           }}
         >
@@ -325,11 +442,11 @@ export default function NkyelSidebar() {
             href="/protocols"
             className="flex items-center gap-2 rounded-lg"
             style={{
-              padding: '8px var(--space-3)',
+              padding: '6px var(--space-3)',
               fontSize: 'var(--text-xs)',
               color: 'var(--fg-subtle)',
               transition: `all var(--transition-fast)`,
-              minHeight: 36,
+              minHeight: 32,
             }}
             onMouseEnter={(e) => {
               e.currentTarget.style.background = 'var(--accent-subtle)';
@@ -341,7 +458,7 @@ export default function NkyelSidebar() {
             }}
             title="Observatoire des Protocoles"
           >
-            <Cpu size={16} className="shrink-0" style={{ color: 'var(--hue-success)' }} />
+            <Cpu size={15} className="shrink-0" style={{ color: 'var(--hue-success)' }} />
             {!isCollapsed && (
               <div className="flex items-center justify-between w-full min-w-0">
                 <span className="truncate" style={{ fontFamily: 'var(--font-mono)', fontSize: '11px' }}>

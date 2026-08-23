@@ -11,6 +11,7 @@ import { Geist, Geist_Mono } from 'next/font/google';
 import SplashScreen from '@/components/SplashScreen';
 import { PostHogProvider } from '@/lib/posthog';
 import GlobalShortcuts from '@/components/shortcuts/GlobalShortcuts';
+import CommandPalette from '@/components/palette/CommandPalette';
 import './globals.css';
 
 /* ── Typography: Geist Sans + Geist Mono only ──────── */
@@ -83,6 +84,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <PostHogProvider>
             {enableSplash && <SplashScreen />}
             <GlobalShortcuts />
+            <CommandPalette />
             {children}
             <Toaster
               position="bottom-right"
