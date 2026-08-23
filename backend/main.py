@@ -4,12 +4,18 @@ Points d'entrée API v1.
 Fondateur : Daniel Jonathan ANDJ
 """
 
+import time
+import logging
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
 from core.config import settings
+from core.context import NkyelContextMiddleware
+from core.errors import NkyelAPIError, nkyel_error_handler
+from core.telemetry import configure_structured_logging, telemetry_registry
+from core.cancellation import cancellation_manager
 from db.session import init_db, close_db
 
 # Imports des routeurs v1
@@ -26,27 +32,89 @@ from api.v1.workgraph_intervention import router as workgraph_router
 from api.v1.clerk_webhook import router as clerk_webhook_router
 from api.v1.beta import router as beta_router
 from api.v1.google_demo import router as google_demo_router
+from api.v1.visual_agent import router as visual_agent_router
+from api.v1.memory import router as memory_router
+from api.v1.world_model import router as world_model_router
+from api.v1.vision_engine import router as vision_engine_router
 from services.language_registry_service import language_service
 
+logger = logging.getLogger(__name__)
+
+# ── Startup timestamp for uptime tracking ────────────────────
+_STARTUP_TIME: float = 0.0
+_STARTUP_COMPLETE: bool = False
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Gère le démarrage et l'arrêt de l'application."""
-    # Démarrage
-    print(f"🚀 Démarrage de Ñkyel AI ({settings.app_name}) v{settings.app_version}...")
+    global _STARTUP_TIME, _STARTUP_COMPLETE
+
+    # ── Démarrage ────────────────────────────────────────────
+    _STARTUP_TIME = time.time()
+
+    # Initialiser le logging structuré
+    log_level = "DEBUG" if settings.debug else "INFO"
+    configure_structured_logging(level=log_level)
+
+    # Initialiser Sentry si configuré
+    if settings.sentry_dsn and not settings.sentry_dsn.startswith("https://xxxxxxxx"):
+        try:
+            import sentry_sdk
+            sentry_sdk.init(
+                dsn=settings.sentry_dsn,
+                environment=settings.environment,
+                traces_sample_rate=0.2 if settings.is_production else 1.0,
+                send_default_pii=False,
+            )
+            logger.info("🛡️ Sentry Observability activé avec succès.")
+        except Exception as e:
+            logger.warning(f"⚠️ Initialisation Sentry ignorée: {e}")
+
+    logger.info(
+        f"🚀 Démarrage de Ñkyel AI ({settings.app_name}) v{settings.app_version}...",
+        extra={"environment": settings.environment},
+    )
+
     try:
         await init_db()
-        print("✅ Connexion à Neon PostgreSQL établie.")
+        logger.info("✅ Connexion à Neon PostgreSQL établie.")
     except Exception as e:
-        print(f"⚠️ Note DB: {e}. Le serveur continue de tourner.")
+        logger.warning(f"⚠️ Note DB: {e}. Le serveur continue de tourner.")
+
+    _STARTUP_COMPLETE = True
+    logger.info(
+        f"✅ Ñkyel AI Backend prêt en {int((time.time() - _STARTUP_TIME) * 1000)}ms"
+    )
+
     yield
-    # Arrêt
-    print("🛑 Arrêt du backend Ñkyel AI...")
+
+    # ── Arrêt gracieux ───────────────────────────────────────
+    logger.info("🛑 Arrêt du backend Ñkyel AI — sauvegarde des états actifs...")
+
+    # Annuler proprement toutes les missions actives
+    status = cancellation_manager.status()
+    active_missions = status.get("active_missions", [])
+    for mission in active_missions:
+        cancellation_manager.cancel_mission(
+            mission["mission_id"], reason="server_shutdown"
+        )
+
+    # Finaliser tous les trackers de coûts actifs
+    global_status = telemetry_registry.global_status()
+    for mid in list(global_status.get("active_missions", {}).keys()):
+        summary = telemetry_registry.finalize_mission(mid)
+        if summary:
+            logger.info(
+                f"📊 Mission {mid} finalisée: ${summary['total_cost_usd']:.6f}",
+            )
+
     try:
         await close_db()
     except Exception:
         pass
+
+    logger.info("🛑 Backend Ñkyel AI arrêté proprement.")
 
 
 
@@ -59,6 +127,9 @@ app = FastAPI(
     redoc_url="/redoc" if settings.debug else None,
 )
 
+# ── Middleware: Context Tracing (DOIT être avant CORS) ───────
+app.add_middleware(NkyelContextMiddleware)
+
 # ── Configuration CORS ───────────────────────────────────────
 app.add_middleware(
     CORSMiddleware,
@@ -69,14 +140,21 @@ app.add_middleware(
 )
 
 
+# ── Exception Handler: NkyelAPIError ─────────────────────────
+app.add_exception_handler(NkyelAPIError, nkyel_error_handler)
+
+
 # ── Gestionnaire d'erreurs global ────────────────────────────
 @app.exception_handler(Exception)
 async def global_exception_handler(request, exc):
-    print(f"❌ Erreur globale: {exc}")
-    # En production, Sentry capturerait ceci
+    logger.error(f"❌ Erreur globale: {exc}", exc_info=True)
     return JSONResponse(
         status_code=500,
-        content={"detail": "Une erreur interne du serveur est survenue."},
+        content={
+            "error": True,
+            "code": "INTERNAL_ERROR",
+            "message": "Une erreur interne du serveur est survenue.",
+        },
     )
 
 
@@ -94,6 +172,10 @@ app.include_router(workgraph_router)
 app.include_router(clerk_webhook_router)
 app.include_router(beta_router)
 app.include_router(google_demo_router)
+app.include_router(visual_agent_router)
+app.include_router(memory_router)
+app.include_router(world_model_router)
+app.include_router(vision_engine_router)
 
 
 
@@ -109,19 +191,140 @@ async def get_supported_languages():
     }
 
 
-# ── Route Healthcheck ────────────────────────────────────────
+# ══════════════════════════════════════════════════════════════
+# Health Endpoints (K8s / BetterStack / Railway)
+# ══════════════════════════════════════════════════════════════
+
 @app.get("/health", tags=["System"])
 async def health_check():
-    """Vérification de la santé du système pour Better Stack / K8s."""
-    return {
-        "status": "healthy",
+    """Vérification authentique de la santé du système (DB, statut global)."""
+    db_status = "connected"
+    is_healthy = True
+    try:
+        from db.session import async_session
+        async with async_session() as session:
+            from sqlalchemy import text
+            await session.execute(text("SELECT 1"))
+    except Exception as e:
+        db_status = f"unreachable ({type(e).__name__})"
+        is_healthy = False
+
+    content = {
+        "status": "healthy" if is_healthy else "degraded",
         "app": settings.app_name,
         "version": settings.app_version,
         "environment": settings.environment,
-        "database": "connected",
+        "database": db_status,
+        "uptime_seconds": int(time.time() - _STARTUP_TIME) if _STARTUP_TIME else 0,
+    }
+    return JSONResponse(
+        status_code=200 if is_healthy else 503,
+        content=content,
+    )
+
+
+@app.get("/health/liveness", tags=["System"])
+async def health_liveness():
+    """
+    Liveness probe — le processus est vivant et répond.
+    K8s redémarre le pod si cette route échoue.
+    """
+    return {
+        "status": "alive",
+        "uptime_seconds": int(time.time() - _STARTUP_TIME) if _STARTUP_TIME else 0,
+    }
+
+
+@app.get("/health/readiness", tags=["System"])
+async def health_readiness():
+    """
+    Readiness probe — le service est prêt à accepter du trafic.
+    Vérifie les dépendances critiques (DB, Model Gateway).
+    """
+    checks: dict = {}
+    all_ok = True
+
+    # Check DB
+    try:
+        from db.session import async_session
+        async with async_session() as session:
+            from sqlalchemy import text
+            await session.execute(text("SELECT 1"))
+        checks["database"] = "ok"
+    except Exception as e:
+        checks["database"] = f"error: {type(e).__name__}"
+        all_ok = False
+
+    # Check Model Gateway circuits
+    try:
+        from services.model_gateway import circuit_breaker
+        cb_status = circuit_breaker.status()
+        open_circuits = [
+            p for p, s in cb_status.items() if s["state"] == "open"
+        ]
+        if open_circuits:
+            checks["model_gateway"] = f"degraded: {', '.join(open_circuits)} circuits open"
+        else:
+            checks["model_gateway"] = "ok"
+    except Exception:
+        checks["model_gateway"] = "ok"
+
+    # Check cancellation manager
+    checks["active_missions"] = cancellation_manager.active_count
+
+    status_code = 200 if all_ok else 503
+    return JSONResponse(
+        status_code=status_code,
+        content={
+            "status": "ready" if all_ok else "not_ready",
+            "checks": checks,
+        },
+    )
+
+
+@app.get("/health/startup", tags=["System"])
+async def health_startup():
+    """
+    Startup probe — le service a terminé son initialisation.
+    K8s attend que cette route retourne 200 avant d'envoyer du trafic.
+    """
+    if not _STARTUP_COMPLETE:
+        return JSONResponse(
+            status_code=503,
+            content={"status": "starting", "message": "Initialisation en cours..."},
+        )
+    return {
+        "status": "started",
+        "startup_duration_ms": int((time.time() - _STARTUP_TIME) * 1000) if _STARTUP_TIME else 0,
+    }
+
+
+# ══════════════════════════════════════════════════════════════
+# System Status (Admin / Observability)
+# ══════════════════════════════════════════════════════════════
+
+@app.get("/api/v1/system/status", tags=["System"])
+async def system_status():
+    """
+    Statut complet du système pour le dashboard admin.
+    Inclut Model Gateway, Memory, Cancellation, Telemetry.
+    """
+    from services.model_gateway import get_gateway_status
+    from services.memory_manager import memory_manager
+
+    return {
+        "app": settings.app_name,
+        "version": settings.app_version,
+        "environment": settings.environment,
+        "uptime_seconds": int(time.time() - _STARTUP_TIME) if _STARTUP_TIME else 0,
+        "model_gateway": get_gateway_status(),
+        "memory": memory_manager.status(),
+        "cancellation": cancellation_manager.status(),
+        "telemetry": telemetry_registry.global_status(),
     }
 
 
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=settings.debug)
+

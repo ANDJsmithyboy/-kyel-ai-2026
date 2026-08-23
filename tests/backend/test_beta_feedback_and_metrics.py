@@ -105,3 +105,38 @@ async def test_feedback_and_metrics_calculation(monkeypatch):
 
     await engine.dispose()
     print("✅ Test feedback et métriques réussi : calculs mathématiques et agrégations vérifiés.")
+
+
+@pytest.mark.asyncio
+async def test_v1_feedback_api_and_db_persistence():
+    """Vérifie l'enregistrement direct de feedback v1 et l'agrégation dynamique des statistiques."""
+    from core.database import save_feedback, get_feedback_statistics
+
+    # 1. Enregistrer des feedbacks réels
+    fb_id_1 = await save_feedback(
+        feedback_type="thumbs_up",
+        message_id="msg_101",
+        conversation_id="conv_101",
+        rating=5,
+        comment="Superbe synthèse sur l'économie gabonaise",
+        model="gemini-2.5-flash",
+    )
+    assert fb_id_1 is not None
+
+    fb_id_2 = await save_feedback(
+        feedback_type="thumbs_down",
+        message_id="msg_102",
+        conversation_id="conv_102",
+        rating=2,
+        comment="Un peu trop verbeux",
+        model="gemini-2.5-flash",
+    )
+    assert fb_id_2 is not None
+
+    # 2. Vérifier les statistiques agrégées
+    stats = await get_feedback_statistics()
+    assert stats["total"] >= 2
+    assert stats["thumbs_up"] >= 1
+    assert stats["thumbs_down"] >= 1
+    assert 1.0 <= stats["avg_rating"] <= 5.0
+

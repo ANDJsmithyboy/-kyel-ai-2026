@@ -1,9 +1,13 @@
+/**
+ * Ñkyel AI · RenduHeader
+ * SmartANDJ AI Technologies · Founder: Daniel Jonathan ANDJ
+ */
+
 'use client';
 
+import React from 'react';
 import { X, Code, FileText, Table, ChartBar, Desktop } from '@phosphor-icons/react';
 import type { RenduType } from '@/lib/models';
-import { cn } from '@/lib/utils';
-import { useSettingsStore } from '@/stores/settings.store';
 
 interface RenduHeaderProps {
   title: string;
@@ -26,27 +30,57 @@ const TYPE_ICONS: Record<string, any> = {
 
 export default function RenduHeader({ title, type, version, onClose }: RenduHeaderProps) {
   const Icon = TYPE_ICONS[type] || FileText;
-  const isBlackPanther = useSettingsStore(s => s.blackPantherMode);
 
   return (
-    <div className="flex items-center justify-between px-4 py-3 border-b border-white/10 bg-black/40 backdrop-blur-xl">
+    <div
+      className="flex items-center justify-between backdrop-blur-xl"
+      style={{
+        paddingInline: 'var(--space-4)',
+        paddingBlock: 'var(--space-3)',
+        borderBottom: '1px solid var(--border-subtle)',
+        background: 'var(--bg-glass)',
+      }}
+    >
       <div className="flex items-center gap-3 overflow-hidden">
-        <div className={cn(
-          "w-8 h-8 rounded-lg flex items-center justify-center shrink-0 border",
-          isBlackPanther ? "bg-[var(--gold)]/10 border-[var(--gold)]/20 text-[var(--gold)]" : "bg-[var(--green-emerald)]/10 border-[var(--green-emerald)]/20 text-[var(--green-emerald)]"
-        )}>
+        <div
+          className="flex items-center justify-center shrink-0"
+          style={{
+            width: 32,
+            height: 32,
+            borderRadius: 'var(--radius-md)',
+            background: 'var(--accent-subtle)',
+            border: '1px solid var(--accent-muted)',
+            color: 'var(--accent)',
+          }}
+        >
           <Icon size={18} weight="duotone" />
         </div>
         <div className="flex flex-col min-w-0">
-          <span className="text-sm font-semibold text-[var(--text-primary)] truncate pr-2">
+          <span
+            className="font-semibold truncate pr-2"
+            style={{ fontSize: 'var(--text-sm)', color: 'var(--fg)' }}
+          >
             {title}
           </span>
           <div className="flex items-center gap-2">
-            <span className="text-[10px] uppercase tracking-widest text-[var(--text-tertiary)]">
-              Le Rendu 💎
+            <span
+              className="font-mono uppercase tracking-wider"
+              style={{ fontSize: '10px', color: 'var(--fg-subtle)' }}
+            >
+              Livrable Ñkyel
             </span>
             {version && (
-              <span className="text-[10px] font-mono text-[var(--text-secondary)] bg-white/10 px-1.5 py-0.5 rounded">
+              <span
+                className="font-mono"
+                style={{
+                  fontSize: '10px',
+                  color: 'var(--fg-muted)',
+                  background: 'var(--accent-subtle)',
+                  paddingInline: '6px',
+                  paddingBlock: '2px',
+                  borderRadius: 'var(--radius-xs)',
+                }}
+              >
                 v{version}
               </span>
             )}
@@ -55,10 +89,26 @@ export default function RenduHeader({ title, type, version, onClose }: RenduHead
       </div>
 
       <div className="flex items-center gap-2 shrink-0">
-        <button 
+        <button
+          type="button"
           onClick={onClose}
-          className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-white/10 text-[var(--text-secondary)] hover:text-white transition-colors"
+          className="flex items-center justify-center rounded-lg"
+          style={{
+            width: 32,
+            height: 32,
+            color: 'var(--fg-subtle)',
+            transition: `all var(--transition-fast)`,
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.color = 'var(--fg)';
+            e.currentTarget.style.background = 'var(--accent-subtle)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.color = 'var(--fg-subtle)';
+            e.currentTarget.style.background = 'transparent';
+          }}
           title="Fermer"
+          aria-label="Fermer"
         >
           <X size={18} weight="bold" />
         </button>

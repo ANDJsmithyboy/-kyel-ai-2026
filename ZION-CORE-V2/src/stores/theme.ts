@@ -49,9 +49,9 @@ export const ACCENTS: AccentConfig[] = [
 
 /* -- Meta colors (theme-color per theme) ----------- */
 const META_COLORS: Record<ThemeKey, string> = {
-  'black-panther':      '#020304',
-  'nuit-lope':          '#050507',
-  'aurore-ogoue':       '#F8F8F4',
+  'black-panther':      '#08090D',
+  'nuit-lope':          '#030305',
+  'aurore-ogoue':       '#F8F8F5',
   'bleu-nuit':          '#060A14',
   'violette-mandrille': '#08060F',
   'neo-blanc':          '#FAFAF8',

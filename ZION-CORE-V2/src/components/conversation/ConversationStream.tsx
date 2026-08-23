@@ -2,10 +2,10 @@
  * Ñkyel AI · ConversationStream
  * SmartANDJ AI Technologies · Founder: Daniel Jonathan ANDJ
  *
- * Flux conversationnel unifié :
- * - Mode Hero d'accueil : Titre souverain « Quelle mission lançons-nous aujourd’hui ? »
- * - Pilules d'actions rapides (QuickActions)
- * - Défilement fluide et rendu progressif des bulles de messages
+ * Unified conversation stream:
+ * — Hero home mode: Sovereign greeting « Quelle mission lançons-nous aujourd’hui ? »
+ * — Quick action inspiration pills (QuickActions)
+ * — Smooth scrolling and progressive rendering of message bubbles
  */
 
 'use client';
@@ -14,7 +14,6 @@ import React, { useRef, useEffect } from 'react';
 import MessageBubble from './MessageBubble';
 import QuickActions from '../composer/QuickActions';
 import NkyelSeptBranchLogo from '@/components/icons/NkyelSeptBranchLogo';
-import { Sparkle } from '@phosphor-icons/react';
 
 export interface MessageItem {
   id: string;
@@ -45,50 +44,70 @@ export default function ConversationStream({
     scrollEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, isStreaming]);
 
-  // Mode Hero (Accueil sans messages)
+  // Hero Mode (Empty conversation state)
   if (messages.length === 0) {
     return (
       <div className="flex-1 flex flex-col items-center justify-center p-6 text-center select-none overflow-y-auto">
-        <div className="w-full max-w-2xl flex flex-col items-center space-y-6 animate-fade-in">
-          {/* Logo Souverain */}
-          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#665F9E]/20 to-[#C39A52]/20 border border-white/[0.1] flex items-center justify-center shadow-lg">
+        <div className="w-full max-w-2xl flex flex-col items-center animate-fade-in" style={{ gap: 'var(--space-6)' }}>
+          {/* Sovereign Logo */}
+          <div
+            className="flex items-center justify-center shadow-lg"
+            style={{
+              width: 64,
+              height: 64,
+              borderRadius: 'var(--radius-xl)',
+              background: 'var(--surface-raised)',
+              border: '1px solid var(--border-default)',
+            }}
+          >
             <NkyelSeptBranchLogo size={40} glow={true} />
           </div>
 
-          {/* Titre Principal Souverain */}
+          {/* Sovereign Header Title */}
           <div className="space-y-2">
-            <h1 className="text-2xl md:text-3xl font-semibold tracking-tight text-[#F1EEE7]">
+            <h1
+              className="font-semibold tracking-tight"
+              style={{ fontSize: 'var(--text-2xl)', color: 'var(--fg)' }}
+            >
               Quelle mission lançons-nous aujourd’hui ?
             </h1>
-            <p className="text-[14px] text-[#B8C0CC] max-w-lg mx-auto leading-relaxed">
+            <p
+              className="max-w-lg mx-auto leading-relaxed"
+              style={{ fontSize: 'var(--text-base)', color: 'var(--fg-muted)' }}
+            >
               Ñkyel orchestre vos objectifs, recherche des preuves, charge des compétences spécialisées et produit des livrables vérifiables.
             </p>
           </div>
 
-          {/* Pilules d'inspiration */}
+          {/* Quick inspiration actions */}
           <QuickActions onSelect={onSelectAction} />
         </div>
       </div>
     );
   }
 
-  // Mode Discussion Active
+  // Active Discussion Mode
   return (
-    <div className="flex-1 overflow-y-auto py-6 space-y-2 scrollbar-thin scrollbar-thumb-white/10">
-      {messages.map((msg) => (
-        <MessageBubble
-          key={msg.id}
-          id={msg.id}
-          role={msg.role}
-          content={msg.content}
-          isStreaming={msg.isStreaming}
-          modelName={msg.modelName}
-          sourcesCount={msg.sourcesCount}
-          hasArtifact={msg.hasArtifact}
-          onRegenerate={onRegenerate}
-        />
-      ))}
-      <div ref={scrollEndRef} className="h-4" />
+    <div
+      className="flex-1 overflow-y-auto scrollbar-thin"
+      style={{ paddingBlock: 'var(--space-6)' }}
+    >
+      <div className="flex flex-col" style={{ gap: 'var(--space-2)' }}>
+        {messages.map((msg) => (
+          <MessageBubble
+            key={msg.id}
+            id={msg.id}
+            role={msg.role}
+            content={msg.content}
+            isStreaming={msg.isStreaming}
+            modelName={msg.modelName}
+            sourcesCount={msg.sourcesCount}
+            hasArtifact={msg.hasArtifact}
+            onRegenerate={onRegenerate}
+          />
+        ))}
+      </div>
+      <div ref={scrollEndRef} style={{ height: 'var(--space-4)' }} />
     </div>
   );
 }

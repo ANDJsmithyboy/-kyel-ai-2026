@@ -2,10 +2,10 @@
  * Ñkyel AI · Conversation & Mission Page
  * SmartANDJ AI Technologies · Founder: Daniel Jonathan ANDJ
  *
- * Page conversationnelle principale intégrant :
- * - ConversationStream (Hero accueil ou flux actif)
- * - MissionComposer (Saisie d'objectifs, Action Launcher, Toggles, STT)
- * - Persistance et streaming des réponses
+ * Sovereign main conversational page:
+ * — ConversationStream (Hero accueil ou flux actif)
+ * — MissionComposer (Saisie d'objectifs, Action Launcher, Toggles, STT)
+ * — Persistance et streaming des réponses
  */
 
 'use client';
@@ -47,8 +47,7 @@ export default function ChatPage() {
       }
       setInitialPrompt('');
 
-
-      // Créer une conversation persistée si nouveau thread
+      // Create persisted conversation if new thread
       if (!conversationId) {
         try {
           const res = await fetch('/api/conversations', {
@@ -62,13 +61,13 @@ export default function ChatPage() {
             window.history.replaceState(null, '', `/chat/${data.id}`);
           }
         } catch {
-          // Poursuite gracieuse
+          // Graceful fallback
         }
       }
 
       chat.sendMessage(content);
     },
-    [conversationId, chat]
+    [conversationId, chat, isClosed]
   );
 
   const messages: MessageItem[] = chat.messages.map((m) => ({
@@ -84,17 +83,21 @@ export default function ChatPage() {
   const isHeroMode = messages.length === 0;
 
   return (
-    <div className="flex flex-col h-full bg-[#08090D] relative overflow-hidden">
+    <div
+      className="flex flex-col h-full relative overflow-hidden"
+      style={{ background: 'var(--bg)' }}
+    >
       {/* Background Subtle WorkGraph Grid */}
       <div
-        className="absolute inset-0 pointer-events-none opacity-[0.03]"
+        className="absolute inset-0 pointer-events-none"
         style={{
-          backgroundImage: `radial-gradient(circle at 1px 1px, #F1EEE7 1px, transparent 0)`,
+          opacity: 0.03,
+          backgroundImage: `radial-gradient(circle at 1px 1px, var(--fg) 1px, transparent 0)`,
           backgroundSize: '32px 32px',
         }}
       />
 
-      {/* Stream Area (Hero ou Discussion) */}
+      {/* Stream Area (Hero or Active Stream) */}
       <ConversationStream
         messages={messages}
         isStreaming={chat.isStreaming}
@@ -102,28 +105,35 @@ export default function ChatPage() {
         onRegenerate={() => chat.reload?.()}
       />
 
-      {/* Bannière d'Erreur éventuelle */}
+      {/* Error Banner */}
       {chat.error && (
         <div
-          className="mx-auto max-w-3xl w-full px-4 py-2.5 mb-2 rounded-2xl text-[13px] flex items-center justify-between"
+          className="mx-auto w-full flex items-center justify-between"
           style={{
+            maxWidth: 'var(--content-max)',
+            paddingInline: 'var(--space-4)',
+            paddingBlock: '10px',
+            marginBottom: 'var(--space-2)',
+            borderRadius: 'var(--radius-lg)',
+            fontSize: 'var(--text-xs)',
             background: 'rgba(190, 98, 84, 0.12)',
             border: '1px solid rgba(190, 98, 84, 0.3)',
-            color: '#BE6254',
+            color: 'var(--hue-danger)',
           }}
         >
           <span>❌ {chat.error}</span>
           <button
             onClick={chat.clearError}
-            className="underline text-[12px] text-[#F1EEE7]/80 hover:text-[#F1EEE7]"
+            className="underline"
+            style={{ fontSize: '11px', color: 'var(--fg-muted)' }}
           >
             Fermer
           </button>
         </div>
       )}
 
-      {/* Compositeur Principal */}
-      <div className="shrink-0 z-20">
+      {/* Main Composer */}
+      <div className="shrink-0" style={{ zIndex: 'var(--z-sticky)' }}>
         <MissionComposer
           onSend={handleSend}
           onStop={chat.stop}

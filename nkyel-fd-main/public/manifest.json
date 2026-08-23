@@ -1,0 +1,58 @@
+{
+  "name": "Nkyel AI",
+  "short_name": "Nkyel",
+  "description": "L'assistant IA le plus avancé d'Afrique. Recherche, code, analyse, langues gabonaises.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#020304",
+  "theme_color": "#C5A059",
+  "orientation": "any",
+  "scope": "/",
+  "lang": "fr",
+  "dir": "ltr",
+  "categories": ["productivity", "utilities", "education"],
+  "icons": [
+    {
+      "src": "/içone-nkyel-ai2026-mobile-vrai.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/içone-nkyel-ai2026-mobile-vrai.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/screenshots/desktop.png",
+      "sizes": "1920x1080",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Nkyel AI Desktop"
+    },
+    {
+      "src": "/screenshots/mobile.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Nkyel AI Mobile"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Nouvelle conversation",
+      "short_name": "Nouveau",
+      "url": "/chat/new",
+      "icons": [{ "src": "/icons/icon-96.png", "sizes": "96x96" }]
+    }
+  ],
+  "related_applications": [
+    {
+      "platform": "play",
+      "id": "com.smartandj.nkyelai"
+    }
+  ]
+}

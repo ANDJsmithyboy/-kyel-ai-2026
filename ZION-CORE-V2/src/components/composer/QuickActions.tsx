@@ -2,7 +2,7 @@
  * Ñkyel AI · QuickActions
  * SmartANDJ AI Technologies · Founder: Daniel Jonathan ANDJ
  *
- * Pilules d'inspiration et raccourcis d'actions rapides pour la page d'accueil
+ * Inspiration pills and quick action shortcuts for the home page.
  */
 
 'use client';
@@ -11,7 +11,6 @@ import React from 'react';
 import {
   Presentation,
   Globe,
-  Palette,
   Code,
   Sparkle,
   TreeStructure,
@@ -22,7 +21,7 @@ export interface QuickPill {
   label: string;
   icon: React.ComponentType<any>;
   prompt: string;
-  color: string;
+  colorVar: string;
 }
 
 export const DEFAULT_QUICK_ACTIONS: QuickPill[] = [
@@ -31,35 +30,35 @@ export const DEFAULT_QUICK_ACTIONS: QuickPill[] = [
     label: 'Présentation Stratégique',
     icon: Presentation,
     prompt: 'Crée un pitch deck stratégique de 10 diapositives pour investisseurs sur :',
-    color: '#C39A52',
+    colorVar: 'var(--hue-warning)',
   },
   {
     id: 'app',
     label: 'Application Interactive',
     icon: Globe,
     prompt: 'Conçois une application web complète avec interface moderne et données dynamiques pour :',
-    color: '#665F9E',
+    colorVar: 'var(--hue-agent)',
   },
   {
     id: 'code',
     label: 'Architecture & Code',
     icon: Code,
-    prompt: 'Analyse et écris le code d\'un microservice haute performance en Python/FastAPI pour :',
-    color: '#6F9485',
+    prompt: "Analyse et écris le code d'un microservice haute performance en Python/FastAPI pour :",
+    colorVar: 'var(--hue-success)',
   },
   {
     id: 'research',
     label: 'Veille & Grounding',
     icon: Sparkle,
     prompt: 'Effectue une recherche approfondie avec vérification des sources primaires sur :',
-    color: '#315A70',
+    colorVar: 'var(--hue-source)',
   },
   {
     id: 'vie',
     label: 'Spatialisation VIE',
     icon: TreeStructure,
-    prompt: 'Modélise l\'exécution spatiale et le WorkGraph pour :',
-    color: '#765E78',
+    prompt: "Modélise l'exécution spatiale et le WorkGraph pour :",
+    colorVar: 'var(--hue-plum)',
   },
 ];
 
@@ -77,9 +76,30 @@ export default function QuickActions({ onSelect }: QuickActionsProps) {
             key={pill.id}
             type="button"
             onClick={() => onSelect(pill.prompt)}
-            className="flex items-center gap-2 px-3.5 py-2 rounded-full bg-[#151922]/60 hover:bg-[#151922] border border-white/[0.06] hover:border-white/[0.12] text-[12px] font-medium text-[#B8C0CC] hover:text-[#F1EEE7] transition-all min-h-[36px]"
+            className="flex items-center gap-2 font-medium"
+            style={{
+              paddingInline: '14px',
+              paddingBlock: '8px',
+              minHeight: 36,
+              borderRadius: 'var(--radius-pill)',
+              background: 'var(--surface-raised)',
+              border: '1px solid var(--border-default)',
+              fontSize: 'var(--text-xs)',
+              color: 'var(--fg-muted)',
+              transition: `all var(--transition-fast)`,
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = 'var(--accent-subtle)';
+              e.currentTarget.style.borderColor = 'var(--accent-muted)';
+              e.currentTarget.style.color = 'var(--fg)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = 'var(--surface-raised)';
+              e.currentTarget.style.borderColor = 'var(--border-default)';
+              e.currentTarget.style.color = 'var(--fg-muted)';
+            }}
           >
-            <Icon size={15} style={{ color: pill.color }} weight="bold" />
+            <Icon size={15} style={{ color: pill.colorVar }} weight="bold" />
             <span>{pill.label}</span>
           </button>
         );

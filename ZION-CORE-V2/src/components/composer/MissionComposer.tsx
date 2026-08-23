@@ -2,28 +2,25 @@
  * Ñkyel AI · MissionComposer
  * SmartANDJ AI Technologies · Founder: Daniel Jonathan ANDJ
  *
- * Compositeur central souverain pour la saisie et le contrôle de missions :
- * - Titre d'accueil : « Quelle mission lançons-nous aujourd’hui ? »
- * - Placeholder : « Décrivez votre objectif à Ñkyel… »
- * - Bouton `+` pour l'Action Launcher
- * - Sélecteur dynamique de moteur (« Ñkyel Auto »)
- * - Toggles des capacités agentiques (Skills, MCP, Recherche, A2A)
- * - Dictée vocale STT
- * - Envoi, arrêt d'exécution et reprise
+ * Sovereign central composer for mission input and control:
+ * — Placeholder: « Décrivez votre objectif à Ñkyel… »
+ * — Action Launcher '+' trigger
+ * — Dynamic engine selector (« Ñkyel Auto »)
+ * — Agentic capability toggles (Skills, MCP, Recherche, A2A)
+ * — Audio STT dictation
+ * — Send, Stop, Stream states with tactile micro-interactions
+ * — Mobile keyboard & safe-area aware
  */
 
 'use client';
 
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import TextareaAutosize from 'react-textarea-autosize';
-import { motion } from 'framer-motion';
 import {
   Plus,
   ArrowUp,
   Square,
   Microphone,
-  Paperclip,
-  Sparkle,
 } from '@phosphor-icons/react';
 import ActionLauncher from './ActionLauncher';
 import ModelSelector from './ModelSelector';
@@ -58,7 +55,7 @@ export default function MissionComposer({
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const { isRecording, startRecording, stopRecording, transcript } = useAudioSTT();
 
-  // Synchronise le prompt initial lorsqu'une pilule ou action est sélectionnée
+  // Synchronize initial prompt when selected from quick actions
   useEffect(() => {
     if (initialPrompt) {
       setInput(initialPrompt);
@@ -66,7 +63,7 @@ export default function MissionComposer({
     }
   }, [initialPrompt]);
 
-  // Synchronise le résultat STT
+  // Synchronize STT voice transcript
   useEffect(() => {
     if (transcript) {
       setInput((prev) => (prev ? `${prev} ${transcript}` : transcript));
@@ -96,11 +93,27 @@ export default function MissionComposer({
   };
 
   return (
-    <div className={`w-full max-w-4xl mx-auto px-4 ${isHeroMode ? 'py-4' : 'py-3'}`}>
-      {/* Conteneur du Compositeur */}
-      <div className="relative rounded-2xl border border-white/[0.08] bg-[#0E121A]/90 backdrop-blur-xl shadow-2xl transition-all focus-within:border-[#665F9E]/50 focus-within:shadow-[0_0_24px_rgba(102,95,158,0.12)]">
-        {/* Ligne 1 : Zone de Saisie Principale */}
-        <div className="px-4 pt-3.5 pb-2">
+    <div
+      className="w-full mx-auto"
+      style={{
+        maxWidth: 'var(--composer-max)',
+        paddingInline: 'var(--space-4)',
+        paddingBlock: isHeroMode ? 'var(--space-4)' : 'var(--space-3)',
+      }}
+    >
+      {/* Composer Surface */}
+      <div
+        className="relative transition-all"
+        style={{
+          borderRadius: 'var(--radius-composer)',
+          border: '1px solid var(--border-default)',
+          background: 'var(--surface-overlay)',
+          backdropFilter: 'blur(32px)',
+          boxShadow: 'var(--shadow-xl)',
+        }}
+      >
+        {/* Row 1: Text Input Area */}
+        <div style={{ paddingInline: 'var(--space-4)', paddingTop: 'var(--space-3)', paddingBottom: 'var(--space-2)' }}>
           <TextareaAutosize
             ref={textareaRef}
             value={input}
@@ -109,24 +122,63 @@ export default function MissionComposer({
             placeholder="Décrivez votre objectif à Ñkyel…"
             minRows={isHeroMode ? 2 : 1}
             maxRows={8}
-            className="w-full bg-transparent text-[#F1EEE7] placeholder-[#7E8795] text-[14px] leading-relaxed resize-none focus:outline-none scrollbar-none"
+            className="w-full bg-transparent resize-none scrollbar-none"
+            style={{
+              color: 'var(--fg)',
+              fontSize: 'var(--text-base)',
+              lineHeight: 'var(--leading-relaxed)',
+              outline: 'none',
+            }}
             aria-label="Décrivez votre objectif à Ñkyel"
           />
         </div>
 
-        {/* Ligne 2 : Toggles Agentiques & Raccourcis */}
-        <div className="px-3 py-1 flex items-center justify-between border-t border-white/[0.04]">
+        {/* Row 2: Agentic Toggles */}
+        <div
+          className="flex items-center justify-between"
+          style={{
+            paddingInline: 'var(--space-3)',
+            paddingBlock: 'var(--space-1)',
+            borderTop: '1px solid var(--border-subtle)',
+          }}
+        >
           <AgenticToggles state={agenticState} onChange={setAgenticState} />
         </div>
 
-        {/* Ligne 3 : Barre d'Outils Inférieure */}
-        <div className="px-3 py-2.5 flex items-center justify-between gap-2 border-t border-white/[0.04] bg-[#08090D]/40 rounded-b-2xl">
-          {/* Bouton `+` pour l'Action Launcher & Sélecteur de Moteur */}
+        {/* Row 3: Bottom Toolbar */}
+        <div
+          className="flex items-center justify-between gap-2"
+          style={{
+            paddingInline: 'var(--space-3)',
+            paddingBlock: 'var(--space-2)',
+            borderTop: '1px solid var(--border-subtle)',
+            background: 'var(--accent-subtle)',
+            borderBottomLeftRadius: 'var(--radius-composer)',
+            borderBottomRightRadius: 'var(--radius-composer)',
+          }}
+        >
+          {/* Action Launcher '+' button & Engine Selector */}
           <div className="flex items-center gap-2">
             <button
               type="button"
               onClick={() => setIsLauncherOpen(true)}
-              className="w-8 h-8 rounded-full bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.06] flex items-center justify-center text-[#B8C0CC] hover:text-[#F1EEE7] transition-colors"
+              className="flex items-center justify-center rounded-full"
+              style={{
+                width: 32,
+                height: 32,
+                background: 'var(--surface-raised)',
+                border: '1px solid var(--border-subtle)',
+                color: 'var(--fg-muted)',
+                transition: `all var(--transition-fast)`,
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.color = 'var(--fg)';
+                e.currentTarget.style.borderColor = 'var(--border-default)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.color = 'var(--fg-muted)';
+                e.currentTarget.style.borderColor = 'var(--border-subtle)';
+              }}
               title="Ouvrir l'Action Launcher (Studio, Build, Data, Protocoles)"
               aria-label="Action Launcher"
             >
@@ -139,44 +191,72 @@ export default function MissionComposer({
             />
           </div>
 
-          {/* Boutons d'Envoi, Micro & Stop */}
+          {/* Voice STT & Send/Stop Buttons */}
           <div className="flex items-center gap-2">
-            {/* Dictée Vocale STT */}
+            {/* Audio Dictation */}
             <button
               type="button"
               onClick={toggleRecording}
-              className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors ${
-                isRecording
-                  ? 'bg-[#BE6254] text-white animate-pulse'
-                  : 'text-[#7E8795] hover:text-[#F1EEE7] hover:bg-white/[0.06]'
-              }`}
+              className="flex items-center justify-center rounded-full"
+              style={{
+                width: 32,
+                height: 32,
+                background: isRecording ? 'var(--hue-danger)' : 'transparent',
+                color: isRecording ? '#FFFFFF' : 'var(--fg-subtle)',
+                transition: `all var(--transition-fast)`,
+              }}
+              onMouseEnter={(e) => {
+                if (!isRecording) {
+                  e.currentTarget.style.color = 'var(--fg)';
+                  e.currentTarget.style.background = 'var(--accent-subtle)';
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (!isRecording) {
+                  e.currentTarget.style.color = 'var(--fg-subtle)';
+                  e.currentTarget.style.background = 'transparent';
+                }
+              }}
               title={isRecording ? 'Arrêter la dictée' : 'Démarrer la dictée vocale'}
               aria-label="Dictée vocale"
             >
               <Microphone size={16} weight={isRecording ? 'fill' : 'regular'} />
             </button>
 
-            {/* Envoi ou Arrêt */}
+            {/* Send or Stop */}
             {isStreaming ? (
               <button
                 type="button"
                 onClick={onStop}
-                className="w-8 h-8 rounded-full bg-[#BE6254] text-white flex items-center justify-center hover:brightness-110 transition-transform active:scale-95"
+                className="flex items-center justify-center rounded-full active:scale-95"
+                style={{
+                  width: 32,
+                  height: 32,
+                  background: 'var(--hue-danger)',
+                  color: '#FFFFFF',
+                  boxShadow: 'var(--shadow-sm)',
+                  transition: `all var(--transition-fast)`,
+                }}
                 title="Arrêter l'exécution"
                 aria-label="Arrêter"
               >
-                <Square size={14} weight="fill" />
+                <Square size={13} weight="fill" />
               </button>
             ) : (
               <button
                 type="button"
                 onClick={handleSend}
                 disabled={!input.trim()}
-                className={`w-8 h-8 rounded-full flex items-center justify-center transition-all ${
-                  input.trim()
-                    ? 'bg-[#665F9E] text-[#F1EEE7] hover:brightness-110 shadow-sm active:scale-95'
-                    : 'bg-white/[0.04] text-[#7E8795] cursor-not-allowed'
-                }`}
+                className="flex items-center justify-center rounded-full active:scale-95"
+                style={{
+                  width: 32,
+                  height: 32,
+                  background: input.trim() ? 'var(--accent)' : 'var(--border-subtle)',
+                  color: input.trim() ? 'var(--accent-fg)' : 'var(--fg-subtle)',
+                  cursor: input.trim() ? 'pointer' : 'not-allowed',
+                  boxShadow: input.trim() ? 'var(--shadow-sm)' : 'none',
+                  transition: `all var(--transition-fast)`,
+                }}
                 title="Lancer la mission"
                 aria-label="Envoyer"
               >

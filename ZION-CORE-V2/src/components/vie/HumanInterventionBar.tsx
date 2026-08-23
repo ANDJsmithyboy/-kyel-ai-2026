@@ -2,14 +2,9 @@
  * Ñkyel AI · HumanInterventionBar
  * SmartANDJ AI Technologies · Founder: Daniel Jonathan ANDJ
  *
- * Barre de contrôle d'intervention humaine en direct sur le WorkGraph :
- * - Modifier une contrainte
- * - Ajouter une instruction
- * - Demander une preuve
- * - Rejeter une hypothèse
- * - Suspendre / Reprendre la mission
- * - Revenir à un checkpoint
- * - Relancer une branche
+ * Live human intervention control bar over the WorkGraph:
+ * — Constraint modification, instruction injection, proof demand, hypothesis rejection
+ * — Pause / Resume mission, checkpoint restore
  */
 
 'use client';
@@ -24,8 +19,6 @@ import {
   Pause,
   Play,
   FloppyDisk,
-  ArrowClockwise,
-  Scales,
 } from '@phosphor-icons/react';
 import { useWorkGraphStore } from '@/lib/nkyel';
 import { protocolEventBus } from '@/lib/protocols/protocol-events';
@@ -55,20 +48,51 @@ export default function HumanInterventionBar({
   };
 
   return (
-    <div className="flex flex-col gap-2 p-2.5 rounded-2xl bg-[#0E121A]/90 backdrop-blur-xl border border-white/[0.08] shadow-2xl select-none">
-      {/* Ligne 1 : Contrôles d'intervention rapide */}
-      <div className="flex items-center flex-wrap gap-1.5 text-[12px] font-medium text-[#F1EEE7]">
-        <div className="flex items-center gap-1.5 px-2 py-1 rounded-lg bg-[#665F9E]/20 text-[#AAA2C8] border border-[#665F9E]/30 font-mono text-[11px]">
+    <div
+      className="flex flex-col select-none"
+      style={{
+        gap: 'var(--space-2)',
+        padding: 'var(--space-3)',
+        borderRadius: 'var(--radius-xl)',
+        background: 'var(--surface-overlay)',
+        backdropFilter: 'blur(32px)',
+        border: '1px solid var(--border-default)',
+        boxShadow: 'var(--shadow-xl)',
+      }}
+    >
+      {/* Row 1: Fast Intervention Controls */}
+      <div className="flex items-center flex-wrap gap-1.5 font-medium" style={{ fontSize: 'var(--text-xs)' }}>
+        <div
+          className="flex items-center gap-1.5 font-mono"
+          style={{
+            paddingInline: 'var(--space-2)',
+            paddingBlock: '4px',
+            borderRadius: 'var(--radius-sm)',
+            background: 'var(--accent-subtle)',
+            color: 'var(--accent)',
+            border: '1px solid var(--accent-muted)',
+            fontSize: '11px',
+          }}
+        >
           <Hand size={14} weight="bold" />
           <span>Contrôle Humain</span>
         </div>
 
-        {/* Suspendre / Reprendre */}
+        {/* Pause / Resume */}
         {isRunning ? (
           <button
             type="button"
             onClick={stopRun}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#BE6254]/20 text-[#BE6254] border border-[#BE6254]/40 hover:bg-[#BE6254]/30 transition-colors"
+            className="flex items-center gap-1.5"
+            style={{
+              paddingInline: '12px',
+              paddingBlock: '6px',
+              borderRadius: 'var(--radius-md)',
+              background: 'rgba(190, 98, 84, 0.15)',
+              color: 'var(--hue-danger)',
+              border: '1px solid rgba(190, 98, 84, 0.3)',
+              transition: `all var(--transition-fast)`,
+            }}
             title="Suspendre l'exécution de la mission"
           >
             <Pause size={14} weight="fill" />
@@ -78,7 +102,16 @@ export default function HumanInterventionBar({
           <button
             type="button"
             onClick={resumeRun}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#6F9485]/20 text-[#6F9485] border border-[#6F9485]/40 hover:bg-[#6F9485]/30 transition-colors"
+            className="flex items-center gap-1.5"
+            style={{
+              paddingInline: '12px',
+              paddingBlock: '6px',
+              borderRadius: 'var(--radius-md)',
+              background: 'rgba(111, 148, 133, 0.15)',
+              color: 'var(--hue-success)',
+              border: '1px solid rgba(111, 148, 133, 0.3)',
+              transition: `all var(--transition-fast)`,
+            }}
             title="Reprendre l'exécution"
           >
             <Play size={14} weight="fill" />
@@ -86,53 +119,105 @@ export default function HumanInterventionBar({
           </button>
         )}
 
-        {/* Modifier une contrainte */}
+        {/* Modify constraint */}
         <button
           type="button"
           onClick={() => {
             protocolEventBus.emit('agui.state.updated', 'agui', 'Modification des contraintes demandée');
             onAddConstraint?.();
           }}
-          className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-[#151922] hover:bg-white/[0.06] border border-white/[0.06] text-[#B8C0CC] hover:text-[#F1EEE7] transition-colors"
+          className="flex items-center gap-1.5"
+          style={{
+            paddingInline: '10px',
+            paddingBlock: '6px',
+            borderRadius: 'var(--radius-md)',
+            background: 'var(--surface-raised)',
+            border: '1px solid var(--border-subtle)',
+            color: 'var(--fg-muted)',
+            transition: `all var(--transition-fast)`,
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.color = 'var(--fg)';
+            e.currentTarget.style.background = 'var(--accent-subtle)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.color = 'var(--fg-muted)';
+            e.currentTarget.style.background = 'var(--surface-raised)';
+          }}
           title="Modifier les contraintes d'exécution"
         >
           <SlidersHorizontal size={14} />
           <span>Contraintes</span>
         </button>
 
-        {/* Ajouter une instruction */}
+        {/* Add instruction */}
         <button
           type="button"
           onClick={() => setIsPromptOpen(!isPromptOpen)}
-          className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-[#151922] hover:bg-white/[0.06] border border-white/[0.06] text-[#B8C0CC] hover:text-[#F1EEE7] transition-colors"
+          className="flex items-center gap-1.5"
+          style={{
+            paddingInline: '10px',
+            paddingBlock: '6px',
+            borderRadius: 'var(--radius-md)',
+            background: 'var(--surface-raised)',
+            border: '1px solid var(--border-subtle)',
+            color: 'var(--fg-muted)',
+            transition: `all var(--transition-fast)`,
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.color = 'var(--fg)';
+            e.currentTarget.style.background = 'var(--accent-subtle)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.color = 'var(--fg-muted)';
+            e.currentTarget.style.background = 'var(--surface-raised)';
+          }}
           title="Injecter une instruction au plan d'exécution"
         >
           <PlusCircle size={14} />
           <span>Instruction</span>
         </button>
 
-        {/* Demander une preuve */}
+        {/* Require proof */}
         <button
           type="button"
           onClick={() => {
             protocolEventBus.emit('agui.state.updated', 'agui', 'Exigence de preuve formelle émise');
             onRequestProof?.();
           }}
-          className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-[#C39A52]/15 text-[#C39A52] border border-[#C39A52]/30 hover:bg-[#C39A52]/25 transition-colors"
+          className="flex items-center gap-1.5"
+          style={{
+            paddingInline: '10px',
+            paddingBlock: '6px',
+            borderRadius: 'var(--radius-md)',
+            background: 'rgba(195, 154, 82, 0.12)',
+            color: 'var(--hue-warning)',
+            border: '1px solid rgba(195, 154, 82, 0.3)',
+            transition: `all var(--transition-fast)`,
+          }}
           title="Demander une preuve et citation primaire"
         >
           <ShieldCheck size={14} />
           <span>Exiger preuve</span>
         </button>
 
-        {/* Rejeter une hypothèse */}
+        {/* Reject hypothesis */}
         <button
           type="button"
           onClick={() => {
             protocolEventBus.emit('agui.state.updated', 'agui', 'Hypothèse active rejetée par l\'humain');
             onRejectHypothesis?.();
           }}
-          className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-[#BE6254]/15 text-[#BE6254] border border-[#BE6254]/30 hover:bg-[#BE6254]/25 transition-colors"
+          className="flex items-center gap-1.5"
+          style={{
+            paddingInline: '10px',
+            paddingBlock: '6px',
+            borderRadius: 'var(--radius-md)',
+            background: 'rgba(190, 98, 84, 0.12)',
+            color: 'var(--hue-danger)',
+            border: '1px solid rgba(190, 98, 84, 0.3)',
+            transition: `all var(--transition-fast)`,
+          }}
           title="Rejeter une hypothèse et forcer le recalcul du plan"
         >
           <XCircle size={14} />
@@ -143,7 +228,25 @@ export default function HumanInterventionBar({
         <button
           type="button"
           onClick={onRestoreCheckpoint}
-          className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-[#151922] hover:bg-white/[0.06] border border-white/[0.06] text-[#B8C0CC] hover:text-[#F1EEE7] transition-colors font-mono text-[11px]"
+          className="flex items-center gap-1.5 font-mono"
+          style={{
+            paddingInline: '10px',
+            paddingBlock: '6px',
+            borderRadius: 'var(--radius-md)',
+            background: 'var(--surface-raised)',
+            border: '1px solid var(--border-subtle)',
+            color: 'var(--fg-muted)',
+            fontSize: '11px',
+            transition: `all var(--transition-fast)`,
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.color = 'var(--fg)';
+            e.currentTarget.style.background = 'var(--accent-subtle)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.color = 'var(--fg-muted)';
+            e.currentTarget.style.background = 'var(--surface-raised)';
+          }}
           title="Revenir au dernier checkpoint vérifié"
         >
           <FloppyDisk size={14} />
@@ -151,21 +254,40 @@ export default function HumanInterventionBar({
         </button>
       </div>
 
-      {/* Ligne 2 : Formulaire d'injection d'instruction directe */}
+      {/* Row 2: Direct Instruction Injection Input */}
       {isPromptOpen && (
-        <div className="flex items-center gap-2 pt-2 border-t border-white/[0.04]">
+        <div
+          className="flex items-center gap-2 pt-2"
+          style={{ borderTop: '1px solid var(--border-subtle)' }}
+        >
           <input
             type="text"
             placeholder="Ex : Priorise les données européennes et supprime l'étape 3..."
             value={instructionInput}
             onChange={(e) => setInstructionInput(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleSendInstruction()}
-            className="flex-1 px-3 py-1.5 rounded-xl bg-[#151922] border border-white/[0.08] text-[13px] text-[#F1EEE7] placeholder-[#7E8795] focus:outline-none focus:border-[#665F9E]"
+            className="flex-1 rounded-xl outline-none"
+            style={{
+              paddingInline: 'var(--space-3)',
+              paddingBlock: '6px',
+              background: 'var(--surface-raised)',
+              border: '1px solid var(--border-default)',
+              fontSize: 'var(--text-sm)',
+              color: 'var(--fg)',
+            }}
           />
           <button
             type="button"
             onClick={handleSendInstruction}
-            className="px-3 py-1.5 rounded-xl bg-[#665F9E] text-[#F1EEE7] text-[12px] font-medium hover:brightness-110 transition-all"
+            className="font-medium rounded-xl"
+            style={{
+              paddingInline: 'var(--space-3)',
+              paddingBlock: '6px',
+              background: 'var(--accent)',
+              color: 'var(--accent-fg)',
+              fontSize: 'var(--text-xs)',
+              transition: `all var(--transition-fast)`,
+            }}
           >
             Injecter
           </button>

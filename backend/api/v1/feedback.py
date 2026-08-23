@@ -1,12 +1,15 @@
 """
 Ñkyel AI — API v1 Feedback · SmartANDJ AI Technologies
-Feedback loop — Section 16 du prompt
+Boucle de feedback en temps réel reliée à Neon PostgreSQL.
 Fondateur : Daniel Jonathan ANDJ
 """
 
 from typing import Optional
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 from pydantic import BaseModel, Field
+
+from core.database import save_feedback, get_feedback_statistics
+from core.security import get_current_user_optional
 
 router = APIRouter(prefix="/v1", tags=["Feedback v1"])
 
@@ -42,29 +45,32 @@ class FeedbackStats(BaseModel):
 
 
 @router.post("/feedback", response_model=FeedbackResponse)
-async def submit_feedback(req: FeedbackRequest):
-    """Record user feedback linked to a specific message."""
-    import uuid
-    # TODO: Write to Neon via SQLAlchemy when DB is connected
-    feedback_id = str(uuid.uuid4())
+async def submit_feedback(
+    req: FeedbackRequest,
+    user: Optional[dict] = Depends(get_current_user_optional),
+):
+    """Enregistre un retour utilisateur réel lié à un message et une conversation."""
+    user_id = user.get("id") if user else None
+    feedback_id = await save_feedback(
+        feedback_type=req.type,
+        message_id=req.message_id,
+        conversation_id=req.conversation_id,
+        rating=req.rating,
+        comment=req.comment,
+        model=req.model_public_name,
+        mode=req.mode,
+        language=req.language,
+        latency_ms=req.latency_ms,
+        tokens_in=req.tokens_in,
+        tokens_out=req.tokens_out,
+        trace_id=req.trace_id,
+        user_id=user_id,
+    )
     return FeedbackResponse(id=feedback_id, status="recorded")
 
 
 @router.get("/feedback/stats", response_model=FeedbackStats)
 async def get_feedback_stats():
-    """Aggregated feedback stats for admin dashboard."""
-    # TODO: Replace with real DB aggregations
-    return FeedbackStats(
-        total=3847,
-        thumbs_up=3416,
-        thumbs_down=431,
-        avg_rating=4.3,
-        thumbs_down_rate=0.112,
-        top_motifs=[
-            {"motif": "Réponse incomplète", "count": 87},
-            {"motif": "Hallucination factuelle", "count": 54},
-            {"motif": "Mauvaise langue", "count": 43},
-            {"motif": "Réponse trop lente", "count": 38},
-            {"motif": "Mauvais ton", "count": 31},
-        ],
-    )
+    """Statistiques agrégées réelles des retours utilisateurs pour le dashboard admin."""
+    stats = await get_feedback_statistics()
+    return FeedbackStats(**stats)

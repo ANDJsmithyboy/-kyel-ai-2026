@@ -13,9 +13,11 @@ import uuid
 import asyncio
 from typing import AsyncGenerator
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, Field
+
+from core.security import get_current_user
 
 
 router = APIRouter(prefix="/api/v1/nkyel", tags=["Ñkyel Agent"])
@@ -29,12 +31,18 @@ class NkyelRunRequest(BaseModel):
     run_id: str | None = Field(default=None, description="Optional run ID for replay/resume")
 
 
+class NkyelCancelRequest(BaseModel):
+    """Request to cancel a running mission."""
+    run_id: str = Field(..., description="The run ID to cancel")
+    reason: str = Field(default="user_requested", description="Cancellation reason")
+
+
 class NkyelReplanRequest(BaseModel):
-    """Request to trigger replanification."""
-    run_id: str
-    edited_node_id: str
-    reason: str
-    updates: dict = Field(default_factory=dict)
+    """Request to trigger replanification for a mission."""
+    run_id: str = Field(..., description="The run ID to replan")
+    edited_node_id: str = Field(..., description="The node ID that was edited/modified")
+    updates: dict = Field(default_factory=dict, description="Updates to apply to the node")
+    reason: str = Field(default="user_intervention", description="Reason for replanification")
 
 
 def _sse_event(event_type: str, data: dict) -> str:
@@ -49,8 +57,12 @@ async def _run_nkyel_agent(request: NkyelRunRequest) -> AsyncGenerator[str, None
     Each event maps to a Canonical Work Graph event.
     """
     from agents.nkyel_graph import nkyel_graph
+    from core.cancellation import cancellation_manager
 
     run_id = request.run_id or f"run_{uuid.uuid4().hex[:8]}"
+
+    # Register cancellation token for this run
+    cancel_token = cancellation_manager.create_token(mission_id=run_id, run_id=run_id)
 
     # Emit run.created
     yield _sse_event("run_started", {
@@ -85,9 +97,17 @@ async def _run_nkyel_agent(request: NkyelRunRequest) -> AsyncGenerator[str, None
 
         # Run the graph — stream events as they happen
         final_state = None
-        # Using astream with stream_mode='values' emits the full state after each node completes
         yielded_count = 0
         async for state in nkyel_graph.astream(initial_state, stream_mode="values"):
+            # Check cancellation
+            if cancel_token.is_cancelled:
+                yield _sse_event("run_cancelled", {
+                    "run_id": run_id,
+                    "status": "cancelled",
+                    "reason": cancel_token.cancel_reason or "user_requested",
+                })
+                break
+
             events = state.get("events", [])
             # Yield any new events
             for i in range(yielded_count, len(events)):
@@ -112,8 +132,8 @@ async def _run_nkyel_agent(request: NkyelRunRequest) -> AsyncGenerator[str, None
             yielded_count = len(events)
             final_state = state
 
-        # Emit final
-        if final_state:
+        # Emit final if not cancelled
+        if final_state and not cancel_token.is_cancelled:
             yield _sse_event("run_completed", {
                 "run_id": run_id,
                 "status": "completed",
@@ -140,11 +160,18 @@ async def _run_nkyel_agent(request: NkyelRunRequest) -> AsyncGenerator[str, None
 
 
 @router.post("/run")
-async def run_nkyel_agent(request: NkyelRunRequest):
+async def run_nkyel_agent(
+    request: NkyelRunRequest,
+    user: dict = Depends(get_current_user),
+):
     """
     Start a Ñkyel agent run.
     Returns an SSE stream of AG-UI compatible events.
     """
+    # Enforce real authenticated user identity
+    if user and user.get("id"):
+        request.user_id = user["id"]
+
     return StreamingResponse(
         _run_nkyel_agent(request),
         media_type="text/event-stream",
@@ -156,17 +183,45 @@ async def run_nkyel_agent(request: NkyelRunRequest):
     )
 
 
+@router.post("/cancel")
+@router.post("/stop")
+async def cancel_run(
+    request: NkyelCancelRequest,
+    user: dict = Depends(get_current_user),
+):
+    """
+    Cancel an ongoing mission run immediately.
+    """
+    from core.cancellation import cancellation_manager
+
+    cancelled = cancellation_manager.cancel_mission(
+        mission_id=request.run_id,
+        reason=request.reason,
+    )
+    return {
+        "success": True,
+        "run_id": request.run_id,
+        "cancelled": cancelled,
+        "reason": request.reason,
+    }
+
+
 @router.post("/replan")
-async def replan(request: NkyelReplanRequest):
+async def replan(
+    request: NkyelReplanRequest,
+    user: dict = Depends(get_current_user),
+):
     """
     Trigger replanification for a running mission.
     This returns a new SSE stream that resumes the graph.
     """
     async def _run_replan() -> AsyncGenerator[str, None]:
         from agents.nkyel_graph import nkyel_graph
-        
         from events.persistent_store import get_snapshot
+        from core.cancellation import cancellation_manager
         
+        cancel_token = cancellation_manager.create_token(mission_id=request.run_id, run_id=request.run_id)
+
         snapshot = get_snapshot(request.run_id)
         if not snapshot:
             yield _sse_event("error", {"run_id": request.run_id, "message": "Snapshot not found."})
@@ -201,6 +256,14 @@ async def replan(request: NkyelReplanRequest):
             yielded_count = 0
             # Route to "do_plan" directly
             async for state in nkyel_graph.astream(initial_state, stream_mode="values"):
+                if cancel_token.is_cancelled:
+                    yield _sse_event("run_cancelled", {
+                        "run_id": request.run_id,
+                        "status": "cancelled",
+                        "reason": cancel_token.cancel_reason or "user_requested",
+                    })
+                    break
+
                 events = state.get("events", [])
                 for i in range(yielded_count, len(events)):
                     evt = events[i]
@@ -214,14 +277,15 @@ async def replan(request: NkyelReplanRequest):
                     yield _sse_event(evt.get("type", "agent_step"), data)
                 yielded_count = len(events)
             
-            yield _sse_event("replan.completed", {
-                "run_id": request.run_id,
-            })
-            
-            yield _sse_event("run_completed", {
-                "run_id": request.run_id,
-                "status": "completed",
-            })
+            if not cancel_token.is_cancelled:
+                yield _sse_event("replan.completed", {
+                    "run_id": request.run_id,
+                })
+                
+                yield _sse_event("run_completed", {
+                    "run_id": request.run_id,
+                    "status": "completed",
+                })
         except Exception as e:
             yield _sse_event("error", {"run_id": request.run_id, "message": str(e)})
             

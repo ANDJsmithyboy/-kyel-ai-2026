@@ -1,0 +1,67 @@
+name: "Gaboma AI Desktop Release"
+
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+
+jobs:
+  build-tauri:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: "macos-latest" # Compile pour Mac (.dmg / .app)
+            args: "--target aarch64-apple-darwin" # Pour les Mac Silicon (M1/M2/M3)
+          - platform: "macos-latest"
+            args: "--target x86_64-apple-darwin" # Pour les anciens Mac Intel
+          - platform: "windows-latest" # Compile pour PC (.exe / .msi)
+            args: ""
+
+    runs-on: ${{ matrix.platform }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 9
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "pnpm"
+          cache-dependency-path: "ZION-CORE-V2/pnpm-lock.yaml"
+
+      - name: Install Rust stable
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.platform == 'macos-latest' && 'aarch64-apple-darwin,x86_64-apple-darwin' || '' }}
+
+      - name: Install macOS dependencies
+        if: matrix.platform == 'macos-latest'
+        run: xcode-select --install || true
+
+      - name: Install frontend dependencies
+        working-directory: ./ZION-CORE-V2
+        run: pnpm install
+
+      - name: Build Next.js Web App
+        working-directory: ./ZION-CORE-V2
+        run: pnpm run build
+
+      - name: Build Tauri Desktop App
+        uses: tauri-apps/tauri-action@v0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          projectPath: "./ZION-CORE-V2/src-tauri"
+          tagName: v2.0.0-${{ github.run_id }}
+          releaseName: "Gaboma AI Desktop v2.0.0"
+          releaseBody: "Release automatique générée par GitHub Actions pour Mac et PC."
+          releaseDraft: true
+          prerelease: false
+          args: ${{ matrix.args }}

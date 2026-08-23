@@ -1,328 +1,382 @@
+/**
+ * Ñkyel AI · Paramètres (Settings Modal)
+ * SmartANDJ AI Technologies · Founder: Daniel Jonathan ANDJ
+ *
+ * Architecture des Paramètres :
+ * 1. Général (Langue, Apparence / Thème, Densité, Sons)
+ * 2. Compte & Souveraineté (Profil, Identité, Sécurité)
+ * 3. Personnalisation (Comportement Ñkyel, Mémoire, Contexte)
+ * 4. Connecteurs (Services externes, Serveurs MCP, Intégrations)
+ * 5. Agents & Compétences (Capacités, Outils, Permissions A2A)
+ * 6. Données & Confidentialité (Contrôle des données, Historique, RAG)
+ * 7. Développeurs & Protocoles (API, Webhooks, A2A, Clés, Diagnostic)
+ */
+
 'use client';
 
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { UserCircle, CreditCard, PuzzlePiece, Moon, SpeakerHigh, ShieldCheck, Scales, Info, X } from '@phosphor-icons/react';
+import {
+  Gear,
+  UserCircle,
+  SlidersHorizontal,
+  PlugsConnected,
+  UsersThree,
+  ShieldCheck,
+  Code,
+  X,
+  Info,
+  Check,
+  Moon,
+  Sun,
+  Globe,
+  Database,
+  Key,
+  Cpu,
+} from '@phosphor-icons/react';
+import { useThemeStore, THEMES, type ThemeKey } from '@/stores/theme';
+import { useLanguageStore } from '@/stores/language.store';
 
-// Types for the settings
-type TabId = 'profil' | 'pacte' | 'extensions' | 'foret' | 'echo' | 'coffre' | 'politique';
+type SettingsTab =
+  | 'general'
+  | 'account'
+  | 'customization'
+  | 'connectors'
+  | 'agents'
+  | 'data'
+  | 'developer';
 
 interface AntreModalProps {
   isOpen: boolean;
   onClose: () => void;
-  initialTab?: TabId;
+  initialTab?: SettingsTab;
 }
 
-export default function AntreModal({ isOpen, onClose, initialTab = 'profil' }: AntreModalProps) {
-  const [activeTab, setActiveTab] = useState<TabId>(initialTab);
-  const [showDiagnostics, setShowDiagnostics] = useState(false);
+const TABS: { id: SettingsTab; label: string; icon: React.ComponentType<any> }[] = [
+  { id: 'general', label: 'Général', icon: Gear },
+  { id: 'account', label: 'Compte & Souveraineté', icon: UserCircle },
+  { id: 'customization', label: 'Personnalisation', icon: SlidersHorizontal },
+  { id: 'connectors', label: 'Connecteurs & MCP', icon: PlugsConnected },
+  { id: 'agents', label: 'Agents & Compétences', icon: UsersThree },
+  { id: 'data', label: 'Données & Mémoire', icon: Database },
+  { id: 'developer', label: 'Développeurs & Protocoles', icon: Code },
+];
 
-  // Content for each tab
-  const renderTabContent = () => {
+export default function AntreModal({ isOpen, onClose, initialTab = 'general' }: AntreModalProps) {
+  const [activeTab, setActiveTab] = useState<SettingsTab>(initialTab);
+  const [showDiagnostics, setShowDiagnostics] = useState(false);
+  const { theme, setTheme } = useThemeStore();
+  const { uiLanguage, setUiLanguage, setModalOpen } = useLanguageStore();
+
+  if (!isOpen) return null;
+
+  const renderContent = () => {
     switch (activeTab) {
-      case 'profil':
+      case 'general':
         return (
           <div className="space-y-6">
-            <h3 className="text-xl font-medium tracking-tight mb-4 flex items-center gap-2"><UserCircle weight="duotone" className="text-primary" size={24}/> Profil Citoyen</h3>
-            <div className="flex items-center gap-4 p-4 bg-white/5 rounded-2xl border border-white/10">
-              <div className="w-16 h-16 rounded-full bg-primary/20 flex items-center justify-center text-primary text-xl font-bold cursor-pointer">
+            <div>
+              <h3 className="font-semibold text-base mb-1" style={{ color: 'var(--fg)' }}>
+                Général
+              </h3>
+              <p className="text-xs" style={{ color: 'var(--fg-muted)' }}>
+                Préférences d'apparence, langue d'interface et comportement de base.
+              </p>
+            </div>
+
+            {/* Thème d'interface */}
+            <div
+              className="p-4 rounded-xl border space-y-3"
+              style={{ background: 'var(--surface-raised)', borderColor: 'var(--border-default)' }}
+            >
+              <label className="text-xs font-semibold uppercase tracking-wider block" style={{ color: 'var(--fg-subtle)' }}>
+                Thème d'interface (6 thèmes souverains)
+              </label>
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                {THEMES.map((t) => {
+                  const isSelected = theme === t.key;
+                  return (
+                    <button
+                      key={t.key}
+                      type="button"
+                      onClick={() => setTheme(t.key)}
+                      className="p-3 rounded-lg border text-left flex flex-col justify-between transition-all"
+                      style={{
+                        background: isSelected ? 'var(--accent-subtle)' : 'var(--surface)',
+                        borderColor: isSelected ? 'var(--accent)' : 'var(--border-subtle)',
+                      }}
+                    >
+                      <div className="flex items-center justify-between w-full mb-1">
+                        <span className="text-xs font-semibold" style={{ color: 'var(--fg)' }}>
+                          {t.name}
+                        </span>
+                        {isSelected && <Check size={14} weight="bold" style={{ color: 'var(--accent)' }} />}
+                      </div>
+                      <span className="text-[11px] line-clamp-1" style={{ color: 'var(--fg-muted)' }}>
+                        {t.description}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Langue principale */}
+            <div
+              className="p-4 rounded-xl border flex items-center justify-between"
+              style={{ background: 'var(--surface-raised)', borderColor: 'var(--border-default)' }}
+            >
+              <div>
+                <span className="text-sm font-medium block" style={{ color: 'var(--fg)' }}>
+                  Langue d'interface & Multilinguisme
+                </span>
+                <span className="text-xs" style={{ color: 'var(--fg-muted)' }}>
+                  Accéder au sélecteur linguistique universel (langues africaines & internationales)
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  onClose();
+                  setModalOpen(true);
+                }}
+                className="px-3 py-1.5 rounded-lg border font-medium text-xs flex items-center gap-1.5"
+                style={{
+                  background: 'var(--accent-subtle)',
+                  borderColor: 'var(--accent-muted)',
+                  color: 'var(--accent)',
+                }}
+              >
+                <Globe size={14} />
+                <span>Configurer</span>
+              </button>
+            </div>
+          </div>
+        );
+
+      case 'account':
+        return (
+          <div className="space-y-6">
+            <div>
+              <h3 className="font-semibold text-base mb-1" style={{ color: 'var(--fg)' }}>
+                Compte & Souveraineté
+              </h3>
+              <p className="text-xs" style={{ color: 'var(--fg-muted)' }}>
+                Gestion de votre profil citoyen, identité et sécurité de session.
+              </p>
+            </div>
+
+            <div
+              className="p-4 rounded-xl border flex items-center gap-4"
+              style={{ background: 'var(--surface-raised)', borderColor: 'var(--border-default)' }}
+            >
+              <div
+                className="w-14 h-14 rounded-full flex items-center justify-center font-semibold text-base"
+                style={{ background: 'var(--accent-subtle)', color: 'var(--accent)', border: '1px solid var(--accent-muted)' }}
+              >
                 JD
               </div>
-              <div className="flex-1">
-                <input type="text" defaultValue="Daniel Jonathan ANDJ" className="bg-transparent border-b border-white/20 px-1 py-1 w-full focus:outline-none focus:border-primary transition-colors text-lg font-medium" />
-                <p className="text-sm opacity-60 mt-1">Citoyen depuis Mars 2026</p>
+              <div className="flex-1 min-w-0">
+                <h4 className="text-sm font-semibold truncate" style={{ color: 'var(--fg)' }}>
+                  Daniel Jonathan ANDJ
+                </h4>
+                <p className="text-xs" style={{ color: 'var(--fg-muted)' }}>
+                  Fondateur & Lead Architect · SmartANDJ AI Technologies
+                </p>
+                <span
+                  className="inline-block mt-1 font-mono text-[10px] px-2 py-0.5 rounded"
+                  style={{ background: 'var(--accent-subtle)', color: 'var(--accent)' }}
+                >
+                  Souveraineté Gabonaise
+                </span>
               </div>
             </div>
-            
-            <div className="space-y-4">
-              <div className="flex justify-between items-center py-2 border-b border-white/5">
-                <span className="opacity-80">Email</span>
-                <div className="flex gap-4 items-center">
-                  <span className="opacity-60">daniel@Nkyel AI.com</span>
-                  <button className="text-primary text-sm font-medium hover:underline">Modifier</button>
-                </div>
-              </div>
-              
-              <div className="flex justify-between items-center py-2 border-b border-white/5">
-                <span className="opacity-80">Téléphone</span>
-                <span className="opacity-60">+241 XX XX XX 00</span>
-              </div>
 
-              <div className="flex justify-between items-center py-2 border-b border-white/5">
-                <span className="opacity-80">Langue de Traque</span>
-                <select className="bg-white/5 border border-white/10 rounded-lg px-3 py-1 text-sm outline-none focus:border-primary">
-                  <option>Français</option>
-                  <option>English</option>
-                  <option>Fang</option>
-                  <option>Punu</option>
-                  <option>Nzebi</option>
-                  <option>Omyène</option>
-                </select>
+            <div
+              className="p-4 rounded-xl border space-y-3"
+              style={{ background: 'var(--surface-raised)', borderColor: 'var(--border-default)' }}
+            >
+              <div className="flex items-center justify-between text-xs py-1 border-b" style={{ borderColor: 'var(--border-subtle)' }}>
+                <span style={{ color: 'var(--fg-muted)' }}>Statut d'accès</span>
+                <span className="font-semibold" style={{ color: 'var(--hue-success)' }}>Actif (Accès Illimité)</span>
               </div>
-
-              <div className="flex justify-between items-center py-2 border-b border-white/5">
-                <span className="opacity-80">Rang / Force</span>
-                <span className="px-3 py-1 rounded-full bg-primary/20 text-primary text-xs font-semibold uppercase tracking-wider">Black Panther</span>
-              </div>
-              
-              <div className="pt-4">
-                <button className="text-red-400 hover:text-red-300 text-sm font-medium transition-colors">
-                  Supprimer mon compte
-                </button>
+              <div className="flex items-center justify-between text-xs py-1">
+                <span style={{ color: 'var(--fg-muted)' }}>Chiffrement souverain</span>
+                <span className="font-mono text-[11px]" style={{ color: 'var(--fg)' }}>AES-256-GCM (Zero-Knowledge)</span>
               </div>
             </div>
           </div>
         );
 
-      case 'pacte':
+      case 'customization':
         return (
           <div className="space-y-6">
-            <h3 className="text-xl font-medium tracking-tight mb-4 flex items-center gap-2"><CreditCard weight="duotone" className="text-primary" size={24}/> Pacte de Chasse</h3>
-            <div className="p-6 bg-gradient-to-br from-primary/20 to-transparent border border-primary/30 rounded-2xl">
-              <div className="flex justify-between items-start mb-4">
+            <div>
+              <h3 className="font-semibold text-base mb-1" style={{ color: 'var(--fg)' }}>
+                Personnalisation
+              </h3>
+              <p className="text-xs" style={{ color: 'var(--fg-muted)' }}>
+                Ajustez le comportement de raisonnement et l'assistance contextuelle.
+              </p>
+            </div>
+
+            <div
+              className="p-4 rounded-xl border space-y-3"
+              style={{ background: 'var(--surface-raised)', borderColor: 'var(--border-default)' }}
+            >
+              <div className="flex items-center justify-between">
                 <div>
-                  <h4 className="text-lg font-bold text-primary mb-1">Black Panther</h4>
-                  <p className="text-sm opacity-80">Renouvellement le 12 Avril 2026</p>
+                  <span className="text-sm font-medium block" style={{ color: 'var(--fg)' }}>
+                    Explication progressive
+                  </span>
+                  <span className="text-xs" style={{ color: 'var(--fg-muted)' }}>
+                    Calme par défaut, inspectable en profondeur sur demande
+                  </span>
                 </div>
-                <span className="px-3 py-1 bg-primary/20 text-primary rounded-full text-xs font-bold uppercase">Actif</span>
+                <span className="font-mono text-xs" style={{ color: 'var(--accent)' }}>Activé</span>
               </div>
-              
-              {/* Energy Gauge */}
-              <div className="space-y-2 mt-6">
-                <div className="flex justify-between text-sm">
-                  <span className="opacity-80">Jauge d'énergie</span>
-                  <span className="font-medium">85%</span>
-                </div>
-                <div className="h-2 w-full bg-white/10 rounded-full overflow-hidden">
-                  <div className="h-full bg-primary w-[85%] rounded-full shadow-[0_0_10px_rgba(255,255,255,0.2)]" />
-                </div>
-              </div>
-            </div>
-
-            <div className="space-y-3">
-              <h4 className="text-sm font-semibold opacity-60 uppercase tracking-wider mb-2">Moyens de paiement</h4>
-              <div className="flex justify-between items-center p-3 border border-white/10 rounded-xl bg-white/5">
-                <div className="flex items-center gap-3">
-                  <img src="/airtel-money.png" alt="Airtel Money" className="w-12 h-8 object-contain rounded bg-white" />
-                  <span className="font-medium">Airtel Money</span>
-                </div>
-                <button className="text-xs text-red-400 opacity-80 hover:opacity-100 font-medium">Retirer</button>
-              </div>
-              <div className="flex justify-between items-center p-3 border border-white/10 rounded-xl bg-white/5 mt-2">
-                <div className="flex items-center gap-3">
-                  <img src="/moov-money.png" alt="Moov Africa" className="w-12 h-8 object-contain rounded bg-white" />
-                  <span className="font-medium">Moov Money</span>
-                </div>
-                <button className="text-xs text-red-400 opacity-80 hover:opacity-100 font-medium">Retirer</button>
-              </div>
-              <button className="w-full p-3 border border-dashed border-white/20 rounded-xl text-sm opacity-70 hover:opacity-100 hover:bg-white/5 transition-colors">
-                + Ajouter un mode de paiement
-              </button>
             </div>
           </div>
         );
 
-      case 'extensions':
+      case 'connectors':
         return (
           <div className="space-y-6">
-            <h3 className="text-xl font-medium tracking-tight mb-4 flex items-center gap-2"><PuzzlePiece weight="duotone" className="text-primary" size={24}/> Extensions de Traque</h3>
-            
-            {[
-              { name: 'Radar Wandana', desc: 'Recherche web profonde', active: true },
-              { name: 'Génération d\'images', desc: 'Création visuelle via prompt', active: true },
-              { name: 'Exécution de code', desc: 'Environnement de test isolé', active: false },
-              { name: 'Connecteurs Cloud', desc: 'Accès Drive / MCP', active: false, config: 'Accède à : lecture de vos fichiers Drive' }
-            ].map((ext, i) => (
-              <div key={i} className="flex flex-col p-4 border border-white/10 rounded-xl bg-white/5 space-y-3">
-                <div className="flex justify-between items-center">
+            <div>
+              <h3 className="font-semibold text-base mb-1" style={{ color: 'var(--fg)' }}>
+                Connecteurs & MCP
+              </h3>
+              <p className="text-xs" style={{ color: 'var(--fg-muted)' }}>
+                Protocoles Model Context Protocol (MCP) et intégrations de données connectées.
+              </p>
+            </div>
+
+            <div className="space-y-2">
+              {[
+                { name: 'Google Search & Grounding', status: 'Connecté', desc: 'Recherche primaire vérifiée en direct' },
+                { name: 'Google Workspace (Drive / Docs / Sheets)', status: 'Prêt', desc: 'Lecture et production de livrables' },
+                { name: 'Qdrant Vector Database', status: 'Actif', desc: 'Mémoire vectorielle sémantique locale' },
+                { name: 'Firebase App Hosting', status: 'Opérationnel', desc: 'Déploiement direct d’artefacts web' },
+              ].map((c, i) => (
+                <div
+                  key={i}
+                  className="p-3.5 rounded-xl border flex items-center justify-between"
+                  style={{ background: 'var(--surface-raised)', borderColor: 'var(--border-default)' }}
+                >
                   <div>
-                    <h4 className="font-medium">{ext.name}</h4>
-                    <p className="text-sm opacity-60">{ext.desc}</p>
+                    <h4 className="text-xs font-semibold" style={{ color: 'var(--fg)' }}>{c.name}</h4>
+                    <p className="text-[11px]" style={{ color: 'var(--fg-muted)' }}>{c.desc}</p>
                   </div>
-                  {/* Switch */}
-                  <button className={`w-11 h-6 rounded-full transition-colors relative ${ext.active ? 'bg-primary' : 'bg-white/20'}`}>
-                    <span className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-transform ${ext.active ? 'left-6' : 'left-1'}`} />
-                  </button>
+                  <span
+                    className="font-mono text-[10px] px-2 py-0.5 rounded"
+                    style={{ background: 'var(--accent-subtle)', color: 'var(--hue-success)' }}
+                  >
+                    {c.status}
+                  </span>
                 </div>
-                {ext.config && (
-                  <div className="pt-3 border-t border-white/10 flex justify-between items-center">
-                    <span className="text-xs opacity-60">{ext.config}</span>
-                    <button className="text-xs text-primary font-medium flex items-center gap-1 hover:underline">
-                      Configurer
-                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 18l6-6-6-6"/></svg>
-                    </button>
+              ))}
+            </div>
+          </div>
+        );
+
+      case 'agents':
+        return (
+          <div className="space-y-6">
+            <div>
+              <h3 className="font-semibold text-base mb-1" style={{ color: 'var(--fg)' }}>
+                Agents & Compétences
+              </h3>
+              <p className="text-xs" style={{ color: 'var(--fg-muted)' }}>
+                Orchestration multi-agents A2A et compétences dynamiques (SKILL.md).
+              </p>
+            </div>
+
+            <div className="space-y-2">
+              {[
+                { name: 'DeerFlow Orchestrator', role: 'Planification, décomposition et contrôle de graphe' },
+                { name: 'Agent de Recherche Wandana', role: 'Extraction, preuves et synthèses documentaires' },
+                { name: 'Agent Codeur Chui', role: 'Développement, tests unitaires et vérification formelle' },
+                { name: 'A2UI Visual Synthesizer', role: 'Rendu interactif des composants et artefacts' },
+              ].map((a, i) => (
+                <div
+                  key={i}
+                  className="p-3.5 rounded-xl border flex items-start justify-between gap-3"
+                  style={{ background: 'var(--surface-raised)', borderColor: 'var(--border-default)' }}
+                >
+                  <div>
+                    <h4 className="text-xs font-semibold" style={{ color: 'var(--fg)' }}>{a.name}</h4>
+                    <p className="text-[11px] mt-0.5" style={{ color: 'var(--fg-muted)' }}>{a.role}</p>
                   </div>
-                )}
-              </div>
-            ))}
+                  <span
+                    className="font-mono text-[10px] px-2 py-0.5 rounded shrink-0"
+                    style={{ background: 'var(--accent-subtle)', color: 'var(--accent)' }}
+                  >
+                    Souverain
+                  </span>
+                </div>
+              ))}
+            </div>
           </div>
         );
 
-      case 'foret':
+      case 'data':
         return (
           <div className="space-y-6">
-            <h3 className="text-xl font-medium tracking-tight mb-4 flex items-center gap-2"><Moon weight="duotone" className="text-primary" size={24}/> Mode de Forêt</h3>
-            
-            <div className="space-y-4">
-              <div className="flex justify-between items-center py-3 border-b border-white/5">
-                <span className="opacity-80">Apparence</span>
-                <select className="bg-white/5 border border-white/10 rounded-lg px-3 py-1 text-sm outline-none focus:border-primary">
-                  <option>Système</option>
-                  <option>Clair</option>
-                  <option>Sombre</option>
-                </select>
-              </div>
+            <div>
+              <h3 className="font-semibold text-base mb-1" style={{ color: 'var(--fg)' }}>
+                Données & Mémoire
+              </h3>
+              <p className="text-xs" style={{ color: 'var(--fg-muted)' }}>
+                Contrôle de la rétention, des checkpoints et de la mémoire souveraine.
+              </p>
+            </div>
 
-              <div className="py-4 border-b border-white/5">
-                <span className="block opacity-80 mb-4">Thème d'Interface</span>
-                <div className="flex gap-4">
-                  {/* 6 Theme Swatches */}
-                  {[
-                    { id: 'panther', color: '#020304', accent: '#C5A059' },
-                    { id: 'amethyst', color: '#1B1425', accent: '#9D6EE2' },
-                    { id: 'emerald', color: '#0A1A14', accent: '#2E8C61' },
-                    { id: 'sapphire', color: '#0A141A', accent: '#2E7A8C' },
-                    { id: 'ruby', color: '#1A0A0B', accent: '#8C2E35' },
-                    { id: 'obsidian', color: '#000000', accent: '#FFFFFF' }
-                  ].map((theme) => (
-                    <button 
-                      key={theme.id}
-                      className={`w-10 h-10 rounded-full border-2 transition-transform hover:scale-110 flex items-center justify-center ${theme.id === 'panther' ? 'border-primary scale-110 shadow-[0_0_15px_rgba(197,160,89,0.3)]' : 'border-transparent'}`}
-                      style={{ backgroundColor: theme.color }}
-                    >
-                      <span className="w-3 h-3 rounded-full" style={{ backgroundColor: theme.accent }} />
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <div className="flex justify-between items-center py-3 border-b border-white/5">
+            <div
+              className="p-4 rounded-xl border space-y-3"
+              style={{ background: 'var(--surface-raised)', borderColor: 'var(--border-default)' }}
+            >
+              <div className="flex items-center justify-between">
                 <div>
-                  <span className="block opacity-80">Noir OLED Absolu</span>
-                  <span className="text-xs opacity-50">Pour économiser la batterie (Mobile)</span>
+                  <span className="text-sm font-medium block" style={{ color: 'var(--fg)' }}>
+                    Hébergement souverain
+                  </span>
+                  <span className="text-xs" style={{ color: 'var(--fg-muted)' }}>
+                    Données traitées et isolées sans ré-entraînement externe
+                  </span>
                 </div>
-                <button className="w-11 h-6 rounded-full bg-white/20 transition-colors relative">
-                  <span className="absolute top-1 left-1 w-4 h-4 rounded-full bg-white transition-transform" />
-                </button>
+                <ShieldCheck size={20} style={{ color: 'var(--hue-success)' }} />
               </div>
             </div>
           </div>
         );
 
-      case 'echo':
+      case 'developer':
         return (
           <div className="space-y-6">
-            <h3 className="text-xl font-medium tracking-tight mb-4 flex items-center gap-2"><SpeakerHigh weight="duotone" className="text-primary" size={24}/> Écho (Voix)</h3>
-            
-            <div className="space-y-4">
-              <div className="flex justify-between items-center py-3 border-b border-white/5">
-                <span className="opacity-80">Style de voix</span>
-                <select className="bg-white/5 border border-white/10 rounded-lg px-3 py-1 text-sm outline-none focus:border-primary">
-                  <option>Masculine</option>
-                  <option>Féminine</option>
-                  <option>Neutre</option>
-                </select>
-              </div>
-
-              <div className="flex justify-between items-center py-3 border-b border-white/5">
-                <span className="opacity-80">Accent</span>
-                <select className="bg-white/5 border border-white/10 rounded-lg px-3 py-1 text-sm outline-none focus:border-primary">
-                  <option>Gabonais</option>
-                  <option>Standard</option>
-                </select>
-              </div>
-
-              <div className="flex justify-between items-center py-3 border-b border-white/5">
-                <span className="opacity-80">Lecture automatique</span>
-                <button className="w-11 h-6 rounded-full bg-primary transition-colors relative">
-                  <span className="absolute top-1 left-6 w-4 h-4 rounded-full bg-white transition-transform" />
-                </button>
-              </div>
-              
-              <div className="flex justify-between items-center py-3 border-b border-white/5">
-                <div>
-                  <span className="block opacity-80">Activation mains-libres</span>
-                  <span className="text-xs opacity-50">Wake-word pour le Live mode</span>
-                </div>
-                <button className="w-11 h-6 rounded-full bg-white/20 transition-colors relative">
-                  <span className="absolute top-1 left-1 w-4 h-4 rounded-full bg-white transition-transform" />
-                </button>
-              </div>
-            </div>
-          </div>
-        );
-
-      case 'coffre':
-        return (
-          <div className="space-y-6">
-            <h3 className="text-xl font-medium tracking-tight mb-4 flex items-center gap-2"><ShieldCheck weight="duotone" className="text-primary" size={24}/> Coffre-Fort Souverain</h3>
-            
-            <div className="p-4 bg-primary/10 border border-primary/20 rounded-xl flex gap-3 items-start mb-6">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-primary mt-0.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-              <div>
-                <h4 className="font-medium text-primary mb-1">Souveraineté des données</h4>
-                <p className="text-sm opacity-80">Toutes vos informations sont hébergées et traitées souverainement sur des serveurs au Gabon.</p>
-              </div>
+            <div>
+              <h3 className="font-semibold text-base mb-1" style={{ color: 'var(--fg)' }}>
+                Développeurs & Protocoles
+              </h3>
+              <p className="text-xs" style={{ color: 'var(--fg-muted)' }}>
+                Surveillance en direct des 8 protocoles et endpoints API.
+              </p>
             </div>
 
-            <div className="space-y-4">
-              <div className="flex justify-between items-center py-3 border-b border-white/5">
-                <div>
-                  <span className="block font-medium">Mode Ombre</span>
-                  <span className="text-xs opacity-60">Vos échanges ne sont ni sauvegardés ni utilisés pour l'entraînement.</span>
-                </div>
-                <button className="w-11 h-6 rounded-full bg-white/20 transition-colors relative">
-                  <span className="absolute top-1 left-1 w-4 h-4 rounded-full bg-white transition-transform" />
-                </button>
+            <div
+              className="p-4 rounded-xl border space-y-2 font-mono text-xs"
+              style={{ background: 'var(--surface)', borderColor: 'var(--border-default)' }}
+            >
+              <div className="flex justify-between" style={{ color: 'var(--fg-muted)' }}>
+                <span>Backend Core:</span>
+                <span style={{ color: 'var(--hue-success)' }}>FastAPI 0.115 + LangGraph (Opérationnel)</span>
               </div>
-
-              <button className="w-full flex justify-between items-center py-3 border-b border-white/5 hover:px-2 transition-all">
-                <span className="opacity-80">Changer le mot de passe</span>
-                <span className="opacity-40">›</span>
-              </button>
-
-              <button className="w-full flex justify-between items-center py-3 border-b border-white/5 hover:px-2 transition-all">
-                <span className="opacity-80">Authentification à deux facteurs (2FA)</span>
-                <span className="opacity-40">Désactivé ›</span>
-              </button>
-
-              <button className="w-full flex justify-between items-center py-3 border-b border-white/5 hover:px-2 transition-all">
-                <span className="opacity-80">Appareils connectés</span>
-                <span className="opacity-40">2 appareils ›</span>
-              </button>
-              
-              <button className="w-full flex justify-between items-center py-3 border-b border-white/5 hover:px-2 transition-all">
-                <span className="opacity-80">Exporter mes données</span>
-                <span className="opacity-40">JSON/PDF ›</span>
-              </button>
-            </div>
-          </div>
-        );
-
-      case 'politique':
-        return (
-          <div className="space-y-6">
-            <h3 className="text-xl font-medium tracking-tight mb-4 flex items-center gap-2"><Scales weight="duotone" className="text-primary" size={24}/> Pacte Politique</h3>
-            
-            <div className="space-y-4">
-              <button className="w-full flex justify-between items-center py-3 border-b border-white/5 hover:px-2 transition-all">
-                <span className="opacity-80">Conditions d'utilisation</span>
-                <span className="text-xs opacity-40">v2.1 (Mars 2026) ›</span>
-              </button>
-
-              <button className="w-full flex justify-between items-center py-3 border-b border-white/5 hover:px-2 transition-all">
-                <span className="opacity-80">Politique de confidentialité</span>
-                <span className="text-xs opacity-40">v1.4 (Fév 2026) ›</span>
-              </button>
-
-              <button className="w-full flex justify-between items-center py-3 border-b border-white/5 hover:px-2 transition-all">
-                <span className="opacity-80">Politique d'utilisation acceptable</span>
-                <span className="text-xs opacity-40">›</span>
-              </button>
-
-              <div className="py-4">
-                <p className="text-sm opacity-60 mb-2">Statut de consentement : <span className="text-primary font-medium">Accepté le 12 Mars 2026</span></p>
-                <button className="text-xs font-medium opacity-80 hover:underline">Gérer les préférences de cookies</button>
+              <div className="flex justify-between" style={{ color: 'var(--fg-muted)' }}>
+                <span>Event Store:</span>
+                <span style={{ color: 'var(--hue-success)' }}>events.sqlite3 (Invariable)</span>
+              </div>
+              <div className="flex justify-between" style={{ color: 'var(--fg-muted)' }}>
+                <span>Frontend:</span>
+                <span style={{ color: 'var(--accent)' }}>ZION-CORE-V2 · Design System V4</span>
               </div>
             </div>
           </div>
@@ -331,107 +385,92 @@ export default function AntreModal({ isOpen, onClose, initialTab = 'profil' }: A
   };
 
   return (
-    <AnimatePresence>
-      {isOpen && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center">
-          {/* Backdrop */}
-          <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={onClose}
-            className="absolute inset-0 bg-background/80 backdrop-blur-sm"
-          />
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: 'rgba(0,0,0,0.65)', backdropFilter: 'blur(8px)' }}>
+      <motion.div
+        initial={{ opacity: 0, scale: 0.96 }}
+        animate={{ opacity: 1, scale: 1 }}
+        exit={{ opacity: 0, scale: 0.96 }}
+        className="w-full max-w-4xl h-[620px] max-h-[90vh] rounded-2xl flex overflow-hidden shadow-2xl border flex-col md:flex-row"
+        style={{
+          background: 'var(--bg)',
+          borderColor: 'var(--border-default)',
+        }}
+      >
+        {/* Navigation Sidebar */}
+        <div
+          className="w-full md:w-64 border-r p-4 flex flex-col shrink-0"
+          style={{
+            background: 'var(--surface-raised)',
+            borderColor: 'var(--border-subtle)',
+          }}
+        >
+          <div className="flex items-center justify-between mb-4 px-2">
+            <h2 className="text-base font-semibold" style={{ color: 'var(--fg)' }}>
+              Paramètres
+            </h2>
+            <button
+              onClick={onClose}
+              className="p-1 rounded-lg md:hidden"
+              style={{ color: 'var(--fg-subtle)' }}
+            >
+              <X size={18} />
+            </button>
+          </div>
 
-          {/* Modal Container */}
-          <motion.div 
-            initial={{ opacity: 0, scale: 0.95, y: 20 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95, y: 20 }}
-            transition={{ type: "spring", bounce: 0, duration: 0.3 }}
-            className="relative w-[900px] h-[600px] max-w-[95vw] max-h-[90vh] bg-[#0c0c0c] border border-white/10 shadow-2xl rounded-2xl flex overflow-hidden flex-col md:flex-row"
-          >
-            {/* Header (Mobile) or Top Bar */}
-            <div className="absolute top-0 left-0 right-0 h-14 border-b border-white/5 flex items-center justify-between px-4 md:hidden">
-              <span className="font-semibold tracking-wide">L'Antre</span>
-              <button onClick={onClose} className="p-2 opacity-70 hover:opacity-100"><X size={20}/></button>
-            </div>
+          <nav className="flex-1 space-y-1 overflow-y-auto">
+            {TABS.map((tab) => {
+              const Icon = tab.icon;
+              const isActive = activeTab === tab.id;
 
-            {/* Left Sidebar */}
-            <div className="w-full md:w-64 bg-white/[0.02] border-r border-white/5 hidden md:flex flex-col">
-              <div className="p-6">
-                <h2 className="text-xl font-semibold tracking-tight">L'Antre</h2>
-              </div>
-              <nav className="flex-1 px-3 space-y-1 overflow-y-auto">
-                <button onClick={() => setActiveTab('profil')} className={`w-full flex items-center gap-3 text-left px-4 py-2.5 rounded-lg text-sm font-medium transition-colors ${activeTab === 'profil' ? 'bg-white/10 text-white' : 'text-white/60 hover:bg-white/5 hover:text-white'}`}><UserCircle size={18} weight={activeTab === 'profil' ? 'fill' : 'regular'}/> Profil Citoyen</button>
-                <button onClick={() => setActiveTab('pacte')} className={`w-full flex items-center gap-3 text-left px-4 py-2.5 rounded-lg text-sm font-medium transition-colors ${activeTab === 'pacte' ? 'bg-white/10 text-white' : 'text-white/60 hover:bg-white/5 hover:text-white'}`}><CreditCard size={18} weight={activeTab === 'pacte' ? 'fill' : 'regular'}/> Pacte de Chasse</button>
-                <button onClick={() => setActiveTab('extensions')} className={`w-full flex items-center gap-3 text-left px-4 py-2.5 rounded-lg text-sm font-medium transition-colors ${activeTab === 'extensions' ? 'bg-white/10 text-white' : 'text-white/60 hover:bg-white/5 hover:text-white'}`}><PuzzlePiece size={18} weight={activeTab === 'extensions' ? 'fill' : 'regular'}/> Extensions de Traque</button>
-                <button onClick={() => setActiveTab('foret')} className={`w-full flex items-center gap-3 text-left px-4 py-2.5 rounded-lg text-sm font-medium transition-colors ${activeTab === 'foret' ? 'bg-white/10 text-white' : 'text-white/60 hover:bg-white/5 hover:text-white'}`}><Moon size={18} weight={activeTab === 'foret' ? 'fill' : 'regular'}/> Mode de Forêt</button>
-                <button onClick={() => setActiveTab('echo')} className={`w-full flex items-center gap-3 text-left px-4 py-2.5 rounded-lg text-sm font-medium transition-colors ${activeTab === 'echo' ? 'bg-white/10 text-white' : 'text-white/60 hover:bg-white/5 hover:text-white'}`}><SpeakerHigh size={18} weight={activeTab === 'echo' ? 'fill' : 'regular'}/> Écho</button>
-                <button onClick={() => setActiveTab('coffre')} className={`w-full flex items-center gap-3 text-left px-4 py-2.5 rounded-lg text-sm font-medium transition-colors ${activeTab === 'coffre' ? 'bg-white/10 text-white' : 'text-white/60 hover:bg-white/5 hover:text-white'}`}><ShieldCheck size={18} weight={activeTab === 'coffre' ? 'fill' : 'regular'}/> Coffre-Fort Souverain</button>
-                <button onClick={() => setActiveTab('politique')} className={`w-full flex items-center gap-3 text-left px-4 py-2.5 rounded-lg text-sm font-medium transition-colors ${activeTab === 'politique' ? 'bg-white/10 text-white' : 'text-white/60 hover:bg-white/5 hover:text-white'}`}><Scales size={18} weight={activeTab === 'politique' ? 'fill' : 'regular'}/> Pacte Politique</button>
-              </nav>
-            </div>
-
-            {/* Main Content */}
-            <div className="flex-1 flex flex-col pt-14 md:pt-0">
-              {/* Top right actions (Close / Info) */}
-              <div className="absolute top-4 right-4 flex gap-2">
-                <button 
-                  onClick={() => setShowDiagnostics(true)}
-                  className="w-8 h-8 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center transition-colors text-white/70"
-                  aria-label="Informations système"
+              return (
+                <button
+                  key={tab.id}
+                  type="button"
+                  onClick={() => setActiveTab(tab.id)}
+                  className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-left transition-all"
+                  style={{
+                    background: isActive ? 'var(--accent-subtle)' : 'transparent',
+                    color: isActive ? 'var(--fg)' : 'var(--fg-muted)',
+                    border: isActive ? '1px solid var(--accent-muted)' : '1px solid transparent',
+                  }}
                 >
-                  <Info size={16} />
+                  <Icon size={16} style={{ color: isActive ? 'var(--accent)' : 'var(--fg-subtle)' }} />
+                  <span className="truncate">{tab.label}</span>
                 </button>
-                <button 
-                  onClick={onClose}
-                  className="w-8 h-8 rounded-full bg-white/5 hover:bg-white/10 hidden md:flex items-center justify-center transition-colors text-white/70"
-                  aria-label="Fermer"
-                >
-                  <X size={16} />
-                </button>
-              </div>
+              );
+            })}
+          </nav>
 
-              {/* Scrollable Form Area */}
-              <div className="flex-1 overflow-y-auto p-6 md:p-10">
-                <div className="max-w-xl">
-                  {renderTabContent()}
-                </div>
-              </div>
-            </div>
-
-            {/* Confidentiality-Safe System Info Modal */}
-            <AnimatePresence>
-              {showDiagnostics && (
-                <motion.div 
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: 10 }}
-                  className="absolute top-16 right-4 w-72 bg-[#1A1A1A] border border-white/10 shadow-2xl rounded-xl p-4 z-50"
-                >
-                  <h4 className="text-sm font-semibold mb-3">Statut Système</h4>
-                  <div className="space-y-2 text-xs opacity-80">
-                    <p className="flex justify-between">
-                      <span>Version:</span>
-                      <span className="font-mono">Nkyel AI - Build 1.0.0-Nkyel</span>
-                    </p>
-                    <p className="flex justify-between">
-                      <span>Nœud:</span>
-                      <span className="font-mono text-primary">Libreville-S-01</span>
-                    </p>
-                    <p className="flex justify-between">
-                      <span>Statut réseau:</span>
-                      <span className="text-green-400">Optimal • 14ms</span>
-                    </p>
-                  </div>
-                  <button onClick={() => setShowDiagnostics(false)} className="mt-4 w-full py-1.5 bg-white/5 hover:bg-white/10 rounded text-xs">Fermer</button>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </motion.div>
+          <div className="pt-3 border-t mt-2" style={{ borderColor: 'var(--border-subtle)' }}>
+            <span className="text-[10px] font-mono block text-center" style={{ color: 'var(--fg-subtle)' }}>
+              Ñkyel AI · Build Souverain
+            </span>
+          </div>
         </div>
-      )}
-    </AnimatePresence>
+
+        {/* Content Area */}
+        <div className="flex-1 flex flex-col min-w-0 overflow-hidden relative">
+          <div className="absolute top-4 right-4 z-10 hidden md:flex items-center gap-2">
+            <button
+              type="button"
+              onClick={onClose}
+              className="p-1.5 rounded-lg border transition-colors"
+              style={{
+                background: 'var(--surface-raised)',
+                borderColor: 'var(--border-subtle)',
+                color: 'var(--fg-subtle)',
+              }}
+              aria-label="Fermer les paramètres"
+            >
+              <X size={16} />
+            </button>
+          </div>
+
+          <div className="flex-1 overflow-y-auto p-6 md:p-8">
+            <div className="max-w-xl mx-auto">{renderContent()}</div>
+          </div>
+        </div>
+      </motion.div>
+    </div>
   );
 }

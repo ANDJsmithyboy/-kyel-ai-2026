@@ -1,0 +1,317 @@
+/**
+ * Nkyel AI — Visual Workspace Styles
+ * Premium dark theme with indigo/platinum palette
+ */
+
+/* --- Workspace Container ------------------------------ */
+.nkyel-workspace {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+  border-radius: 1.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgba(8, 10, 20, 0.95);
+  box-shadow: 0 28px 80px rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(24px);
+}
+
+.nkyel-workspace-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgba(6, 8, 18, 0.8);
+}
+
+.nkyel-workspace-label {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.24em;
+  color: #C0A062;
+  font-weight: 600;
+}
+
+.nkyel-workspace-title {
+  margin-top: 0.25rem;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.92);
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+.nkyel-workspace-subtitle {
+  margin-top: 0.125rem;
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.nkyel-workspace-controls {
+  display: flex;
+  gap: 0.5rem;
+}
+
+/* --- Canvas Container --------------------------------- */
+.nkyel-canvas-container {
+  position: relative;
+  flex: 1;
+  width: 100%;
+  height: 100%;
+}
+
+.nkyel-canvas-container::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 15% 15%, rgba(107, 138, 224, 0.08), transparent 30%),
+    radial-gradient(circle at 85% 85%, rgba(155, 114, 207, 0.06), transparent 25%),
+    radial-gradient(circle at 50% 50%, rgba(192, 160, 98, 0.04), transparent 40%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.nkyel-react-flow {
+  z-index: 1;
+  background: transparent !important;
+}
+
+/* --- Node Styles -------------------------------------- */
+.nkyel-node {
+  position: relative;
+  min-width: 200px;
+  max-width: 320px;
+  padding: 1rem;
+  border-radius: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(12, 14, 28, 0.92);
+  backdrop-filter: blur(12px);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+.nkyel-node:hover {
+  border-color: rgba(255, 255, 255, 0.15);
+  transform: translateY(-1px);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.nkyel-node:focus-visible {
+  outline: 2px solid #C0A062;
+  outline-offset: 2px;
+}
+
+.nkyel-node-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.nkyel-node-icon {
+  font-size: 1rem;
+}
+
+.nkyel-node-type {
+  font-size: 0.6rem;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  font-weight: 600;
+}
+
+.nkyel-node-status {
+  margin-left: auto;
+  font-size: 0.8rem;
+  opacity: 0.7;
+}
+
+.nkyel-node-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.92);
+  line-height: 1.3;
+  margin: 0;
+}
+
+.nkyel-node-summary {
+  margin-top: 0.5rem;
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.5);
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.nkyel-node-footer {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-top: 0.75rem;
+}
+
+.nkyel-provenance-badge,
+.nkyel-provider-badge {
+  font-size: 0.55rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.03);
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.nkyel-node-actions {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  display: flex;
+  gap: 0.25rem;
+}
+
+.nkyel-node-actions button {
+  width: 1.5rem;
+  height: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.5rem;
+  background: rgba(0, 0, 0, 0.4);
+  cursor: pointer;
+  font-size: 0.7rem;
+  transition: background 0.15s;
+}
+
+.nkyel-node-actions button:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* --- Activity Feed ------------------------------------ */
+.nkyel-activity-feed {
+  width: 280px;
+  max-height: 260px;
+  padding: 0.75rem;
+  border-radius: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgba(8, 10, 20, 0.92);
+  backdrop-filter: blur(12px);
+  overflow-y: auto;
+}
+
+.nkyel-activity-feed h4 {
+  font-size: 0.6rem;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: rgba(255, 255, 255, 0.4);
+  margin: 0 0 0.5rem;
+}
+
+.nkyel-activity-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.nkyel-activity-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  padding: 0.35rem 0.5rem;
+  border-radius: 0.5rem;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.nkyel-activity-type {
+  font-size: 0.6rem;
+  color: #6B8AE0;
+  font-weight: 600;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.nkyel-activity-detail {
+  font-size: 0.7rem;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+/* --- Controls Override -------------------------------- */
+.nkyel-controls {
+  background: rgba(5, 7, 12, 0.85) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-radius: 0.75rem !important;
+}
+
+.nkyel-controls button {
+  color: white !important;
+  fill: white !important;
+}
+
+/* --- Buttons ------------------------------------------ */
+.nkyel-btn {
+  padding: 0.5rem 1rem;
+  border-radius: 0.75rem;
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+.nkyel-btn-primary {
+  background: linear-gradient(135deg, #C0A062, #A08040);
+  color: #0A0C14;
+}
+
+.nkyel-btn-primary:hover {
+  background: linear-gradient(135deg, #D0B072, #B09050);
+}
+
+.nkyel-btn-secondary {
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.nkyel-btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* --- Responsive --------------------------------------- */
+@media (max-width: 768px) {
+  .nkyel-workspace {
+    border-radius: 0;
+  }
+
+  .nkyel-workspace-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .nkyel-node {
+    min-width: 160px;
+    max-width: 260px;
+    padding: 0.75rem;
+  }
+
+  .nkyel-activity-feed {
+    width: 200px;
+  }
+}
+
+/* --- Reduced Motion ----------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  .nkyel-node,
+  .nkyel-btn {
+    transition: none;
+  }
+
+  .nkyel-node:hover {
+    transform: none;
+  }
+}

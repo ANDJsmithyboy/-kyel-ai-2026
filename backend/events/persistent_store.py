@@ -2,6 +2,7 @@ import sqlite3
 import json
 import os
 import logging
+from contextlib import contextmanager
 from typing import List, Dict, Any, Optional
 
 logger = logging.getLogger(__name__)
@@ -9,10 +10,14 @@ logger = logging.getLogger(__name__)
 # Fichier SQLite local pour la persistance P0
 DB_PATH = os.environ.get("NKYEL_EVENT_STORE_DB", "events.sqlite3")
 
-def get_connection() -> sqlite3.Connection:
+@contextmanager
+def get_connection():
     conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row
-    return conn
+    try:
+        yield conn
+    finally:
+        conn.close()
 
 def init_db():
     """Initialise le schéma de la base de données de l'Event Store."""

@@ -2,7 +2,7 @@
  * Ñkyel AI · Modal Sélecteur Linguistique Universel & Priorité Africaine
  * SmartANDJ AI Technologies · Founder: Daniel Jonathan ANDJ
  *
- * Permet de configurer indépendamment les 5 dimensions linguistiques :
+ * Configures the 5 independent language dimensions:
  * 1. Interface (UI)
  * 2. Conversation (Dialogue)
  * 3. Documents (Livrables)
@@ -21,12 +21,9 @@ import {
   MagnifyingGlass,
   X,
   Check,
-  Sparkle,
-  ShieldCheck,
-  Broadcast,
   WifiLow,
 } from '@phosphor-icons/react';
-import { useLanguageStore, SUPPORTED_LANGUAGES, type LanguageItem } from '@/stores/language.store';
+import { useLanguageStore, SUPPORTED_LANGUAGES } from '@/stores/language.store';
 
 export default function LanguageSelectorModal() {
   const {
@@ -102,33 +99,63 @@ export default function LanguageSelectorModal() {
   const activeTag = getActiveLangForTab();
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-md flex items-center justify-center p-4 animate-fade-in">
-      <div className="w-full max-w-2xl bg-[#0E121A] border border-white/[0.1] rounded-3xl shadow-2xl flex flex-col max-h-[85vh] overflow-hidden">
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-fade-in"
+      style={{ background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(10px)' }}
+    >
+      <div
+        className="w-full max-w-2xl border rounded-3xl shadow-2xl flex flex-col max-h-[85vh] overflow-hidden"
+        style={{
+          background: 'var(--bg)',
+          borderColor: 'var(--border-default)',
+        }}
+      >
         {/* Header */}
-        <div className="px-6 py-5 border-b border-white/[0.06] flex items-center justify-between shrink-0 bg-[#121620]">
+        <div
+          className="px-6 py-5 border-b flex items-center justify-between shrink-0"
+          style={{
+            background: 'var(--surface-raised)',
+            borderColor: 'var(--border-subtle)',
+          }}
+        >
           <div className="flex items-center gap-3">
-            <span className="w-10 h-10 rounded-2xl bg-[#665F9E]/20 text-[#AAA2C8] flex items-center justify-center border border-[#665F9E]/30">
+            <span
+              className="w-10 h-10 rounded-2xl flex items-center justify-center border shrink-0"
+              style={{
+                background: 'var(--accent-subtle)',
+                color: 'var(--accent)',
+                borderColor: 'var(--accent-muted)',
+              }}
+            >
               <Globe size={22} weight="bold" />
             </span>
             <div>
-              <h2 className="text-base font-bold font-heading text-[#F1EEE7]">
+              <h2 className="text-base font-semibold" style={{ color: 'var(--fg)' }}>
                 Souveraineté Linguistique & Multilinguisme
               </h2>
-              <p className="text-xs text-[#7E8795] mt-0.5">
-                Langues gabonaises & africaines au cœur de Ñkyel AI, adaptables au monde entier.
+              <p className="text-xs mt-0.5" style={{ color: 'var(--fg-muted)' }}>
+                Langues gabonaises & africaines au cœur de Ñkyel AI, adaptées au monde entier.
               </p>
             </div>
           </div>
           <button
             onClick={() => setModalOpen(false)}
-            className="p-2 rounded-xl text-[#7E8795] hover:text-white hover:bg-white/[0.06] transition-colors"
+            className="p-2 rounded-xl transition-colors"
+            style={{ color: 'var(--fg-subtle)' }}
+            aria-label="Fermer"
           >
             <X size={18} />
           </button>
         </div>
 
         {/* 5 Settings Tabs */}
-        <div className="flex border-b border-white/[0.06] px-6 bg-[#0E121A] shrink-0 overflow-x-auto">
+        <div
+          className="flex border-b px-6 shrink-0 overflow-x-auto"
+          style={{
+            background: 'var(--bg)',
+            borderColor: 'var(--border-subtle)',
+          }}
+        >
           {[
             { id: 'conversation', label: 'Dialogue', icon: Translate },
             { id: 'ui', label: 'Interface', icon: Globe },
@@ -142,11 +169,11 @@ export default function LanguageSelectorModal() {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id as any)}
-                className={`flex items-center gap-2 py-3 px-3 text-xs font-semibold border-b-2 transition-all shrink-0 ${
-                  isActive
-                    ? 'border-[#C39A52] text-[#C39A52]'
-                    : 'border-transparent text-[#7E8795] hover:text-[#B8C0CC]'
-                }`}
+                className="flex items-center gap-2 py-3 px-3 text-xs font-semibold border-b-2 transition-all shrink-0"
+                style={{
+                  borderColor: isActive ? 'var(--accent)' : 'transparent',
+                  color: isActive ? 'var(--accent)' : 'var(--fg-subtle)',
+                }}
               >
                 <Icon size={16} />
                 <span>{tab.label}</span>
@@ -156,15 +183,26 @@ export default function LanguageSelectorModal() {
         </div>
 
         {/* Search & Category Filter */}
-        <div className="p-4 px-6 border-b border-white/[0.04] flex flex-col sm:flex-row gap-3 items-center justify-between shrink-0 bg-[#0E121A]">
+        <div
+          className="p-4 px-6 border-b flex flex-col sm:flex-row gap-3 items-center justify-between shrink-0"
+          style={{
+            background: 'var(--surface-raised)',
+            borderColor: 'var(--border-subtle)',
+          }}
+        >
           <div className="relative w-full sm:w-72">
-            <MagnifyingGlass size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#7E8795]" />
+            <MagnifyingGlass size={15} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: 'var(--fg-subtle)' }} />
             <input
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Rechercher une langue..."
-              className="w-full pl-9 pr-3 py-1.5 rounded-xl bg-white/[0.03] border border-white/[0.08] text-xs text-[#F1EEE7] outline-none focus:border-[#665F9E]"
+              className="w-full pl-9 pr-3 py-1.5 rounded-xl border text-xs outline-none"
+              style={{
+                background: 'var(--surface)',
+                borderColor: 'var(--border-subtle)',
+                color: 'var(--fg)',
+              }}
             />
           </div>
 
@@ -177,11 +215,12 @@ export default function LanguageSelectorModal() {
               <button
                 key={cat.id}
                 onClick={() => setFilterCategory(cat.id as any)}
-                className={`px-2.5 py-1 rounded-lg text-xs font-medium transition-all ${
-                  filterCategory === cat.id
-                    ? 'bg-[#665F9E]/20 text-[#AAA2C8] border border-[#665F9E]/40'
-                    : 'text-[#7E8795] hover:text-white bg-white/[0.02]'
-                }`}
+                className="px-2.5 py-1 rounded-lg text-xs font-medium transition-all border"
+                style={{
+                  background: filterCategory === cat.id ? 'var(--accent-subtle)' : 'transparent',
+                  color: filterCategory === cat.id ? 'var(--accent)' : 'var(--fg-subtle)',
+                  borderColor: filterCategory === cat.id ? 'var(--accent-muted)' : 'var(--border-subtle)',
+                }}
               >
                 {cat.label}
               </button>
@@ -190,29 +229,34 @@ export default function LanguageSelectorModal() {
         </div>
 
         {/* Languages List */}
-        <div className="flex-1 overflow-y-auto p-4 px-6 space-y-2.5 scrollbar-thin scrollbar-thumb-white/10">
-          {/* Option Auto-detect pour le dialogue */}
+        <div className="flex-1 overflow-y-auto p-4 px-6 space-y-2.5 scrollbar-thin">
+          {/* Auto-detect option for conversation */}
           {activeTab === 'conversation' && (
             <div
               onClick={() => handleSelectLang('auto')}
-              className={`p-3.5 rounded-2xl border transition-all cursor-pointer flex items-center justify-between ${
-                activeTag === 'auto'
-                  ? 'bg-[#C39A52]/15 border-[#C39A52]/50 text-[#F1EEE7]'
-                  : 'bg-white/[0.02] border-white/[0.06] hover:bg-white/[0.04] text-[#B8C0CC]'
-              }`}
+              className="p-3.5 rounded-2xl border transition-all cursor-pointer flex items-center justify-between"
+              style={{
+                background: activeTag === 'auto' ? 'var(--accent-subtle)' : 'var(--surface)',
+                borderColor: activeTag === 'auto' ? 'var(--accent)' : 'var(--border-subtle)',
+              }}
             >
               <div className="flex items-center gap-3">
-                <span className="w-8 h-8 rounded-xl bg-[#C39A52]/20 text-[#C39A52] flex items-center justify-center font-bold text-xs">
+                <span
+                  className="w-8 h-8 rounded-xl flex items-center justify-center font-bold text-xs shrink-0"
+                  style={{ background: 'var(--accent-subtle)', color: 'var(--accent)' }}
+                >
                   ✨
                 </span>
                 <div>
-                  <h4 className="text-xs font-semibold text-[#F1EEE7]">Détection Automatique Universelle</h4>
-                  <p className="text-[11px] text-[#7E8795]">
+                  <h4 className="text-xs font-semibold" style={{ color: 'var(--fg)' }}>
+                    Détection Automatique Universelle
+                  </h4>
+                  <p className="text-[11px]" style={{ color: 'var(--fg-muted)' }}>
                     L'agent répond dans la langue de votre message (supporte le code-switching Fang / Français / Anglais).
                   </p>
                 </div>
               </div>
-              {activeTag === 'auto' && <Check size={18} className="text-[#C39A52]" weight="bold" />}
+              {activeTag === 'auto' && <Check size={18} style={{ color: 'var(--accent)' }} weight="bold" />}
             </div>
           )}
 
@@ -222,27 +266,45 @@ export default function LanguageSelectorModal() {
               <div
                 key={lang.tag}
                 onClick={() => handleSelectLang(lang.tag)}
-                className={`p-3.5 rounded-2xl border transition-all cursor-pointer flex items-center justify-between ${
-                  isSelected
-                    ? 'bg-[#665F9E]/15 border-[#665F9E]/50 text-[#F1EEE7]'
-                    : 'bg-white/[0.02] border-white/[0.06] hover:bg-white/[0.04] text-[#B8C0CC]'
-                }`}
+                className="p-3.5 rounded-2xl border transition-all cursor-pointer flex items-center justify-between"
+                style={{
+                  background: isSelected ? 'var(--accent-subtle)' : 'var(--surface)',
+                  borderColor: isSelected ? 'var(--accent)' : 'var(--border-subtle)',
+                }}
               >
                 <div className="flex items-center gap-3 min-w-0">
-                  <span className="w-8 h-8 rounded-xl bg-white/[0.04] border border-white/[0.06] flex items-center justify-center font-bold text-xs uppercase text-[#AAA2C8] shrink-0">
+                  <span
+                    className="w-8 h-8 rounded-xl border flex items-center justify-center font-bold text-xs uppercase shrink-0 font-mono"
+                    style={{
+                      background: 'var(--surface-raised)',
+                      borderColor: 'var(--border-subtle)',
+                      color: 'var(--accent)',
+                    }}
+                  >
                     {lang.tag}
                   </span>
                   <div className="min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <h4 className="text-xs font-semibold text-[#F1EEE7]">{lang.name}</h4>
-                      <span className="text-[11px] text-[#7E8795] font-serif italic">({lang.nativeName})</span>
+                      <h4 className="text-xs font-semibold" style={{ color: 'var(--fg)' }}>
+                        {lang.name}
+                      </h4>
+                      <span className="text-[11px] italic" style={{ color: 'var(--fg-muted)' }}>
+                        ({lang.nativeName})
+                      </span>
                       {lang.isAfricanPriority && (
-                        <span className="px-2 py-0.2 rounded-full text-[9px] font-bold uppercase bg-[#6F9485]/20 text-[#6F9485] border border-[#6F9485]/30">
+                        <span
+                          className="px-2 py-0.5 rounded-full text-[9px] font-bold uppercase border"
+                          style={{
+                            background: 'rgba(111, 148, 133, 0.15)',
+                            color: 'var(--hue-success)',
+                            borderColor: 'rgba(111, 148, 133, 0.3)',
+                          }}
+                        >
                           Afrique
                         </span>
                       )}
                     </div>
-                    <p className="text-[11px] text-[#7E8795] mt-0.5 truncate">
+                    <p className="text-[11px] mt-0.5 truncate" style={{ color: 'var(--fg-muted)' }}>
                       {lang.region} • Direction : {lang.direction.toUpperCase()}
                       {lang.notes && ` • ${lang.notes}`}
                     </p>
@@ -251,17 +313,15 @@ export default function LanguageSelectorModal() {
 
                 <div className="flex items-center gap-3 shrink-0">
                   <span
-                    className={`px-2 py-0.5 rounded-md text-[10px] font-mono font-medium ${
-                      lang.llmStatus === 'stable'
-                        ? 'bg-[#6F9485]/20 text-[#6F9485]'
-                        : lang.llmStatus === 'beta'
-                        ? 'bg-[#C39A52]/20 text-[#C39A52]'
-                        : 'bg-white/[0.04] text-[#7E8795]'
-                    }`}
+                    className="px-2 py-0.5 rounded-md text-[10px] font-mono font-medium"
+                    style={{
+                      background: lang.llmStatus === 'stable' ? 'rgba(111, 148, 133, 0.15)' : 'var(--accent-subtle)',
+                      color: lang.llmStatus === 'stable' ? 'var(--hue-success)' : 'var(--accent)',
+                    }}
                   >
                     {lang.llmStatus.toUpperCase()}
                   </span>
-                  {isSelected && <Check size={18} className="text-[#6F9485]" weight="bold" />}
+                  {isSelected && <Check size={18} style={{ color: 'var(--hue-success)' }} weight="bold" />}
                 </div>
               </div>
             );
@@ -269,15 +329,22 @@ export default function LanguageSelectorModal() {
         </div>
 
         {/* Footer with Low Bandwidth Toggle */}
-        <div className="p-4 px-6 border-t border-white/[0.06] bg-[#121620] flex items-center justify-between shrink-0">
+        <div
+          className="p-4 px-6 border-t flex items-center justify-between shrink-0"
+          style={{
+            background: 'var(--surface-raised)',
+            borderColor: 'var(--border-subtle)',
+          }}
+        >
           <button
             type="button"
             onClick={toggleLowBandwidthMode}
-            className={`flex items-center gap-2 px-3 py-1.5 rounded-xl border text-xs font-medium transition-all ${
-              lowBandwidthMode
-                ? 'bg-[#6F9485]/20 border-[#6F9485]/40 text-[#6F9485]'
-                : 'bg-white/[0.02] border-white/[0.06] text-[#7E8795] hover:text-white'
-            }`}
+            className="flex items-center gap-2 px-3 py-1.5 rounded-xl border text-xs font-medium transition-all"
+            style={{
+              background: lowBandwidthMode ? 'rgba(111, 148, 133, 0.15)' : 'transparent',
+              borderColor: lowBandwidthMode ? 'rgba(111, 148, 133, 0.3)' : 'var(--border-subtle)',
+              color: lowBandwidthMode ? 'var(--hue-success)' : 'var(--fg-muted)',
+            }}
           >
             <WifiLow size={16} />
             <span>Mode Bas Débit {lowBandwidthMode ? '(Actif)' : '(Désactivé)'}</span>
@@ -285,7 +352,11 @@ export default function LanguageSelectorModal() {
 
           <button
             onClick={() => setModalOpen(false)}
-            className="px-5 py-2 rounded-xl bg-[#665F9E] hover:bg-[#665F9E]/80 text-white text-xs font-semibold shadow-lg transition-all"
+            className="px-5 py-2 rounded-xl text-xs font-semibold shadow-lg transition-all"
+            style={{
+              background: 'var(--accent)',
+              color: 'var(--accent-fg)',
+            }}
           >
             Appliquer & Fermer
           </button>

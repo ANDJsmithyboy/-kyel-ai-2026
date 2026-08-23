@@ -2,11 +2,10 @@
  * Ñkyel AI · ResponseActions
  * SmartANDJ AI Technologies · Founder: Daniel Jonathan ANDJ
  *
- * Barre d'actions fluide sous chaque réponse d'agent :
- * - Copier, Utile, Pas utile, Régénérer, Continuer, Lire (TTS), Partager, Sources,
- *   Mémoire, Ajouter à un Espace, Inspecter dans WorkGraph, Ouvrir dans VIE, Ouvrir l’artefact.
- * - Actions de code : Copier, Exécuter en Sandbox, Créer un fichier, Télécharger, Déployer.
- * - Zéro layout shift, transition d'opacité naturelle.
+ * Fluid action bar under each assistant reply:
+ * — Copy, TTS, Feedback, Regenerate, Continue, Sources count, Memory
+ * — Open in VIE, Open Artifact, More actions
+ * — Zero layout shift, smooth opacity transitions
  */
 
 'use client';
@@ -25,10 +24,7 @@ import {
   Graph,
   ArrowsOutSimple,
   DotsThree,
-  Code,
   FolderSimplePlus,
-  PlayCircle,
-  FileArrowDown,
   TreeStructure,
 } from '@phosphor-icons/react';
 import { useRouter } from 'next/navigation';
@@ -64,7 +60,7 @@ export default function ResponseActions({
   const [isSavedMemory, setIsSavedMemory] = useState(false);
   const [showMoreMenu, setShowMoreMenu] = useState(false);
 
-  // 1. Copie
+  // 1. Copy
   const handleCopy = () => {
     navigator.clipboard.writeText(content);
     setCopied(true);
@@ -98,68 +94,125 @@ export default function ResponseActions({
     protocolEventBus.emit('agui.state.updated', 'agui', `Feedback : ${type === 'up' ? 'Utile' : 'Pas utile'}`, { messageId, feedback: type });
   };
 
-  // 4. Mémoire
+  // 4. Memory
   const handleSaveMemory = () => {
     setIsSavedMemory(!isSavedMemory);
     protocolEventBus.emit('agui.state.updated', 'agui', `Enregistrement dans la Mémoire Ñkyel`, { messageId });
   };
 
   return (
-    <div className="relative min-h-[32px] mt-2 pt-2 border-t border-white/[0.04] flex items-center justify-between text-[#7E8795] text-[12px] select-none opacity-85 hover:opacity-100 transition-opacity">
-      {/* Groupe de gauche : Actions Principales */}
+    <div
+      className="relative flex items-center justify-between select-none opacity-85 hover:opacity-100 transition-opacity"
+      style={{
+        minHeight: 32,
+        marginTop: 'var(--space-2)',
+        paddingTop: 'var(--space-2)',
+        borderTop: '1px solid var(--border-subtle)',
+        fontSize: 'var(--text-xs)',
+        color: 'var(--fg-muted)',
+      }}
+    >
+      {/* Left group: Main Actions */}
       <div className="flex items-center flex-wrap gap-1">
-        {/* Copier */}
+        {/* Copy */}
         <button
           type="button"
           onClick={handleCopy}
-          className="flex items-center gap-1 px-2 py-1 rounded-lg hover:bg-white/[0.06] hover:text-[#F1EEE7] transition-colors"
+          className="flex items-center gap-1 rounded-lg"
+          style={{
+            paddingInline: 'var(--space-2)',
+            paddingBlock: '4px',
+            transition: `all var(--transition-fast)`,
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.background = 'var(--accent-subtle)';
+            e.currentTarget.style.color = 'var(--fg)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.background = 'transparent';
+            e.currentTarget.style.color = 'var(--fg-muted)';
+          }}
           title="Copier la réponse"
         >
-          {copied ? <Check size={14} className="text-[#6F9485]" weight="bold" /> : <Copy size={14} />}
+          {copied ? <Check size={14} style={{ color: 'var(--hue-success)' }} weight="bold" /> : <Copy size={14} />}
           <span>{copied ? 'Copié' : 'Copier'}</span>
         </button>
 
-        {/* Feedback Utile / Pas Utile */}
+        {/* Thumbs Up */}
         <button
           type="button"
           onClick={() => handleFeedback('up')}
-          className={`p-1 rounded-lg hover:bg-white/[0.06] transition-colors ${
-            feedback === 'up' ? 'text-[#6F9485] bg-[#6F9485]/10' : 'hover:text-[#F1EEE7]'
-          }`}
+          className="p-1 rounded-lg"
+          style={{
+            color: feedback === 'up' ? 'var(--hue-success)' : 'var(--fg-subtle)',
+            background: feedback === 'up' ? 'var(--accent-subtle)' : 'transparent',
+            transition: `all var(--transition-fast)`,
+          }}
+          onMouseEnter={(e) => {
+            if (feedback !== 'up') e.currentTarget.style.color = 'var(--fg)';
+          }}
+          onMouseLeave={(e) => {
+            if (feedback !== 'up') e.currentTarget.style.color = 'var(--fg-subtle)';
+          }}
           title="Utile"
         >
           <ThumbsUp size={14} weight={feedback === 'up' ? 'fill' : 'regular'} />
         </button>
 
+        {/* Thumbs Down */}
         <button
           type="button"
           onClick={() => handleFeedback('down')}
-          className={`p-1 rounded-lg hover:bg-white/[0.06] transition-colors ${
-            feedback === 'down' ? 'text-[#BE6254] bg-[#BE6254]/10' : 'hover:text-[#F1EEE7]'
-          }`}
+          className="p-1 rounded-lg"
+          style={{
+            color: feedback === 'down' ? 'var(--hue-danger)' : 'var(--fg-subtle)',
+            background: feedback === 'down' ? 'var(--accent-subtle)' : 'transparent',
+            transition: `all var(--transition-fast)`,
+          }}
+          onMouseEnter={(e) => {
+            if (feedback !== 'down') e.currentTarget.style.color = 'var(--fg)';
+          }}
+          onMouseLeave={(e) => {
+            if (feedback !== 'down') e.currentTarget.style.color = 'var(--fg-subtle)';
+          }}
           title="Pas utile"
         >
           <ThumbsDown size={14} weight={feedback === 'down' ? 'fill' : 'regular'} />
         </button>
 
-        {/* TTS Voix */}
+        {/* Audio TTS */}
         <button
           type="button"
           onClick={handleTTS}
-          className={`p-1 rounded-lg hover:bg-white/[0.06] transition-colors ${
-            isPlayingAudio ? 'text-[#C39A52] animate-pulse' : 'hover:text-[#F1EEE7]'
-          }`}
+          className="p-1 rounded-lg"
+          style={{
+            color: isPlayingAudio ? 'var(--accent)' : 'var(--fg-subtle)',
+            transition: `all var(--transition-fast)`,
+          }}
           title={isPlayingAudio ? 'Arrêter la lecture' : 'Lire à voix haute'}
         >
-          <SpeakerHigh size={14} weight={isPlayingAudio ? 'fill' : 'regular'} />
+          <SpeakerHigh size={14} weight={isPlayingAudio ? 'fill' : 'regular'} className={isPlayingAudio ? 'animate-pulse' : ''} />
         </button>
 
-        {/* Régénérer */}
+        {/* Regenerate */}
         {onRegenerate && (
           <button
             type="button"
             onClick={onRegenerate}
-            className="flex items-center gap-1 px-2 py-1 rounded-lg hover:bg-white/[0.06] hover:text-[#F1EEE7] transition-colors"
+            className="flex items-center gap-1 rounded-lg"
+            style={{
+              paddingInline: 'var(--space-2)',
+              paddingBlock: '4px',
+              transition: `all var(--transition-fast)`,
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = 'var(--accent-subtle)';
+              e.currentTarget.style.color = 'var(--fg)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = 'transparent';
+              e.currentTarget.style.color = 'var(--fg-muted)';
+            }}
             title="Régénérer la réponse"
           >
             <ArrowClockwise size={14} />
@@ -167,12 +220,18 @@ export default function ResponseActions({
           </button>
         )}
 
-        {/* Continuer */}
+        {/* Continue */}
         {onContinue && (
           <button
             type="button"
             onClick={onContinue}
-            className="flex items-center gap-1 px-2 py-1 rounded-lg hover:bg-white/[0.06] hover:text-[#F1EEE7] transition-colors text-[#6F9485]"
+            className="flex items-center gap-1 rounded-lg"
+            style={{
+              paddingInline: 'var(--space-2)',
+              paddingBlock: '4px',
+              color: 'var(--hue-success)',
+              transition: `all var(--transition-fast)`,
+            }}
             title="Poursuivre la mission"
           >
             <Play size={13} weight="fill" />
@@ -180,25 +239,38 @@ export default function ResponseActions({
           </button>
         )}
 
-        {/* Sources Vérifiées */}
+        {/* Verified Sources Badge */}
         {sourcesCount > 0 && (
           <button
             type="button"
             onClick={onOpenSources}
-            className="flex items-center gap-1 px-2 py-1 rounded-lg bg-[#315A70]/20 text-[#6F9485] border border-[#6F9485]/30 hover:brightness-110 transition-all text-[11px] font-mono"
+            className="flex items-center gap-1 rounded-full font-mono"
+            style={{
+              paddingInline: 'var(--space-2)',
+              paddingBlock: '2px',
+              background: 'var(--accent-subtle)',
+              color: 'var(--hue-success)',
+              border: '1px solid var(--border-subtle)',
+              fontSize: '11px',
+              transition: `all var(--transition-fast)`,
+            }}
             title="Inspecter les sources primaires"
           >
             <span>{sourcesCount} sources</span>
           </button>
         )}
 
-        {/* Mémoire Souveraine */}
+        {/* Sovereign Memory */}
         <button
           type="button"
           onClick={handleSaveMemory}
-          className={`flex items-center gap-1 px-2 py-1 rounded-lg hover:bg-white/[0.06] transition-colors ${
-            isSavedMemory ? 'text-[#C39A52]' : 'hover:text-[#F1EEE7]'
-          }`}
+          className="flex items-center gap-1 rounded-lg"
+          style={{
+            paddingInline: 'var(--space-2)',
+            paddingBlock: '4px',
+            color: isSavedMemory ? 'var(--accent)' : 'var(--fg-subtle)',
+            transition: `all var(--transition-fast)`,
+          }}
           title="Conserver dans la Mémoire Ñkyel"
         >
           <BookmarkSimple size={14} weight={isSavedMemory ? 'fill' : 'regular'} />
@@ -206,25 +278,42 @@ export default function ResponseActions({
         </button>
       </div>
 
-      {/* Groupe de droite : Inspections & Artefacts */}
-      <div className="flex items-center gap-1">
-        {/* Ouvrir dans VIE */}
+      {/* Right group: VIE & Artifact Actions */}
+      <div className="flex items-center gap-1.5">
+        {/* Open in VIE */}
         <button
           type="button"
           onClick={() => router.push('/workspace')}
-          className="flex items-center gap-1 px-2 py-1 rounded-lg bg-[#665F9E]/15 border border-[#665F9E]/30 text-[#AAA2C8] hover:bg-[#665F9E]/30 transition-colors text-[11px] font-medium"
+          className="flex items-center gap-1 rounded-lg font-medium"
+          style={{
+            paddingInline: 'var(--space-2)',
+            paddingBlock: '4px',
+            background: 'var(--accent-subtle)',
+            border: '1px solid var(--border-subtle)',
+            color: 'var(--accent)',
+            fontSize: '11px',
+            transition: `all var(--transition-fast)`,
+          }}
           title="Ouvrir dans l'espace visuel Ñkyel VIE"
         >
           <TreeStructure size={13} />
           <span>Ouvrir dans VIE</span>
         </button>
 
-        {/* Ouvrir l'Artefact */}
+        {/* Open Artifact */}
         {hasArtifact && (
           <button
             type="button"
             onClick={() => open()}
-            className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-[#C39A52]/20 border border-[#C39A52]/40 text-[#C39A52] hover:bg-[#C39A52]/30 transition-colors text-[11px] font-medium"
+            className="flex items-center gap-1 rounded-lg font-medium"
+            style={{
+              paddingInline: '10px',
+              paddingBlock: '4px',
+              background: 'var(--accent)',
+              color: 'var(--accent-fg)',
+              fontSize: '11px',
+              transition: `all var(--transition-fast)`,
+            }}
             title="Consulter le livrable dans Artifact Studio"
           >
             <ArrowsOutSimple size={13} />
@@ -232,12 +321,15 @@ export default function ResponseActions({
           </button>
         )}
 
-        {/* Menu Plus */}
+        {/* More Actions Menu */}
         <div className="relative">
           <button
             type="button"
             onClick={() => setShowMoreMenu(!showMoreMenu)}
-            className="p-1 rounded-lg hover:bg-white/[0.06] hover:text-[#F1EEE7] transition-colors"
+            className="p-1 rounded-lg"
+            style={{ color: 'var(--fg-subtle)', transition: `all var(--transition-fast)` }}
+            onMouseEnter={(e) => { e.currentTarget.style.color = 'var(--fg)'; }}
+            onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--fg-subtle)'; }}
             title="Plus d'actions"
           >
             <DotsThree size={16} weight="bold" />
@@ -246,17 +338,41 @@ export default function ResponseActions({
           {showMoreMenu && (
             <>
               <div
-                className="fixed inset-0 z-30"
+                className="fixed inset-0"
+                style={{ zIndex: 'var(--z-sticky)' }}
                 onClick={() => setShowMoreMenu(false)}
               />
-              <div className="absolute right-0 bottom-full mb-1.5 w-52 rounded-xl bg-[#151922] border border-white/[0.1] shadow-2xl p-1 z-40 text-[12px] space-y-0.5">
+              <div
+                className="absolute right-0 bottom-full mb-1.5 rounded-xl shadow-xl"
+                style={{
+                  width: 210,
+                  padding: 'var(--space-1)',
+                  background: 'var(--surface-raised)',
+                  border: '1px solid var(--border-default)',
+                  zIndex: 'var(--z-dropdown)',
+                  fontSize: 'var(--text-xs)',
+                }}
+              >
                 <button
                   type="button"
                   onClick={() => {
                     router.push('/spaces');
                     setShowMoreMenu(false);
                   }}
-                  className="w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg hover:bg-white/[0.06] text-[#B8C0CC] hover:text-[#F1EEE7] text-left"
+                  className="w-full flex items-center gap-2 rounded-lg text-left"
+                  style={{
+                    padding: '6px 10px',
+                    color: 'var(--fg-muted)',
+                    transition: `all var(--transition-fast)`,
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = 'var(--accent-subtle)';
+                    e.currentTarget.style.color = 'var(--fg)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = 'transparent';
+                    e.currentTarget.style.color = 'var(--fg-muted)';
+                  }}
                 >
                   <FolderSimplePlus size={15} />
                   <span>Ajouter à un Espace</span>
@@ -267,7 +383,20 @@ export default function ResponseActions({
                     router.push('/workspace?tab=workgraph');
                     setShowMoreMenu(false);
                   }}
-                  className="w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg hover:bg-white/[0.06] text-[#B8C0CC] hover:text-[#F1EEE7] text-left"
+                  className="w-full flex items-center gap-2 rounded-lg text-left"
+                  style={{
+                    padding: '6px 10px',
+                    color: 'var(--fg-muted)',
+                    transition: `all var(--transition-fast)`,
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = 'var(--accent-subtle)';
+                    e.currentTarget.style.color = 'var(--fg)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = 'transparent';
+                    e.currentTarget.style.color = 'var(--fg-muted)';
+                  }}
                 >
                   <Graph size={15} />
                   <span>Inspecter dans WorkGraph</span>
@@ -280,7 +409,20 @@ export default function ResponseActions({
                     }
                     setShowMoreMenu(false);
                   }}
-                  className="w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg hover:bg-white/[0.06] text-[#B8C0CC] hover:text-[#F1EEE7] text-left"
+                  className="w-full flex items-center gap-2 rounded-lg text-left"
+                  style={{
+                    padding: '6px 10px',
+                    color: 'var(--fg-muted)',
+                    transition: `all var(--transition-fast)`,
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = 'var(--accent-subtle)';
+                    e.currentTarget.style.color = 'var(--fg)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = 'transparent';
+                    e.currentTarget.style.color = 'var(--fg-muted)';
+                  }}
                 >
                   <ShareNetwork size={15} />
                   <span>Partager la mission</span>

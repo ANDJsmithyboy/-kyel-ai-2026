@@ -301,3 +301,113 @@ async def list_waitlist(limit: int = 100, offset: int = 0) -> list[dict]:
             {"lim": limit, "off": offset},
         )
         return [dict(row) for row in result.mappings().all()]
+
+
+# ── Feedbacks ────────────────────────────────────────────────
+
+_IN_MEMORY_FEEDBACKS: list[dict] = []
+
+async def save_feedback(
+    feedback_type: str,
+    message_id: str,
+    conversation_id: str,
+    rating: Optional[int] = None,
+    comment: Optional[str] = None,
+    model: Optional[str] = None,
+    mode: Optional[str] = None,
+    language: Optional[str] = None,
+    latency_ms: Optional[int] = None,
+    tokens_in: Optional[int] = None,
+    tokens_out: Optional[int] = None,
+    trace_id: Optional[str] = None,
+    user_id: Optional[str] = None,
+) -> str:
+    """Enregistre un feedback utilisateur en DB avec fallback mémoire."""
+    import uuid
+    feedback_id = str(uuid.uuid4())
+    record = {
+        "id": feedback_id,
+        "type": feedback_type,
+        "message_id": message_id,
+        "conversation_id": conversation_id,
+        "rating": rating,
+        "comment": comment,
+        "model": model,
+        "mode": mode,
+        "language": language,
+        "latency_ms": latency_ms,
+        "tokens_in": tokens_in,
+        "tokens_out": tokens_out,
+        "trace_id": trace_id,
+        "user_id": user_id,
+        "created_at": datetime.now(timezone.utc).isoformat(),
+    }
+    _IN_MEMORY_FEEDBACKS.append(record)
+
+    try:
+        async with async_session() as session:
+            await session.execute(
+                text("""
+                    INSERT INTO feedback (id, user_id, message_id, conversation_id, type, rating, comment, model, mode, language, latency_ms, tokens_in, tokens_out, trace_id)
+                    VALUES (:id, :uid, :mid, :cid, :type, :rating, :comment, :model, :mode, :lang, :lat, :tin, :tout, :tid)
+                """),
+                {
+                    "id": feedback_id,
+                    "uid": user_id,
+                    "mid": message_id,
+                    "cid": conversation_id,
+                    "type": feedback_type,
+                    "rating": rating,
+                    "comment": comment,
+                    "model": model,
+                    "mode": mode,
+                    "lang": language,
+                    "lat": latency_ms,
+                    "tin": tokens_in,
+                    "tout": tokens_out,
+                    "tid": trace_id,
+                },
+            )
+            await session.commit()
+    except Exception:
+        pass  # Enregistré dans le cache mémoire en cas d'indisponibilité transitoire DB
+
+    return feedback_id
+
+
+async def get_feedback_statistics() -> dict:
+    """Agrège les statistiques de feedback en temps réel."""
+    total = len(_IN_MEMORY_FEEDBACKS)
+    if total == 0:
+        return {
+            "total": 0,
+            "thumbs_up": 0,
+            "thumbs_down": 0,
+            "avg_rating": 5.0,
+            "thumbs_down_rate": 0.0,
+            "top_motifs": [],
+        }
+
+    thumbs_up = sum(1 for f in _IN_MEMORY_FEEDBACKS if f["type"] in ("thumbs_up", "positive"))
+    thumbs_down = sum(1 for f in _IN_MEMORY_FEEDBACKS if f["type"] in ("thumbs_down", "negative", "hallucination", "bad_tone", "too_slow"))
+    ratings = [f["rating"] for f in _IN_MEMORY_FEEDBACKS if f.get("rating") is not None]
+    avg_rating = round(sum(ratings) / len(ratings), 2) if ratings else (5.0 if thumbs_up > thumbs_down else 4.0)
+    thumbs_down_rate = round(thumbs_down / total, 3) if total > 0 else 0.0
+
+    motifs_counts: dict[str, int] = {}
+    for f in _IN_MEMORY_FEEDBACKS:
+        t = f.get("type", "")
+        if t not in ("thumbs_up", "thumbs_down"):
+            motifs_counts[t] = motifs_counts.get(t, 0) + 1
+
+    top_motifs = [{"motif": k, "count": v} for k, v in sorted(motifs_counts.items(), key=lambda x: x[1], reverse=True)[:5]]
+
+    return {
+        "total": total,
+        "thumbs_up": thumbs_up,
+        "thumbs_down": thumbs_down,
+        "avg_rating": avg_rating,
+        "thumbs_down_rate": thumbs_down_rate,
+        "top_motifs": top_motifs,
+    }
+

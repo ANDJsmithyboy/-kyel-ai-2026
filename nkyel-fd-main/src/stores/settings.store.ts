@@ -1,0 +1,229 @@
+/* Nkyel AI · settings.store.ts · SmartANDJ AI Technologies
+   Paramètres utilisateur persistés en localStorage */
+
+import { create } from 'zustand';
+
+/* -- Re-export theme types from single source ------ */
+export type { ThemeKey, AccentKey } from './theme';
+export { THEMES, ACCENTS } from './theme';
+
+import type { ThemeKey, AccentKey } from './theme';
+import { THEMES, ACCENTS } from './theme';
+
+export type FontSize = 'small' | 'normal' | 'large';
+export type Density = 'compact' | 'comfortable';
+export type GreetingStyle = 'formel' | 'gabonais' | 'argot';
+
+/* -- Noms de modèles masqués (utilisateurs normaux) -- */
+export const MODEL_DISPLAY_NAMES: Record<string, string> = {
+  'aurata-spark': 'Aurata (Flash)',
+  'sonar-deep': 'Sonar (Pro)',
+  'onyx-apex': 'Onyx (Agent)',
+  'loxo-archive': 'Wandana (Research)',
+  'black-panther-v4': 'Black Panther',
+};
+
+export function getDisplayModelName(realName: string, isAdmin: boolean): string {
+  if (isAdmin) return realName;
+  return MODEL_DISPLAY_NAMES[realName] || realName;
+}
+
+/* -- Light themes ---------------------------------- */
+const LIGHT_THEMES = new Set<ThemeKey>(['aurore-ogoue', 'neo-blanc']);
+
+/* -- State ----------------------------------------- */
+interface SettingsState {
+  theme: ThemeKey;
+  accent: AccentKey;
+  fontSize: FontSize;
+  density: Density;
+  greetingStyle: GreetingStyle;
+  language: string;
+  showThinking: boolean;
+  streamResponses: boolean;
+  showCopyButton: boolean;
+  codeSyntaxHighlight: boolean;
+  blackPantherMode: boolean;
+
+  setTheme: (t: ThemeKey) => void;
+  setAccent: (a: AccentKey) => void;
+  setFontSize: (f: FontSize) => void;
+  setDensity: (d: Density) => void;
+  setGreetingStyle: (g: GreetingStyle) => void;
+  setLanguage: (l: string) => void;
+  toggleThinking: () => void;
+  toggleStream: () => void;
+  toggleCopy: () => void;
+  toggleSyntax: () => void;
+  toggleBlackPanther: () => void;
+  hydrate: () => void;
+}
+
+/* -- Helpers --------------------------------------- */
+function ls(key: string, fallback: string): string {
+  if (typeof window === 'undefined') return fallback;
+  return localStorage.getItem(key) || fallback;
+}
+
+function isValidTheme(t: string): t is ThemeKey {
+  return THEMES.some((theme) => theme.key === t);
+}
+
+function isValidAccent(a: string): a is AccentKey {
+  return ACCENTS.some((accent) => accent.key === a);
+}
+
+function isValidFontSize(size: string): size is FontSize {
+  return size === 'small' || size === 'normal' || size === 'large';
+}
+
+function isValidDensity(density: string): density is Density {
+  return density === 'compact' || density === 'comfortable';
+}
+
+function applyThemeToDOM(theme: ThemeKey) {
+  if (typeof window === 'undefined') return;
+  document.documentElement.setAttribute('data-theme', theme);
+  document.documentElement.className = LIGHT_THEMES.has(theme) ? 'light' : 'dark';
+  const meta = document.querySelector('meta[name="theme-color"]');
+  const t = THEMES.find((x) => x.key === theme);
+  if (meta && t) {
+    const metaColors: Record<ThemeKey, string> = {
+      'black-panther': '#020304', 'nuit-lope': '#050507', 'aurore-ogoue': '#F8F8F4',
+      'bleu-nuit': '#060A14', 'violette-mandrille': '#08060F', 'neo-blanc': '#FAFAF8',
+    };
+    meta.setAttribute('content', metaColors[theme] || '#020304');
+  }
+}
+
+function applyAccentToDOM(accent: AccentKey) {
+  if (typeof window === 'undefined') return;
+  const colors: Record<AccentKey, string> = {
+    blue: '#0070F8',
+    gold: '#D0A040',
+    cyan: '#58A0C8',
+    magenta: '#F00080',
+    graphite: '#303840',
+  };
+  document.documentElement.setAttribute('data-accent', accent);
+  document.documentElement.style.setProperty('--accent-brand', colors[accent] || colors.gold);
+}
+
+function applyFontSizeToDOM(fs: FontSize) {
+  if (typeof window === 'undefined') return;
+  const scale = fs === 'small' ? 0.9 : fs === 'large' ? 1.1 : 1;
+  document.documentElement.style.setProperty('--app-text-scale', String(scale));
+  document.documentElement.setAttribute('data-font-size', fs);
+}
+
+function applyDensityToDOM(density: Density) {
+  if (typeof window === 'undefined') return;
+  document.documentElement.setAttribute('data-density', density);
+}
+
+/* -- Store ------------------------------------------ */
+export const useSettingsStore = create<SettingsState>((set, get) => ({
+  theme: 'neo-blanc' as ThemeKey,
+  accent: 'gold' as AccentKey,
+  fontSize: 'normal' as FontSize,
+  density: 'comfortable' as Density,
+  greetingStyle: 'gabonais' as GreetingStyle,
+  language: 'fr',
+  showThinking: true,
+  streamResponses: true,
+  showCopyButton: true,
+  codeSyntaxHighlight: true,
+  blackPantherMode: false,
+
+  hydrate: () => {
+    const rawTheme = ls('Nkyel AI_theme', 'neo-blanc');
+    const theme: ThemeKey = isValidTheme(rawTheme) ? rawTheme : 'neo-blanc';
+    const rawAccent = ls('Nkyel AI_accent', 'gold');
+    const accent: AccentKey = isValidAccent(rawAccent) ? rawAccent : 'gold';
+    const rawFontSize = ls('Nkyel AI_fontSize', 'normal');
+    const fontSize: FontSize = isValidFontSize(rawFontSize) ? rawFontSize : 'normal';
+    const rawDensity = ls('Nkyel AI_density', 'comfortable');
+    const density: Density = isValidDensity(rawDensity) ? rawDensity : 'comfortable';
+    const greetingStyle = ls('Nkyel AI_greetingStyle', 'gabonais') as GreetingStyle;
+    const language = ls('Nkyel AI_language', 'fr');
+    const showThinking = ls('Nkyel AI_showThinking', 'true') === 'true';
+    const streamResponses = ls('Nkyel AI_streamResponses', 'true') === 'true';
+    const showCopyButton = ls('Nkyel AI_showCopyButton', 'true') === 'true';
+    const codeSyntaxHighlight = ls('Nkyel AI_codeSyntax', 'true') === 'true';
+    const blackPantherMode = ls('Nkyel AI_bp', 'false') === 'true';
+
+    applyThemeToDOM(blackPantherMode ? 'black-panther' : theme);
+    applyAccentToDOM(accent);
+    applyFontSizeToDOM(fontSize);
+    applyDensityToDOM(density);
+
+    set({ theme, accent, fontSize, density, greetingStyle, language, showThinking, streamResponses, showCopyButton, codeSyntaxHighlight, blackPantherMode });
+  },
+
+  setTheme: (t) => {
+    applyThemeToDOM(t);
+    localStorage.setItem('Nkyel AI_theme', t);
+    set({ theme: t });
+  },
+
+  setAccent: (a) => {
+    applyAccentToDOM(a);
+    localStorage.setItem('Nkyel AI_accent', a);
+    set({ accent: a });
+  },
+
+    setFontSize: (f) => {
+    applyFontSizeToDOM(f);
+    localStorage.setItem('Nkyel AI_fontSize', f);
+    set({ fontSize: f });
+  },
+  setDensity: (d) => {
+    applyDensityToDOM(d);
+    localStorage.setItem('Nkyel AI_density', d);
+    set({ density: d });
+  },
+  setGreetingStyle: (g) => {
+    localStorage.setItem('Nkyel AI_greetingStyle', g);
+    set({ greetingStyle: g });
+  },
+
+  setLanguage: (l) => {
+    localStorage.setItem('Nkyel AI_language', l);
+    set({ language: l });
+  },
+
+  toggleThinking: () => {
+    const v = !get().showThinking;
+    localStorage.setItem('Nkyel AI_showThinking', String(v));
+    set({ showThinking: v });
+  },
+
+  toggleStream: () => {
+    const v = !get().streamResponses;
+    localStorage.setItem('Nkyel AI_streamResponses', String(v));
+    set({ streamResponses: v });
+  },
+
+  toggleCopy: () => {
+    const v = !get().showCopyButton;
+    localStorage.setItem('Nkyel AI_showCopyButton', String(v));
+    set({ showCopyButton: v });
+  },
+
+  toggleSyntax: () => {
+    const v = !get().codeSyntaxHighlight;
+    localStorage.setItem('Nkyel AI_codeSyntax', String(v));
+    set({ codeSyntaxHighlight: v });
+  },
+
+  toggleBlackPanther: () => {
+    const v = !get().blackPantherMode;
+    localStorage.setItem('Nkyel AI_bp', String(v));
+    if (v) {
+      applyThemeToDOM('black-panther');
+    } else {
+      applyThemeToDOM(get().theme);
+    }
+    set({ blackPantherMode: v });
+  },
+}));

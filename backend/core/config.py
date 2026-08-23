@@ -15,9 +15,11 @@ class Settings(BaseSettings):
     # ── Application ──────────────────────────────────────────────
     app_name: str = "Ñkyel AI"
     app_version: str = "2.0.0"
+    app_url: str = "https://nkyel.smartandjai.com"
     company_name: str = "SmartANDJ AI Technologies (Libreville, Gabon)"
     founder: str = "Daniel Jonathan ANDJ (Akare Ntoutoume Daniel Jonathan)"
     environment: str = "development"
+    app_env: str = "development"
     debug: bool = True
 
     # ── Base de données Neon PostgreSQL ──────────────────────
@@ -60,8 +62,30 @@ class Settings(BaseSettings):
     # ── Tavily (Web Search pour DeerFlow) ───────────────────
     tavily_api_key: str = ""
 
+    # ── Fireworks AI ────────────────────────────────────────
+    fireworks_api_key: str = ""
+    fireworks_base_url: str = "https://api.fireworks.ai/inference/v1"
+
+    # ── Together AI ─────────────────────────────────────────
+    together_api_key: str = ""
+    together_base_url: str = "https://api.together.xyz/v1"
+
+    # ── ElevenLabs (Speech) ─────────────────────────────────
+    elevenlabs_api_key: str = ""
+    elevenlabs_voice_id: str = "21m00Tcm4TlvDq8ikWAM"
+
+    # ── E2B (Sandbox) ───────────────────────────────────────
+    e2b_api_key: str = ""
+
+    # ── Brave Search ────────────────────────────────────────
+    brave_search_api_key: str = ""
+
     # ── Sentry ──────────────────────────────────────────────
     sentry_dsn: str = ""
+
+    # ── OpenTelemetry ───────────────────────────────────────
+    otel_exporter_otlp_endpoint: str = ""
+    otel_service_name: str = "nkyel-backend"
 
     # ── Multimedia Providers ────────────────────────────────
     pollinations_api_key: str = ""
@@ -84,15 +108,16 @@ class Settings(BaseSettings):
     r2_public_url: str = "https://artifacts.nkyel.ai"
 
     # ── CORS ────────────────────────────────────────────────
-    cors_origins: str = "http://localhost:3000,http://localhost:8081,http://localhost:5173,http://localhost:5175"
+    cors_origins: str = "http://localhost:3000,http://localhost:8081,http://localhost:5173,http://localhost:5175,https://nkyel.smartandjai.com,https://demo.nkyel.smartandjai.com,https://nkyel.ai"
 
     @property
     def cors_origins_list(self) -> List[str]:
-        return [origin.strip() for origin in self.cors_origins.split(",")]
+        return [origin.strip() for origin in self.cors_origins.split(",") if origin.strip()]
 
     @property
     def is_production(self) -> bool:
-        return self.environment == "production"
+        env = self.app_env or self.environment
+        return env.lower() in ("production", "prod")
 
     @property
     def clerk_jwks_url(self) -> str:

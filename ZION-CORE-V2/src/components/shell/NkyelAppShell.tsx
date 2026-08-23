@@ -1,11 +1,11 @@
 /**
- * Ñkyel AI · NkyelAppShell (Zone 1 - Zone 2 - Zone 3)
+ * Ñkyel AI · NkyelAppShell
  * SmartANDJ AI Technologies · Founder: Daniel Jonathan ANDJ
  *
- * Conteneur spatial modulaire respectant l'ergonomie Apple :
- * - Zone 1 : Navigation souveraine (NkyelSidebar)
- * - Zone 2 : Espace Central fluide (Conversation ↔ Mission VIE)
- * - Zone 3 : Ñkyel Artifact Studio (Redimensionnable 420px à 560px)
+ * Spatial container — 3 zones:
+ *   Zone 1: Sovereign Navigation (NkyelSidebar)
+ *   Zone 2: Central workspace (Conversation ↔ Mission VIE)
+ *   Zone 3: Ñkyel Artifact Studio (resizable right panel)
  */
 
 'use client';
@@ -13,7 +13,6 @@
 import React, { useState, useEffect } from 'react';
 import NkyelSidebar from './NkyelSidebar';
 import TopBar from './TopBar';
-import AuroraBackground from '@/components/ui/AuroraBackground';
 import ArtifactStudio from '@/components/rendu/ArtifactStudio';
 import CapabilitiesDrawer from '@/components/capabilities/CapabilitiesDrawer';
 import WorkspaceModeSwitcher, { type WorkspaceViewMode } from './WorkspaceModeSwitcher';
@@ -49,29 +48,37 @@ export default function NkyelAppShell({
 
   const handleModeChange = (mode: WorkspaceViewMode) => {
     setViewMode(mode);
-    if (onViewModeChange) {
-      onViewModeChange(mode);
-    }
+    onViewModeChange?.(mode);
   };
 
   const isPublicClosed = betaStatus?.state === 'PUBLIC_CLOSED' && !dismissClosedScreen;
 
   return (
-    <div className="flex h-dvh w-screen overflow-hidden bg-[#08090D] text-[#F1EEE7] antialiased select-none font-sans flex-col">
-      {/* Bandeau de Statut Bêta 42h (Header Global) */}
+    <div className="flex h-dvh w-screen overflow-hidden flex-col select-none"
+         style={{ background: 'var(--bg)', color: 'var(--fg)' }}>
+
+      {/* Beta Status Banner (global header) */}
       <BetaStatusBanner onOpenFeedback={() => setFeedbackOpen(true)} />
 
       <div className="flex-1 flex overflow-hidden relative">
-        {/* Fond fluide et subtil sans récursion de calcul */}
-        <AuroraBackground />
-
-        {/* Zone 1: Navigation Souveraine (Sidebar) */}
+        {/* Zone 1: Sovereign Navigation */}
         <NkyelSidebar />
 
-        {/* Zone 2: Espace Central Dédié (Conversation ou Mission VIE) */}
-        <div className="flex-1 flex flex-col min-w-0 bg-[#08090D] relative z-10 overflow-hidden">
-          {/* Barre Supérieure avec Switcher de mode & Hub */}
-          <header className="h-14 border-b border-white/[0.06] bg-[#0E121A]/60 backdrop-blur-md px-4 flex items-center justify-between shrink-0 z-20">
+        {/* Zone 2: Central Workspace */}
+        <div className="flex-1 flex flex-col min-w-0 relative overflow-hidden"
+             style={{ background: 'var(--bg)' }}>
+
+          {/* Top Bar — 52px, backdrop blur, hairline border */}
+          <header
+            className="shrink-0 flex items-center justify-between backdrop-blur-md"
+            style={{
+              height: 'var(--header-height)',
+              borderBottom: '1px solid var(--border-subtle)',
+              background: 'var(--bg-glass)',
+              paddingInline: 'var(--space-4)',
+              zIndex: 'var(--z-header)',
+            }}
+          >
             <div className="flex items-center gap-3">
               <WorkspaceModeSwitcher
                 mode={viewMode}
@@ -79,34 +86,33 @@ export default function NkyelAppShell({
                 isRunning={isRunning}
               />
             </div>
-
             <TopBar onOpenCapabilities={() => setCapabilitiesOpen(true)} />
           </header>
 
-          {/* Corps Central */}
+          {/* Central Content */}
           <main className="flex-1 overflow-hidden relative flex flex-col">
             {children}
           </main>
         </div>
 
-        {/* Tiroir d'Actions et Capacités (Action Launcher) */}
+        {/* Capabilities Drawer */}
         <CapabilitiesDrawer
           isOpen={capabilitiesOpen}
           onClose={() => setCapabilitiesOpen(false)}
           onSelectCapability={() => setCapabilitiesOpen(false)}
         />
 
-        {/* Zone 3: Ñkyel Artifact Studio (Right Panel) */}
+        {/* Zone 3: Artifact Studio (Right Panel) */}
         <ArtifactStudio />
       </div>
 
-      {/* Modal de Retour d'Expérience Bêta Structuré */}
+      {/* Beta Feedback Modal */}
       <BetaFeedbackModal
         isOpen={feedbackOpen}
         onClose={() => setFeedbackOpen(false)}
       />
 
-      {/* Écran de Fin de Bêta post-24 août 06h00 Libreville */}
+      {/* Beta Closed Overlay */}
       {isPublicClosed && (
         <BetaClosedScreen
           onOpenFeedback={() => setFeedbackOpen(true)}
@@ -117,4 +123,3 @@ export default function NkyelAppShell({
     </div>
   );
 }
-

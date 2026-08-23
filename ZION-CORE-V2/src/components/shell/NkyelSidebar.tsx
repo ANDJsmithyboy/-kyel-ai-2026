@@ -2,26 +2,23 @@
  * Ñkyel AI · NkyelSidebar
  * SmartANDJ AI Technologies · Founder: Daniel Jonathan ANDJ
  *
- * Navigation Souveraine Ñkyel — 11 sections obligatoires :
- * - Nouvelle mission
- * - Conversation
- * - Ñkyel VIE
- * - Agents
- * - Protocoles
- * - Connecteurs MCP
- * - Skills
- * - Missions planifiées
- * - Mémoire Ñkyel
- * - Espaces
- * - Checkpoints
+ * Sovereign Navigation — 11 sections:
+ * Nouvelle mission · Conversation · Ñkyel VIE · Agents · Protocoles
+ * Connecteurs MCP · Skills · Missions planifiées · Mémoire · Espaces · Checkpoints
+ *
+ * Apple × Geist precision:
+ * — Strict 4/8px vertical rhythm
+ * — 44px minimum touch targets
+ * — Pixel-perfect icon alignment (18px optical)
+ * — Collapsed mode with tooltips
+ * — Mobile drawer with backdrop
  */
 
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
-import { motion, AnimatePresence } from 'framer-motion';
+import { usePathname } from 'next/navigation';
 import {
   Plus,
   ChatCircleDots,
@@ -35,9 +32,6 @@ import {
   FolderSimpleStar,
   FloppyDisk,
   SidebarSimple,
-  SlidersHorizontal,
-  ShieldCheck,
-  CaretRight,
 } from '@phosphor-icons/react';
 import NkyelSeptBranchLogo from '@/components/icons/NkyelSeptBranchLogo';
 import { useSidebar } from '@/hooks/useSidebar';
@@ -67,136 +61,304 @@ export const NAV_SECTIONS: NavItemConfig[] = [
 
 export default function NkyelSidebar() {
   const pathname = usePathname();
-  const router = useRouter();
   const { isCollapsed, toggleSidebar, isMobile, isOpen, closeMobileSidebar } = useSidebar();
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
 
-  // État étendu ou compact
-  const sidebarWidth = isCollapsed ? 'w-[68px]' : 'w-[272px]';
+  const handleNavClick = useCallback(() => {
+    if (isMobile) closeMobileSidebar();
+  }, [isMobile, closeMobileSidebar]);
+
+  const sidebarW = isCollapsed ? 'var(--sidebar-collapsed)' : 'var(--sidebar-width)';
 
   return (
-    <aside
-      className={`relative h-full flex flex-col shrink-0 z-30 border-r border-white/[0.06] bg-[#08090D] transition-all duration-200 ease-out select-none ${sidebarWidth}`}
-      aria-label="Navigation principale Ñkyel"
-    >
-      {/* 1. Header & Logo Souverain */}
-      <div className="h-14 flex items-center justify-between px-3.5 border-b border-white/[0.04]">
-        <Link
-          href="/"
-          className="flex items-center gap-3 overflow-hidden rounded-xl p-1.5 hover:bg-white/[0.03] transition-colors"
-          title="Ñkyel AI — Accueil"
-        >
-          <NkyelSeptBranchLogo size={28} />
-          {!isCollapsed && (
-            <div className="flex flex-col min-w-0">
-              <span className="text-[14px] font-semibold text-[#F1EEE7] tracking-tight truncate flex items-center gap-1.5">
-                Ñkyel AI
-                <span className="text-[9px] px-1.5 py-0.5 rounded bg-[#665F9E]/20 text-[#AAA2C8] border border-[#665F9E]/30 font-mono">
-                  PRO
-                </span>
-              </span>
-              <span className="text-[10px] text-[#7E8795] truncate font-mono">
-                SmartANDJ AI
-              </span>
-            </div>
-          )}
-        </Link>
+    <>
+      {/* Mobile backdrop */}
+      {isMobile && isOpen && (
+        <div
+          className="fixed inset-0"
+          style={{ background: 'rgba(0,0,0,0.5)', zIndex: 'var(--z-overlay)' }}
+          onClick={closeMobileSidebar}
+          aria-hidden="true"
+        />
+      )}
 
-        {/* Toggle Expand/Collapse */}
-        {!isMobile && (
-          <button
-            type="button"
-            onClick={toggleSidebar}
-            className="w-8 h-8 rounded-lg flex items-center justify-center text-[#7E8795] hover:text-[#F1EEE7] hover:bg-white/[0.06] transition-colors"
-            title={isCollapsed ? 'Développer la navigation' : 'Réduire la navigation'}
-            aria-label={isCollapsed ? 'Développer' : 'Réduire'}
+      <aside
+        className="h-full flex flex-col shrink-0 select-none"
+        style={{
+          width: sidebarW,
+          background: 'var(--bg)',
+          borderRight: '1px solid var(--border-subtle)',
+          zIndex: 'var(--z-sidebar)',
+          transition: `width var(--duration-slow) var(--ease-out)`,
+          ...(isMobile ? {
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            bottom: 0,
+            transform: isOpen ? 'translateX(0)' : 'translateX(-100%)',
+            width: 'var(--sidebar-width)',
+            boxShadow: isOpen ? 'var(--shadow-2xl)' : 'none',
+          } : {}),
+        }}
+        aria-label="Navigation principale Ñkyel"
+      >
+        {/* ─── Header: Logo + Collapse Toggle ─── */}
+        <div
+          className="flex items-center justify-between shrink-0"
+          style={{
+            height: 'var(--header-height)',
+            paddingInline: 'var(--space-3)',
+            borderBottom: '1px solid var(--border-subtle)',
+          }}
+        >
+          <Link
+            href="/"
+            className="flex items-center gap-3 overflow-hidden rounded-lg"
+            style={{ padding: 'var(--space-1)' }}
+            title="Ñkyel AI — Accueil"
+            onClick={handleNavClick}
           >
-            <SidebarSimple size={18} weight={isCollapsed ? 'regular' : 'fill'} />
-          </button>
-        )}
-      </div>
+            <NkyelSeptBranchLogo size={28} />
+            {!isCollapsed && (
+              <div className="flex flex-col min-w-0">
+                <span
+                  className="font-semibold truncate flex items-center gap-2"
+                  style={{ fontSize: 'var(--text-base)', color: 'var(--fg)', letterSpacing: '-0.01em' }}
+                >
+                  Ñkyel AI
+                  <span
+                    className="font-mono"
+                    style={{
+                      fontSize: '9px',
+                      padding: '1px 6px',
+                      borderRadius: 'var(--radius-xs)',
+                      background: 'var(--accent-subtle)',
+                      color: 'var(--accent)',
+                      border: '1px solid var(--accent-muted)',
+                      letterSpacing: 'var(--tracking-wider)',
+                      textTransform: 'uppercase',
+                      fontWeight: 600,
+                    }}
+                  >
+                    PRO
+                  </span>
+                </span>
+                <span
+                  className="truncate"
+                  style={{ fontSize: '10px', color: 'var(--fg-subtle)', fontFamily: 'var(--font-mono)' }}
+                >
+                  SmartANDJ AI
+                </span>
+              </div>
+            )}
+          </Link>
 
-      {/* 2. Bouton Principal : Nouvelle Mission */}
-      <div className="p-2.5">
-        <Link
-          href="/chat?new=true"
-          className={`group flex items-center gap-2.5 w-full rounded-xl p-2.5 transition-all text-[13px] font-medium ${
-            isCollapsed
-              ? 'justify-center bg-gradient-to-br from-[#665F9E]/20 to-[#315A70]/20 border border-[#665F9E]/40 text-[#F1EEE7] hover:border-[#665F9E]'
-              : 'bg-gradient-to-r from-[#665F9E] to-[#315A70] text-[#F1EEE7] hover:brightness-110 shadow-sm'
-          }`}
-          title="Lancer une nouvelle mission"
-        >
-          <Plus size={18} weight="bold" className="shrink-0 group-hover:rotate-90 transition-transform duration-200" />
-          {!isCollapsed && <span className="truncate">Nouvelle mission</span>}
-        </Link>
-      </div>
-
-      {/* 3. Liste des 10 Autres Sections */}
-      <div className="flex-1 overflow-y-auto px-2 space-y-1 py-1 scrollbar-thin scrollbar-thumb-white/10">
-        {NAV_SECTIONS.slice(1).map((item) => {
-          const Icon = item.icon;
-          const isActive = pathname.startsWith(item.href.split('?')[0]);
-
-          return (
-            <Link
-              key={item.id}
-              href={item.href}
-              onMouseEnter={() => setHoveredItem(item.id)}
-              onMouseLeave={() => setHoveredItem(null)}
-              className={`group relative flex items-center gap-3 px-3 py-2 rounded-xl text-[13px] font-medium transition-colors duration-150 min-h-[44px] ${
-                isActive
-                  ? 'bg-[#151922] text-[#F1EEE7] border border-white/[0.08]'
-                  : 'text-[#B8C0CC] hover:text-[#F1EEE7] hover:bg-white/[0.04]'
-              }`}
-              title={isCollapsed ? item.label : undefined}
+          {!isMobile && (
+            <button
+              type="button"
+              onClick={toggleSidebar}
+              className="flex items-center justify-center rounded-lg"
+              style={{
+                width: 32,
+                height: 32,
+                color: 'var(--fg-subtle)',
+                transition: `all var(--transition-fast)`,
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.color = 'var(--fg)';
+                e.currentTarget.style.background = 'var(--accent-subtle)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.color = 'var(--fg-subtle)';
+                e.currentTarget.style.background = 'transparent';
+              }}
+              title={isCollapsed ? 'Développer la navigation' : 'Réduire la navigation'}
+              aria-label={isCollapsed ? 'Développer' : 'Réduire'}
             >
-              <Icon
-                size={18}
-                weight={isActive ? 'fill' : 'regular'}
-                className={`shrink-0 transition-colors ${
-                  isActive ? 'text-[#C39A52]' : 'text-[#7E8795] group-hover:text-[#B8C0CC]'
-                }`}
-              />
-
-              {!isCollapsed && (
-                <div className="flex-1 flex items-center justify-between min-w-0">
-                  <span className="truncate">{item.label}</span>
-                  {item.badge && (
-                    <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-[#315A70]/20 text-[#6F9485] border border-[#6F9485]/30 font-mono">
-                      {item.badge}
-                    </span>
-                  )}
-                </div>
-              )}
-
-              {/* Tooltip pour mode compact */}
-              {isCollapsed && hoveredItem === item.id && (
-                <div className="absolute left-[74px] top-1/2 -translate-y-1/2 z-50 px-2.5 py-1 rounded-lg bg-[#151922] border border-white/[0.1] text-[#F1EEE7] text-[12px] whitespace-nowrap shadow-xl">
-                  {item.label}
-                </div>
-              )}
-            </Link>
-          );
-        })}
-      </div>
-
-      {/* 4. Footer & Statut Souverain */}
-      <div className="p-2.5 border-t border-white/[0.04] flex flex-col gap-1.5">
-        <Link
-          href="/protocols"
-          className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-[12px] text-[#7E8795] hover:text-[#B8C0CC] hover:bg-white/[0.03] transition-colors min-h-[44px]"
-          title="Observatoire des Protocoles"
-        >
-          <Cpu size={16} className="text-[#6F9485] shrink-0" />
-          {!isCollapsed && (
-            <div className="flex items-center justify-between w-full min-w-0">
-              <span className="truncate font-mono text-[11px]">8 Protocoles OK</span>
-              <span className="w-1.5 h-1.5 rounded-full bg-[#6F9485] animate-pulse" />
-            </div>
+              <SidebarSimple size={18} weight={isCollapsed ? 'regular' : 'fill'} />
+            </button>
           )}
-        </Link>
-      </div>
-    </aside>
+        </div>
+
+        {/* ─── New Mission Button ─── */}
+        <div style={{ padding: 'var(--space-3)' }}>
+          <Link
+            href="/chat?new=true"
+            className="group flex items-center gap-2 w-full font-medium"
+            style={{
+              borderRadius: 'var(--radius-md)',
+              padding: isCollapsed ? 'var(--space-3)' : '10px var(--space-3)',
+              fontSize: 'var(--text-sm)',
+              justifyContent: isCollapsed ? 'center' : 'flex-start',
+              background: 'var(--accent)',
+              color: 'var(--accent-fg)',
+              transition: `all var(--transition-fast)`,
+            }}
+            title="Lancer une nouvelle mission"
+            onClick={handleNavClick}
+            onMouseEnter={(e) => { e.currentTarget.style.opacity = '0.9'; }}
+            onMouseLeave={(e) => { e.currentTarget.style.opacity = '1'; }}
+          >
+            <Plus size={16} weight="bold" className="shrink-0" />
+            {!isCollapsed && <span className="truncate">Nouvelle mission</span>}
+          </Link>
+        </div>
+
+        {/* ─── Navigation Items ─── */}
+        <nav
+          className="flex-1 overflow-y-auto scrollbar-thin"
+          style={{ paddingInline: 'var(--space-2)', paddingBlock: 'var(--space-1)' }}
+        >
+          <div className="flex flex-col" style={{ gap: '2px' }}>
+            {NAV_SECTIONS.slice(1).map((item) => {
+              const Icon = item.icon;
+              const basePath = item.href.split('?')[0];
+              const isActive = pathname === basePath || (basePath !== '/' && pathname.startsWith(basePath));
+
+              return (
+                <Link
+                  key={item.id}
+                  href={item.href}
+                  onMouseEnter={() => setHoveredItem(item.id)}
+                  onMouseLeave={() => setHoveredItem(null)}
+                  onClick={handleNavClick}
+                  className="group relative flex items-center font-medium"
+                  style={{
+                    gap: 'var(--space-3)',
+                    paddingInline: 'var(--space-3)',
+                    minHeight: 40,
+                    borderRadius: 'var(--radius-md)',
+                    fontSize: 'var(--text-sm)',
+                    justifyContent: isCollapsed ? 'center' : 'flex-start',
+                    color: isActive ? 'var(--fg)' : 'var(--fg-muted)',
+                    background: isActive ? 'var(--surface-raised)' : 'transparent',
+                    transition: `all var(--transition-fast)`,
+                  }}
+                  onMouseEnter={(e) => {
+                    if (!isActive) {
+                      e.currentTarget.style.background = 'var(--accent-subtle)';
+                      e.currentTarget.style.color = 'var(--fg)';
+                    }
+                    setHoveredItem(item.id);
+                  }}
+                  onMouseLeave={(e) => {
+                    if (!isActive) {
+                      e.currentTarget.style.background = 'transparent';
+                      e.currentTarget.style.color = 'var(--fg-muted)';
+                    }
+                    setHoveredItem(null);
+                  }}
+                  title={isCollapsed ? item.label : undefined}
+                >
+                  <Icon
+                    size={18}
+                    weight={isActive ? 'fill' : 'regular'}
+                    className="shrink-0"
+                    style={{
+                      color: isActive ? 'var(--accent)' : 'var(--fg-subtle)',
+                      transition: `color var(--transition-fast)`,
+                    }}
+                  />
+
+                  {!isCollapsed && (
+                    <div className="flex-1 flex items-center justify-between min-w-0">
+                      <span className="truncate">{item.label}</span>
+                      {item.badge && (
+                        <span
+                          className="font-mono"
+                          style={{
+                            fontSize: '10px',
+                            padding: '1px 6px',
+                            borderRadius: 'var(--radius-pill)',
+                            background: 'var(--accent-subtle)',
+                            color: 'var(--fg-muted)',
+                            border: '1px solid var(--border-subtle)',
+                            fontWeight: 500,
+                          }}
+                        >
+                          {item.badge}
+                        </span>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Tooltip for collapsed mode */}
+                  {isCollapsed && hoveredItem === item.id && (
+                    <div
+                      className="absolute whitespace-nowrap"
+                      style={{
+                        left: 'calc(var(--sidebar-collapsed) + 8px)',
+                        top: '50%',
+                        transform: 'translateY(-50%)',
+                        zIndex: 'var(--z-dropdown)',
+                        padding: '4px 10px',
+                        borderRadius: 'var(--radius-sm)',
+                        background: 'var(--surface-raised)',
+                        border: '1px solid var(--border-default)',
+                        color: 'var(--fg)',
+                        fontSize: 'var(--text-xs)',
+                        boxShadow: 'var(--shadow-md)',
+                        pointerEvents: 'none',
+                      }}
+                    >
+                      {item.label}
+                    </div>
+                  )}
+                </Link>
+              );
+            })}
+          </div>
+        </nav>
+
+        {/* ─── Footer: Protocol Status ─── */}
+        <div
+          className="shrink-0"
+          style={{
+            padding: 'var(--space-3)',
+            borderTop: '1px solid var(--border-subtle)',
+          }}
+        >
+          <Link
+            href="/protocols"
+            className="flex items-center gap-2 rounded-lg"
+            style={{
+              padding: '8px var(--space-3)',
+              fontSize: 'var(--text-xs)',
+              color: 'var(--fg-subtle)',
+              transition: `all var(--transition-fast)`,
+              minHeight: 36,
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = 'var(--accent-subtle)';
+              e.currentTarget.style.color = 'var(--fg-muted)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = 'transparent';
+              e.currentTarget.style.color = 'var(--fg-subtle)';
+            }}
+            title="Observatoire des Protocoles"
+          >
+            <Cpu size={16} className="shrink-0" style={{ color: 'var(--hue-success)' }} />
+            {!isCollapsed && (
+              <div className="flex items-center justify-between w-full min-w-0">
+                <span className="truncate" style={{ fontFamily: 'var(--font-mono)', fontSize: '11px' }}>
+                  8 Protocoles OK
+                </span>
+                <span
+                  className="animate-breathe"
+                  style={{
+                    width: 6,
+                    height: 6,
+                    borderRadius: 'var(--radius-pill)',
+                    background: 'var(--hue-success)',
+                    flexShrink: 0,
+                  }}
+                />
+              </div>
+            )}
+          </Link>
+        </div>
+      </aside>
+    </>
   );
 }
