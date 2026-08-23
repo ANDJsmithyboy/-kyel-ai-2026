@@ -33,8 +33,8 @@ import {
   FloppyDisk,
   SidebarSimple,
   Sparkle,
+  ShieldCheck,
 } from '@phosphor-icons/react';
-import NkyelSeptBranchLogo from '@/components/icons/NkyelSeptBranchLogo';
 import { useSidebar } from '@/hooks/useSidebar';
 
 export interface NavItemConfig {
@@ -59,6 +59,7 @@ export const NAV_SECTIONS: NavItemConfig[] = [
   { id: 'memory', label: 'Mémoire Ñkyel', href: '/memory', icon: Brain },
   { id: 'spaces', label: 'Espaces', href: '/spaces', icon: FolderSimpleStar },
   { id: 'checkpoints', label: 'Checkpoints', href: '/workspace?view=checkpoints', icon: FloppyDisk },
+  { id: 'admin', label: 'Command Center', href: '/admin', icon: ShieldCheck, badge: 'ADMIN' },
 ];
 
 export default function NkyelSidebar() {
@@ -120,7 +121,7 @@ export default function NkyelSidebar() {
             title="Ñkyel AI — Accueil"
             onClick={handleNavClick}
           >
-            <NkyelSeptBranchLogo size={28} />
+            <img src="/nkyel-ai.svg" alt="Ñkyel AI" className="w-7 h-7 object-contain shrink-0 rounded-lg shadow-sm" />
             {!isCollapsed && (
               <div className="flex flex-col min-w-0">
                 <span
