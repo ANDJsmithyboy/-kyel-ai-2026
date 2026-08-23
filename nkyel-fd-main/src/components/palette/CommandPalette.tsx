@@ -445,10 +445,10 @@ export default function CommandPalette() {
             initial={{ opacity: 0, y: -20, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -20, scale: 0.95 }}
-            className="fixed top-5 right-5 z-[100] px-4 py-2.5 rounded-2xl bg-[#0C0E14] border border-[#D5AE57]/40 text-xs text-white shadow-2xl flex items-center gap-2"
+            className="fixed top-5 right-5 z-[100] px-4 py-2.5 rounded-2xl bg-[var(--material-content-raised)] border border-[#D5AE57]/50 text-xs text-[var(--text-primary)] shadow-[var(--shadow-floating)] flex items-center gap-2"
           >
             <CheckCircle size={16} weight="fill" className="text-[#D5AE57]" />
-            <span>{toastMessage}</span>
+            <span className="font-medium">{toastMessage}</span>
           </motion.div>
         )}
       </AnimatePresence>
@@ -462,10 +462,10 @@ export default function CommandPalette() {
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.97, y: -10 }}
               transition={{ duration: 0.16, ease: [0.16, 1, 0.3, 1] }}
-              className="w-full max-w-xl rounded-3xl bg-[#0A0B10]/95 border border-white/[0.12] shadow-[0_30px_90px_rgba(0,0,0,0.85)] overflow-hidden flex flex-col max-h-[82vh]"
+              className="w-full max-w-xl rounded-3xl bg-[var(--material-glass-floating)] border border-[var(--border-strong)] shadow-[var(--shadow-modal)] backdrop-blur-3xl overflow-hidden flex flex-col max-h-[82vh]"
             >
               {/* Search Bar Header */}
-              <div className="p-3.5 sm:p-4 border-b border-white/[0.08] flex items-center gap-3 bg-white/[0.02]">
+              <div className="p-3.5 sm:p-4 border-b border-[var(--border)] flex items-center gap-3 bg-[var(--surface)]">
                 <MagnifyingGlass size={18} className="text-[#D5AE57] shrink-0" />
                 <input
                   ref={inputRef}
@@ -474,9 +474,9 @@ export default function CommandPalette() {
                   onChange={(e) => setQuery(e.target.value)}
                   onKeyDown={handleInputKeyDown}
                   placeholder="Que souhaitez-vous faire ? (ex: nouvelle mission, dark, langue, mémoire...)"
-                  className="w-full bg-transparent text-sm text-white placeholder-white/40 focus:outline-none"
+                  className="w-full bg-transparent text-sm text-[var(--text-primary)] placeholder-[var(--text-secondary)] placeholder:opacity-60 focus:outline-none font-sans"
                 />
-                <kbd className="hidden sm:inline-block px-2 py-0.5 rounded-lg bg-white/10 text-[10px] text-white/60 font-mono">
+                <kbd className="hidden sm:inline-block px-2 py-0.5 rounded-lg bg-[var(--surface-raised)] border border-[var(--border)] text-[10px] text-[var(--text-secondary)] font-mono">
                   ESC
                 </kbd>
               </div>
@@ -487,7 +487,7 @@ export default function CommandPalette() {
                 className="p-2 overflow-y-auto space-y-1 custom-scrollbar max-h-[60vh]"
               >
                 {filteredCommands.length === 0 ? (
-                  <div className="py-12 text-center text-xs text-white/40 font-light">
+                  <div className="py-12 text-center text-xs text-[var(--text-tertiary)] font-normal">
                     Aucune commande trouvée pour « {query} ».
                   </div>
                 ) : (
@@ -499,37 +499,36 @@ export default function CommandPalette() {
                         key={cmd.id}
                         onClick={() => cmd.handler()}
                         onMouseEnter={() => setSelectedIndex(idx)}
-                        className={`w-full p-2.5 rounded-2xl text-left flex items-center justify-between transition-all ${
+                        className={`w-full flex items-center justify-between p-2.5 rounded-2xl text-left transition-all ${
                           isSelected
-                            ? 'bg-[#D5AE57]/15 border border-[#D5AE57]/40 text-white shadow-sm'
-                            : 'bg-transparent text-white/70 hover:text-white'
+                            ? 'bg-[#D5AE57]/15 border border-[#D5AE57]/40 text-[var(--text-primary)] shadow-sm'
+                            : 'hover:bg-[var(--hover)] border border-transparent text-[var(--text-secondary)]'
                         }`}
                       >
-                        <div className="flex items-center gap-3 min-w-0 pr-2">
+                        <div className="flex items-center gap-3 min-w-0">
                           <div
-                            className={`w-7 h-7 rounded-xl flex items-center justify-center shrink-0 ${
-                              isSelected ? 'bg-[#D5AE57] text-black' : 'bg-white/5 text-white/60'
+                            className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 ${
+                              isSelected
+                                ? 'bg-[#D5AE57] text-black shadow-md'
+                                : 'bg-[var(--surface-raised)] text-[var(--text-secondary)]'
                             }`}
                           >
-                            <Icon size={15} weight={isSelected ? 'bold' : 'regular'} />
+                            <Icon size={16} weight={isSelected ? 'bold' : 'regular'} />
                           </div>
-                          <div className="truncate">
-                            <div className="text-xs font-medium truncate">{cmd.label}</div>
-                            <div className="text-[10px] text-white/40 font-mono truncate">{cmd.category}</div>
+                          <div className="min-w-0 flex-1">
+                            <div className={`text-xs font-semibold truncate ${isSelected ? 'text-[var(--text-primary)]' : 'text-[var(--text-primary)]'}`}>
+                              {cmd.label}
+                            </div>
+                            <div className="text-[10px] text-[var(--text-tertiary)] truncate">
+                              {cmd.category}
+                            </div>
                           </div>
                         </div>
 
-                        {cmd.shortcut ? (
-                          <kbd className="text-[10px] font-mono px-2 py-0.5 rounded bg-white/10 text-white/60 shrink-0">
+                        {cmd.shortcut && (
+                          <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-lg bg-[var(--surface-raised)] border border-[var(--border)] text-[var(--text-tertiary)] shrink-0 ml-2">
                             {cmd.shortcut}
-                          </kbd>
-                        ) : (
-                          <ArrowRight
-                            size={13}
-                            className={`shrink-0 transition-opacity ${
-                              isSelected ? 'opacity-100 text-[#D5AE57]' : 'opacity-0'
-                            }`}
-                          />
+                          </span>
                         )}
                       </button>
                     );
@@ -537,17 +536,20 @@ export default function CommandPalette() {
                 )}
               </div>
 
-              {/* Minimal Keyboard Footer */}
-              <div className="p-2.5 border-t border-white/[0.06] bg-black/40 px-4 flex items-center justify-between text-[11px] text-white/40 font-mono">
+              {/* Footer Guidance */}
+              <div className="p-2.5 px-4 border-t border-[var(--border)] bg-[var(--surface)] flex items-center justify-between text-[11px] text-[var(--text-tertiary)]">
                 <div className="flex items-center gap-3">
-                  <span>↑↓ Naviguer</span>
-                  <span>↵ Valider</span>
-                  <span>ESC Fermer</span>
+                  <span className="flex items-center gap-1">
+                    <kbd className="px-1.5 py-0.2 rounded bg-[var(--surface-raised)] border border-[var(--border)] font-mono text-[10px]">↑</kbd>
+                    <kbd className="px-1.5 py-0.2 rounded bg-[var(--surface-raised)] border border-[var(--border)] font-mono text-[10px]">↓</kbd>
+                    <span>Naviguer</span>
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <kbd className="px-1.5 py-0.2 rounded bg-[var(--surface-raised)] border border-[var(--border)] font-mono text-[10px]">↵</kbd>
+                    <span>Exécuter</span>
+                  </span>
                 </div>
-                <div className="flex items-center gap-1 text-[#D5AE57]">
-                  <Sparkle size={12} weight="fill" />
-                  <span>Ñkyel Action Engine</span>
-                </div>
+                <span className="font-mono text-[10px] text-[#D5AE57]">Ñkyel Universal Action Layer</span>
               </div>
             </motion.div>
           </div>

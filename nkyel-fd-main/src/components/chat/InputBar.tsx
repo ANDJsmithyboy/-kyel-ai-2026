@@ -270,15 +270,15 @@ export default function InputBar({ onSend, onStop, isGenerating }: InputBarProps
           )}
         </AnimatePresence>
 
-        {/* -- The Pill (Haze Glassmorphism 2.0) ------------------------------- */}
+        {/* -- The Pill (Apple Liquid Glass Floating Layer) ------------------------------- */}
         <motion.div
           layout
-          className="flex items-center gap-2 rounded-full shadow-2xl backdrop-blur-2xl"
+          className="flex items-center gap-2 rounded-full backdrop-blur-2xl transition-shadow"
           style={{
-            background: 'rgba(255,255,255,0.03)',
-            border: '1px solid rgba(255,255,255,0.1)',
+            background: 'var(--material-glass-floating)',
+            border: '1px solid var(--border-strong)',
             padding: isLiveMode ? '16px 24px' : '8px 12px 8px 8px',
-            boxShadow: '0 8px 32px rgba(0,0,0,0.4)',
+            boxShadow: 'var(--shadow-floating)',
           }}
         >
           {isLiveMode ? (
@@ -286,14 +286,14 @@ export default function InputBar({ onSend, onStop, isGenerating }: InputBarProps
             <div className="flex w-full items-center justify-between gap-4">
               <button 
                 onClick={() => setIsLiveMode(false)}
-                className="p-2 rounded-full bg-white/10 text-white/80 hover:bg-white/20 transition"
+                className="p-2 rounded-full bg-[var(--hover)] text-[var(--text-primary)] hover:bg-[var(--active)] transition"
               >
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
               </button>
               <NkyelWaves isLive />
               <button 
                 onClick={handleSend}
-                className="p-2 rounded-full text-white bg-red-500/80 hover:bg-red-500 transition"
+                className="p-2 rounded-full text-white bg-red-500/90 hover:bg-red-500 transition"
               >
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="6" width="12" height="12" rx="2"/></svg>
               </button>
@@ -311,8 +311,8 @@ export default function InputBar({ onSend, onStop, isGenerating }: InputBarProps
                     exit={{ width: 40, opacity: 0 }}
                     transition={{ duration: 0.2 }}
                     onClick={() => setPopoverOpen(!popoverOpen)}
-                    className="flex flex-shrink-0 items-center gap-2 rounded-full px-4 py-2 hover:bg-white/5 transition"
-                    style={{ background: 'rgba(var(--accent-rgb), 0.1)', border: '1px solid rgba(var(--accent-rgb), 0.2)' }}
+                    className="flex flex-shrink-0 items-center gap-2 rounded-full px-4 py-2 hover:bg-[var(--hover)] transition"
+                    style={{ background: 'var(--accent-subtle)', border: '1px solid var(--accent-muted)' }}
                   >
                     <span style={{ color: 'var(--accent)' }}>
                       {(() => {
@@ -338,7 +338,7 @@ export default function InputBar({ onSend, onStop, isGenerating }: InputBarProps
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.8 }}
                     onClick={() => setPopoverOpen(!popoverOpen)}
-                    className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full hover:bg-white/10 transition bg-white/5 text-white/80"
+                    className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full hover:bg-[var(--hover)] transition bg-[var(--surface-raised)] text-[var(--text-secondary)]"
                   >
                     <PlusIcon />
                   </motion.button>
@@ -353,7 +353,7 @@ export default function InputBar({ onSend, onStop, isGenerating }: InputBarProps
                 onKeyDown={handleKeyDown}
                 placeholder="Demandez n'importe quoi à Nkyel..."
                 rows={1}
-                className="flex-1 resize-none border-none bg-transparent text-[15px] leading-relaxed outline-none placeholder:text-white/30 text-white px-2 py-2"
+                className="flex-1 resize-none border-none bg-transparent text-[15px] leading-relaxed outline-none text-[var(--text-primary)] placeholder:text-[var(--text-secondary)] placeholder:opacity-60 px-2 py-2 font-sans"
                 style={{ maxHeight: 200 }}
               />
 
@@ -378,7 +378,7 @@ export default function InputBar({ onSend, onStop, isGenerating }: InputBarProps
                       animate={{ scale: 1, opacity: 1 }}
                       exit={{ scale: 0, opacity: 0 }}
                       onClick={handleSend}
-                      className="flex h-10 w-10 items-center justify-center rounded-full text-[#020304] transition hover:opacity-90"
+                      className="flex h-10 w-10 items-center justify-center rounded-full text-[#020304] transition hover:opacity-90 active:scale-95 shadow-md"
                       style={{ background: 'var(--accent)' }}
                     >
                       <SendIcon />
@@ -393,7 +393,7 @@ export default function InputBar({ onSend, onStop, isGenerating }: InputBarProps
                     >
                       <button
                         onClick={() => setIsTranscribing(!isTranscribing)}
-                        className={`flex h-10 w-10 items-center justify-center rounded-full transition ${isTranscribing ? 'bg-red-500/20 text-red-400' : 'text-white/50 hover:text-white/90 hover:bg-white/5'}`}
+                        className={`flex h-10 w-10 items-center justify-center rounded-full transition ${isTranscribing ? 'bg-red-500/20 text-red-400' : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--hover)]'}`}
                       >
                         <MicIcon />
                         {isTranscribing && (
@@ -407,7 +407,7 @@ export default function InputBar({ onSend, onStop, isGenerating }: InputBarProps
                       </button>
                       <button
                         onClick={() => setIsLiveMode(true)}
-                        className="flex h-10 w-10 items-center justify-center rounded-full text-white/50 hover:text-white/90 hover:bg-white/5 transition"
+                        className="flex h-10 w-10 items-center justify-center rounded-full text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--hover)] transition"
                       >
                         <NkyelWaves />
                       </button>
@@ -420,7 +420,7 @@ export default function InputBar({ onSend, onStop, isGenerating }: InputBarProps
         </motion.div>
       </div>
 
-      <p className="mt-3 text-center text-[11px] text-white/30 tracking-wide font-medium select-none">
+      <p className="mt-3 text-center text-[12px] text-[var(--text-tertiary)] tracking-wide font-medium select-none">
         Nkyel AI peut faire des erreurs. Votre discernement reste souverain.
       </p>
     </div>

@@ -200,18 +200,18 @@ export default function SettingsPage() {
       </AnimatePresence>
 
       {/* ── Top Bar ── */}
-      <header className="h-14 border-b border-white/[0.06] bg-[#07080D]/90 backdrop-blur-xl px-4 sm:px-8 flex items-center justify-between sticky top-0 z-30">
+      <header className="h-14 border-b border-[var(--border)] bg-[var(--material-glass-regular)] backdrop-blur-xl px-4 sm:px-8 flex items-center justify-between sticky top-0 z-30">
         <div className="flex items-center gap-3">
           <button
             onClick={() => router.push('/chat')}
-            className="w-8 h-8 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] flex items-center justify-center text-white transition-colors"
+            className="w-8 h-8 rounded-xl bg-[var(--surface-raised)] hover:bg-[var(--hover)] border border-[var(--border)] flex items-center justify-center text-[var(--text-primary)] transition-colors"
             title="Retour à la conversation"
           >
             <ArrowLeft size={16} />
           </button>
           <div className="flex items-center gap-2">
-            <span className="font-bold text-sm text-white">Paramètres & Profil</span>
-            <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-white/5 text-white/50">
+            <span className="font-bold text-sm text-[var(--text-primary)]">Paramètres & Profil</span>
+            <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[var(--surface-raised)] text-[var(--text-tertiary)] border border-[var(--border-subtle)]">
               Luma × Apple Design
             </span>
           </div>
@@ -231,7 +231,7 @@ export default function SettingsPage() {
       <div className="flex-1 max-w-6xl mx-auto w-full px-4 sm:px-8 py-8 flex flex-col md:flex-row gap-8">
         {/* Left Navigation Sidebar */}
         <aside className="w-full md:w-64 shrink-0 space-y-1">
-          <div className="text-[11px] font-mono uppercase text-white/40 px-3 pb-2 font-bold">
+          <div className="text-[11px] font-mono uppercase text-[var(--text-tertiary)] px-3 pb-2 font-bold">
             Sections
           </div>
           {SETTINGS_TABS.map((tab) => {
@@ -244,7 +244,7 @@ export default function SettingsPage() {
                 className={`w-full flex items-center justify-between px-3 py-2.5 rounded-2xl text-xs font-medium transition-all text-left ${
                   isSel
                     ? 'bg-[#D5AE57]/15 text-[#D5AE57] border border-[#D5AE57]/30 shadow-sm font-semibold'
-                    : 'text-white/60 hover:text-white hover:bg-white/[0.03]'
+                    : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--hover)]'
                 }`}
               >
                 <div className="flex items-center gap-3">
@@ -267,26 +267,26 @@ export default function SettingsPage() {
           {activeTab === 'profile' && (
             <div className="space-y-6">
               <div>
-                <h2 className="text-base font-bold text-white">Profil & Identité</h2>
-                <p className="text-xs text-white/50 mt-0.5">
+                <h2 className="text-base font-bold text-[var(--text-primary)]">Profil & Identité</h2>
+                <p className="text-xs text-[var(--text-secondary)] mt-0.5">
                   Informations de compte synchronisées avec Clerk et Neon PostgreSQL.
                 </p>
               </div>
 
               {/* Avatar Box (Luma style) */}
-              <div className="p-4 rounded-3xl bg-[#0D0F17] border border-white/[0.06] flex items-center gap-4">
+              <div className="p-4 rounded-3xl bg-[var(--material-content)] border border-[var(--border)] flex items-center gap-4">
                 <div className="w-16 h-16 rounded-full bg-gradient-to-tr from-[#D5AE57] to-amber-200 text-black flex items-center justify-center font-bold text-xl shadow-lg shrink-0">
                   {(fullName.slice(0, 2) || 'DJ').toUpperCase()}
                 </div>
                 <div className="space-y-1">
-                  <div className="font-bold text-sm text-white">{fullName}</div>
-                  <div className="text-xs text-white/40 font-mono">
+                  <div className="font-bold text-sm text-[var(--text-primary)]">{fullName}</div>
+                  <div className="text-xs text-[var(--text-tertiary)] font-mono">
                     {user?.primaryEmailAddress?.emailAddress || 'daniel@nkyel.ai'}
                   </div>
                   <div className="flex items-center gap-2 pt-1">
                     <button
                       onClick={() => showToast('Téléversement d\'avatar prêt.')}
-                      className="px-2.5 py-1 rounded-xl bg-white/[0.05] hover:bg-white/10 text-[11px] text-white/80 transition-colors flex items-center gap-1.5"
+                      className="px-2.5 py-1 rounded-xl bg-[var(--surface-raised)] hover:bg-[var(--hover)] text-[11px] text-[var(--text-secondary)] border border-[var(--border)] transition-colors flex items-center gap-1.5"
                     >
                       <UploadSimple size={13} />
                       <span>Changer Photo</span>
@@ -296,46 +296,46 @@ export default function SettingsPage() {
               </div>
 
               {/* Calm Row Form Fields */}
-              <div className="p-5 rounded-3xl bg-[#0D0F17] border border-white/[0.06] divide-y divide-white/[0.06] space-y-4">
+              <div className="p-5 rounded-3xl bg-[var(--material-content)] border border-[var(--border)] divide-y divide-[var(--border)] space-y-4">
                 <div className="pt-2 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                   <div>
-                    <div className="text-xs font-bold text-white">Nom Complet</div>
-                    <div className="text-[11px] text-white/40">Nom affiché sur la plateforme</div>
+                    <div className="text-xs font-bold text-[var(--text-primary)]">Nom Complet</div>
+                    <div className="text-[11px] text-[var(--text-tertiary)]">Nom affiché sur la plateforme</div>
                   </div>
                   <input
                     type="text"
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
-                    className="p-2 px-3 rounded-xl bg-black/40 border border-white/10 text-xs text-white focus:outline-none focus:border-[#D5AE57] w-full sm:w-64"
+                    className="p-2 px-3 rounded-xl bg-[var(--material-canvas)] border border-[var(--border)] text-xs text-[var(--text-primary)] focus:outline-none focus:border-[#D5AE57] w-full sm:w-64 font-sans"
                   />
                 </div>
 
                 <div className="pt-4 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                   <div>
-                    <div className="text-xs font-bold text-white">Nom d&apos;utilisateur</div>
-                    <div className="text-[11px] text-white/40">Identifiant unique @username</div>
+                    <div className="text-xs font-bold text-[var(--text-primary)]">Nom d&apos;utilisateur</div>
+                    <div className="text-[11px] text-[var(--text-tertiary)]">Identifiant unique @username</div>
                   </div>
                   <div className="flex items-center gap-1 w-full sm:w-64">
-                    <span className="text-white/40 text-xs">@</span>
+                    <span className="text-[var(--text-tertiary)] text-xs">@</span>
                     <input
                       type="text"
                       value={username}
                       onChange={(e) => setUsername(e.target.value)}
-                      className="p-2 px-3 rounded-xl bg-black/40 border border-white/10 text-xs text-white focus:outline-none focus:border-[#D5AE57] flex-1"
+                      className="p-2 px-3 rounded-xl bg-[var(--material-canvas)] border border-[var(--border)] text-xs text-[var(--text-primary)] focus:outline-none focus:border-[#D5AE57] flex-1 font-sans"
                     />
                   </div>
                 </div>
 
                 <div className="pt-4 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                   <div>
-                    <div className="text-xs font-bold text-white">Rôle & Bio</div>
-                    <div className="text-[11px] text-white/40">Contextualise les réponses de l&apos;agent</div>
+                    <div className="text-xs font-bold text-[var(--text-primary)]">Rôle & Bio</div>
+                    <div className="text-[11px] text-[var(--text-tertiary)]">Contextualise les réponses de l&apos;agent</div>
                   </div>
                   <input
                     type="text"
                     value={bio}
                     onChange={(e) => setBio(e.target.value)}
-                    className="p-2 px-3 rounded-xl bg-black/40 border border-white/10 text-xs text-white focus:outline-none focus:border-[#D5AE57] w-full sm:w-64"
+                    className="p-2 px-3 rounded-xl bg-[var(--material-canvas)] border border-[var(--border)] text-xs text-[var(--text-primary)] focus:outline-none focus:border-[#D5AE57] w-full sm:w-64 font-sans"
                   />
                 </div>
               </div>
@@ -346,14 +346,14 @@ export default function SettingsPage() {
           {activeTab === 'general' && (
             <div className="space-y-6">
               <div>
-                <h2 className="text-base font-bold text-white">Général & Langues Mondiales (BCP-47)</h2>
-                <p className="text-xs text-white/50 mt-0.5">
+                <h2 className="text-base font-bold text-[var(--text-primary)]">Général & Langues Mondiales (BCP-47)</h2>
+                <p className="text-xs text-[var(--text-secondary)] mt-0.5">
                   Séparation stricte entre la langue de l&apos;interface et la langue de génération de l&apos;agent.
                 </p>
               </div>
 
-              <div className="p-5 rounded-3xl bg-[#0D0F17] border border-white/[0.06] space-y-4">
-                <div className="text-xs font-bold text-white uppercase tracking-wider font-mono text-[#D5AE57]">
+              <div className="p-5 rounded-3xl bg-[var(--material-content)] border border-[var(--border)] space-y-4">
+                <div className="text-xs font-bold uppercase tracking-wider font-mono text-[#D5AE57]">
                   Langue d&apos;Interface Utilisateur (UI)
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
@@ -365,13 +365,13 @@ export default function SettingsPage() {
                         onClick={() => handleLanguageChange(lang.code, lang.name)}
                         className={`p-3 rounded-2xl border text-left flex items-center justify-between transition-all ${
                           isSelected
-                            ? 'bg-[#D5AE57]/15 border-[#D5AE57]/40 text-white shadow-sm'
-                            : 'bg-black/30 border-white/[0.05] text-white/60 hover:text-white hover:border-white/10'
+                            ? 'bg-[#D5AE57]/15 border-[#D5AE57]/40 text-[var(--text-primary)] shadow-sm'
+                            : 'bg-[var(--surface-raised)] border-[var(--border-subtle)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:border-[var(--border)]'
                         }`}
                       >
                         <div>
-                          <div className="text-xs font-bold text-white">{lang.name}</div>
-                          <div className="text-[10px] text-white/40 font-mono">{lang.nativeName} ({lang.code})</div>
+                          <div className="text-xs font-bold text-[var(--text-primary)]">{lang.name}</div>
+                          <div className="text-[10px] text-[var(--text-tertiary)] font-mono">{lang.nativeName} ({lang.code})</div>
                         </div>
                         {isSelected && <CheckCircle size={16} weight="fill" className="text-[#D5AE57]" />}
                       </button>
@@ -381,25 +381,25 @@ export default function SettingsPage() {
               </div>
 
               {/* Timezone & Time Format */}
-              <div className="p-5 rounded-3xl bg-[#0D0F17] border border-white/[0.06] divide-y divide-white/[0.06] space-y-4">
+              <div className="p-5 rounded-3xl bg-[var(--material-content)] border border-[var(--border)] divide-y divide-[var(--border)] space-y-4">
                 <div className="pt-2 flex items-center justify-between">
                   <div>
-                    <div className="text-xs font-bold text-white">Fuseau Horaire</div>
-                    <div className="text-[11px] text-white/40">Utilisé pour les missions planifiées</div>
+                    <div className="text-xs font-bold text-[var(--text-primary)]">Fuseau Horaire</div>
+                    <div className="text-[11px] text-[var(--text-tertiary)]">Utilisé pour les missions planifiées</div>
                   </div>
-                  <span className="text-xs font-mono text-white/80">{timezone}</span>
+                  <span className="text-xs font-mono text-[var(--text-secondary)]">{timezone}</span>
                 </div>
 
                 <div className="pt-4 flex items-center justify-between">
                   <div>
-                    <div className="text-xs font-bold text-white">Format de l&apos;heure</div>
-                    <div className="text-[11px] text-white/40">24 heures ou 12 heures AM/PM</div>
+                    <div className="text-xs font-bold text-[var(--text-primary)]">Format de l&apos;heure</div>
+                    <div className="text-[11px] text-[var(--text-tertiary)]">24 heures ou 12 heures AM/PM</div>
                   </div>
-                  <div className="flex items-center gap-1 p-1 bg-black/40 rounded-xl border border-white/10 text-xs">
+                  <div className="flex items-center gap-1 p-1 bg-[var(--material-canvas)] rounded-xl border border-[var(--border)] text-xs">
                     <button
                       onClick={() => setTimeFormat('24h')}
                       className={`px-3 py-1 rounded-lg font-mono ${
-                        timeFormat === '24h' ? 'bg-[#D5AE57] text-black font-bold' : 'text-white/60'
+                        timeFormat === '24h' ? 'bg-[#D5AE57] text-black font-bold' : 'text-[var(--text-secondary)]'
                       }`}
                     >
                       24h
@@ -407,7 +407,7 @@ export default function SettingsPage() {
                     <button
                       onClick={() => setTimeFormat('12h')}
                       className={`px-3 py-1 rounded-lg font-mono ${
-                        timeFormat === '12h' ? 'bg-[#D5AE57] text-black font-bold' : 'text-white/60'
+                        timeFormat === '12h' ? 'bg-[#D5AE57] text-black font-bold' : 'text-[var(--text-secondary)]'
                       }`}
                     >
                       12h
@@ -422,8 +422,8 @@ export default function SettingsPage() {
           {activeTab === 'appearance' && (
             <div className="space-y-6">
               <div>
-                <h2 className="text-base font-bold text-white">Apparence & Thèmes</h2>
-                <p className="text-xs text-white/50 mt-0.5">
+                <h2 className="text-base font-bold text-[var(--text-primary)]">Apparence & Thèmes</h2>
+                <p className="text-xs text-[var(--text-secondary)] mt-0.5">
                   Thèmes optimisés pour écrans OLED et contrastes Apple précis.
                 </p>
               </div>
@@ -433,39 +433,39 @@ export default function SettingsPage() {
                   onClick={() => handleThemeChange('black-panther')}
                   className={`p-4 rounded-3xl border text-left space-y-2 transition-all ${
                     currentTheme === 'black-panther'
-                      ? 'bg-[#D5AE57]/15 border-[#D5AE57]/40 text-white shadow-lg'
-                      : 'bg-[#0A0B10] border-white/10 text-white/60 hover:text-white'
+                      ? 'bg-[#D5AE57]/15 border-[#D5AE57]/40 text-[var(--text-primary)] shadow-lg'
+                      : 'bg-[var(--material-content)] border-[var(--border)] text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
                   }`}
                 >
                   <Moon size={20} className="text-[#D5AE57]" />
-                  <div className="font-bold text-xs text-white">Black Panther</div>
-                  <p className="text-[10px] text-white/40">Noir profond avec touches d&apos;or souverain.</p>
+                  <div className="font-bold text-xs text-[var(--text-primary)]">Black Panther</div>
+                  <p className="text-[11px] text-[var(--text-tertiary)]">Noir profond avec touches d&apos;or souverain.</p>
                 </button>
 
                 <button
                   onClick={() => handleThemeChange('nuit-lope')}
                   className={`p-4 rounded-3xl border text-left space-y-2 transition-all ${
                     currentTheme === 'nuit-lope'
-                      ? 'bg-emerald-500/15 border-emerald-500/40 text-white shadow-lg'
-                      : 'bg-[#0A0B10] border-white/10 text-white/60 hover:text-white'
+                      ? 'bg-emerald-500/15 border-emerald-500/40 text-[var(--text-primary)] shadow-lg'
+                      : 'bg-[var(--material-content)] border-[var(--border)] text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
                   }`}
                 >
                   <Moon size={20} className="text-emerald-400" />
-                  <div className="font-bold text-xs text-white">Nuit Lopé</div>
-                  <p className="text-[10px] text-white/40">Onyx avec accents émeraude gabonaise.</p>
+                  <div className="font-bold text-xs text-[var(--text-primary)]">Nuit Lopé</div>
+                  <p className="text-[11px] text-[var(--text-tertiary)]">Onyx avec accents émeraude gabonaise.</p>
                 </button>
 
                 <button
                   onClick={() => handleThemeChange('aurore-ogoue')}
                   className={`p-4 rounded-3xl border text-left space-y-2 transition-all ${
                     currentTheme === 'aurore-ogoue'
-                      ? 'bg-white/20 border-white/40 text-white shadow-lg'
-                      : 'bg-[#0A0B10] border-white/10 text-white/60 hover:text-white'
+                      ? 'bg-[var(--surface-raised)] border-[#D5AE57]/40 text-[var(--text-primary)] shadow-lg'
+                      : 'bg-[var(--material-content)] border-[var(--border)] text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
                   }`}
                 >
-                  <Sun size={20} className="text-amber-200" />
-                  <div className="font-bold text-xs text-white">Aurore Ogooué</div>
-                  <p className="text-[10px] text-white/40">Mode clair inspiré de la pureté Apple.</p>
+                  <Sun size={20} className="text-amber-300" />
+                  <div className="font-bold text-xs text-[var(--text-primary)]">Aurore Ogooué</div>
+                  <p className="text-[11px] text-[var(--text-tertiary)]">Mode clair inspiré de la pureté Apple.</p>
                 </button>
               </div>
             </div>
@@ -475,8 +475,8 @@ export default function SettingsPage() {
           {activeTab === 'agent' && (
             <div className="space-y-6">
               <div>
-                <h2 className="text-base font-bold text-white">Politique d&apos;Agent & Autonomie</h2>
-                <p className="text-xs text-white/50 mt-0.5">
+                <h2 className="text-base font-bold text-[var(--text-primary)]">Politique d&apos;Agent & Autonomie</h2>
+                <p className="text-xs text-[var(--text-secondary)] mt-0.5">
                   Contrôlez le degré d&apos;initiative et les seuils d&apos;approbation humaine de Ñkyel.
                 </p>
               </div>
@@ -486,39 +486,39 @@ export default function SettingsPage() {
                   onClick={() => handleAutonomyChange('guided')}
                   className={`p-4 rounded-3xl border text-left space-y-2 transition-all ${
                     autonomyLevel === 'guided'
-                      ? 'bg-[#D5AE57]/15 border-[#D5AE57]/40 text-white'
-                      : 'bg-[#0D0F17] border-white/[0.06] text-white/60 hover:text-white'
+                      ? 'bg-[#D5AE57]/15 border-[#D5AE57]/40 text-[var(--text-primary)]'
+                      : 'bg-[var(--material-content)] border-[var(--border)] text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
                   }`}
                 >
                   <HandPointing size={20} className="text-[#D5AE57]" />
-                  <div className="font-bold text-xs text-white">Guidée</div>
-                  <p className="text-[10px] text-white/40">Demande confirmation pour chaque étape et outil.</p>
+                  <div className="font-bold text-xs text-[var(--text-primary)]">Guidée</div>
+                  <p className="text-[11px] text-[var(--text-tertiary)]">Demande confirmation pour chaque étape et outil.</p>
                 </button>
 
                 <button
                   onClick={() => handleAutonomyChange('semi_autonomous')}
                   className={`p-4 rounded-3xl border text-left space-y-2 transition-all ${
                     autonomyLevel === 'semi_autonomous'
-                      ? 'bg-[#D5AE57]/15 border-[#D5AE57]/40 text-white'
-                      : 'bg-[#0D0F17] border-white/[0.06] text-white/60 hover:text-white'
+                      ? 'bg-[#D5AE57]/15 border-[#D5AE57]/40 text-[var(--text-primary)]'
+                      : 'bg-[var(--material-content)] border-[var(--border)] text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
                   }`}
                 >
                   <SlidersHorizontal size={20} className="text-[#D5AE57]" />
-                  <div className="font-bold text-xs text-white">Semi-Autonome</div>
-                  <p className="text-[10px] text-white/40">Exécute les recherches, demande pour les actions critiques.</p>
+                  <div className="font-bold text-xs text-[var(--text-primary)]">Semi-Autonome</div>
+                  <p className="text-[11px] text-[var(--text-tertiary)]">Exécute les recherches, demande pour les actions critiques.</p>
                 </button>
 
                 <button
                   onClick={() => handleAutonomyChange('fully_autonomous')}
                   className={`p-4 rounded-3xl border text-left space-y-2 transition-all ${
                     autonomyLevel === 'fully_autonomous'
-                      ? 'bg-[#D5AE57]/15 border-[#D5AE57]/40 text-white'
-                      : 'bg-[#0D0F17] border-white/[0.06] text-white/60 hover:text-white'
+                      ? 'bg-[#D5AE57]/15 border-[#D5AE57]/40 text-[var(--text-primary)]'
+                      : 'bg-[var(--material-content)] border-[var(--border)] text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
                   }`}
                 >
                   <Lightning size={20} className="text-amber-300" />
-                  <div className="font-bold text-xs text-white">Autonome</div>
-                  <p className="text-[10px] text-white/40">Enchaîne jusqu&apos;à 40 étapes sans interruption.</p>
+                  <div className="font-bold text-xs text-[var(--text-primary)]">Autonome</div>
+                  <p className="text-[11px] text-[var(--text-tertiary)]">Enchaîne jusqu&apos;à 40 étapes sans interruption.</p>
                 </button>
               </div>
             </div>
@@ -528,24 +528,24 @@ export default function SettingsPage() {
           {activeTab === 'memory' && (
             <div className="space-y-6">
               <div>
-                <h2 className="text-base font-bold text-white">Mémoire Souveraine DeerMem</h2>
-                <p className="text-xs text-white/50 mt-0.5">
+                <h2 className="text-base font-bold text-[var(--text-primary)]">Mémoire Souveraine DeerMem</h2>
+                <p className="text-xs text-[var(--text-secondary)] mt-0.5">
                   Apprentissage cross-session et mémorisation contextuelle sans fuite de données.
                 </p>
               </div>
 
-              <div className="p-5 rounded-3xl bg-[#0D0F17] border border-white/[0.06] divide-y divide-white/[0.06] space-y-4">
+              <div className="p-5 rounded-3xl bg-[var(--material-content)] border border-[var(--border)] divide-y divide-[var(--border)] space-y-4">
                 <div className="pt-2 flex items-center justify-between">
                   <div>
-                    <div className="text-xs font-bold text-white">Extraction Automatique des Faits</div>
-                    <div className="text-[11px] text-white/40">Permet à Ñkyel de retenir vos préférences au fil des échanges</div>
+                    <div className="text-xs font-bold text-[var(--text-primary)]">Extraction Automatique des Faits</div>
+                    <div className="text-[11px] text-[var(--text-tertiary)]">Permet à Ñkyel de retenir vos préférences au fil des échanges</div>
                   </div>
                   <button
                     onClick={handleToggleMemory}
                     className={`px-3 py-1.5 rounded-xl font-mono text-xs font-bold transition-all ${
                       memoryEnabled
                         ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/40'
-                        : 'bg-white/5 text-white/40 border border-white/10'
+                        : 'bg-[var(--surface-raised)] text-[var(--text-tertiary)] border border-[var(--border)]'
                     }`}
                   >
                     {memoryEnabled ? 'ACTIVÉ' : 'DÉSACTIVÉ'}
@@ -554,15 +554,15 @@ export default function SettingsPage() {
 
                 <div className="pt-4 flex items-center justify-between">
                   <div>
-                    <div className="text-xs font-bold text-white">Demander Confirmation Avant Mémorisation</div>
-                    <div className="text-[11px] text-white/40">Affiche une invite avant d&apos;enregistrer un nouveau souvenir</div>
+                    <div className="text-xs font-bold text-[var(--text-primary)]">Demander Confirmation Avant Mémorisation</div>
+                    <div className="text-[11px] text-[var(--text-tertiary)]">Affiche une invite avant d&apos;enregistrer un nouveau souvenir</div>
                   </div>
                   <button
                     onClick={() => setConfirmBeforeRemembering(!confirmBeforeRemembering)}
                     className={`px-3 py-1.5 rounded-xl font-mono text-xs font-bold transition-all ${
                       confirmBeforeRemembering
                         ? 'bg-[#D5AE57]/20 text-[#D5AE57] border border-[#D5AE57]/40'
-                        : 'bg-white/5 text-white/40 border border-white/10'
+                        : 'bg-[var(--surface-raised)] text-[var(--text-tertiary)] border border-[var(--border)]'
                     }`}
                   >
                     {confirmBeforeRemembering ? 'OUI' : 'NON'}
@@ -576,17 +576,17 @@ export default function SettingsPage() {
           {activeTab === 'subscription' && (
             <div className="space-y-6">
               <div>
-                <h2 className="text-base font-bold text-white">Forfait & Crédits d&apos;Inférence</h2>
-                <p className="text-xs text-white/50 mt-0.5">
+                <h2 className="text-base font-bold text-[var(--text-primary)]">Forfait & Crédits d&apos;Inférence</h2>
+                <p className="text-xs text-[var(--text-secondary)] mt-0.5">
                   Gestion de votre plan et suivi de vos quotas de jetons d&apos;IA.
                 </p>
               </div>
 
-              <div className="p-6 rounded-3xl bg-gradient-to-tr from-[#12141F] to-[#0A0C14] border border-[#D5AE57]/30 space-y-4">
+              <div className="p-6 rounded-3xl bg-[var(--material-content-raised)] border border-[#D5AE57]/30 space-y-4 shadow-md">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <Crown size={20} className="text-[#D5AE57]" />
-                    <span className="font-bold text-sm text-white">
+                    <span className="font-bold text-sm text-[var(--text-primary)]">
                       {isSuperAdmin ? 'Plan Fondateur Super Admin' : 'Plan Professionnel'}
                     </span>
                   </div>
@@ -595,14 +595,14 @@ export default function SettingsPage() {
                   </span>
                 </div>
 
-                <div className="space-y-2 text-xs text-white/70">
+                <div className="space-y-2 text-xs text-[var(--text-secondary)]">
                   <div className="flex justify-between">
                     <span>Crédits d&apos;Inférence Restants :</span>
-                    <span className="font-mono font-bold text-white">
+                    <span className="font-mono font-bold text-[var(--text-primary)]">
                       {isSuperAdmin ? '999,999,999 (Illimités)' : '25,000 / 25,000'}
                     </span>
                   </div>
-                  <div className="w-full h-2 bg-white/10 rounded-full overflow-hidden">
+                  <div className="w-full h-2 bg-[var(--surface)] rounded-full overflow-hidden border border-[var(--border-subtle)]">
                     <div className="w-full h-full bg-[#D5AE57]" />
                   </div>
                 </div>
@@ -614,20 +614,20 @@ export default function SettingsPage() {
           {activeTab === 'security' && (
             <div className="space-y-6">
               <div>
-                <h2 className="text-base font-bold text-white">Sécurité & Résidence Souveraine</h2>
-                <p className="text-xs text-white/50 mt-0.5">
+                <h2 className="text-base font-bold text-[var(--text-primary)]">Sécurité & Résidence Souveraine</h2>
+                <p className="text-xs text-[var(--text-secondary)] mt-0.5">
                   Chiffrement de bout en bout et isolation étanche des données par tenant.
                 </p>
               </div>
 
-              <div className="p-5 rounded-3xl bg-[#0D0F17] border border-white/[0.06] space-y-3 text-xs text-white/70">
+              <div className="p-5 rounded-3xl bg-[var(--material-content)] border border-[var(--border)] space-y-3 text-xs text-[var(--text-secondary)]">
                 <div className="flex items-center justify-between">
                   <span>Authentification</span>
                   <span className="font-mono text-emerald-400 font-bold">Clerk JWKS RS256</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span>Isolation des données</span>
-                  <span className="font-mono text-white">PostgreSQL Row-Level Security</span>
+                  <span className="font-mono text-[var(--text-primary)]">PostgreSQL Row-Level Security</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span>Chiffrement des clés API</span>
@@ -642,7 +642,7 @@ export default function SettingsPage() {
             <div className="space-y-6">
               <div>
                 <h2 className="text-base font-bold text-red-400">Zone Critique</h2>
-                <p className="text-xs text-white/50 mt-0.5">
+                <p className="text-xs text-[var(--text-secondary)] mt-0.5">
                   Actions destructives ou de réinitialisation de vos données.
                 </p>
               </div>
@@ -650,12 +650,12 @@ export default function SettingsPage() {
               <div className="p-5 rounded-3xl bg-red-500/5 border border-red-500/20 space-y-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <div className="text-xs font-bold text-white">Effacer le Cache Local & Mémoire</div>
-                    <div className="text-[11px] text-white/40">Supprime les données temporaires locales</div>
+                    <div className="text-xs font-bold text-[var(--text-primary)]">Effacer le Cache Local & Mémoire</div>
+                    <div className="text-[11px] text-[var(--text-tertiary)]">Supprime les données temporaires locales</div>
                   </div>
                   <button
                     onClick={() => showToast('Cache local nettoyé.')}
-                    className="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-xs text-white transition-colors"
+                    className="px-3 py-1.5 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-xs text-red-300 transition-colors border border-red-500/30 font-medium"
                   >
                     Nettoyer
                   </button>

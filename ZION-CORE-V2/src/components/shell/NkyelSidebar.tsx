@@ -345,17 +345,16 @@ export default function NkyelSidebar() {
           {/* Profile Menu Popover */}
           {profileMenuOpen && (
             <div
-              className="absolute left-3 right-3 bottom-full mb-2 p-2 rounded-2xl bg-[#0D0F17] border border-white/10 shadow-2xl z-50 text-xs space-y-1"
-              style={{ minWidth: 220 }}
+              className="absolute bottom-full left-2 right-2 mb-2 p-1.5 rounded-2xl border border-[var(--border-strong)] bg-[var(--material-glass-elevated)] backdrop-blur-2xl shadow-[var(--shadow-modal)] z-50 text-xs animate-in fade-in zoom-in-95 duration-150"
             >
               {/* User Header */}
-              <div className="p-2 border-b border-white/[0.08] flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-[#D5AE57] to-amber-200 text-black flex items-center justify-center font-bold text-xs shrink-0">
+              <div className="p-2 border-b border-[var(--border)] flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-[#D5AE57] to-amber-200 text-black flex items-center justify-center font-bold text-xs shrink-0 shadow-sm">
                   {userInitials}
                 </div>
                 <div className="min-w-0 flex-1">
-                  <div className="font-bold text-white truncate text-xs">{displayName}</div>
-                  <div className="text-[10px] text-white/40 truncate font-mono">{userEmail}</div>
+                  <div className="font-bold text-[var(--text-primary)] truncate text-xs">{displayName}</div>
+                  <div className="text-[11px] text-[var(--text-tertiary)] truncate font-mono">{userEmail}</div>
                 </div>
               </div>
 
@@ -364,38 +363,38 @@ export default function NkyelSidebar() {
                 <Link
                   href="/settings"
                   onClick={() => setProfileMenuOpen(false)}
-                  className="flex items-center gap-2.5 px-2.5 py-1.5 rounded-xl hover:bg-white/[0.06] text-white/80 hover:text-white transition-colors"
+                  className="flex items-center gap-2.5 px-2.5 py-2 rounded-xl hover:bg-[var(--hover)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
                 >
-                  <User size={14} className="text-[#D5AE57]" />
-                  <span>Mon Profil</span>
+                  <User size={15} className="text-[#D5AE57]" />
+                  <span className="font-medium">Mon Profil</span>
                 </Link>
 
                 <Link
                   href="/settings"
                   onClick={() => setProfileMenuOpen(false)}
-                  className="flex items-center gap-2.5 px-2.5 py-1.5 rounded-xl hover:bg-white/[0.06] text-white/80 hover:text-white transition-colors"
+                  className="flex items-center gap-2.5 px-2.5 py-2 rounded-xl hover:bg-[var(--hover)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
                 >
-                  <Gear size={14} className="text-white/60" />
-                  <span>Paramètres</span>
+                  <Gear size={15} className="text-[var(--text-tertiary)]" />
+                  <span className="font-medium">Paramètres</span>
                 </Link>
 
-                <div className="flex items-center justify-between px-2.5 py-1.5 rounded-xl bg-white/[0.03] text-white/70">
-                  <span className="flex items-center gap-2 text-[11px]">
-                    <Crown size={14} className="text-[#D5AE57]" />
+                <div className="flex items-center justify-between px-2.5 py-2 rounded-xl bg-[var(--surface-raised)] text-[var(--text-secondary)] border border-[var(--border-subtle)]">
+                  <span className="flex items-center gap-2 text-xs">
+                    <Crown size={15} className="text-[#D5AE57]" />
                     <span>Crédits Inférence</span>
                   </span>
-                  <span className="font-mono text-[10px] font-bold text-[#D5AE57]">Illimités</span>
+                  <span className="font-mono text-[11px] font-bold text-[#D5AE57]">Illimités</span>
                 </div>
               </div>
 
               {/* Sign Out */}
-              <div className="pt-1 border-t border-white/[0.06]">
+              <div className="pt-1 border-t border-[var(--border)]">
                 <SignOutButton>
                   <button
                     onClick={() => setProfileMenuOpen(false)}
-                    className="w-full flex items-center gap-2.5 px-2.5 py-1.5 rounded-xl hover:bg-red-500/10 text-red-400 text-left transition-colors"
+                    className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl hover:bg-red-500/10 text-red-400 text-left transition-colors font-medium"
                   >
-                    <SignOut size={14} />
+                    <SignOut size={15} />
                     <span>Déconnexion</span>
                   </button>
                 </SignOutButton>
@@ -406,7 +405,7 @@ export default function NkyelSidebar() {
           {/* Profile Trigger Button */}
           <button
             onClick={() => setProfileMenuOpen((prev) => !prev)}
-            className="w-full flex items-center justify-between p-1.5 rounded-xl hover:bg-white/[0.04] transition-colors text-left"
+            className="w-full flex items-center justify-between p-2 rounded-xl hover:bg-[var(--hover)] transition-colors text-left"
           >
             <div className="flex items-center gap-2.5 min-w-0">
               <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-[#D5AE57] to-amber-200 text-black flex items-center justify-center font-bold text-[11px] shrink-0 shadow-sm">
@@ -414,8 +413,8 @@ export default function NkyelSidebar() {
               </div>
               {!isCollapsed && (
                 <div className="min-w-0 flex-1">
-                  <div className="text-xs font-medium text-white truncate">{displayName}</div>
-                  <div className="flex items-center gap-1">
+                  <div className="text-xs font-semibold text-[var(--text-primary)] truncate">{displayName}</div>
+                  <div className="flex items-center gap-1 mt-0.5">
                     <span className="text-[9px] font-mono px-1.5 py-0.2 rounded bg-[#D5AE57]/15 border border-[#D5AE57]/30 text-[#D5AE57] font-bold">
                       {isSuperAdmin ? 'SUPER ADMIN' : 'PRO'}
                     </span>
@@ -425,7 +424,7 @@ export default function NkyelSidebar() {
             </div>
 
             {!isCollapsed && (
-              <DotsThreeVertical size={16} className="text-white/40 shrink-0" />
+              <DotsThreeVertical size={16} className="text-[var(--text-tertiary)] shrink-0" />
             )}
           </button>
         </div>

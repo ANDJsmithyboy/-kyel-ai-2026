@@ -135,47 +135,82 @@ code, pre, kbd, samp {
 .no-scrollbar::-webkit-scrollbar { display: none; }
 
 /* ═══════════════════════════════════════════════════════
-   GLASSMORPHISM 2.0 & LUXURY MATERIAL SYSTEM (Apple × Geist)
+   MATERIAL SYSTEM (Apple Liquid Glass × Geist × Ñkyel VIE)
    ═══════════════════════════════════════════════════════ */
 
-.glass-subtle {
-  background: var(--bg-glass);
-  backdrop-filter: blur(14px) saturate(160%);
-  -webkit-backdrop-filter: blur(14px) saturate(160%);
-  border: 1px solid var(--glass-border);
-  box-shadow: inset 0 1px 0 var(--glass-highlight), var(--shadow-xs);
+.material-canvas {
+  background: var(--material-canvas);
+  color: var(--text-primary);
 }
 
-.glass-standard {
-  background: var(--surface-overlay);
-  backdrop-filter: blur(20px) saturate(170%);
-  -webkit-backdrop-filter: blur(20px) saturate(170%);
-  border: 1px solid var(--glass-border);
-  box-shadow: inset 0 1px 0 var(--glass-highlight), var(--shadow-sm);
+.material-content {
+  background: var(--material-content);
+  color: var(--text-primary);
+  border: 1px solid var(--border);
 }
 
-.glass-elevated {
-  background: var(--surface-overlay);
+.material-content-raised {
+  background: var(--material-content-raised);
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-key);
+}
+
+.material-glass-regular {
+  background: var(--material-glass-regular);
+  color: var(--text-primary);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid var(--glass-border);
+  box-shadow: inset 0 1px 0 var(--glass-highlight), var(--shadow-key);
+}
+
+.material-glass-elevated {
+  background: var(--material-glass-elevated);
+  color: var(--text-primary);
   backdrop-filter: blur(28px) saturate(180%);
   -webkit-backdrop-filter: blur(28px) saturate(180%);
   border: 1px solid var(--border-strong);
-  box-shadow: inset 0 1px 0 var(--glass-highlight), var(--shadow-lg);
+  box-shadow: inset 0 1px 0 var(--glass-highlight), var(--shadow-ambient);
 }
 
-.glass-floating {
-  background: var(--surface-overlay);
+.material-glass-floating {
+  background: var(--material-glass-floating);
+  color: var(--text-primary);
   backdrop-filter: blur(32px) saturate(190%);
   -webkit-backdrop-filter: blur(32px) saturate(190%);
   border: 1px solid var(--border-strong);
-  box-shadow: inset 0 1px 0 var(--glass-highlight), var(--shadow-xl);
+  box-shadow: inset 0 1px 0 var(--glass-highlight), var(--shadow-floating);
 }
 
-.glass-modal {
-  background: var(--surface-overlay);
-  backdrop-filter: blur(40px) saturate(200%);
-  -webkit-backdrop-filter: blur(40px) saturate(200%);
-  border: 1px solid var(--border-strong);
-  box-shadow: inset 0 1px 0 var(--glass-highlight), var(--shadow-xl);
+.material-glass-clear {
+  background: var(--material-glass-clear);
+  color: var(--text-primary);
+  backdrop-filter: blur(14px) saturate(160%);
+  -webkit-backdrop-filter: blur(14px) saturate(160%);
+  border: 1px solid var(--glass-border);
+}
+
+.material-overlay {
+  background: var(--material-overlay);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+.material-scrim {
+  background: var(--material-scrim);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+/* Fallback si backdrop-filter non supporté */
+@supports not (backdrop-filter: blur(1px)) {
+  .material-glass-regular,
+  .material-glass-elevated,
+  .material-glass-floating,
+  .material-glass-clear {
+    background: var(--material-content-raised) !important;
+  }
 }
 
 /* ── Crisp High Contrast Utilities ── */
