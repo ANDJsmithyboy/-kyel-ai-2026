@@ -317,7 +317,7 @@ function SettingsContent() {
               <div className="space-y-6">
                 <div>
                   <h2 className="text-base font-bold text-[var(--text-primary)]">Profil & Identité</h2>
-                  <p className="text-xs text-[var(--text-secondary)]">Géré via Clerk SSO et la sécurité souveraine SmartANDJ.</p>
+                  <p className="text-xs text-[var(--text-secondary)]">Géré via SSO sécurisé et la sécurité souveraine SmartANDJ.</p>
                 </div>
 
                 <SettingSection title="Informations Personnelles">

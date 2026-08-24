@@ -12,6 +12,8 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
+export type BCP47Language = string;
+
 export interface LanguageItem {
   tag: string;              // BCP-47 tag (ex: 'fr-FR', 'fr-GA', 'en-US', 'en-GB', 'ar-SA', 'zh-CN', 'fan', 'puu')
   name: string;             // Nom d'affichage international
@@ -355,7 +357,7 @@ interface LanguageState {
 
 export const useLanguageStore = create<LanguageState>()(
   persist(
-    (set, get) => ({
+    (set: any, get: any) => ({
       uiLocale: 'fr-FR',
       agentLanguage: 'auto',
       isModalOpen: false,
@@ -380,7 +382,7 @@ export const useLanguageStore = create<LanguageState>()(
     }),
     {
       name: 'Nkyel_Language_Storage',
-      onRehydrateStorage: () => (state) => {
+      onRehydrateStorage: () => (state: any) => {
         if (state) {
           applyRTLToDOM(state.uiLocale || 'fr-FR');
         }

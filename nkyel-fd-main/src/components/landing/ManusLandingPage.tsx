@@ -103,8 +103,8 @@ const APPLE_CORE_PILLARS = [
     icon: ShieldCheck,
     color: '#10B981',
     title: "6. Sécurité de Rang Bancaire & Cloud Privé",
-    desc: "Authentification Clerk RS256, isolation multi-tenant Row-Level Security sur Neon PostgreSQL, chiffrement de bout en bout et zéro clé API exposée en clair.",
-    tag: "Clerk · Neon RLS",
+    desc: "Authentification chiffrée JWKS RS256, isolation multi-tenant Row-Level Security sur base dédiée, chiffrement de bout en bout et zéro clé API exposée en clair.",
+    tag: "Chiffrement Zero-Knowledge",
   },
 ];
 

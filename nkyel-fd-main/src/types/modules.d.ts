@@ -1,5 +1,9 @@
 /* Module declarations for IDE type resolution */
 
+declare const process: {
+  env: Record<string, string | undefined>;
+};
+
 declare module '@clerk/nextjs' {
   import React from 'react';
   export const SignIn: React.ComponentType<any>;
@@ -48,10 +52,25 @@ declare module 'next/server' {
   export type NextFetchEvent = any;
 }
 
+declare module 'next/navigation' {
+  export function useRouter(): any;
+  export function usePathname(): string;
+  export function useSearchParams(): URLSearchParams;
+  export function useParams(): Record<string, string | string[]>;
+  export function redirect(url: string): never;
+  export function notFound(): never;
+}
+
 declare module 'next/link' {
   import React from 'react';
   const Link: React.ForwardRefExoticComponent<any>;
   export default Link;
+}
+
+declare module 'framer-motion' {
+  import React from 'react';
+  export const motion: any;
+  export const AnimatePresence: React.ComponentType<any>;
 }
 
 declare module '@phosphor-icons/react' {
@@ -93,4 +112,23 @@ declare module '@phosphor-icons/react' {
   export const FloppyDisk: Icon;
   export const TerminalWindow: Icon;
   export const PaperPlaneTilt: Icon;
+  export const User: Icon;
+  export const Desktop: Icon;
+  export const Crown: Icon;
+  export const WarningOctagon: Icon;
+  export const CaretRight: Icon;
+  export const ArrowsClockwise: Icon;
+  export const Database: Icon;
+  export const Check: Icon;
+  export const Play: Icon;
+  export const UserCircle: Icon;
+  export const Code: Icon;
+  export const FileText: Icon;
+  export const Cookie: Icon;
+  export const Scales: Icon;
+  export const ChatCircleText: Icon;
+  export const ChartLineUp: Icon;
+  export const Image: Icon;
+  export const VideoCamera: Icon;
+  export const Infinity: Icon;
 }
