@@ -1,38 +1,49 @@
-/* Nkyel AI · sign-up/page.tsx · SmartANDJ AI Technologies */
+/* Ñkyel AI · sign-up/[[...sign-up]]/page.tsx · SmartANDJ AI Technologies
+   Fondateur : Daniel Jonathan ANDJ
+   Page d'Inscription Séparée Haute Fidélité Manus AI × Clerk Pro */
+
+'use client';
+
+import React from 'react';
 import { SignUp } from '@clerk/nextjs';
-import Image from 'next/image';
+import ManusAuthShell from '@/components/auth/ManusAuthShell';
 
 export default function SignUpPage() {
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-[var(--zc-background)] py-12 px-4 sm:px-6 lg:px-8">
-      
-      {/* Nkyel AI Custom Header */}
-      <div className="mb-6 flex flex-col items-center animate-fade-in-up">
-        <div className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-2xl shadow-xl overflow-hidden mb-4 border border-[var(--accent)]/30">
-          <Image
-            src="/Nkyel AI-logo.jpeg"
-            alt="Nkyel AI"
-            fill
-            className="object-cover"
-            priority
-          />
-        </div>
-        <h1 className="text-2xl sm:text-3xl font-extrabold text-[var(--text-primary)] tracking-tight text-center">
-          Rejoindre <span className="text-transparent bg-clip-text bg-gradient-to-r from-[var(--accent)] to-[#ECFDF5]">Nkyel AI</span>
-        </h1>
-        <p className="text-xs sm:text-sm text-[var(--text-tertiary)] mt-1 font-medium">Créer une identité souveraine</p>
-      </div>
-
-      <div className="w-full max-w-md animate-fade-in-up delay-75 flex justify-center">
-        <SignUp path="/sign-up" routing="path" signInUrl="/sign-in" />
-      </div>
-
-      {/* Powered By Footer */}
-      <div className="mt-12 text-center animate-fade-in-up delay-150">
-        <p className="text-[11px] text-[var(--text-tertiary)] font-medium tracking-[0.2em] uppercase">
-          Powered by <span className="text-[var(--accent)] font-bold">SmartANDJ AI Tech</span>
-        </p>
-      </div>
-    </div>
+    <ManusAuthShell
+      mode="sign-up"
+      title="Créer votre compte Ñkyel AI"
+      subtitle="Rejoignez la nouvelle ère de l'intelligence agentique avec mémoire continue et orchestration globale."
+    >
+      <SignUp
+        path="/sign-up"
+        routing="path"
+        signInUrl="/sign-in"
+        fallbackRedirectUrl="/chat"
+        appearance={{
+          elements: {
+            rootBox: 'w-full',
+            card: 'bg-transparent shadow-none p-0 border-0 w-full',
+            header: 'hidden',
+            footer: 'hidden',
+            formButtonPrimary:
+              'w-full h-11 rounded-xl bg-gradient-to-r from-[#B8922A] via-[#D5AE57] to-[#B8922A] hover:opacity-95 text-[#090A0E] font-bold text-sm shadow-md shadow-[#D5AE57]/20 border-0 transition-all cursor-pointer',
+            socialButtonsBlockButton:
+              'w-full h-11 rounded-xl bg-[var(--surface-sunken)] border border-[var(--border)] hover:border-[var(--border-strong)] hover:bg-[var(--surface-raised)] text-[var(--text-primary)] transition-all font-medium text-xs flex items-center justify-center gap-2',
+            socialButtonsBlockButtonText: 'text-[var(--text-primary)] font-medium text-xs',
+            formFieldInput:
+              'w-full h-11 px-3.5 rounded-xl bg-[var(--surface-sunken)] border border-[var(--border)] focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/20 text-[var(--text-primary)] text-sm transition-all',
+            formFieldLabel: 'text-xs font-semibold text-[var(--text-secondary)] mb-1 block',
+            dividerLine: 'bg-[var(--border-subtle)]',
+            dividerText: 'text-[11px] font-mono text-[var(--text-tertiary)] uppercase tracking-wider',
+            formFieldAction: 'text-xs text-[#D5AE57] hover:underline',
+            identityPreview: 'p-3 rounded-xl bg-[var(--surface-sunken)] border border-[var(--border)]',
+            identityPreviewText: 'text-xs text-[var(--text-primary)] font-medium',
+            identityPreviewEditButton: 'text-xs text-[#D5AE57] font-semibold hover:underline',
+            formResendCodeLink: 'text-xs text-[#D5AE57] hover:underline',
+          },
+        }}
+      />
+    </ManusAuthShell>
   );
 }
