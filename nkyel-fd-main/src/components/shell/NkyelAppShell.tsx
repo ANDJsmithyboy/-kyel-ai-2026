@@ -51,7 +51,7 @@ export default function NkyelAppShell({
     }
   };
 
-  const isPublicClosed = betaStatus?.state === 'PUBLIC_CLOSED' && !dismissClosedScreen;
+  const isPublicClosed = false;
 
   return (
     <div className="nkyel-shell nkyel-monochrome-shell antialiased">
