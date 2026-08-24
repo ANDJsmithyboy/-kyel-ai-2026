@@ -1,22 +1,23 @@
 /**
- * Nkyel AI · UpgradeModal & Subscription Flow
- * SmartANDJ AI Technologies
- * High-converting Pro subscription modal with Clerk Auth, pricing plans, and feature unlocks
+ * Ñkyel AI · UpgradeModal (Abonnements & Élite Pro)
+ * SmartANDJ AI Technologies · Founder: Daniel Jonathan ANDJ
+ *
+ * Modal épurée et thémée (100% Light et 100% Dark) avec garanties WCAG 2.2 AA
  */
 
 'use client';
 
+import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useAuth, SignInButton, SignUpButton } from '@clerk/nextjs';
 import {
   Sparkle,
-  CheckCircle,
+  Check,
+  X,
   Lightning,
   ShieldCheck,
-  Cpu,
-  Infinity as InfinityIcon,
-  X,
-  ArrowRight,
+  Brain,
+  Crown,
+  Lock,
 } from '@phosphor-icons/react';
 
 interface UpgradeModalProps {
@@ -25,77 +26,72 @@ interface UpgradeModalProps {
 }
 
 export default function UpgradeModal({ isOpen, onClose }: UpgradeModalProps) {
-  const { isSignedIn } = useAuth();
+  const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>('yearly');
 
   if (!isOpen) return null;
 
   const plans = [
     {
-      id: 'pro_monthly',
+      id: 'pro-unlimited',
       name: 'Ñkyel Pro Souverain',
-      badge: 'Recommandé — INFJ-A & Visionnaires',
-      price: '19.99 €',
-      period: '/ mois',
-      features: [
-        'Accès illimité au modèle souverain 120B (Ñkyel Chui)',
-        'Moteur Agent DeerFlow 2.0 complet avec WorkGraph',
-        'Génération d\'images haute résolution via Imagen 3',
-        'Génération de vidéos et animations avec Veo',
-        'Exécution de code native ultra-rapide (Vercel Labs fx)',
-        'Connecteurs MCP illimités & RAG souverain (Neon + Redis)',
-        'Support prioritaire 24/7 par SmartANDJ AI',
-      ],
+      badge: 'Inférence Illimitée',
+      price: billingCycle === 'yearly' ? '18 000 XAF' : '22 000 XAF',
+      period: '/mois',
       popular: true,
+      features: [
+        'Accès illimité à Google Gemini 3.1 Pro & 2.5 Flash',
+        'Ingestion multimodale 2 Millions de tokens',
+        'Exécution Sandbox Python E2B illimitée',
+        'Recherche Wandana Web Radar temps réel',
+        'Mémoire souveraine DeerMem persistante',
+        'Support prioritaire SmartANDJ',
+      ],
     },
     {
       id: 'enterprise',
-      name: 'Ñkyel Enterprise & Gouvernance',
+      name: 'Ñkyel Organisation',
       badge: 'Sur-mesure',
-      price: '99.00 €',
-      period: '/ mois',
-      features: [
-        'Toutes les fonctionnalités Pro incluses',
-        'Déploiement sur infrastructure souveraine dédiée',
-        'Bases de connaissances vectorielles isolées (Qdrant dédié)',
-        'Gouvernance multi-utilisateurs & RBAC',
-        'SLA 99.99% avec audit de sécurité',
-      ],
+      price: 'Sur devis',
+      period: '',
       popular: false,
+      features: [
+        'Déploiement VPC / Local On-Premise',
+        'SLA 99.99% garanti et clés API dédiées',
+        'Connecteurs MCP d\'entreprise sur-mesure',
+        'Isolation totale et conformité RGPD / Souveraineté',
+        'Formation et intégration continue',
+      ],
     },
   ];
 
   return (
-    <AnimatePresence>
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4">
-        {/* Backdrop */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          onClick={onClose}
-          className="fixed inset-0 bg-black/80 backdrop-blur-md"
-        />
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      {/* Backdrop Scrim */}
+      <div
+        onClick={onClose}
+        className="fixed inset-0 bg-black/60 backdrop-blur-md transition-opacity"
+      />
 
-        {/* Modal Window */}
+      <AnimatePresence>
         <motion.div
-          initial={{ opacity: 0, scale: 0.95, y: 15 }}
+          initial={{ opacity: 0, scale: 0.96, y: 12 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0.95, y: 15 }}
+          exit={{ opacity: 0, scale: 0.96, y: 12 }}
           transition={{ type: 'spring', stiffness: 350, damping: 25 }}
-          className="relative w-full max-w-2xl max-h-[90vh] bg-[#07090F] border border-[#D5AE57]/30 rounded-3xl shadow-[0_0_50px_rgba(213,174,87,0.2)] overflow-hidden flex flex-col z-10"
+          className="relative w-full max-w-2xl max-h-[90vh] bg-[var(--material-content)] border border-[var(--border-strong)] rounded-3xl shadow-[var(--shadow-modal)] overflow-hidden flex flex-col z-10"
         >
           {/* Header */}
-          <div className="flex items-center justify-between px-6 py-4 border-b border-white/10 bg-gradient-to-r from-[#10141F] to-[#171B27]">
+          <div className="flex items-center justify-between px-6 py-4 border-b border-[var(--border)] bg-[var(--material-glass-regular)]">
             <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-[#6757E8] to-[#D5AE57] flex items-center justify-center text-black">
+              <div className="w-8 h-8 rounded-xl bg-[#D5AE57] flex items-center justify-center text-black font-bold">
                 <Sparkle size={18} weight="fill" />
               </div>
               <div>
-                <h2 className="text-sm sm:text-base font-bold text-white tracking-tight">
-                  Rejoindre l'Élite Ñkyel Pro
+                <h2 className="text-sm sm:text-base font-bold text-[var(--text-primary)] tracking-tight">
+                  Rejoindre l&apos;Élite Ñkyel Pro
                 </h2>
-                <p className="text-[11px] text-[#9199A8]">
-                  SmartANDJ AI Technologies — Puissance souveraine illimitée
+                <p className="text-[11px] text-[var(--text-secondary)]">
+                  SmartANDJ AI Technologies — Puissance souveraine mondiale
                 </p>
               </div>
             </div>
@@ -103,7 +99,7 @@ export default function UpgradeModal({ isOpen, onClose }: UpgradeModalProps) {
             <button
               type="button"
               onClick={onClose}
-              className="w-8 h-8 rounded-xl flex items-center justify-center text-[#9199A8] hover:text-white hover:bg-white/10 transition-colors"
+              className="w-8 h-8 rounded-xl flex items-center justify-center text-[var(--text-tertiary)] hover:text-[var(--text-primary)] hover:bg-[var(--hover)] transition-colors"
             >
               <X size={18} />
             </button>
@@ -112,11 +108,11 @@ export default function UpgradeModal({ isOpen, onClose }: UpgradeModalProps) {
           {/* Body */}
           <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-5 scrollbar-thin">
             {/* Promo Banner */}
-            <div className="p-4 rounded-2xl bg-gradient-to-r from-[#6757E8]/20 via-[#D5AE57]/10 to-transparent border border-[#D5AE57]/30 flex items-center gap-3">
+            <div className="p-4 rounded-2xl bg-[#D5AE57]/10 border border-[#D5AE57]/30 flex items-center gap-3">
               <Lightning size={24} weight="fill" className="text-[#D5AE57] shrink-0" />
               <div className="text-xs">
-                <span className="font-bold text-white">Offre Fondateur & Lancement 2026 : </span>
-                <span className="text-[#EDEAE3]">Profitez d'un accès sans limites et de la rotation multi-clés automatique !</span>
+                <span className="font-bold text-[var(--text-primary)]">Offre Fondateur 2026 : </span>
+                <span className="text-[var(--text-secondary)]">Profitez d&apos;un accès sans limites et de la rotation multi-modèles intelligente !</span>
               </div>
             </div>
 
@@ -127,8 +123,8 @@ export default function UpgradeModal({ isOpen, onClose }: UpgradeModalProps) {
                   key={p.id}
                   className={`p-4 rounded-2xl border flex flex-col justify-between text-left transition-all ${
                     p.popular
-                      ? 'bg-gradient-to-b from-[#171B27] to-[#10141F] border-[#D5AE57]/50 shadow-lg'
-                      : 'bg-[#10141F] border-white/10'
+                      ? 'bg-[var(--surface-raised)] border-[#D5AE57]/50 shadow-md'
+                      : 'bg-[var(--surface)] border-[var(--border)]'
                   }`}
                 >
                   <div className="space-y-3">
@@ -139,54 +135,45 @@ export default function UpgradeModal({ isOpen, onClose }: UpgradeModalProps) {
                     </div>
 
                     <div>
-                      <h3 className="text-base font-bold text-white">{p.name}</h3>
-                      <div className="flex items-baseline gap-1 mt-1">
-                        <span className="text-2xl font-extrabold text-white">{p.price}</span>
-                        <span className="text-xs text-[#9199A8]">{p.period}</span>
+                      <h3 className="text-base font-bold text-[var(--text-primary)]">{p.name}</h3>
+                      <div className="mt-1 flex items-baseline gap-1">
+                        <span className="text-2xl font-extrabold text-[var(--text-primary)] tracking-tight">
+                          {p.price}
+                        </span>
+                        <span className="text-xs text-[var(--text-tertiary)]">{p.period}</span>
                       </div>
                     </div>
 
-                    <ul className="space-y-2 text-xs text-[#9199A8] pt-2 border-t border-white/5">
+                    <ul className="space-y-2 pt-2 border-t border-[var(--border-subtle)] text-xs text-[var(--text-secondary)]">
                       {p.features.map((f, i) => (
                         <li key={i} className="flex items-start gap-2">
-                          <CheckCircle size={14} weight="fill" className="text-[#00D4AA] shrink-0 mt-0.5" />
+                          <Check size={14} weight="bold" className="text-[#D5AE57] shrink-0 mt-0.5" />
                           <span>{f}</span>
                         </li>
                       ))}
                     </ul>
                   </div>
 
-                  <div className="mt-5">
-                    {isSignedIn ? (
-                      <button
-                        type="button"
-                        onClick={() => {
-                          alert('Redirection vers la passerelle de paiement sécurisée...');
-                          onClose();
-                        }}
-                        className="w-full py-2.5 rounded-xl bg-gradient-to-r from-[#D5AE57] to-[#C5A059] text-black font-bold text-xs flex items-center justify-center gap-2 hover:opacity-90 transition-opacity shadow-md"
-                      >
-                        <span>S'abonner maintenant</span>
-                        <ArrowRight size={14} weight="bold" />
-                      </button>
-                    ) : (
-                      <SignUpButton mode="modal">
-                        <button
-                          type="button"
-                          className="w-full py-2.5 rounded-xl bg-gradient-to-r from-[#6757E8] to-[#D5AE57] text-white font-bold text-xs flex items-center justify-center gap-2 hover:opacity-90 transition-opacity shadow-md"
-                        >
-                          <span>Créer un compte & S'abonner</span>
-                          <ArrowRight size={14} weight="bold" />
-                        </button>
-                      </SignUpButton>
-                    )}
-                  </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      alert('Redirection vers la passerelle de paiement souveraine sécurisée...');
+                      onClose();
+                    }}
+                    className={`mt-5 w-full py-2.5 rounded-xl font-bold text-xs transition-all ${
+                      p.popular
+                        ? 'bg-[#D5AE57] hover:bg-[#C59E47] text-black shadow-md'
+                        : 'bg-[var(--surface-raised)] hover:bg-[var(--hover)] text-[var(--text-primary)] border border-[var(--border)]'
+                    }`}
+                  >
+                    Choisir ce forfait
+                  </button>
                 </div>
               ))}
             </div>
           </div>
         </motion.div>
-      </div>
-    </AnimatePresence>
+      </AnimatePresence>
+    </div>
   );
 }

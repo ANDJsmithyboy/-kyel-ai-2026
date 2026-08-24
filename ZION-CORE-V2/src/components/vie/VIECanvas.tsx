@@ -2,16 +2,16 @@
  * Ñkyel AI · VIECanvas (Visual Interactive Execution)
  * SmartANDJ AI Technologies · Founder: Daniel Jonathan ANDJ
  *
- * Spatial live mission execution canvas:
- * — High-performance React Flow rendering
- * — Canonical WorkGraph node representations & semantic colors
- * — Minimap, zoom, node filters, fullscreen
- * — Direct human intervention bar (HumanInterventionBar)
+ * Canvas spatial d'exécution en direct de la mission :
+ * - Rendu haute performance React Flow
+ * - Représentation graphique exacte des 8 protocoles & outils Google connectés
+ * - Minimap, zoom, filtres de nœuds, plein écran
+ * - Barre d'intervention humaine directe (HumanInterventionBar)
  */
 
 'use client';
 
-import React, { useMemo, useEffect, useState } from 'react';
+import React, { useCallback, useMemo, useEffect, useState } from 'react';
 import {
   ReactFlow,
   MiniMap,
@@ -19,19 +19,31 @@ import {
   Background,
   useNodesState,
   useEdgesState,
+  addEdge,
+  Connection,
+  Edge as RFEdge,
+  BackgroundVariant,
+  Panel,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import { useWorkGraphStore } from '@/lib/nkyel/work-graph-store';
-import type { WorkNode, WorkNodeType } from '@/lib/nkyel/work-graph.types';
+import type { WorkNode, WorkEdge, WorkNodeType } from '@/lib/nkyel/work-graph.types';
 import HumanInterventionBar from './HumanInterventionBar';
 import {
+  TreeStructure,
+  MagnifyingGlass,
   ArrowsOut,
   ArrowsIn,
+  ShieldCheck,
+  FloppyDisk,
+  PuzzlePiece,
+  PlugsConnected,
+  UsersThree,
 } from '@phosphor-icons/react';
 
-// Semantic Node Colors
+// Palette Wada Sanzo pour les types de nœuds
 const NODE_COLORS: Record<WorkNodeType, string> = {
-  goal: '#C39A52',          // Gold
+  goal: '#C39A52',          // Old Gold
   plan: '#665F9E',          // Ñkyel Indigo
   task: '#7C9AE8',          // Light Blue
   agent: '#6F9485',         // Celadon Green (A2A)
@@ -59,80 +71,46 @@ const NODE_COLORS: Record<WorkNodeType, string> = {
   firebase_deploy: '#FFA000', // Firebase Amber
 };
 
-// Custom Node for the React Flow canvas
+// Node personnalisé pour le canvas
 function CustomWorkNode({ data }: { data: WorkNode }) {
   const color = NODE_COLORS[data.type] || '#665F9E';
   const isActive = data.status === 'active';
 
   return (
     <div
-      className="p-3 shadow-xl backdrop-blur-md transition-all"
-      style={{
-        borderRadius: 'var(--radius-xl)',
-        background: 'var(--surface-overlay)',
-        border: isActive ? `1.5px solid var(--accent)` : '1px solid var(--border-default)',
-        boxShadow: isActive ? 'var(--shadow-lg)' : 'var(--shadow-md)',
-        minWidth: 220,
-        maxWidth: 280,
-        color: 'var(--fg)',
-      }}
+      className={`p-3 rounded-2xl border bg-[var(--bg-elevated)] text-[var(--text-primary)] min-w-[220px] max-w-[280px] shadow-xl backdrop-blur-md transition-all ${
+        isActive
+          ? 'border-[var(--accent)] shadow-[0_0_20px_rgba(195,154,82,0.25)] ring-1 ring-[var(--accent)]'
+          : 'border-[var(--border)] hover:border-[var(--border-strong)]'
+      }`}
     >
       <div className="flex items-center justify-between gap-2 mb-1.5">
         <span
-          className="font-mono uppercase tracking-wider font-semibold"
-          style={{
-            fontSize: '10px',
-            paddingInline: '8px',
-            paddingBlock: '2px',
-            borderRadius: 'var(--radius-pill)',
-            backgroundColor: `${color}20`,
-            color,
-            border: `1px solid ${color}40`,
-          }}
+          className="text-[10px] font-mono px-2 py-0.5 rounded-full uppercase tracking-wider font-semibold"
+          style={{ backgroundColor: `${color}25`, color, border: `1px solid ${color}50` }}
         >
           {data.type.replace('_', ' ')}
         </span>
         {isActive && (
           <span className="flex h-2 w-2 relative">
-            <span
-              className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75"
-              style={{ background: 'var(--accent)' }}
-            />
-            <span
-              className="relative inline-flex rounded-full h-2 w-2"
-              style={{ background: 'var(--accent)' }}
-            />
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[var(--accent)] opacity-75" />
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-[var(--accent)]" />
           </span>
         )}
       </div>
 
-      <h4
-        className="font-semibold leading-snug line-clamp-2"
-        style={{ fontSize: 'var(--text-sm)', color: 'var(--fg)' }}
-      >
+      <h4 className="text-[13px] font-semibold text-[var(--text-primary)] leading-snug line-clamp-2">
         {data.title}
       </h4>
 
       {data.summary && (
-        <p
-          className="line-clamp-2 leading-relaxed"
-          style={{ fontSize: '11px', color: 'var(--fg-muted)', marginTop: '4px' }}
-        >
+        <p className="text-[11px] text-[var(--text-secondary)] mt-1 line-clamp-2 leading-relaxed">
           {data.summary}
         </p>
       )}
 
       {data.provider && (
-        <div
-          className="flex items-center justify-between font-mono"
-          style={{
-            marginTop: '8px',
-            paddingTop: '6px',
-            borderTop: '1px solid var(--border-subtle)',
-            fontSize: '10px',
-            color: 'var(--fg-subtle)',
-          }}
-        >
+        <div className="mt-2 pt-1.5 border-t border-[var(--border)] flex items-center justify-between text-[10px] text-[var(--text-tertiary)] font-mono">
           <span className="truncate">{data.provider}</span>
           {data.latencyMs && <span>{data.latencyMs}ms</span>}
         </div>
@@ -146,10 +124,10 @@ const nodeTypes = {
 };
 
 export default function VIECanvas() {
-  const { nodes: graphNodes, edges: graphEdges, selectNode } = useWorkGraphStore();
+  const { nodes: graphNodes, edges: graphEdges, selectedNodeId, selectNode } = useWorkGraphStore();
   const [isFullscreen, setIsFullscreen] = useState(false);
 
-  // Conversion of nodes for React Flow
+  // Conversion des nœuds pour React Flow
   const rfNodes = useMemo(() => {
     return graphNodes.map((n, idx) => ({
       id: n.id,
@@ -162,7 +140,7 @@ export default function VIECanvas() {
     }));
   }, [graphNodes]);
 
-  // Conversion of edges
+  // Conversion des arêtes
   const rfEdges = useMemo(() => {
     return graphEdges.map((e) => ({
       id: e.id,
@@ -170,9 +148,9 @@ export default function VIECanvas() {
       target: e.targetId,
       label: e.type.replace('_', ' '),
       animated: true,
-      style: { stroke: 'var(--accent)', strokeWidth: 1.5 },
-      labelStyle: { fill: 'var(--fg-muted)', fontSize: 10, fontFamily: 'var(--font-mono)' },
-      labelBgStyle: { fill: 'var(--bg)', fillOpacity: 0.85 },
+      style: { stroke: '#665F9E', strokeWidth: 1.5 },
+      labelStyle: { fill: '#B8C0CC', fontSize: 10, fontFamily: 'monospace' },
+      labelBgStyle: { fill: '#08090D', fillOpacity: 0.8 },
     }));
   }, [graphEdges]);
 
@@ -189,39 +167,30 @@ export default function VIECanvas() {
 
   return (
     <div
-      className={`relative w-full h-full overflow-hidden flex flex-col ${
+      className={`relative w-full h-full bg-[var(--graph-canvas)] overflow-hidden flex flex-col ${
         isFullscreen ? 'fixed inset-0 z-50' : ''
       }`}
-      style={{ background: 'var(--bg)' }}
     >
-      {/* Top Control Overlay */}
+      {/* Barre de Contrôle Supérieure */}
       <div className="absolute top-4 left-4 right-4 z-20 flex items-center justify-between pointer-events-none">
         <div className="pointer-events-auto">
           <HumanInterventionBar />
         </div>
 
-        {/* Fullscreen Toggle */}
+        {/* Bouton Plein Écran */}
         <div className="pointer-events-auto flex items-center gap-2">
           <button
             type="button"
+            onClick={resetGraph}
+            className="p-2.5 rounded-xl bg-[var(--surface)] backdrop-blur-md border border-[var(--border)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--hover)] transition-colors shadow-lg"
+            title="Réinitialiser la vue"
+          >
+            <ArrowsClockwise size={16} />
+          </button>
+          <button
+            type="button"
             onClick={() => setIsFullscreen(!isFullscreen)}
-            className="flex items-center justify-center backdrop-blur-md shadow-lg"
-            style={{
-              padding: '10px',
-              borderRadius: 'var(--radius-lg)',
-              background: 'var(--surface-overlay)',
-              border: '1px solid var(--border-default)',
-              color: 'var(--fg-muted)',
-              transition: `all var(--transition-fast)`,
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.color = 'var(--fg)';
-              e.currentTarget.style.background = 'var(--surface-raised)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.color = 'var(--fg-muted)';
-              e.currentTarget.style.background = 'var(--surface-overlay)';
-            }}
+            className="p-2.5 rounded-xl bg-[var(--surface)] backdrop-blur-md border border-[var(--border)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--hover)] transition-colors shadow-lg"
             title={isFullscreen ? 'Quitter le plein écran' : 'Passer en plein écran'}
           >
             {isFullscreen ? <ArrowsIn size={18} /> : <ArrowsOut size={18} />}
@@ -229,7 +198,7 @@ export default function VIECanvas() {
         </div>
       </div>
 
-      {/* React Flow Canvas */}
+      {/* Canvas React Flow */}
       <div className="flex-1 w-full h-full">
         <ReactFlow
           nodes={nodes}
@@ -239,28 +208,14 @@ export default function VIECanvas() {
           nodeTypes={nodeTypes}
           onNodeClick={(_, node) => selectNode(node.id)}
           fitView
-          style={{ background: 'var(--bg)' }}
+          className="bg-transparent"
         >
-          <Background color="var(--fg)" gap={32} size={1} style={{ opacity: 0.03 }} />
-          <Controls
-            style={{
-              background: 'var(--surface-raised)',
-              border: '1px solid var(--border-default)',
-              borderRadius: 'var(--radius-lg)',
-              color: 'var(--fg)',
-              fill: 'var(--fg)',
-            }}
-          />
+          <Background color="var(--graph-grid)" gap={24} size={1.5} />
+          <Controls className="bg-[var(--surface-raised)] border border-[var(--border)] text-[var(--text-primary)] rounded-xl fill-[var(--text-primary)] shadow-md" />
           <MiniMap
             nodeColor={(n) => NODE_COLORS[(n.data as WorkNode)?.type] || '#665F9E'}
-            style={{
-              background: 'var(--surface-raised)',
-              border: '1px solid var(--border-default)',
-              borderRadius: 'var(--radius-lg)',
-              overflow: 'hidden',
-              boxShadow: 'var(--shadow-xl)',
-            }}
-            maskColor="rgba(8, 9, 13, 0.75)"
+            className="bg-[var(--surface-raised)] border border-[var(--border)] rounded-xl overflow-hidden shadow-2xl"
+            maskColor="var(--material-overlay)"
           />
         </ReactFlow>
       </div>

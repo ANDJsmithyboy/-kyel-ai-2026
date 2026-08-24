@@ -1,14 +1,14 @@
 /*
- * Ñkyel AI · Design System Tokens (Apple Liquid Glass × Geist × Ñkyel VIE Edition)
+ * Ñkyel AI · Design System Master Tokens V2
  * SmartANDJ AI Technologies · Founder: Daniel Jonathan ANDJ
  *
- * ARCHITECTURE SÉMANTIQUE OFFICIELLE :
- *   LEVEL 0 : CANVAS               (Fond solide, sombre ou clair)
+ * ARCHITECTURE SÉMANTIQUE UNIFIÉE (APPLE LIQUID GLASS × GEIST × LUMA AI) :
+ *   LEVEL 0 : CANVAS               (Fond silencieux, sombre ou clair)
  *   LEVEL 1 : CONTENT LAYER        (Surfaces solides pour Chat, Tableaux, Documents, VIE)
  *   LEVEL 2 : FUNCTIONAL GLASS     (Sidebar, Composer, Command Palette, Barres d'outils)
- *   LEVEL 3 : TRANSIENT GLASS      (Popovers, Menus, Inspecteurs contextuels)
+ *   LEVEL 3 : TRANSIENT GLASS      (Popovers, Menus, Inspecteurs contextuels, Modales)
  *
- * RÈGLE D'OR : ZÉRO VERRE INUTILE SUR LE CONTENU. LE CONTENU EST SOLIDE ET LISIBLE.
+ * RÈGLE D'OR : AUCUNE COULEUR HARDCODÉE. PROPAGATION INTÉGRALE DES TOKENS.
  */
 
 :root {
@@ -18,7 +18,7 @@
   --font-sans: var(--font-geist), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   --font-mono: var(--font-geist-mono), "SF Mono", "Cascadia Code", "Fira Code", monospace;
 
-  /* Échelle typographique Geist stricte (Pas de texte microscopique) */
+  /* Échelle typographique adaptative (contrôlée par data-text-size) */
   --app-text-scale: 1;
   --text-micro:    calc(12px * var(--app-text-scale, 1));
   --text-caption:  calc(13px * var(--app-text-scale, 1));
@@ -58,6 +58,11 @@
   --space-12:  48px;
   --space-16:  64px;
   --space-20:  80px;
+
+  /* Densité spatiale (contrôlée par data-density) */
+  --density-row: 44px;
+  --density-padding: 12px;
+  --density-gap: 8px;
 
   /* Échelle de rayons concentriques (R_inner = R_outer - padding) */
   --radius-control-sm: 6px;
@@ -105,35 +110,47 @@
   --sidebar-collapsed:      64px;
   --chat-max-width:         780px;
   --thread-max-width:       960px;
-  --settings-max-width:     840px;
+  --settings-max-width:     960px;
   --content-max-width:      1240px;
 
   --header-height:          48px;
   --touch-target:           44px;
 
-  /* ═══════════════════════════════════════════════════════
-     OR SOVERAIN ÑKYEL (Accents Rares et Distinctifs)
-     ═══════════════════════════════════════════════════════ */
+  /* Accent par défaut (Or Souverain) */
   --brand-gold:        #D5AE57;
   --brand-gold-soft:   rgba(213, 174, 87, 0.42);
-  --accent-brand:      var(--brand-gold);
+  --accent:            #D5AE57;
+  --accent-fg:         #05060A;
+  --accent-hover:      #C59E47;
+  --accent-active:     #B48D36;
+  --accent-subtle:     rgba(213, 174, 87, 0.12);
+  --accent-muted:      rgba(213, 174, 87, 0.22);
+  --focus-ring:        var(--accent);
 }
 
 /* ═══════════════════════════════════════════════════════
-   THEME: BLACK PANTHER (Dark — Black-Led, Not Gray-Soup)
+   THEME: DARK (Black Panther / Nuit Lopé / Default OLED)
    ═══════════════════════════════════════════════════════ */
 
 :root,
-[data-theme="black-panther"] {
+[data-theme="dark"],
+[data-theme="black-panther"],
+[data-theme="nuit-lope"],
+[data-theme="bleu-nuit"],
+[data-theme="violette-mandrille"],
+html.dark {
   color-scheme: dark;
 
   /* Level 0: Canvas */
   --material-canvas:         #05060A;
+  --background:              var(--material-canvas);
   --bg:                      var(--material-canvas);
 
   /* Level 1: Solid Content Surfaces (Chat, Artifacts, Documents) */
   --material-content:        #0D0F17;
   --material-content-raised: #131622;
+  --surface-primary:         var(--material-content);
+  --surface-secondary:       var(--material-content-raised);
   --surface:                 var(--material-content);
   --surface-raised:          var(--material-content-raised);
 
@@ -141,11 +158,15 @@
   --material-glass-regular:  rgba(13, 15, 23, 0.85);
   --material-glass-elevated: rgba(19, 22, 34, 0.88);
   --material-glass-floating: rgba(13, 15, 23, 0.92);
+  --glass-regular:           var(--material-glass-regular);
+  --glass-elevated:          var(--material-glass-elevated);
+  --glass-floating:          var(--material-glass-floating);
 
   /* Level 3: Transient Glass & Overlays */
   --material-glass-clear:    rgba(13, 15, 23, 0.65);
   --material-overlay:        rgba(5, 6, 10, 0.75);
   --material-scrim:          rgba(0, 0, 0, 0.85);
+  --surface-overlay:         var(--material-overlay);
 
   /* Garanties de Contraste Absolu WCAG 2.2 AA */
   --text-primary:            #FFFFFF;               /* 100% visibilité pure */
@@ -153,26 +174,33 @@
   --text-tertiary:           #7E889B;               /* 65% métadonnées lisibles */
   --text-disabled:           #4A5260;               /* 40% désactivé */
   --text-inverse:            #05060A;
+  --foreground:              var(--text-primary);
+  --foreground-secondary:    var(--text-secondary);
+  --foreground-tertiary:     var(--text-tertiary);
+  --foreground-disabled:     var(--text-disabled);
+
+  /* Icônes sémantiques */
+  --icon-primary:            var(--text-primary);
+  --icon-secondary:          var(--text-secondary);
+  --icon-tertiary:           var(--text-tertiary);
+  --icon-disabled:           var(--text-disabled);
 
   /* Bordures Subpixel Raffinées */
   --border:                  rgba(255, 255, 255, 0.08);
+  --border-default:          rgba(255, 255, 255, 0.08);
   --border-strong:           rgba(255, 255, 255, 0.16);
   --border-subtle:           rgba(255, 255, 255, 0.045);
   --glass-border:            rgba(255, 255, 255, 0.09);
   --glass-highlight:         rgba(255, 255, 255, 0.05);
 
-  /* Or Ñkyel de Haute Valeur */
-  --accent:                  #D5AE57;
-  --accent-fg:               #05060A;
-  --accent-hover:            #C59E47;
-  --accent-subtle:           rgba(213, 174, 87, 0.12);
-  --accent-muted:            rgba(213, 174, 87, 0.22);
-
-  /* Interactions Calmes */
+  /* Contrôles et Interactions */
+  --control-bg:              rgba(255, 255, 255, 0.05);
+  --control-hover:           rgba(255, 255, 255, 0.09);
+  --control-active:          rgba(255, 255, 255, 0.12);
+  --control-border:          rgba(255, 255, 255, 0.10);
   --hover:                   rgba(255, 255, 255, 0.045);
   --active:                  rgba(255, 255, 255, 0.08);
   --selected:                rgba(255, 255, 255, 0.06);
-  --focus-ring:              var(--accent);
 
   /* Statuts Sémantiques */
   --success:                 #22C55E;
@@ -192,23 +220,39 @@
   --composer-border:         rgba(255, 255, 255, 0.10);
   --settings-bg:             #0D0F17;
   --settings-nav-bg:         #080A0F;
+
+  /* Graphes Sémantiques & VIE */
+  --graph-canvas:            #08090D;
+  --graph-grid:              rgba(255, 255, 255, 0.04);
+  --graph-node:              #0E121A;
+  --graph-node-selected:     #161C28;
+  --graph-node-border:       rgba(255, 255, 255, 0.12);
+  --graph-edge:              rgba(255, 255, 255, 0.18);
+  --graph-edge-active:       var(--accent);
+  --graph-label:             #FFFFFF;
+  --graph-label-muted:       #8A94A6;
 }
 
 /* ═══════════════════════════════════════════════════════
-   THEME: NEO BLANC (Apple Paper & Soft Glass · Light)
+   THEME: LIGHT (Neo Blanc / Aurore Ogooué / Apple Paper)
    ═══════════════════════════════════════════════════════ */
 
+[data-theme="light"],
 [data-theme="neo-blanc"],
-[data-theme="aurore-ogoue"] {
+[data-theme="aurore-ogoue"],
+html.light {
   color-scheme: light;
 
   /* Level 0: Canvas */
   --material-canvas:         #FBFBF9;
+  --background:              var(--material-canvas);
   --bg:                      var(--material-canvas);
 
   /* Level 1: Solid Content Surfaces */
   --material-content:        #FFFFFF;
-  --material-content-raised: #FFFFFF;
+  --material-content-raised: #F4F4F1;
+  --surface-primary:         var(--material-content);
+  --surface-secondary:       var(--material-content-raised);
   --surface:                 var(--material-content);
   --surface-raised:          var(--material-content-raised);
 
@@ -216,11 +260,15 @@
   --material-glass-regular:  rgba(251, 251, 249, 0.90);
   --material-glass-elevated: rgba(255, 255, 255, 0.94);
   --material-glass-floating: rgba(255, 255, 255, 0.96);
+  --glass-regular:           var(--material-glass-regular);
+  --glass-elevated:          var(--material-glass-elevated);
+  --glass-floating:          var(--material-glass-floating);
 
   /* Level 3: Transient Glass & Overlays */
   --material-glass-clear:    rgba(255, 255, 255, 0.70);
   --material-overlay:        rgba(9, 10, 14, 0.35);
   --material-scrim:          rgba(9, 10, 14, 0.60);
+  --surface-overlay:         var(--material-overlay);
 
   /* Garanties de Contraste Absolu */
   --text-primary:            #090A0E;               /* Encre noire pure */
@@ -228,19 +276,28 @@
   --text-tertiary:           #6E7687;               /* Ardoise équilibrée */
   --text-disabled:           #9CA3AF;
   --text-inverse:            #FFFFFF;
+  --foreground:              var(--text-primary);
+  --foreground-secondary:    var(--text-secondary);
+  --foreground-tertiary:     var(--text-tertiary);
+  --foreground-disabled:     var(--text-disabled);
+
+  /* Icônes sémantiques */
+  --icon-primary:            var(--text-primary);
+  --icon-secondary:          var(--text-secondary);
+  --icon-tertiary:           var(--text-tertiary);
+  --icon-disabled:           var(--text-disabled);
 
   --border:                  rgba(9, 10, 14, 0.08);
+  --border-default:          rgba(9, 10, 14, 0.08);
   --border-strong:           rgba(9, 10, 14, 0.16);
   --border-subtle:           rgba(9, 10, 14, 0.045);
   --glass-border:            rgba(9, 10, 14, 0.08);
   --glass-highlight:         rgba(255, 255, 255, 0.8);
 
-  --accent:                  #B8922A;
-  --accent-fg:               #FFFFFF;
-  --accent-hover:            #A6831F;
-  --accent-subtle:           rgba(184, 146, 42, 0.09);
-  --accent-muted:            rgba(184, 146, 42, 0.18);
-
+  --control-bg:              rgba(9, 10, 14, 0.04);
+  --control-hover:           rgba(9, 10, 14, 0.08);
+  --control-active:          rgba(9, 10, 14, 0.12);
+  --control-border:          rgba(9, 10, 14, 0.08);
   --hover:                   rgba(9, 10, 14, 0.04);
   --active:                  rgba(9, 10, 14, 0.08);
   --selected:                rgba(9, 10, 14, 0.06);
@@ -260,33 +317,129 @@
   --composer-bg:             rgba(255, 255, 255, 0.94);
   --composer-border:         rgba(9, 10, 14, 0.10);
   --settings-bg:             #FFFFFF;
-  --settings-nav-bg:         #F4F4F0;
+  --settings-nav-bg:         #F7F7F4;
+
+  /* Graphes Sémantiques & VIE */
+  --graph-canvas:            #F4F4F0;
+  --graph-grid:              rgba(9, 10, 14, 0.06);
+  --graph-node:              #FFFFFF;
+  --graph-node-selected:     #EDEDEA;
+  --graph-node-border:       rgba(9, 10, 14, 0.12);
+  --graph-edge:              rgba(9, 10, 14, 0.18);
+  --graph-edge-active:       var(--accent);
+  --graph-label:             #090A0E;
+  --graph-label-muted:       #6E7687;
 }
 
 /* ═══════════════════════════════════════════════════════
-   THEME: NUIT LOPÉ & BLEU NUIT (Dark Variants)
+   ACCENT PALETTES SÉMANTIQUES (5 Accents Officiels)
    ═══════════════════════════════════════════════════════ */
 
-[data-theme="nuit-lope"] {
-  --material-canvas:         #040507;
-  --bg:                      var(--material-canvas);
-  --material-content:        #0B0D12;
-  --material-content-raised: #12151E;
-  --surface:                 var(--material-content);
-  --surface-raised:          var(--material-content-raised);
-  --sidebar-bg:              #07080D;
-  --composer-bg:             #0B0D12;
-  --settings-bg:             #0B0D12;
+[data-accent="gold"] {
+  --accent:          #D5AE57;
+  --accent-hover:    #C59E47;
+  --accent-active:   #B48D36;
+  --accent-fg:       #05060A;
+  --focus-ring:      #D5AE57;
+  --accent-subtle:   rgba(213, 174, 87, 0.12);
+  --accent-muted:    rgba(213, 174, 87, 0.22);
 }
 
-[data-theme="bleu-nuit"] {
-  --material-canvas:         #050810;
-  --bg:                      var(--material-canvas);
-  --material-content:        #0B101E;
-  --material-content-raised: #11182C;
-  --surface:                 var(--material-content);
-  --surface-raised:          var(--material-content-raised);
-  --sidebar-bg:              #070B14;
-  --composer-bg:             #0B101E;
-  --settings-bg:             #0B101E;
+[data-accent="blue"] {
+  --accent:          #0070F8;
+  --accent-hover:    #0060D0;
+  --accent-active:   #0050B0;
+  --accent-fg:       #FFFFFF;
+  --focus-ring:      #0070F8;
+  --accent-subtle:   rgba(0, 112, 248, 0.12);
+  --accent-muted:    rgba(0, 112, 248, 0.22);
+}
+
+[data-accent="cyan"] {
+  --accent:          #00D4AA;
+  --accent-hover:    #00B894;
+  --accent-active:   #009E7E;
+  --accent-fg:       #05060A;
+  --focus-ring:      #00D4AA;
+  --accent-subtle:   rgba(0, 212, 170, 0.12);
+  --accent-muted:    rgba(0, 212, 170, 0.22);
+}
+
+[data-accent="magenta"] {
+  --accent:          #F00080;
+  --accent-hover:    #D0006E;
+  --accent-active:   #B0005C;
+  --accent-fg:       #FFFFFF;
+  --focus-ring:      #F00080;
+  --accent-subtle:   rgba(240, 0, 128, 0.12);
+  --accent-muted:    rgba(240, 0, 128, 0.22);
+}
+
+[data-accent="graphite"] {
+  --accent:          #8A92A0;
+  --accent-hover:    #727A88;
+  --accent-active:   #5C6472;
+  --accent-fg:       #FFFFFF;
+  --focus-ring:      #8A92A0;
+  --accent-subtle:   rgba(138, 146, 160, 0.12);
+  --accent-muted:    rgba(138, 146, 160, 0.22);
+}
+
+/* ═══════════════════════════════════════════════════════
+   TEXT SIZE PROJECTION (Propagation Universelle)
+   ═══════════════════════════════════════════════════════ */
+
+[data-text-size="small"] {
+  --app-text-scale: 0.88;
+}
+
+[data-text-size="default"],
+[data-text-size="normal"] {
+  --app-text-scale: 1.0;
+}
+
+[data-text-size="large"] {
+  --app-text-scale: 1.14;
+}
+
+/* ═══════════════════════════════════════════════════════
+   DENSITY PROJECTION
+   ═══════════════════════════════════════════════════════ */
+
+[data-density="compact"] {
+  --density-row: 36px;
+  --density-padding: 8px;
+  --density-gap: 6px;
+}
+
+[data-density="comfortable"] {
+  --density-row: 44px;
+  --density-padding: 12px;
+  --density-gap: 8px;
+}
+
+[data-density="spacious"] {
+  --density-row: 52px;
+  --density-padding: 16px;
+  --density-gap: 12px;
+}
+
+/* ═══════════════════════════════════════════════════════
+   ICONS: CURRENTCOLOR RULE & ACCESSIBILITY
+   ═══════════════════════════════════════════════════════ */
+
+svg {
+  shape-rendering: geometricPrecision;
+}
+
+/* ═══════════════════════════════════════════════════════
+   PORTALS & OVERLAYS INHERITANCE
+   ═══════════════════════════════════════════════════════ */
+
+[data-radix-popper-content-wrapper],
+[data-radix-portal],
+.radix-dialog-content,
+.sonner-toast {
+  color: var(--text-primary);
+  font-family: var(--font-sans);
 }

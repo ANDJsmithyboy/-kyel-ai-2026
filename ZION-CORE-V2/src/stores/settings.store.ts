@@ -105,21 +105,38 @@ export interface UserPreferencesState {
   hydrateDOM: () => void;
 }
 
-const LIGHT_THEMES = new Set<ThemeKey>(['aurore-ogoue', 'neo-blanc']);
+const LIGHT_THEMES = new Set<string>(['light', 'aurore-ogoue', 'neo-blanc']);
 
-function applyDOMTheme(theme: ThemeKey) {
+export function applyDOMTheme(theme: string) {
   if (typeof window === 'undefined') return;
-  document.documentElement.setAttribute('data-theme', theme);
-  document.documentElement.className = LIGHT_THEMES.has(theme) ? 'light' : 'dark';
+  let resolvedTheme = theme;
+  if (theme === 'system' || theme === 'auto') {
+    const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    resolvedTheme = prefersDark ? 'black-panther' : 'neo-blanc';
+  }
+  const isLight = LIGHT_THEMES.has(resolvedTheme);
+  document.documentElement.setAttribute('data-theme', resolvedTheme);
+  document.documentElement.className = isLight ? 'light' : 'dark';
 }
 
-function applyDOMScale(fontSize: FontSize) {
+export function applyDOMScale(fontSize: FontSize) {
   if (typeof window === 'undefined') return;
-  const scale = fontSize === 'small' ? '0.9' : fontSize === 'large' ? '1.1' : '1.0';
+  const scale = fontSize === 'small' ? '0.88' : fontSize === 'large' ? '1.14' : '1.0';
+  document.documentElement.setAttribute('data-text-size', fontSize);
   document.documentElement.style.setProperty('--app-text-scale', scale);
 }
 
-function applyDOMMotion(reducedMotion: boolean) {
+export function applyDOMAccent(accent: string) {
+  if (typeof window === 'undefined') return;
+  document.documentElement.setAttribute('data-accent', accent);
+}
+
+export function applyDOMDensity(density: Density) {
+  if (typeof window === 'undefined') return;
+  document.documentElement.setAttribute('data-density', density);
+}
+
+export function applyDOMMotion(reducedMotion: boolean) {
   if (typeof window === 'undefined') return;
   document.documentElement.style.setProperty('--app-motion-factor', reducedMotion ? '0' : '1');
 }
@@ -178,7 +195,9 @@ export const useSettingsStore = create<UserPreferencesState>()(
       hydrateDOM: () => {
         const state = get();
         applyDOMTheme(state.theme);
+        applyDOMAccent(state.accent);
         applyDOMScale(state.fontSize);
+        applyDOMDensity(state.density);
         applyDOMMotion(state.reducedMotion);
         applyRTLToDOM(state.uiLocale);
       },
@@ -196,6 +215,7 @@ export const useSettingsStore = create<UserPreferencesState>()(
       },
 
       setAccent: (a) => {
+        applyDOMAccent(a);
         set({ accent: a });
         get().saveToServer();
       },
@@ -207,6 +227,7 @@ export const useSettingsStore = create<UserPreferencesState>()(
       },
 
       setDensity: (d) => {
+        applyDOMDensity(d);
         set({ density: d });
         get().saveToServer();
       },

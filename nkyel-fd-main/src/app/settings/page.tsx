@@ -2,16 +2,16 @@
  * Ñkyel AI — Page Paramètres & Profil (Luma AI × Apple × Geist Level)
  * SmartANDJ AI Technologies · Founder: Daniel Jonathan ANDJ
  *
- * Philosophie de Design :
- * - LUMA dans la simplicité, la hiérarchie et la lisibilité du compte
- * - APPLE dans le calme, les rangées épurées (Setting ... Value > / Setting ... Toggle) et l'absence de cartes B2B surchargées
- * - GEIST dans la rigueur typographique (Geist Sans / Geist Mono)
- * - ÑKYEL dans l'intelligence contextuelle et la mémoire souveraine DeerMem
+ * Architecture & Discipline Spatiale :
+ * - LUMA dans la compacité, la clarté et la fluidité entre Web et Mobile
+ * - APPLE dans le calme des rangées (Setting ... Control / Description) sans soupe de cartes
+ * - GEIST dans la rigueur typographique et les contrastes WCAG 2.2 AA
+ * - ZÉRO DÉLAI : Changements de thème, accents, police et langues appliqués en 0ms avec persistance Neon
  */
 
 'use client';
 
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useRouter, useSearchParams } from 'next/navigation';
 import {
@@ -30,24 +30,22 @@ import {
   CheckCircle,
   CaretRight,
   Sparkle,
-  UploadSimple,
-  Trash,
   ArrowsClockwise,
   SlidersHorizontal,
-  HandPointing,
   Lightning,
   LockKey,
-  Key,
   Database,
-  ArrowSquareOut,
+  Eye,
+  Check,
 } from '@phosphor-icons/react';
 import { useUser } from '@clerk/nextjs';
 import { useLanguageStore, BCP47Language } from '@/stores/language.store';
-import { useSettingsStore } from '@/stores/settings.store';
+import { useSettingsStore, FontSize, Density } from '@/stores/settings.store';
+import Surface from '@/components/ui/Surface';
 
 type SettingsTab =
-  | 'profile'
   | 'general'
+  | 'profile'
   | 'appearance'
   | 'agent'
   | 'memory'
@@ -63,14 +61,22 @@ interface TabItem {
 }
 
 const SETTINGS_TABS: TabItem[] = [
+  { id: 'general', label: 'Général & Langues', icon: Globe },
   { id: 'profile', label: 'Profil & Identité', icon: User },
-  { id: 'general', label: 'Général & Langues (BCP-47)', icon: Globe },
-  { id: 'appearance', label: 'Apparence', icon: Sun },
-  { id: 'agent', label: 'Politique d\'Agent & Autonomie', icon: Cpu },
-  { id: 'memory', label: 'Mémoire Souveraine DeerMem', icon: Brain },
-  { id: 'subscription', label: 'Forfait & Crédits', icon: Crown, badge: 'Illimités' },
-  { id: 'security', label: 'Sécurité & Résidence Données', icon: ShieldCheck },
+  { id: 'appearance', label: 'Apparence & Thème', icon: Sun },
+  { id: 'agent', label: 'Intelligence & Autonomie', icon: Cpu },
+  { id: 'memory', label: 'Mémoire Souveraine', icon: Brain },
+  { id: 'subscription', label: 'Forfait & Crédits', icon: Crown, badge: 'PRO' },
+  { id: 'security', label: 'Sécurité & Données', icon: ShieldCheck },
   { id: 'danger', label: 'Zone Critique', icon: WarningOctagon },
+];
+
+const ACCENT_CHOICES = [
+  { key: 'gold', name: 'Or Souverain', color: '#D5AE57' },
+  { key: 'blue', name: 'Bleu Smart', color: '#0070F8' },
+  { key: 'cyan', name: 'Bleu Réseau', color: '#00D4AA' },
+  { key: 'magenta', name: 'Magenta Signal', color: '#F00080' },
+  { key: 'graphite', name: 'Graphite Calme', color: '#8A92A0' },
 ];
 
 const WORLD_LANGUAGES: { code: string; name: string; nativeName: string; region: string; rtl?: boolean }[] = [
@@ -86,584 +92,596 @@ const WORLD_LANGUAGES: { code: string; name: string; nativeName: string; region:
   { code: 'ja-JP', name: '日本語', nativeName: '日本語', region: 'Asia' },
 ];
 
+/* ── Composants Primitifs Calmes ── */
+function SettingSection({
+  title,
+  description,
+  children,
+}: {
+  title: string;
+  description?: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="space-y-3 pt-4 first:pt-0">
+      <div className="border-b border-[var(--border-subtle)] pb-2">
+        <h3 className="text-sm font-semibold text-[var(--text-primary)] tracking-tight">{title}</h3>
+        {description && (
+          <p className="text-[12px] text-[var(--text-secondary)] mt-0.5">{description}</p>
+        )}
+      </div>
+      <div className="divide-y divide-[var(--border-subtle)]">{children}</div>
+    </div>
+  );
+}
+
+function SettingRow({
+  label,
+  description,
+  control,
+}: {
+  label: string;
+  description?: string;
+  control: React.ReactNode;
+}) {
+  return (
+    <div className="py-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+      <div className="space-y-0.5 max-w-md">
+        <div className="font-medium text-[13px] text-[var(--text-primary)]">{label}</div>
+        {description && (
+          <p className="text-[12px] text-[var(--text-secondary)] leading-relaxed">{description}</p>
+        )}
+      </div>
+      <div className="shrink-0 flex items-center">{control}</div>
+    </div>
+  );
+}
+
 export default function SettingsPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const initialTab = (searchParams.get('tab') as SettingsTab) || 'profile';
+  const initialTab = (searchParams.get('tab') as SettingsTab) || 'general';
 
   const [activeTab, setActiveTab] = useState<SettingsTab>(initialTab);
+  const [mobileDrilldown, setMobileDrilldown] = useState<SettingsTab | null>(null);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
-  const [saving, setSaving] = useState(false);
 
   const { user } = useUser();
   const { locale, setLocale } = useLanguageStore();
-  const { preferences, updatePreference, setTheme } = useSettingsStore();
 
-  // ── Profile Fields ────────────────────────────────────────
-  const [fullName, setFullName] = useState('Daniel Jonathan ANDJ');
-  const [username, setUsername] = useState('daniel_andj');
-  const [bio, setBio] = useState('Fondateur & Architecte en Chef · SmartANDJ AI Technologies');
-  const [agentLanguage, setAgentLanguage] = useState('fr');
-  const [timezone, setTimezone] = useState('Africa/Libreville');
-  const [timeFormat, setTimeFormat] = useState<'24h' | '12h'>('24h');
-
-  // ── Appearance Fields ─────────────────────────────────────
-  const [currentTheme, setCurrentTheme] = useState<'black-panther' | 'nuit-lope' | 'aurore-ogoue' | 'system'>('black-panther');
-
-  // ── Agent & Autonomy Fields ───────────────────────────────
-  const [autonomyLevel, setAutonomyLevel] = useState<'guided' | 'semi_autonomous' | 'fully_autonomous'>('semi_autonomous');
-  const [defaultModelPolicy, setDefaultModelPolicy] = useState('gemini-3.1-pro');
-  const [requireConfirmationForCode, setRequireConfirmationForCode] = useState(true);
-
-  // ── Memory Fields ─────────────────────────────────────────
-  const [memoryEnabled, setMemoryEnabled] = useState(true);
-  const [confirmBeforeRemembering, setConfirmBeforeRemembering] = useState(false);
-
-  const isSuperAdmin = useMemo(() => {
-    const email = user?.primaryEmailAddress?.emailAddress?.toLowerCase() || '';
-    return (
-      email.includes('jonathanakarentoutoume') ||
-      email.includes('smartandjia') ||
-      email.includes('nkyel.ai')
-    );
-  }, [user]);
+  const {
+    theme,
+    accent,
+    fontSize,
+    density,
+    reducedMotion,
+    autonomyLevel,
+    responseDepth,
+    researchDepth,
+    memoryEnabled,
+    memoryPolicy,
+    setTheme,
+    setAccent,
+    setFontSize,
+    setDensity,
+    updatePreferences,
+    isSyncing,
+  } = useSettingsStore();
 
   const showToast = (msg: string) => {
     setToastMessage(msg);
-    setTimeout(() => setToastMessage(null), 3500);
+    setTimeout(() => setToastMessage(null), 2500);
   };
 
-  // Sync initial user data
-  useEffect(() => {
-    if (user) {
-      if (user.fullName) setFullName(user.fullName);
-      if (user.username) setUsername(user.username);
-    }
-  }, [user]);
-
-  // ── Handlers ──────────────────────────────────────────────
-  const handleSaveProfile = async () => {
-    setSaving(true);
-    try {
-      await updatePreference('full_name', fullName);
-      await updatePreference('username', username);
-      await updatePreference('bio', bio);
-      showToast('Profil enregistré avec succès dans Neon PostgreSQL.');
-    } catch {
-      showToast('Erreur lors de l\'enregistrement.');
-    } finally {
-      setSaving(false);
-    }
-  };
-
-  const handleLanguageChange = async (code: string, label: string) => {
-    setLocale(code);
-    await updatePreference('ui_locale', code);
-    showToast(`Langue appliquée : ${label}`);
-  };
-
-  const handleThemeChange = async (themeKey: 'black-panther' | 'nuit-lope' | 'aurore-ogoue' | 'system') => {
-    setCurrentTheme(themeKey);
-    setTheme(themeKey === 'system' ? 'black-panther' : themeKey);
-    await updatePreference('theme', themeKey);
-    showToast(`Thème appliqué : ${themeKey}`);
-  };
-
-  const handleAutonomyChange = async (level: 'guided' | 'semi_autonomous' | 'fully_autonomous') => {
-    setAutonomyLevel(level);
-    await updatePreference('autonomy_level', level);
-    showToast('Niveau d\'autonomie mis à jour.');
-  };
-
-  const handleToggleMemory = async () => {
-    const newVal = !memoryEnabled;
-    setMemoryEnabled(newVal);
-    await updatePreference('memory_enabled', newVal);
-    showToast(`Mémoire automatique : ${newVal ? 'Activée' : 'Désactivée'}`);
-  };
+  const displayName = user?.fullName || 'Daniel Jonathan ANDJ';
+  const displayEmail = user?.primaryEmailAddress?.emailAddress || 'founder@smartandj.ai';
+  const initials = 'DJ';
 
   return (
-    <div className="min-h-screen bg-[#07080D] text-[#ECECEC] font-sans antialiased selection:bg-[#D5AE57]/30 selection:text-white flex flex-col">
-      {/* ── Toast Notification ── */}
+    <div className="min-h-screen w-full bg-[var(--material-canvas)] text-[var(--text-primary)] antialiased select-none">
+      {/* ── Header Supérieur Minimal ── */}
+      <header className="h-13 border-b border-[var(--border)] bg-[var(--material-glass-regular)] backdrop-blur-xl px-4 sm:px-8 flex items-center justify-between sticky top-0 z-30">
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => {
+              if (mobileDrilldown) {
+                setMobileDrilldown(null);
+              } else {
+                router.push('/chat');
+              }
+            }}
+            className="w-8 h-8 rounded-lg flex items-center justify-center text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--hover)] transition-colors"
+            title="Retour au workspace"
+          >
+            <ArrowLeft size={16} />
+          </button>
+          <span className="font-semibold text-xs tracking-tight text-[var(--text-primary)]">
+            {mobileDrilldown
+              ? SETTINGS_TABS.find((t) => t.id === mobileDrilldown)?.label
+              : 'Paramètres & Préférences'}
+          </span>
+        </div>
+
+        <div className="flex items-center gap-2 text-[11px] font-mono text-[var(--text-tertiary)]">
+          {isSyncing ? (
+            <span className="flex items-center gap-1.5 text-amber-400">
+              <ArrowsClockwise size={12} className="animate-spin" />
+              <span className="hidden sm:inline">Synchronisation...</span>
+            </span>
+          ) : (
+            <span className="flex items-center gap-1 text-emerald-400">
+              <CheckCircle size={13} weight="fill" />
+              <span className="hidden sm:inline">Persisté Neon</span>
+            </span>
+          )}
+        </div>
+      </header>
+
+      {/* ── Toast de confirmation ── */}
       <AnimatePresence>
         {toastMessage && (
           <motion.div
-            initial={{ opacity: 0, y: -20, scale: 0.95 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -20, scale: 0.95 }}
-            className="fixed top-5 right-5 z-[100] px-4 py-2.5 rounded-2xl bg-[#0E1017] border border-[#D5AE57]/40 text-xs text-white shadow-2xl flex items-center gap-2"
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            className="fixed top-16 left-1/2 -translate-x-1/2 px-4 py-2 rounded-full bg-[var(--material-glass-floating)] border border-[var(--border-strong)] text-xs text-[var(--text-primary)] shadow-[var(--shadow-floating)] backdrop-blur-2xl z-50 flex items-center gap-2"
           >
-            <CheckCircle size={16} weight="fill" className="text-[#D5AE57]" />
+            <CheckCircle size={14} weight="fill" className="text-emerald-400" />
             <span>{toastMessage}</span>
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* ── Top Bar ── */}
-      <header className="h-14 border-b border-[var(--border)] bg-[var(--material-glass-regular)] backdrop-blur-xl px-4 sm:px-8 flex items-center justify-between sticky top-0 z-30">
-        <div className="flex items-center gap-3">
-          <button
-            onClick={() => router.push('/chat')}
-            className="w-8 h-8 rounded-xl bg-[var(--surface-raised)] hover:bg-[var(--hover)] border border-[var(--border)] flex items-center justify-center text-[var(--text-primary)] transition-colors"
-            title="Retour à la conversation"
-          >
-            <ArrowLeft size={16} />
-          </button>
-          <div className="flex items-center gap-2">
-            <span className="font-bold text-sm text-[var(--text-primary)]">Paramètres & Profil</span>
-            <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[var(--surface-raised)] text-[var(--text-tertiary)] border border-[var(--border-subtle)]">
-              Luma × Apple Design
-            </span>
-          </div>
-        </div>
-
-        <button
-          onClick={handleSaveProfile}
-          disabled={saving}
-          className="flex items-center gap-2 px-4 py-1.5 rounded-xl bg-[#D5AE57] text-black font-bold text-xs shadow-md active:scale-95 transition-all disabled:opacity-50"
-        >
-          {saving ? <ArrowsClockwise size={14} className="animate-spin" /> : <Sparkle size={14} weight="fill" />}
-          <span>Enregistrer</span>
-        </button>
-      </header>
-
-      {/* ── Settings Layout: Sidebar + Calm Rows ── */}
-      <div className="flex-1 max-w-6xl mx-auto w-full px-4 sm:px-8 py-8 flex flex-col md:flex-row gap-8">
-        {/* Left Navigation Sidebar */}
-        <aside className="w-full md:w-64 shrink-0 space-y-1">
-          <div className="text-[11px] font-mono uppercase text-[var(--text-tertiary)] px-3 pb-2 font-bold">
-            Sections
-          </div>
-          {SETTINGS_TABS.map((tab) => {
-            const Icon = tab.icon;
-            const isSel = activeTab === tab.id;
-            return (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                className={`w-full flex items-center justify-between px-3 py-2.5 rounded-2xl text-xs font-medium transition-all text-left ${
-                  isSel
-                    ? 'bg-[#D5AE57]/15 text-[#D5AE57] border border-[#D5AE57]/30 shadow-sm font-semibold'
-                    : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--hover)]'
-                }`}
-              >
-                <div className="flex items-center gap-3">
-                  <Icon size={16} weight={isSel ? 'bold' : 'regular'} />
-                  <span>{tab.label}</span>
-                </div>
-                {tab.badge && (
-                  <span className="text-[9px] font-mono px-1.5 py-0.2 rounded bg-amber-400/20 text-amber-300 font-bold">
-                    {tab.badge}
-                  </span>
-                )}
-              </button>
-            );
-          })}
-        </aside>
-
-        {/* Right Content Area: Apple-Grade Calm Rows */}
-        <main className="flex-1 space-y-8 pb-16 max-w-2xl">
-          {/* ── 1. PROFILE & IDENTITY ── */}
-          {activeTab === 'profile' && (
-            <div className="space-y-6">
-              <div>
-                <h2 className="text-base font-bold text-[var(--text-primary)]">Profil & Identité</h2>
-                <p className="text-xs text-[var(--text-secondary)] mt-0.5">
-                  Informations de compte synchronisées avec Clerk et Neon PostgreSQL.
-                </p>
-              </div>
-
-              {/* Avatar Box (Luma style) */}
-              <div className="p-4 rounded-3xl bg-[var(--material-content)] border border-[var(--border)] flex items-center gap-4">
-                <div className="w-16 h-16 rounded-full bg-gradient-to-tr from-[#D5AE57] to-amber-200 text-black flex items-center justify-center font-bold text-xl shadow-lg shrink-0">
-                  {(fullName.slice(0, 2) || 'DJ').toUpperCase()}
-                </div>
-                <div className="space-y-1">
-                  <div className="font-bold text-sm text-[var(--text-primary)]">{fullName}</div>
-                  <div className="text-xs text-[var(--text-tertiary)] font-mono">
-                    {user?.primaryEmailAddress?.emailAddress || 'daniel@nkyel.ai'}
-                  </div>
-                  <div className="flex items-center gap-2 pt-1">
-                    <button
-                      onClick={() => showToast('Téléversement d\'avatar prêt.')}
-                      className="px-2.5 py-1 rounded-xl bg-[var(--surface-raised)] hover:bg-[var(--hover)] text-[11px] text-[var(--text-secondary)] border border-[var(--border)] transition-colors flex items-center gap-1.5"
-                    >
-                      <UploadSimple size={13} />
-                      <span>Changer Photo</span>
-                    </button>
-                  </div>
-                </div>
-              </div>
-
-              {/* Calm Row Form Fields */}
-              <div className="p-5 rounded-3xl bg-[var(--material-content)] border border-[var(--border)] divide-y divide-[var(--border)] space-y-4">
-                <div className="pt-2 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                  <div>
-                    <div className="text-xs font-bold text-[var(--text-primary)]">Nom Complet</div>
-                    <div className="text-[11px] text-[var(--text-tertiary)]">Nom affiché sur la plateforme</div>
-                  </div>
-                  <input
-                    type="text"
-                    value={fullName}
-                    onChange={(e) => setFullName(e.target.value)}
-                    className="p-2 px-3 rounded-xl bg-[var(--material-canvas)] border border-[var(--border)] text-xs text-[var(--text-primary)] focus:outline-none focus:border-[#D5AE57] w-full sm:w-64 font-sans"
-                  />
-                </div>
-
-                <div className="pt-4 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                  <div>
-                    <div className="text-xs font-bold text-[var(--text-primary)]">Nom d&apos;utilisateur</div>
-                    <div className="text-[11px] text-[var(--text-tertiary)]">Identifiant unique @username</div>
-                  </div>
-                  <div className="flex items-center gap-1 w-full sm:w-64">
-                    <span className="text-[var(--text-tertiary)] text-xs">@</span>
-                    <input
-                      type="text"
-                      value={username}
-                      onChange={(e) => setUsername(e.target.value)}
-                      className="p-2 px-3 rounded-xl bg-[var(--material-canvas)] border border-[var(--border)] text-xs text-[var(--text-primary)] focus:outline-none focus:border-[#D5AE57] flex-1 font-sans"
-                    />
-                  </div>
-                </div>
-
-                <div className="pt-4 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                  <div>
-                    <div className="text-xs font-bold text-[var(--text-primary)]">Rôle & Bio</div>
-                    <div className="text-[11px] text-[var(--text-tertiary)]">Contextualise les réponses de l&apos;agent</div>
-                  </div>
-                  <input
-                    type="text"
-                    value={bio}
-                    onChange={(e) => setBio(e.target.value)}
-                    className="p-2 px-3 rounded-xl bg-[var(--material-canvas)] border border-[var(--border)] text-xs text-[var(--text-primary)] focus:outline-none focus:border-[#D5AE57] w-full sm:w-64 font-sans"
-                  />
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* ── 2. GENERAL & BCP-47 LANGUAGES ── */}
-          {activeTab === 'general' && (
-            <div className="space-y-6">
-              <div>
-                <h2 className="text-base font-bold text-[var(--text-primary)]">Général & Langues Mondiales (BCP-47)</h2>
-                <p className="text-xs text-[var(--text-secondary)] mt-0.5">
-                  Séparation stricte entre la langue de l&apos;interface et la langue de génération de l&apos;agent.
-                </p>
-              </div>
-
-              <div className="p-5 rounded-3xl bg-[var(--material-content)] border border-[var(--border)] space-y-4">
-                <div className="text-xs font-bold uppercase tracking-wider font-mono text-[#D5AE57]">
-                  Langue d&apos;Interface Utilisateur (UI)
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                  {WORLD_LANGUAGES.map((lang) => {
-                    const isSelected = locale === lang.code;
-                    return (
-                      <button
-                        key={lang.code}
-                        onClick={() => handleLanguageChange(lang.code, lang.name)}
-                        className={`p-3 rounded-2xl border text-left flex items-center justify-between transition-all ${
-                          isSelected
-                            ? 'bg-[#D5AE57]/15 border-[#D5AE57]/40 text-[var(--text-primary)] shadow-sm'
-                            : 'bg-[var(--surface-raised)] border-[var(--border-subtle)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:border-[var(--border)]'
-                        }`}
-                      >
-                        <div>
-                          <div className="text-xs font-bold text-[var(--text-primary)]">{lang.name}</div>
-                          <div className="text-[10px] text-[var(--text-tertiary)] font-mono">{lang.nativeName} ({lang.code})</div>
-                        </div>
-                        {isSelected && <CheckCircle size={16} weight="fill" className="text-[#D5AE57]" />}
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-
-              {/* Timezone & Time Format */}
-              <div className="p-5 rounded-3xl bg-[var(--material-content)] border border-[var(--border)] divide-y divide-[var(--border)] space-y-4">
-                <div className="pt-2 flex items-center justify-between">
-                  <div>
-                    <div className="text-xs font-bold text-[var(--text-primary)]">Fuseau Horaire</div>
-                    <div className="text-[11px] text-[var(--text-tertiary)]">Utilisé pour les missions planifiées</div>
-                  </div>
-                  <span className="text-xs font-mono text-[var(--text-secondary)]">{timezone}</span>
-                </div>
-
-                <div className="pt-4 flex items-center justify-between">
-                  <div>
-                    <div className="text-xs font-bold text-[var(--text-primary)]">Format de l&apos;heure</div>
-                    <div className="text-[11px] text-[var(--text-tertiary)]">24 heures ou 12 heures AM/PM</div>
-                  </div>
-                  <div className="flex items-center gap-1 p-1 bg-[var(--material-canvas)] rounded-xl border border-[var(--border)] text-xs">
-                    <button
-                      onClick={() => setTimeFormat('24h')}
-                      className={`px-3 py-1 rounded-lg font-mono ${
-                        timeFormat === '24h' ? 'bg-[#D5AE57] text-black font-bold' : 'text-[var(--text-secondary)]'
-                      }`}
-                    >
-                      24h
-                    </button>
-                    <button
-                      onClick={() => setTimeFormat('12h')}
-                      className={`px-3 py-1 rounded-lg font-mono ${
-                        timeFormat === '12h' ? 'bg-[#D5AE57] text-black font-bold' : 'text-[var(--text-secondary)]'
-                      }`}
-                    >
-                      12h
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* ── 3. APPEARANCE ── */}
-          {activeTab === 'appearance' && (
-            <div className="space-y-6">
-              <div>
-                <h2 className="text-base font-bold text-[var(--text-primary)]">Apparence & Thèmes</h2>
-                <p className="text-xs text-[var(--text-secondary)] mt-0.5">
-                  Thèmes optimisés pour écrans OLED et contrastes Apple précis.
-                </p>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+      {/* ── Conteneur Principal (Max-width 960px Discipline Luma) ── */}
+      <div className="max-w-[960px] mx-auto px-4 sm:px-6 py-6 sm:py-8">
+        {/* ── Desktop & Tablet View (2 Colonnes) ── */}
+        <div className="hidden md:grid md:grid-cols-[200px_1fr] gap-8 items-start">
+          {/* Navigation Latérale Gauche */}
+          <nav className="space-y-0.5 sticky top-20">
+            {SETTINGS_TABS.map((tab) => {
+              const Icon = tab.icon;
+              const isSelected = activeTab === tab.id;
+              return (
                 <button
-                  onClick={() => handleThemeChange('black-panther')}
-                  className={`p-4 rounded-3xl border text-left space-y-2 transition-all ${
-                    currentTheme === 'black-panther'
-                      ? 'bg-[#D5AE57]/15 border-[#D5AE57]/40 text-[var(--text-primary)] shadow-lg'
-                      : 'bg-[var(--material-content)] border-[var(--border)] text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                  className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium transition-all text-left ${
+                    isSelected
+                      ? 'bg-[var(--surface-raised)] text-[var(--text-primary)] font-semibold shadow-sm border border-[var(--border)]'
+                      : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--hover)]'
                   }`}
                 >
-                  <Moon size={20} className="text-[#D5AE57]" />
-                  <div className="font-bold text-xs text-[var(--text-primary)]">Black Panther</div>
-                  <p className="text-[11px] text-[var(--text-tertiary)]">Noir profond avec touches d&apos;or souverain.</p>
-                </button>
-
-                <button
-                  onClick={() => handleThemeChange('nuit-lope')}
-                  className={`p-4 rounded-3xl border text-left space-y-2 transition-all ${
-                    currentTheme === 'nuit-lope'
-                      ? 'bg-emerald-500/15 border-emerald-500/40 text-[var(--text-primary)] shadow-lg'
-                      : 'bg-[var(--material-content)] border-[var(--border)] text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
-                  }`}
-                >
-                  <Moon size={20} className="text-emerald-400" />
-                  <div className="font-bold text-xs text-[var(--text-primary)]">Nuit Lopé</div>
-                  <p className="text-[11px] text-[var(--text-tertiary)]">Onyx avec accents émeraude gabonaise.</p>
-                </button>
-
-                <button
-                  onClick={() => handleThemeChange('aurore-ogoue')}
-                  className={`p-4 rounded-3xl border text-left space-y-2 transition-all ${
-                    currentTheme === 'aurore-ogoue'
-                      ? 'bg-[var(--surface-raised)] border-[#D5AE57]/40 text-[var(--text-primary)] shadow-lg'
-                      : 'bg-[var(--material-content)] border-[var(--border)] text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
-                  }`}
-                >
-                  <Sun size={20} className="text-amber-300" />
-                  <div className="font-bold text-xs text-[var(--text-primary)]">Aurore Ogooué</div>
-                  <p className="text-[11px] text-[var(--text-tertiary)]">Mode clair inspiré de la pureté Apple.</p>
-                </button>
-              </div>
-            </div>
-          )}
-
-          {/* ── 4. AGENT & AUTONOMY ── */}
-          {activeTab === 'agent' && (
-            <div className="space-y-6">
-              <div>
-                <h2 className="text-base font-bold text-[var(--text-primary)]">Politique d&apos;Agent & Autonomie</h2>
-                <p className="text-xs text-[var(--text-secondary)] mt-0.5">
-                  Contrôlez le degré d&apos;initiative et les seuils d&apos;approbation humaine de Ñkyel.
-                </p>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                <button
-                  onClick={() => handleAutonomyChange('guided')}
-                  className={`p-4 rounded-3xl border text-left space-y-2 transition-all ${
-                    autonomyLevel === 'guided'
-                      ? 'bg-[#D5AE57]/15 border-[#D5AE57]/40 text-[var(--text-primary)]'
-                      : 'bg-[var(--material-content)] border-[var(--border)] text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
-                  }`}
-                >
-                  <HandPointing size={20} className="text-[#D5AE57]" />
-                  <div className="font-bold text-xs text-[var(--text-primary)]">Guidée</div>
-                  <p className="text-[11px] text-[var(--text-tertiary)]">Demande confirmation pour chaque étape et outil.</p>
-                </button>
-
-                <button
-                  onClick={() => handleAutonomyChange('semi_autonomous')}
-                  className={`p-4 rounded-3xl border text-left space-y-2 transition-all ${
-                    autonomyLevel === 'semi_autonomous'
-                      ? 'bg-[#D5AE57]/15 border-[#D5AE57]/40 text-[var(--text-primary)]'
-                      : 'bg-[var(--material-content)] border-[var(--border)] text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
-                  }`}
-                >
-                  <SlidersHorizontal size={20} className="text-[#D5AE57]" />
-                  <div className="font-bold text-xs text-[var(--text-primary)]">Semi-Autonome</div>
-                  <p className="text-[11px] text-[var(--text-tertiary)]">Exécute les recherches, demande pour les actions critiques.</p>
-                </button>
-
-                <button
-                  onClick={() => handleAutonomyChange('fully_autonomous')}
-                  className={`p-4 rounded-3xl border text-left space-y-2 transition-all ${
-                    autonomyLevel === 'fully_autonomous'
-                      ? 'bg-[#D5AE57]/15 border-[#D5AE57]/40 text-[var(--text-primary)]'
-                      : 'bg-[var(--material-content)] border-[var(--border)] text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
-                  }`}
-                >
-                  <Lightning size={20} className="text-amber-300" />
-                  <div className="font-bold text-xs text-[var(--text-primary)]">Autonome</div>
-                  <p className="text-[11px] text-[var(--text-tertiary)]">Enchaîne jusqu&apos;à 40 étapes sans interruption.</p>
-                </button>
-              </div>
-            </div>
-          )}
-
-          {/* ── 5. MEMORY SOUVERAINE DEERMEM ── */}
-          {activeTab === 'memory' && (
-            <div className="space-y-6">
-              <div>
-                <h2 className="text-base font-bold text-[var(--text-primary)]">Mémoire Souveraine DeerMem</h2>
-                <p className="text-xs text-[var(--text-secondary)] mt-0.5">
-                  Apprentissage cross-session et mémorisation contextuelle sans fuite de données.
-                </p>
-              </div>
-
-              <div className="p-5 rounded-3xl bg-[var(--material-content)] border border-[var(--border)] divide-y divide-[var(--border)] space-y-4">
-                <div className="pt-2 flex items-center justify-between">
-                  <div>
-                    <div className="text-xs font-bold text-[var(--text-primary)]">Extraction Automatique des Faits</div>
-                    <div className="text-[11px] text-[var(--text-tertiary)]">Permet à Ñkyel de retenir vos préférences au fil des échanges</div>
+                  <div className="flex items-center gap-2.5 min-w-0">
+                    <Icon size={15} weight={isSelected ? 'bold' : 'regular'} />
+                    <span className="truncate">{tab.label}</span>
                   </div>
-                  <button
-                    onClick={handleToggleMemory}
-                    className={`px-3 py-1.5 rounded-xl font-mono text-xs font-bold transition-all ${
-                      memoryEnabled
-                        ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/40'
-                        : 'bg-[var(--surface-raised)] text-[var(--text-tertiary)] border border-[var(--border)]'
-                    }`}
-                  >
-                    {memoryEnabled ? 'ACTIVÉ' : 'DÉSACTIVÉ'}
-                  </button>
-                </div>
-
-                <div className="pt-4 flex items-center justify-between">
-                  <div>
-                    <div className="text-xs font-bold text-[var(--text-primary)]">Demander Confirmation Avant Mémorisation</div>
-                    <div className="text-[11px] text-[var(--text-tertiary)]">Affiche une invite avant d&apos;enregistrer un nouveau souvenir</div>
-                  </div>
-                  <button
-                    onClick={() => setConfirmBeforeRemembering(!confirmBeforeRemembering)}
-                    className={`px-3 py-1.5 rounded-xl font-mono text-xs font-bold transition-all ${
-                      confirmBeforeRemembering
-                        ? 'bg-[#D5AE57]/20 text-[#D5AE57] border border-[#D5AE57]/40'
-                        : 'bg-[var(--surface-raised)] text-[var(--text-tertiary)] border border-[var(--border)]'
-                    }`}
-                  >
-                    {confirmBeforeRemembering ? 'OUI' : 'NON'}
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* ── 6. SUBSCRIPTION & CREDITS ── */}
-          {activeTab === 'subscription' && (
-            <div className="space-y-6">
-              <div>
-                <h2 className="text-base font-bold text-[var(--text-primary)]">Forfait & Crédits d&apos;Inférence</h2>
-                <p className="text-xs text-[var(--text-secondary)] mt-0.5">
-                  Gestion de votre plan et suivi de vos quotas de jetons d&apos;IA.
-                </p>
-              </div>
-
-              <div className="p-6 rounded-3xl bg-[var(--material-content-raised)] border border-[#D5AE57]/30 space-y-4 shadow-md">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <Crown size={20} className="text-[#D5AE57]" />
-                    <span className="font-bold text-sm text-[var(--text-primary)]">
-                      {isSuperAdmin ? 'Plan Fondateur Super Admin' : 'Plan Professionnel'}
+                  {tab.badge && (
+                    <span className="text-[9px] font-mono px-1.5 py-0.2 rounded-full bg-[#D5AE57]/15 text-[#D5AE57] border border-[#D5AE57]/30 font-bold">
+                      {tab.badge}
                     </span>
+                  )}
+                </button>
+              );
+            })}
+          </nav>
+
+          {/* Panneau de Contenu Droit */}
+          <Surface material="content" className="p-6 rounded-3xl border border-[var(--border)] space-y-6 shadow-sm">
+            {/* 1. GÉNÉRAL & LANGUES */}
+            {activeTab === 'general' && (
+              <div className="space-y-6">
+                <div>
+                  <h2 className="text-base font-bold text-[var(--text-primary)]">Général & Région</h2>
+                  <p className="text-xs text-[var(--text-secondary)]">Préférences linguistiques universelles et formats d&apos;affichage.</p>
+                </div>
+
+                <SettingSection title="Langue de l'Interface (BCP-47)">
+                  <SettingRow
+                    label="Langue du Produit"
+                    description="Dictionnaire utilisé pour l'ensemble des boutons, navigations et menus."
+                    control={
+                      <select
+                        value={locale}
+                        onChange={(e) => {
+                          setLocale(e.target.value as BCP47Language);
+                          showToast(`Langue changée : ${e.target.value}`);
+                        }}
+                        className="h-8 px-2.5 rounded-xl bg-[var(--surface-raised)] border border-[var(--border)] text-xs text-[var(--text-primary)] font-medium focus:outline-none focus:border-[var(--accent)]"
+                      >
+                        {WORLD_LANGUAGES.map((lang) => (
+                          <option key={lang.code} value={lang.code}>
+                            {lang.name} ({lang.nativeName})
+                          </option>
+                        ))}
+                      </select>
+                    }
+                  />
+                </SettingSection>
+
+                <SettingSection title="Fuseau & Calendrier">
+                  <SettingRow
+                    label="Fuseau Horaire"
+                    description="Calcul et horodatage des tâches planifiées et des récurrences."
+                    control={
+                      <span className="font-mono text-xs px-2.5 py-1 rounded-lg bg-[var(--surface-raised)] border border-[var(--border)] text-[var(--text-secondary)]">
+                        Africa/Libreville (UTC+1)
+                      </span>
+                    }
+                  />
+                </SettingSection>
+              </div>
+            )}
+
+            {/* 2. PROFIL & IDENTITÉ */}
+            {activeTab === 'profile' && (
+              <div className="space-y-6">
+                <div>
+                  <h2 className="text-base font-bold text-[var(--text-primary)]">Profil & Identité</h2>
+                  <p className="text-xs text-[var(--text-secondary)]">Géré via Clerk SSO et la sécurité souveraine SmartANDJ.</p>
+                </div>
+
+                <SettingSection title="Informations Personnelles">
+                  <SettingRow
+                    label="Avatar & Initiales"
+                    description="Utilisé dans les conversations et les sessions collaboratives."
+                    control={
+                      <div className="w-9 h-9 rounded-full bg-[#D5AE57] text-black font-extrabold flex items-center justify-center text-xs shadow-sm">
+                        {initials}
+                      </div>
+                    }
+                  />
+                  <SettingRow
+                    label="Nom Complet"
+                    description="Votre identité publique au sein du système."
+                    control={
+                      <span className="text-xs font-semibold text-[var(--text-primary)]">
+                        {displayName}
+                      </span>
+                    }
+                  />
+                  <SettingRow
+                    label="Adresse E-mail"
+                    description="Compte principal associé à votre clé de sécurité."
+                    control={
+                      <span className="text-xs font-mono text-[var(--text-secondary)]">
+                        {displayEmail}
+                      </span>
+                    }
+                  />
+                </SettingSection>
+              </div>
+            )}
+
+            {/* 3. APPARENCE & THÈME (0ms LIVE SWITCHING) */}
+            {activeTab === 'appearance' && (
+              <div className="space-y-6">
+                <div>
+                  <h2 className="text-base font-bold text-[var(--text-primary)]">Apparence & Thème</h2>
+                  <p className="text-xs text-[var(--text-secondary)]">Bascule immédiate 100% Light et 100% Dark avec garantie WCAG 2.2 AA.</p>
+                </div>
+
+                <SettingSection title="Mode d'Affichage">
+                  <SettingRow
+                    label="Thème Visuel"
+                    description="Sélectionnez l'apparence globale de l'interface."
+                    control={
+                      <div className="flex items-center gap-1 p-1 rounded-xl bg-[var(--surface-raised)] border border-[var(--border)] text-xs">
+                        {[
+                          { key: 'neo-blanc', label: 'Clair', icon: Sun },
+                          { key: 'system', label: 'Système', icon: Desktop },
+                          { key: 'black-panther', label: 'Sombre', icon: Moon },
+                        ].map((t) => {
+                          const Icon = t.icon;
+                          const isSelected =
+                            theme === t.key ||
+                            (t.key === 'neo-blanc' && (theme === 'light' || theme === 'aurore-ogoue')) ||
+                            (t.key === 'black-panther' && theme === 'dark');
+                          return (
+                            <button
+                              key={t.key}
+                              onClick={() => {
+                                setTheme(t.key as any);
+                                showToast(`Thème activé : ${t.label}`);
+                              }}
+                              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-medium transition-all ${
+                                isSelected
+                                  ? 'bg-[var(--surface)] text-[var(--text-primary)] shadow-sm font-semibold'
+                                  : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
+                              }`}
+                            >
+                              <Icon size={14} />
+                              <span>{t.label}</span>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    }
+                  />
+                </SettingSection>
+
+                <SettingSection title="Nuances d'Accentuation">
+                  <SettingRow
+                    label="Couleur d'Accent"
+                    description="Appliquée avec parcimonie aux anneaux de focus, sélections et états de prestige."
+                    control={
+                      <div className="flex items-center gap-2">
+                        {ACCENT_CHOICES.map((a) => (
+                          <button
+                            key={a.key}
+                            onClick={() => {
+                              setAccent(a.key as any);
+                              showToast(`Accent activé : ${a.name}`);
+                            }}
+                            className={`w-6 h-6 rounded-full flex items-center justify-center transition-all ${
+                              accent === a.key
+                                ? 'ring-2 ring-[var(--text-primary)] ring-offset-2 ring-offset-[var(--material-canvas)] scale-110'
+                                : 'opacity-70 hover:opacity-100'
+                            }`}
+                            style={{ backgroundColor: a.color }}
+                            title={a.name}
+                          >
+                            {accent === a.key && <Check size={11} weight="bold" className="text-white drop-shadow" />}
+                          </button>
+                        ))}
+                      </div>
+                    }
+                  />
+                </SettingSection>
+
+                <SettingSection title="Échelle Typographique Geist">
+                  <SettingRow
+                    label="Taille du Texte"
+                    description="Ajuste proportionnellement l'ensemble des polices sans casser la mise en page."
+                    control={
+                      <div className="flex items-center gap-1 p-1 rounded-xl bg-[var(--surface-raised)] border border-[var(--border)] text-xs">
+                        {[
+                          { key: 'small', label: 'Petit (88%)' },
+                          { key: 'normal', label: 'Défaut (100%)' },
+                          { key: 'large', label: 'Grand (114%)' },
+                        ].map((s) => (
+                          <button
+                            key={s.key}
+                            onClick={() => {
+                              setFontSize(s.key as FontSize);
+                              showToast(`Taille ajustée : ${s.label}`);
+                            }}
+                            className={`px-2.5 py-1 rounded-lg font-medium transition-all ${
+                              fontSize === s.key || (s.key === 'normal' && fontSize === 'default' as any)
+                                ? 'bg-[var(--surface)] text-[var(--text-primary)] shadow-sm font-semibold'
+                                : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
+                            }`}
+                          >
+                            {s.label}
+                          </button>
+                        ))}
+                      </div>
+                    }
+                  />
+                </SettingSection>
+
+                <SettingSection title="Densité Spatiale">
+                  <SettingRow
+                    label="Densité de l'Interface"
+                    description="Contrôle les espacements verticaux des tableaux et des barres d'outils."
+                    control={
+                      <div className="flex items-center gap-1 p-1 rounded-xl bg-[var(--surface-raised)] border border-[var(--border)] text-xs">
+                        {[
+                          { key: 'compact', label: 'Compact' },
+                          { key: 'comfortable', label: 'Confortable' },
+                        ].map((d) => (
+                          <button
+                            key={d.key}
+                            onClick={() => {
+                              setDensity(d.key as Density);
+                              showToast(`Densité : ${d.label}`);
+                            }}
+                            className={`px-2.5 py-1 rounded-lg font-medium transition-all ${
+                              density === d.key
+                                ? 'bg-[var(--surface)] text-[var(--text-primary)] shadow-sm font-semibold'
+                                : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
+                            }`}
+                          >
+                            {d.label}
+                          </button>
+                        ))}
+                      </div>
+                    }
+                  />
+                </SettingSection>
+              </div>
+            )}
+
+            {/* 4. AGENT & AUTONOMIE */}
+            {activeTab === 'agent' && (
+              <div className="space-y-6">
+                <div>
+                  <h2 className="text-base font-bold text-[var(--text-primary)]">Intelligence & Modèles</h2>
+                  <p className="text-xs text-[var(--text-secondary)]">Contrôle fin de l&apos;orchestration autonome Google Gemini 3.1 Pro.</p>
+                </div>
+
+                <SettingSection title="Niveau d'Autonomie">
+                  <SettingRow
+                    label="Gouvernance des Décisions"
+                    description="Autorisation requise pour l'exécution d'outils sensibles et les modifications de fichiers."
+                    control={
+                      <select
+                        value={autonomyLevel}
+                        onChange={(e) => {
+                          updatePreferences({ autonomyLevel: e.target.value as any });
+                          showToast('Niveau d\'autonomie mis à jour');
+                        }}
+                        className="h-8 px-2.5 rounded-xl bg-[var(--surface-raised)] border border-[var(--border)] text-xs text-[var(--text-primary)] font-medium focus:outline-none focus:border-[var(--accent)]"
+                      >
+                        <option value="guided">Guidé (Demander confirmation)</option>
+                        <option value="semi_autonomous">Semi-Autonome (Recommandé)</option>
+                        <option value="fully_autonomous">Autonome Illimité (Pro)</option>
+                      </select>
+                    }
+                  />
+                </SettingSection>
+              </div>
+            )}
+
+            {/* 5. MÉMOIRE SOUVERAINE DEERMEM */}
+            {activeTab === 'memory' && (
+              <div className="space-y-6">
+                <div>
+                  <h2 className="text-base font-bold text-[var(--text-primary)]">Mémoire Souveraine DeerMem</h2>
+                  <p className="text-xs text-[var(--text-secondary)]">Rétention locale et synchronisation chiffrée de vos contextes de travail.</p>
+                </div>
+
+                <SettingSection title="Politique de Rétention">
+                  <SettingRow
+                    label="Activation de la Mémoire"
+                    description="Permet à Ñkyel de se souvenir de vos projets et préférences récurrentes."
+                    control={
+                      <input
+                        type="checkbox"
+                        checked={memoryEnabled}
+                        onChange={(e) => {
+                          updatePreferences({ memoryEnabled: e.target.checked });
+                          showToast(e.target.checked ? 'Mémoire activée' : 'Mémoire désactivée');
+                        }}
+                        className="w-4 h-4 rounded accent-[#D5AE57]"
+                      />
+                    }
+                  />
+                </SettingSection>
+              </div>
+            )}
+
+            {/* 6. FORFAIT & CRÉDITS */}
+            {activeTab === 'subscription' && (
+              <div className="space-y-6">
+                <div>
+                  <h2 className="text-base font-bold text-[var(--text-primary)]">Forfait & Quotas d&apos;Inférence</h2>
+                  <p className="text-xs text-[var(--text-secondary)]">Accès prioritaire à Google Gemini 3.1 Pro et Gemini 2.5 Flash.</p>
+                </div>
+
+                <div className="p-4 rounded-2xl bg-[#D5AE57]/10 border border-[#D5AE57]/30 flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <Crown size={24} weight="fill" className="text-[#D5AE57]" />
+                    <div>
+                      <div className="text-sm font-bold text-[var(--text-primary)]">Ñkyel Pro Illimité</div>
+                      <div className="text-xs text-[var(--text-secondary)]">Inférence souveraine et fenêtres 2M tokens actives.</div>
+                    </div>
                   </div>
-                  <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#D5AE57]/20 text-[#D5AE57] font-bold">
+                  <span className="text-xs font-mono font-bold text-emerald-400 px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20">
                     ACTIF
                   </span>
                 </div>
-
-                <div className="space-y-2 text-xs text-[var(--text-secondary)]">
-                  <div className="flex justify-between">
-                    <span>Crédits d&apos;Inférence Restants :</span>
-                    <span className="font-mono font-bold text-[var(--text-primary)]">
-                      {isSuperAdmin ? '999,999,999 (Illimités)' : '25,000 / 25,000'}
-                    </span>
-                  </div>
-                  <div className="w-full h-2 bg-[var(--surface)] rounded-full overflow-hidden border border-[var(--border-subtle)]">
-                    <div className="w-full h-full bg-[#D5AE57]" />
-                  </div>
-                </div>
               </div>
-            </div>
-          )}
+            )}
+          </Surface>
+        </div>
 
-          {/* ── 7. SECURITY & DATA RESIDENCY ── */}
-          {activeTab === 'security' && (
-            <div className="space-y-6">
-              <div>
-                <h2 className="text-base font-bold text-[var(--text-primary)]">Sécurité & Résidence Souveraine</h2>
-                <p className="text-xs text-[var(--text-secondary)] mt-0.5">
-                  Chiffrement de bout en bout et isolation étanche des données par tenant.
-                </p>
-              </div>
-
-              <div className="p-5 rounded-3xl bg-[var(--material-content)] border border-[var(--border)] space-y-3 text-xs text-[var(--text-secondary)]">
-                <div className="flex items-center justify-between">
-                  <span>Authentification</span>
-                  <span className="font-mono text-emerald-400 font-bold">Clerk JWKS RS256</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span>Isolation des données</span>
-                  <span className="font-mono text-[var(--text-primary)]">PostgreSQL Row-Level Security</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span>Chiffrement des clés API</span>
-                  <span className="font-mono text-[#D5AE57]">AES-256-GCM SecretManager</span>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* ── 8. DANGER ZONE ── */}
-          {activeTab === 'danger' && (
-            <div className="space-y-6">
-              <div>
-                <h2 className="text-base font-bold text-red-400">Zone Critique</h2>
-                <p className="text-xs text-[var(--text-secondary)] mt-0.5">
-                  Actions destructives ou de réinitialisation de vos données.
-                </p>
-              </div>
-
-              <div className="p-5 rounded-3xl bg-red-500/5 border border-red-500/20 space-y-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <div className="text-xs font-bold text-[var(--text-primary)]">Effacer le Cache Local & Mémoire</div>
-                    <div className="text-[11px] text-[var(--text-tertiary)]">Supprime les données temporaires locales</div>
-                  </div>
+        {/* ── Mobile View (Drill-down Navigation) ── */}
+        <div className="md:hidden">
+          {!mobileDrilldown ? (
+            /* Menu Racine Mobile */
+            <div className="space-y-2">
+              {SETTINGS_TABS.map((tab) => {
+                const Icon = tab.icon;
+                return (
                   <button
-                    onClick={() => showToast('Cache local nettoyé.')}
-                    className="px-3 py-1.5 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-xs text-red-300 transition-colors border border-red-500/30 font-medium"
+                    key={tab.id}
+                    onClick={() => setMobileDrilldown(tab.id)}
+                    className="w-full flex items-center justify-between p-4 rounded-2xl bg-[var(--surface)] border border-[var(--border)] text-left active:bg-[var(--surface-raised)] transition-colors"
                   >
-                    Nettoyer
+                    <div className="flex items-center gap-3">
+                      <Icon size={18} className="text-[#D5AE57]" />
+                      <span className="text-sm font-medium text-[var(--text-primary)]">{tab.label}</span>
+                    </div>
+                    <CaretRight size={16} className="text-[var(--text-tertiary)]" />
                   </button>
+                );
+              })}
+            </div>
+          ) : (
+            /* Écran de Détail Section Mobile */
+            <div className="p-4 rounded-2xl bg-[var(--surface)] border border-[var(--border)] space-y-4">
+              <button
+                onClick={() => setMobileDrilldown(null)}
+                className="flex items-center gap-1.5 text-xs text-[#D5AE57] font-semibold mb-2"
+              >
+                <ArrowLeft size={14} />
+                <span>Toutes les catégories</span>
+              </button>
+
+              {/* Contenu Section Mobile (Miroir de la section active) */}
+              {mobileDrilldown === 'appearance' && (
+                <div className="space-y-4 text-xs">
+                  <div className="font-semibold text-sm text-[var(--text-primary)]">Thème Visuel</div>
+                  <div className="grid grid-cols-3 gap-2">
+                    {[
+                      { key: 'neo-blanc', label: 'Clair' },
+                      { key: 'system', label: 'Système' },
+                      { key: 'black-panther', label: 'Sombre' },
+                    ].map((t) => (
+                      <button
+                        key={t.key}
+                        onClick={() => setTheme(t.key as any)}
+                        className={`py-2 rounded-xl border text-center font-semibold ${
+                          theme === t.key || (t.key === 'neo-blanc' && theme === 'light')
+                            ? 'bg-[#D5AE57] text-black border-transparent'
+                            : 'bg-[var(--surface-raised)] border-[var(--border)] text-[var(--text-primary)]'
+                        }`}
+                      >
+                        {t.label}
+                      </button>
+                    ))}
+                  </div>
+
+                  <div className="font-semibold text-sm text-[var(--text-primary)] pt-3">Couleur d&apos;Accent</div>
+                  <div className="flex items-center gap-3">
+                    {ACCENT_CHOICES.map((a) => (
+                      <button
+                        key={a.key}
+                        onClick={() => setAccent(a.key as any)}
+                        className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                          accent === a.key ? 'ring-2 ring-[var(--text-primary)] ring-offset-2' : ''
+                        }`}
+                        style={{ backgroundColor: a.color }}
+                      >
+                        {accent === a.key && <Check size={13} weight="bold" className="text-white drop-shadow" />}
+                      </button>
+                    ))}
+                  </div>
                 </div>
-              </div>
+              )}
+
+              {mobileDrilldown === 'general' && (
+                <div className="space-y-4 text-xs">
+                  <div className="font-semibold text-sm text-[var(--text-primary)]">Langue du Produit</div>
+                  <select
+                    value={locale}
+                    onChange={(e) => setLocale(e.target.value as BCP47Language)}
+                    className="w-full h-10 px-3 rounded-xl bg-[var(--surface-raised)] border border-[var(--border)] text-xs text-[var(--text-primary)]"
+                  >
+                    {WORLD_LANGUAGES.map((lang) => (
+                      <option key={lang.code} value={lang.code}>
+                        {lang.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              )}
+
+              {mobileDrilldown === 'profile' && (
+                <div className="space-y-3 text-xs">
+                  <div>
+                    <span className="text-[var(--text-tertiary)] block">Nom :</span>
+                    <span className="font-semibold text-sm text-[var(--text-primary)]">{displayName}</span>
+                  </div>
+                  <div>
+                    <span className="text-[var(--text-tertiary)] block">E-mail :</span>
+                    <span className="font-mono text-xs text-[var(--text-secondary)]">{displayEmail}</span>
+                  </div>
+                </div>
+              )}
             </div>
           )}
-        </main>
+        </div>
       </div>
     </div>
   );

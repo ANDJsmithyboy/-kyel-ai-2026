@@ -167,7 +167,7 @@ export default function VIECanvas() {
 
   return (
     <div
-      className={`relative w-full h-full bg-[#08090D] overflow-hidden flex flex-col ${
+      className={`relative w-full h-full bg-[var(--graph-canvas)] overflow-hidden flex flex-col ${
         isFullscreen ? 'fixed inset-0 z-50' : ''
       }`}
     >
@@ -190,7 +190,7 @@ export default function VIECanvas() {
           <button
             type="button"
             onClick={() => setIsFullscreen(!isFullscreen)}
-            className="p-2.5 rounded-xl bg-[#0E121A]/90 backdrop-blur-md border border-white/[0.08] text-[#B8C0CC] hover:text-[#F1EEE7] hover:bg-[#151922] transition-colors shadow-lg"
+            className="p-2.5 rounded-xl bg-[var(--surface)] backdrop-blur-md border border-[var(--border)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--hover)] transition-colors shadow-lg"
             title={isFullscreen ? 'Quitter le plein écran' : 'Passer en plein écran'}
           >
             {isFullscreen ? <ArrowsIn size={18} /> : <ArrowsOut size={18} />}
@@ -210,12 +210,12 @@ export default function VIECanvas() {
           fitView
           className="bg-transparent"
         >
-          <Background color="var(--border)" gap={24} size={1.5} />
+          <Background color="var(--graph-grid)" gap={24} size={1.5} />
           <Controls className="bg-[var(--surface-raised)] border border-[var(--border)] text-[var(--text-primary)] rounded-xl fill-[var(--text-primary)] shadow-md" />
           <MiniMap
             nodeColor={(n) => NODE_COLORS[(n.data as WorkNode)?.type] || '#665F9E'}
-            className="bg-[#0E121A] border border-white/[0.08] rounded-xl overflow-hidden shadow-2xl"
-            maskColor="rgba(8, 9, 13, 0.75)"
+            className="bg-[var(--surface-raised)] border border-[var(--border)] rounded-xl overflow-hidden shadow-2xl"
+            maskColor="var(--material-overlay)"
           />
         </ReactFlow>
       </div>
