@@ -137,10 +137,10 @@ function SettingRow({
   );
 }
 
-export default function SettingsPage() {
+function SettingsContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const initialTab = (searchParams.get('tab') as SettingsTab) || 'general';
+  const initialTab = (searchParams?.get('tab') as SettingsTab) || 'general';
 
   const [activeTab, setActiveTab] = useState<SettingsTab>(initialTab);
   const [mobileDrilldown, setMobileDrilldown] = useState<SettingsTab | null>(null);
@@ -684,5 +684,22 @@ export default function SettingsPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function SettingsPage() {
+  return (
+    <React.Suspense
+      fallback={
+        <div className="min-h-screen w-full bg-[var(--material-canvas)] text-[var(--text-primary)] flex items-center justify-center">
+          <div className="flex items-center gap-2 text-xs text-[var(--text-secondary)]">
+            <span className="w-3 h-3 border-2 border-[var(--accent)] border-t-transparent rounded-full animate-spin" />
+            <span>Chargement des paramètres...</span>
+          </div>
+        </div>
+      }
+    >
+      <SettingsContent />
+    </React.Suspense>
   );
 }
