@@ -131,4 +131,5 @@ declare module '@phosphor-icons/react' {
   export const Image: Icon;
   export const VideoCamera: Icon;
   export const Infinity: Icon;
+  export const EnvelopeSimple: Icon;
 }
