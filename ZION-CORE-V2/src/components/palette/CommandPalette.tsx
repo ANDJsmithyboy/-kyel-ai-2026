@@ -45,6 +45,7 @@ import {
   HandPointing,
   LockKey,
   PaperPlaneTilt,
+  TreeStructure,
 } from '@phosphor-icons/react';
 import { useUser } from '@clerk/nextjs';
 import { useLanguageStore } from '@/stores/language.store';

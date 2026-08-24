@@ -29,6 +29,17 @@ export type TimeFormat = '24h' | '12h';
 export type NumberFormat = 'space_comma' | 'comma_dot';
 export type CurrencyDisplay = 'XAF' | 'EUR' | 'USD' | 'GBP' | 'CNY' | 'JPY' | 'AED' | 'INR';
 
+export const MODEL_DISPLAY_NAMES: Record<string, string> = {
+  'gemini-3.1-pro': 'Ñkyel Vision & Research Pro',
+  'gemini-2.5-flash': 'Ñkyel Flash Fast',
+  'gemini-2.5-pro': 'Google Gemini 2.5 Pro',
+  'mistral-large-latest': 'Mistral Large 2',
+  'mistral-small-latest': 'Mistral Small',
+  'claude-3-7-sonnet-latest': 'Claude 3.7 Sonnet',
+  'gpt-4o': 'GPT-4o Omnimodal',
+  'deepseek-reasoner': 'DeepSeek R1',
+};
+
 export interface UserPreferencesState {
   // 1. Général & Formats
   uiLocale: string;
