@@ -8,7 +8,7 @@ import Sidebar from '@/components/layout/Sidebar';
 import TopBar from '@/components/shell/TopBar';
 import { useSidebarStore } from '@/stores/sidebar';
 import { useSettingsStore } from '@/stores/settings.store';
-import { useUser } from '@clerk/nextjs';
+import { useSafeUser as useUser } from '@/lib/auth-client';
 import { useAuthStore } from '@/stores/auth.store';
 import { cn } from '@/lib/utils';
 import AuroraBackground from '@/components/ui/AuroraBackground';

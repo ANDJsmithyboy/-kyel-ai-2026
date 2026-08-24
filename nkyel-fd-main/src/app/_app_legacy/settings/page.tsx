@@ -16,7 +16,7 @@ import {
 } from '@/stores/settings.store';
 import { useAuthStore } from '@/stores/auth.store';
 import { cn } from '@/lib/utils';
-import { useClerk } from '@clerk/nextjs';
+import { useSafeClerk as useClerk } from '@/lib/auth-client';
 import { motion, AnimatePresence } from 'framer-motion';
 
 type TabKey = 'apparence' | 'Nkyel AI' | 'chat' | 'audio' | 'about';

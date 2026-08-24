@@ -26,6 +26,22 @@ export function useSafeUser(): { isSignedIn: boolean; isLoaded: boolean; user: a
   };
 }
 
+export function useSafeAuth(): {
+  userId: string;
+  sessionId: string;
+  getToken: () => Promise<string>;
+  isSignedIn: boolean;
+  isLoaded: boolean;
+} {
+  return {
+    userId: 'founder_smartandj_01',
+    sessionId: 'session_demo_founder_01',
+    getToken: async () => 'bearer_token_demo_founder',
+    isSignedIn: true,
+    isLoaded: true,
+  };
+}
+
 export function useSafeClerk(): any {
   return {
     signOut: async () => {
@@ -40,3 +56,17 @@ export function useSafeClerk(): any {
     },
   };
 }
+
+export const SignInButton = ({ children, className }: { children?: React.ReactNode; className?: string }) => (
+  <a href="/chat" className={className}>{children || 'Connexion'}</a>
+);
+
+export const SignUpButton = ({ children, className }: { children?: React.ReactNode; className?: string }) => (
+  <a href="/chat" className={className}>{children || 'Inscription'}</a>
+);
+
+export const UserButton = ({ className }: { className?: string }) => (
+  <div className={`w-8 h-8 rounded-full bg-[var(--accent)] text-[var(--accent-fg)] flex items-center justify-center font-bold text-xs ${className || ''}`}>
+    Ñ
+  </div>
+);

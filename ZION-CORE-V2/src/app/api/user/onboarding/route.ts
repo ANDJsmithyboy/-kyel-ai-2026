@@ -8,6 +8,8 @@ import { NextResponse } from 'next/server';
 import { db, schema } from '@/lib/db';
 import { eq } from 'drizzle-orm';
 
+export const dynamic = 'force-dynamic';
+
 // -- Type guard --
 interface OnboardingPayload {
   fullName: string;

@@ -44,7 +44,7 @@ import {
   VideoCamera,
   Infinity as InfinityIcon,
 } from '@phosphor-icons/react';
-import { useUser, SignInButton, SignUpButton, UserButton } from '@clerk/nextjs';
+import { useSafeUser as useUser, SignInButton, SignUpButton, UserButton } from '@/lib/auth-client';
 import { useRouter } from 'next/navigation';
 
 const GEMINI_CAPABILITIES = [

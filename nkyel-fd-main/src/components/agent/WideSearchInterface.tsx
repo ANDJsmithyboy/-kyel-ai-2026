@@ -3,7 +3,7 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { useChat } from '@ai-sdk/react';
 
-import { useAuth } from '@clerk/nextjs';
+import { useSafeAuth as useAuth } from '@/lib/auth-client';
 import { Send, Sparkles, Command } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
