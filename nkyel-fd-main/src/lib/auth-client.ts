@@ -57,16 +57,28 @@ export function useSafeClerk(): any {
   };
 }
 
-export const SignInButton = ({ children, className }: { children?: React.ReactNode; className?: string }) => (
-  <a href="/chat" className={className}>{children || 'Connexion'}</a>
-);
+export const SignInButton = (props: any) => {
+  return React.createElement(
+    'a',
+    { href: '/chat', className: props?.className },
+    props?.children || 'Connexion'
+  );
+};
 
-export const SignUpButton = ({ children, className }: { children?: React.ReactNode; className?: string }) => (
-  <a href="/chat" className={className}>{children || 'Inscription'}</a>
-);
+export const SignUpButton = (props: any) => {
+  return React.createElement(
+    'a',
+    { href: '/chat', className: props?.className },
+    props?.children || 'Inscription'
+  );
+};
 
-export const UserButton = ({ className }: { className?: string }) => (
-  <div className={`w-8 h-8 rounded-full bg-[var(--accent)] text-[var(--accent-fg)] flex items-center justify-center font-bold text-xs ${className || ''}`}>
-    Ñ
-  </div>
-);
+export const UserButton = (props: any) => {
+  return React.createElement(
+    'div',
+    {
+      className: `w-8 h-8 rounded-full bg-[var(--accent)] text-[var(--accent-fg)] flex items-center justify-center font-bold text-xs ${props?.className || ''}`,
+    },
+    'Ñ'
+  );
+};

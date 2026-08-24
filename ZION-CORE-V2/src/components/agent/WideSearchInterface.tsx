@@ -24,7 +24,7 @@ export default function WideSearchInterface() {
     body: {
       model: selectedModel, // On passe le modèle au backend FastAPI (LangGraph)
     },
-    fetch: async (input, init) => {
+    fetch: async (input: any, init: any) => {
       // Injection du token Clerk pour la sécurité
       const token = await getToken();
       const secureInit = {

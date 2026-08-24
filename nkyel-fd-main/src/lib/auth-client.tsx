@@ -1,4 +1,4 @@
-/* Ñkyel AI · auth-client.ts · SmartANDJ AI Technologies
+/* Ñkyel AI · auth-client.tsx · SmartANDJ AI Technologies
    Safe resilient auth hooks (Clerk-compatible + sovereign fallback)
    Fondateur : Daniel Jonathan ANDJ */
 

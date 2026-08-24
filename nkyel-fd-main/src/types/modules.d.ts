@@ -29,9 +29,14 @@ declare module '@clerk/nextjs' {
 declare module '@clerk/nextjs/server' {
   export function clerkMiddleware(handler?: any): any;
   export function createRouteMatcher(routes: (string | RegExp)[]): (req: any) => boolean;
-  export function auth(): any;
+  export function auth(): Promise<any>;
   export function currentUser(): Promise<any>;
+  export function clerkClient(): Promise<any>;
 }
+
+declare module 'drizzle-orm';
+declare module 'drizzle-orm/neon-http';
+declare module 'drizzle-orm/pg-core';
 
 declare module '@clerk/localizations' {
   export const frFR: any;
