@@ -158,13 +158,14 @@ class ModelProvider(str, Enum):
     GABOMA_AI = "gaboma_ai"
     NKYEL_SOVEREIGN = "nkyel_sovereign"
     
-    # Self-Hosted / On-Prem
     VLLM_LOCAL = "vllm_local"
     TGI_LOCAL = "tgi_local"
     SGLANG_LOCAL = "sglang_local"
     LLAMACPP_LOCAL = "llamacpp_local"
     OLLAMA = "ollama"
     RUNPOD = "runpod"
+    LOCAL = "local"
+    NKYEL_HOSTED = "nkyel_hosted"
 
 
 # ══════════════════════════════════════════════════════════════
@@ -826,6 +827,17 @@ MODEL_REGISTRY: List[ModelSpec] = [
         priority=70,
         is_fallback=True,
     ),
+    ModelSpec(
+        id="meta-llama/Meta-Llama-3.1-70B-Instruct-Turbo",
+        provider=ModelProvider.TOGETHER,
+        capability=ModelCapability.BALANCED,
+        display_name="Together Llama 70B Turbo",
+        context_window=8192,
+        max_tokens=4096,
+        input_cost_per_m=0.88,
+        output_cost_per_m=0.88,
+        priority=85,
+    ),
 
     # ── DEEP & REASONING Capabilities ─────────────────────────
     ModelSpec(
@@ -1015,6 +1027,12 @@ MODEL_REGISTRY: List[ModelSpec] = [
         sovereignty_level="local",
     ),
 ]
+
+
+def _get_models_for_capability(capability: ModelCapability) -> List[ModelSpec]:
+    """Retourne la liste des modèles supportant la capacité, triés par priorité décroissante."""
+    matching = [m for m in MODEL_REGISTRY if m.capability == capability]
+    return sorted(matching, key=lambda x: x.priority, reverse=True)
 
 
 # ══════════════════════════════════════════════════════════════
@@ -1263,6 +1281,38 @@ class GatewayResponse:
     attempts: int = 1
 
 
+async def _call_google_gemini(
+    spec: ModelSpec,
+    prompt: str,
+    chat_messages: Optional[List[Dict[str, str]]] = None,
+    temperature: float = 0.7,
+    tokens_max: int = 8192,
+    json_mode: bool = False,
+) -> Dict[str, Any]:
+    """Appel direct au SDK Google Gemini."""
+    import google.generativeai as genai
+    api_key = os.getenv("GOOGLE_GENERATIVE_AI_API_KEY") or getattr(settings, "google_api_key", "")
+    genai.configure(api_key=api_key)
+    gen_config = genai.GenerationConfig(
+        temperature=temperature,
+        max_output_tokens=tokens_max,
+        response_mime_type="application/json" if json_mode else None,
+    )
+    model = genai.GenerativeModel(spec.id, generation_config=gen_config)
+    resp = model.generate_content(prompt)
+    text = resp.text or ""
+    input_toks = len(prompt) // 4
+    output_toks = len(text) // 4
+    if hasattr(resp, "usage_metadata") and resp.usage_metadata:
+        input_toks = getattr(resp.usage_metadata, "prompt_token_count", input_toks) or input_toks
+        output_toks = getattr(resp.usage_metadata, "candidates_token_count", output_toks) or output_toks
+    return {
+        "text": text,
+        "input_tokens": input_toks,
+        "output_tokens": output_toks,
+    }
+
+
 async def call(
     prompt: str,
     capability: ModelCapability = ModelCapability.BALANCED,
@@ -1320,24 +1370,14 @@ async def call(
 
         try:
             # Cas spécial : Google Gemini natif via google.generativeai si configuré
-            if spec.provider == ModelProvider.GOOGLE and os.getenv("GOOGLE_GENERATIVE_AI_API_KEY"):
+            if spec.provider == ModelProvider.GOOGLE:
                 try:
-                    import google.generativeai as genai
-                    genai.configure(api_key=os.getenv("GOOGLE_GENERATIVE_AI_API_KEY"))
-                    gen_config = genai.GenerationConfig(
-                        temperature=temperature,
-                        max_output_tokens=tokens_max,
-                        response_mime_type="application/json" if json_mode else None,
+                    g_res = await _call_google_gemini(
+                        spec, prompt, chat_messages, temperature, tokens_max, json_mode
                     )
-                    model = genai.GenerativeModel(spec.id, generation_config=gen_config)
-                    resp = model.generate_content(prompt)
-                    text = resp.text or ""
-                    input_toks = len(prompt) // 4
-                    output_toks = len(text) // 4
-                    if hasattr(resp, "usage_metadata") and resp.usage_metadata:
-                        input_toks = getattr(resp.usage_metadata, "prompt_token_count", input_toks) or input_toks
-                        output_toks = getattr(resp.usage_metadata, "candidates_token_count", output_toks) or output_toks
-
+                    text = g_res.get("text", "")
+                    input_toks = g_res.get("input_tokens", len(prompt) // 4)
+                    output_toks = g_res.get("output_tokens", len(text) // 4)
                     latency_ms = int((time.time() - start_time) * 1000)
                     cost = (input_toks * spec.input_cost_per_m + output_toks * spec.output_cost_per_m) / 1_000_000
 
@@ -1579,7 +1619,9 @@ def get_gateway_status() -> Dict[str, Any]:
         "metrics": gateway_metrics.summary(),
         "circuits": circuit_breaker.status(),
         "registered_providers_count": len(GLOBAL_PROVIDER_REGISTRY),
+        "registered_models": len(MODEL_REGISTRY),
         "registered_models_count": len(MODEL_REGISTRY),
+        "interfaces": ["chat", "stream", "embed", "rerank"],
         "capabilities": [c.value for c in ModelCapability],
         "regions": [r.value for r in ProviderRegion],
         "providers": [p.value for p in ModelProvider],

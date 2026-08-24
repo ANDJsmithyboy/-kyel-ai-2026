@@ -107,7 +107,7 @@ export interface UserPreferencesState {
 
 const LIGHT_THEMES = new Set<string>(['light', 'aurore-ogoue', 'neo-blanc']);
 
-export function applyDOMTheme(theme: string) {
+export function applyDOMTheme(theme: string): void {
   if (typeof window === 'undefined') return;
   let resolvedTheme = theme;
   if (theme === 'system' || theme === 'auto') {
@@ -119,31 +119,31 @@ export function applyDOMTheme(theme: string) {
   document.documentElement.className = isLight ? 'light' : 'dark';
 }
 
-export function applyDOMScale(fontSize: FontSize) {
+export function applyDOMScale(fontSize: FontSize): void {
   if (typeof window === 'undefined') return;
   const scale = fontSize === 'small' ? '0.88' : fontSize === 'large' ? '1.14' : '1.0';
   document.documentElement.setAttribute('data-text-size', fontSize);
   document.documentElement.style.setProperty('--app-text-scale', scale);
 }
 
-export function applyDOMAccent(accent: string) {
+export function applyDOMAccent(accent: string): void {
   if (typeof window === 'undefined') return;
   document.documentElement.setAttribute('data-accent', accent);
 }
 
-export function applyDOMDensity(density: Density) {
+export function applyDOMDensity(density: Density): void {
   if (typeof window === 'undefined') return;
   document.documentElement.setAttribute('data-density', density);
 }
 
-export function applyDOMMotion(reducedMotion: boolean) {
+export function applyDOMMotion(reducedMotion: boolean): void {
   if (typeof window === 'undefined') return;
   document.documentElement.style.setProperty('--app-motion-factor', reducedMotion ? '0' : '1');
 }
 
 export const useSettingsStore = create<UserPreferencesState>()(
   persist(
-    (set, get) => ({
+    (set: any, get: any) => ({
       // Defaults
       uiLocale: 'fr-FR',
       agentLanguage: 'auto',
@@ -156,7 +156,7 @@ export const useSettingsStore = create<UserPreferencesState>()(
       firstDayOfWeek: 'monday',
 
       theme: 'black-panther',
-      accent: 'foret',
+      accent: 'gold',
       fontSize: 'normal',
       density: 'comfortable',
       reducedMotion: false,
@@ -202,85 +202,85 @@ export const useSettingsStore = create<UserPreferencesState>()(
         applyRTLToDOM(state.uiLocale);
       },
 
-      updatePreferences: async (updates) => {
-        set((state) => ({ ...state, ...updates }));
+      updatePreferences: async (updates: Partial<UserPreferencesState>) => {
+        set((state: UserPreferencesState) => ({ ...state, ...updates }));
         get().hydrateDOM();
         await get().saveToServer();
       },
 
-      setTheme: (t) => {
+      setTheme: (t: ThemeKey) => {
         applyDOMTheme(t);
         set({ theme: t });
         get().saveToServer();
       },
 
-      setAccent: (a) => {
+      setAccent: (a: AccentKey) => {
         applyDOMAccent(a);
         set({ accent: a });
         get().saveToServer();
       },
 
-      setFontSize: (f) => {
+      setFontSize: (f: FontSize) => {
         applyDOMScale(f);
         set({ fontSize: f });
         get().saveToServer();
       },
 
-      setDensity: (d) => {
+      setDensity: (d: Density) => {
         applyDOMDensity(d);
         set({ density: d });
         get().saveToServer();
       },
 
-      setUiLocale: (locale) => {
+      setUiLocale: (locale: string) => {
         applyRTLToDOM(locale);
         set({ uiLocale: locale });
         get().saveToServer();
       },
 
-      setAgentLanguage: (lang) => {
+      setAgentLanguage: (lang: string) => {
         set({ agentLanguage: lang });
         get().saveToServer();
       },
 
-      setDateFormat: (f) => {
+      setDateFormat: (f: DateFormat) => {
         set({ dateFormat: f });
         get().saveToServer();
       },
 
-      setTimeFormat: (f) => {
+      setTimeFormat: (f: TimeFormat) => {
         set({ timeFormat: f });
         get().saveToServer();
       },
 
-      setCurrencyDisplay: (c) => {
+      setCurrencyDisplay: (c: CurrencyDisplay) => {
         set({ currencyDisplay: c });
         get().saveToServer();
       },
 
-      setResponseDepth: (d) => {
+      setResponseDepth: (d: ResponseDepth) => {
         set({ responseDepth: d });
         get().saveToServer();
       },
 
-      setResearchDepth: (r) => {
+      setResearchDepth: (r: ResearchDepth) => {
         set({ researchDepth: r });
         get().saveToServer();
       },
 
-      setMemoryPolicy: (p) => {
+      setMemoryPolicy: (p: 'never' | 'always_ask' | 'auto_preferences' | 'auto_all') => {
         set({ memoryPolicy: p });
         get().saveToServer();
       },
 
-      setDataResidency: (r) => {
+      setDataResidency: (r: DataResidency) => {
         set({ dataResidency: r });
         get().saveToServer();
       },
 
       fetchFromServer: async () => {
         if (typeof window === 'undefined') return;
-        try: {
+        try {
           set({ isSyncing: true });
           const res = await fetch('/api/v1/users/preferences');
           if (res.ok) {
@@ -374,7 +374,7 @@ export const useSettingsStore = create<UserPreferencesState>()(
     }),
     {
       name: 'Nkyel_Settings_Storage_V2',
-      onRehydrateStorage: () => (state) => {
+      onRehydrateStorage: () => (state: UserPreferencesState | undefined) => {
         if (state) {
           state.hydrateDOM();
         }

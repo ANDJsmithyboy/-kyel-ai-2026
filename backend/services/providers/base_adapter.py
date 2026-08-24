@@ -88,7 +88,8 @@ class BaseProviderAdapter(ABC):
         timeout: Optional[float] = None,
     ) -> AsyncGenerator[Dict[str, Any], None]:
         """Génération de texte en streaming SSE."""
-        pass
+        if False:
+            yield {}
 
     async def embed(
         self,
