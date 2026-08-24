@@ -61,6 +61,35 @@ declare module 'next/navigation' {
   export function notFound(): never;
 }
 
+declare module 'next' {
+  export type Metadata = any;
+  export type Viewport = any;
+}
+
+declare module 'next/script' {
+  import React from 'react';
+  const Script: React.ComponentType<any>;
+  export default Script;
+}
+
+declare module 'next/font/google' {
+  export function Geist(options?: any): { variable: string; className: string };
+  export function Geist_Mono(options?: any): { variable: string; className: string };
+  export function Inter(options?: any): { variable: string; className: string };
+}
+
+declare module 'next/image' {
+  import React from 'react';
+  const Image: React.ComponentType<any>;
+  export default Image;
+}
+
+declare module 'sonner' {
+  import React from 'react';
+  export const Toaster: React.ComponentType<any>;
+  export const toast: any;
+}
+
 declare module 'next/link' {
   import React from 'react';
   const Link: React.ForwardRefExoticComponent<any>;
