@@ -20,7 +20,7 @@ const isPublicRoute = createRouteMatcher([
   '/legal',
 ]);
 
-export default clerkMiddleware(async (auth, req) => {
+export default clerkMiddleware(async (auth: any, req: any) => {
   // Public routes pass through freely
   if (isPublicRoute(req)) {
     return NextResponse.next();
