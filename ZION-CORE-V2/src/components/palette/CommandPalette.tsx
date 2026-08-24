@@ -47,6 +47,7 @@ import {
   PaperPlaneTilt,
   TreeStructure,
 } from '@phosphor-icons/react';
+import { GeistActivity } from '@/components/icons/GeistIcons';
 import { useUser } from '@clerk/nextjs';
 import { useLanguageStore } from '@/stores/language.store';
 import { useSettingsStore } from '@/stores/settings.store';
@@ -207,7 +208,7 @@ export default function CommandPalette() {
         id: 'action-toggle-inspector',
         label: 'Afficher / Masquer l\'Inspecteur Contextuel (Sources / Tools / Run)',
         category: 'Actions & Missions',
-        icon: Activity,
+        icon: GeistActivity,
         shortcut: '⌘I',
         keywords: ['contexte', 'inspector', 'sources', 'outils', 'tools', 'skills', 'mcp'],
         handler: () => {
