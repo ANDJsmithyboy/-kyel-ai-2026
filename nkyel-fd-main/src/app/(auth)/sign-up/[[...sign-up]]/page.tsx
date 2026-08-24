@@ -1,16 +1,16 @@
 /* Ñkyel AI · sign-up/[[...sign-up]]/page.tsx · SmartANDJ AI Technologies
    Fondateur : Daniel Jonathan ANDJ
-   Page d'Inscription Séparée Haute Fidélité Manus AI × Clerk Pro */
+   Page d'Inscription Séparée Ñkyel AI × Clerk Pro */
 
 'use client';
 
 import React from 'react';
 import { SignUp } from '@clerk/nextjs';
-import ManusAuthShell from '@/components/auth/ManusAuthShell';
+import NkyelAuthShell from '@/components/auth/NkyelAuthShell';
 
 export default function SignUpPage() {
   return (
-    <ManusAuthShell
+    <NkyelAuthShell
       mode="sign-up"
       title="Créer votre compte Ñkyel AI"
       subtitle="Rejoignez la nouvelle ère de l'intelligence agentique avec mémoire continue et orchestration globale."
@@ -44,6 +44,6 @@ export default function SignUpPage() {
           },
         }}
       />
-    </ManusAuthShell>
+    </NkyelAuthShell>
   );
 }

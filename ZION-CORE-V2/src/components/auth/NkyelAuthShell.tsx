@@ -1,8 +1,8 @@
 /**
- * Ñkyel AI · Manus-Grade Sovereign Authentication Shell
- * SmartANDJ AI Technologies · Founder: Daniel Jonathan ANDJ
+ * Ñkyel AI — Sovereign Authentication Architecture
+ * SmartANDJ AI Technologies · Fondateur : Daniel Jonathan ANDJ
  *
- * Élite Visuelle : Manus AI × Apple Liquid Glass × Geist Typography
+ * Élite Visuelle : Apple Liquid Glass × Geist Typography × Ñkyel AI
  * - Double panneau Split-Screen (Desktop) / Fluid Stack (Mobile)
  * - Navigation fluide entre Connexion (/sign-in) et Inscription (/sign-up)
  * - Intégration Clerk Pro avec styling anti-fatigue natif (Dark & Light)
@@ -29,14 +29,14 @@ import {
   Lightning,
 } from '@phosphor-icons/react';
 
-interface ManusAuthShellProps {
+interface NkyelAuthShellProps {
   mode: 'sign-in' | 'sign-up';
   title: string;
   subtitle: string;
   children: React.ReactNode;
 }
 
-const MANUS_PILLARS = [
+const NKYEL_PILLARS = [
   {
     icon: TreeStructure,
     title: 'WorkGraph & Agents Autonomes',
@@ -57,23 +57,23 @@ const MANUS_PILLARS = [
   },
 ];
 
-export default function ManusAuthShell({
+export default function NkyelAuthShell({
   mode,
   title,
   subtitle,
   children,
-}: ManusAuthShellProps) {
+}: NkyelAuthShellProps) {
   const pathname = usePathname();
 
   return (
     <div className="min-h-screen w-full bg-[var(--material-canvas)] text-[var(--text-primary)] flex flex-col lg:flex-row relative overflow-x-hidden font-sans selection:bg-[#D5AE57]/20 selection:text-[#D5AE57]">
       
-      {/* ── Background Ambient Glow (Manus-grade) ────────────────── */}
+      {/* ── Background Ambient Glow ────────────────── */}
       <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-gradient-to-br from-[#D5AE57]/8 via-[#6757E8]/5 to-transparent rounded-full blur-[140px] pointer-events-none -z-10" />
       <div className="absolute bottom-0 right-10 w-[500px] h-[500px] bg-gradient-to-tl from-[#10B981]/5 via-[#D5AE57]/5 to-transparent rounded-full blur-[120px] pointer-events-none -z-10" />
 
       {/* ══════════════════════════════════════════════════════════════
-          GAUCHE : Hero Showcase Manus AI (Desktop & Tablette)
+          GAUCHE : Vitrine Souveraine Ñkyel AI (Desktop)
       ══════════════════════════════════════════════════════════════ */}
       <div className="hidden lg:flex lg:w-1/2 flex-col justify-between p-12 xl:p-16 border-r border-[var(--border-subtle)] relative bg-[var(--surface-sunken)]/40 backdrop-blur-2xl">
         
@@ -104,7 +104,7 @@ export default function ManusAuthShell({
           <div className="pt-8 space-y-4">
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[var(--surface-raised)] border border-[var(--border-subtle)] text-xs text-[var(--text-secondary)] shadow-sm">
               <Sparkle size={14} className="text-[#D5AE57] animate-pulse" />
-              <span>Plateforme Agentique Haute Précision</span>
+              <span>Plateforme Agentique Souveraine Haute Précision</span>
             </div>
 
             <h1 className="text-3xl xl:text-4xl font-extrabold text-[var(--text-primary)] tracking-tight leading-[1.15]">
@@ -115,14 +115,14 @@ export default function ManusAuthShell({
             </h1>
 
             <p className="text-sm text-[var(--text-secondary)] leading-relaxed max-w-lg">
-              Rejoignez l'écosystème souverain réunissant l'orchestration multi-agents, 
+              Rejoignez l'écosystème Ñkyel AI réunissant l'orchestration multi-agents, 
               le studio d'artefacts VIE et la mémoire contextuelle sans compromis sur la confidentialité.
             </p>
           </div>
 
           {/* Feature Matrix Cards */}
           <div className="pt-6 space-y-3 max-w-lg">
-            {MANUS_PILLARS.map((p, idx) => (
+            {NKYEL_PILLARS.map((p, idx) => (
               <motion.div
                 key={idx}
                 initial={{ opacity: 0, y: 10 }}
@@ -164,7 +164,7 @@ export default function ManusAuthShell({
       </div>
 
       {/* ══════════════════════════════════════════════════════════════
-          DROITE : Carte d'authentification Clerk Pro Manus-Grade
+          DROITE : Carte d'authentification Clerk Pro Ñkyel
       ══════════════════════════════════════════════════════════════ */}
       <div className="flex-1 flex flex-col justify-between p-6 sm:p-10 lg:p-12 xl:p-16 relative">
         
@@ -178,7 +178,7 @@ export default function ManusAuthShell({
             <span>Accueil</span>
           </Link>
 
-          {/* Segmented Auth Mode Switcher (Manus AI / Apple Style) */}
+          {/* Segmented Auth Mode Switcher */}
           <div className="inline-flex p-1 rounded-xl bg-[var(--surface-sunken)] border border-[var(--border-subtle)] text-xs font-medium">
             <Link
               href="/sign-in"
