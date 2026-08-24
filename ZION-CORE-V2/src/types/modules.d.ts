@@ -102,63 +102,7 @@ declare module 'framer-motion' {
   export const AnimatePresence: React.ComponentType<any>;
 }
 
-declare module '@phosphor-icons/react' {
-  import React from 'react';
-  export interface IconProps extends React.SVGAttributes<SVGElement> {
-    size?: number | string;
-    color?: string;
-    weight?: 'thin' | 'light' | 'regular' | 'bold' | 'fill' | 'duotone';
-    mirrored?: boolean;
-  }
-  export type Icon = React.ComponentType<IconProps>;
-  export const Sparkle: Icon;
-  export const ShieldCheck: Icon;
-  export const Cpu: Icon;
-  export const Brain: Icon;
-  export const TreeStructure: Icon;
-  export const ArrowLeft: Icon;
-  export const ArrowRight: Icon;
-  export const LockKey: Icon;
-  export const Globe: Icon;
-  export const CheckCircle: Icon;
-  export const Lightning: Icon;
-  export const Moon: Icon;
-  export const Sun: Icon;
-  export const Plus: Icon;
-  export const Graph: Icon;
-  export const Gear: Icon;
-  export const Eye: Icon;
-  export const CalendarCheck: Icon;
-  export const SlidersHorizontal: Icon;
-  export const HandPointing: Icon;
-  export const MagnifyingGlass: Icon;
-  export const Command: Icon;
-  export const ChatCircleDots: Icon;
-  export const UsersThree: Icon;
-  export const PlugsConnected: Icon;
-  export const PuzzlePiece: Icon;
-  export const FolderSimpleStar: Icon;
-  export const FloppyDisk: Icon;
-  export const TerminalWindow: Icon;
-  export const PaperPlaneTilt: Icon;
-  export const User: Icon;
-  export const Desktop: Icon;
-  export const Crown: Icon;
-  export const WarningOctagon: Icon;
-  export const CaretRight: Icon;
-  export const ArrowsClockwise: Icon;
-  export const Database: Icon;
-  export const Check: Icon;
-  export const Play: Icon;
-  export const UserCircle: Icon;
-  export const Code: Icon;
-  export const FileText: Icon;
-  export const Cookie: Icon;
-  export const Scales: Icon;
-  export const ChatCircleText: Icon;
-  export const ChartLineUp: Icon;
-  export const Image: Icon;
-  export const VideoCamera: Icon;
-  export const Infinity: Icon;
-  export const EnvelopeSimple: Icon;
-}
+declare module '@phosphor-icons/react';
+declare module '@tabler/icons-react';
+declare module 'lucide-react';
+

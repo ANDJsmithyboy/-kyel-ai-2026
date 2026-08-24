@@ -38,7 +38,7 @@ import {
   Eye,
   Check,
 } from '@phosphor-icons/react';
-import { useUser } from '@clerk/nextjs';
+import { useSafeUser as useUser } from '@/lib/auth-client';
 import { useLanguageStore, BCP47Language } from '@/stores/language.store';
 import { useSettingsStore, FontSize, Density } from '@/stores/settings.store';
 import Surface from '@/components/ui/Surface';

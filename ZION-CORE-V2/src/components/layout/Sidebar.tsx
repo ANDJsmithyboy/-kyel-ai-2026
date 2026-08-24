@@ -18,7 +18,7 @@ import { useChatStore, type Conversation } from '@/stores/chat.store';
 import { useSettingsStore } from '@/stores/settings.store';
 import { cn } from '@/lib/utils';
 import { v4 as uuidv4 } from 'uuid';
-import { useClerk } from '@clerk/nextjs';
+import { useSafeClerk as useClerk } from '@/lib/auth-client';
 
 /* -- Salutations gabonaises par heure -- */
 function getGreeting(name: string, style: string): string {
@@ -39,15 +39,15 @@ export default function Sidebar() {
   const router = useRouter();
   const { signOut } = useClerk();
   const { isOpen, isMobile, close, toggle, setMobile } = useSidebarStore();
-  const user = useAuthStore((s) => s.user);
-  const logout = useAuthStore((s) => s.logout);
-  const conversations = useChatStore((s) => s.conversations);
-  const activeId = useChatStore((s) => s.activeConversationId);
-  const addConversation = useChatStore((s) => s.addConversation);
-  const setActiveConversation = useChatStore((s) => s.setActiveConversation);
-  const removeConversation = useChatStore((s) => s.removeConversation);
-  const greetingStyle = useSettingsStore((s) => s.greetingStyle);
-  const blackPantherMode = useSettingsStore((s) => s.blackPantherMode);
+  const user = useAuthStore((s: any) => s.user);
+  const logout = useAuthStore((s: any) => s.logout);
+  const conversations = useChatStore((s: any) => s.conversations);
+  const activeId = useChatStore((s: any) => s.activeConversationId);
+  const addConversation = useChatStore((s: any) => s.addConversation);
+  const setActiveConversation = useChatStore((s: any) => s.setActiveConversation);
+  const removeConversation = useChatStore((s: any) => s.removeConversation);
+  const greetingStyle = useSettingsStore((s: any) => s.greetingStyle);
+  const blackPantherMode = useSettingsStore((s: any) => s.blackPantherMode);
 
   const [searchQuery, setSearchQuery] = useState('');
   const [showSearch, setShowSearch] = useState(false);
@@ -138,7 +138,7 @@ export default function Sidebar() {
 
   /* Filtrer conversations */
   const filtered = searchQuery
-    ? conversations.filter((c) => c.title.toLowerCase().includes(searchQuery.toLowerCase()))
+    ? conversations.filter((c: any) => c.title.toLowerCase().includes(searchQuery.toLowerCase()))
     : conversations;
 
   /* Grouper par date */
@@ -148,10 +148,10 @@ export default function Sidebar() {
   const weekStart = todayStart - 7 * 86400000;
 
   const groups: { label: string; items: Conversation[] }[] = [];
-  const todayItems = filtered.filter((c) => c.updatedAt >= todayStart);
-  const yesterdayItems = filtered.filter((c) => c.updatedAt >= yesterdayStart && c.updatedAt < todayStart);
-  const weekItems = filtered.filter((c) => c.updatedAt >= weekStart && c.updatedAt < yesterdayStart);
-  const olderItems = filtered.filter((c) => c.updatedAt < weekStart);
+  const todayItems = filtered.filter((c: any) => c.updatedAt >= todayStart);
+  const yesterdayItems = filtered.filter((c: any) => c.updatedAt >= yesterdayStart && c.updatedAt < todayStart);
+  const weekItems = filtered.filter((c: any) => c.updatedAt >= weekStart && c.updatedAt < yesterdayStart);
+  const olderItems = filtered.filter((c: any) => c.updatedAt < weekStart);
 
   if (todayItems.length) groups.push({ label: "Aujourd'hui", items: todayItems });
   if (yesterdayItems.length) groups.push({ label: 'Hier', items: yesterdayItems });

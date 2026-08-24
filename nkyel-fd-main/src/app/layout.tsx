@@ -86,39 +86,5 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </body>
     </html>
   );
-
-  if (isClerkConfigured && clerkKey) {
-    return (
-      <ClerkProvider
-        publishableKey={clerkKey}
-        localization={frFR}
-        appearance={{
-          variables: {
-            colorPrimary: '#B8922A',
-            colorBackground: 'hsl(0 0% 100%)',
-            colorDanger: '#DC2626',
-            borderRadius: '12px',
-          },
-          elements: {
-            card: 'bg-[var(--bg)] border border-[var(--border)] shadow-lg',
-            headerTitle: 'hidden',
-            headerSubtitle: 'hidden',
-            formButtonPrimary: 'bg-[var(--accent)] hover:opacity-90 text-[var(--accent-fg)] font-bold border-0 transition-opacity',
-            footerActionLink: 'text-[var(--accent)] hover:text-[var(--text-primary)] transition-colors font-semibold',
-            formFieldInput: 'bg-[var(--surface)] border border-[var(--border)] focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent-muted)] text-[var(--text-primary)]',
-            dividerLine: 'bg-[var(--border)]',
-            dividerText: 'text-[var(--text-secondary)]',
-            socialButtonsBlockButton: 'bg-[var(--surface)] border border-[var(--border)] hover:bg-[var(--bg-elevated)] text-[var(--text-primary)] transition-colors',
-            socialButtonsBlockButtonText: 'text-[var(--text-primary)] font-medium',
-            socialButtonsBlockButtonArrow: 'text-[var(--text-primary)]',
-            watermark: 'hidden',
-          },
-        }}
-      >
-        {content}
-      </ClerkProvider>
-    );
-  }
-
   return content;
 }

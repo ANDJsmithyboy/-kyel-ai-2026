@@ -12,7 +12,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
-import { useClerk } from '@clerk/nextjs';
+import { useSafeClerk as useClerk } from '@/lib/auth-client';
 import {
   GearSix,
   User,
@@ -32,8 +32,8 @@ interface SidebarFooterProps {
 export default function SidebarFooter({ isCollapsed }: SidebarFooterProps) {
   const router = useRouter();
   const { signOut } = useClerk();
-  const logout = useAuthStore((s) => s.logout);
-  const user = useAuthStore((s) => s.user);
+  const logout = useAuthStore((s: any) => s.logout);
+  const user = useAuthStore((s: any) => s.user);
 
   const [showDropdown, setShowDropdown] = useState(false);
   const [isUpgradeOpen, setIsUpgradeOpen] = useState(false);

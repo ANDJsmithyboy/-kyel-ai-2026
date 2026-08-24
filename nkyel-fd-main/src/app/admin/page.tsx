@@ -52,7 +52,7 @@ import {
   DeviceMobile,
   ChartLineUp,
 } from '@phosphor-icons/react';
-import { useUser } from '@clerk/nextjs';
+import { useSafeUser as useUser } from '@/lib/auth-client';
 
 type TabId =
   | 'overview'

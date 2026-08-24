@@ -43,8 +43,9 @@ import {
   Command,
   Crown,
 } from '@phosphor-icons/react';
-import { useUser, SignOutButton } from '@clerk/nextjs';
 import { useSidebar } from '@/hooks/useSidebar';
+import { useSafeUser as useUser } from '@/lib/auth-client';
+const SignOutButton = ({ children }: { children: React.ReactNode }) => <div onClick={() => { if (typeof window !== 'undefined') window.location.href = '/'; }}>{children}</div>;
 
 export interface NavItemConfig {
   id: string;
@@ -220,8 +221,8 @@ export default function NkyelSidebar() {
             }}
             title="Lancer une nouvelle mission"
             onClick={handleNavClick}
-            onMouseEnter={(e) => { e.currentTarget.style.opacity = '0.9'; }}
-            onMouseLeave={(e) => { e.currentTarget.style.opacity = '1'; }}
+            onMouseEnter={(e: any) => { e.currentTarget.style.opacity = '0.9'; }}
+            onMouseLeave={(e: any) => { e.currentTarget.style.opacity = '1'; }}
           >
             <Plus size={16} weight="bold" className="shrink-0" />
             {!isCollapsed && <span className="truncate">Nouvelle mission</span>}
@@ -243,8 +244,6 @@ export default function NkyelSidebar() {
                 <Link
                   key={item.id}
                   href={item.href}
-                  onMouseEnter={() => setHoveredItem(item.id)}
-                  onMouseLeave={() => setHoveredItem(null)}
                   onClick={handleNavClick}
                   className="group relative flex items-center font-medium"
                   style={{
@@ -258,14 +257,14 @@ export default function NkyelSidebar() {
                     background: isActive ? 'var(--surface-raised)' : 'transparent',
                     transition: `all var(--transition-fast)`,
                   }}
-                  onMouseEnter={(e) => {
+                  onMouseEnter={(e: any) => {
                     if (!isActive) {
                       e.currentTarget.style.background = 'var(--accent-subtle)';
                       e.currentTarget.style.color = 'var(--fg)';
                     }
                     setHoveredItem(item.id);
                   }}
-                  onMouseLeave={(e) => {
+                  onMouseLeave={(e: any) => {
                     if (!isActive) {
                       e.currentTarget.style.background = 'transparent';
                       e.currentTarget.style.color = 'var(--fg-muted)';
@@ -447,11 +446,11 @@ export default function NkyelSidebar() {
               transition: `all var(--transition-fast)`,
               minHeight: 32,
             }}
-            onMouseEnter={(e) => {
+            onMouseEnter={(e: any) => {
               e.currentTarget.style.background = 'var(--accent-subtle)';
               e.currentTarget.style.color = 'var(--fg-muted)';
             }}
-            onMouseLeave={(e) => {
+            onMouseLeave={(e: any) => {
               e.currentTarget.style.background = 'transparent';
               e.currentTarget.style.color = 'var(--fg-subtle)';
             }}

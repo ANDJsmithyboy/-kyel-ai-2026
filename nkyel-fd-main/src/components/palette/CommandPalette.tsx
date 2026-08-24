@@ -48,7 +48,7 @@ import {
   TreeStructure,
 } from '@phosphor-icons/react';
 import { GeistActivity } from '@/components/icons/GeistIcons';
-import { useUser } from '@clerk/nextjs';
+import { useSafeUser as useUser } from '@/lib/auth-client';
 import { useLanguageStore } from '@/stores/language.store';
 import { useSettingsStore } from '@/stores/settings.store';
 import { useWorkspaceLayout } from '@/hooks/useWorkspaceLayout';

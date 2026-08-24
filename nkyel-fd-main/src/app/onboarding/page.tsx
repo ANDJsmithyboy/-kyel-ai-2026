@@ -5,7 +5,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useUser } from '@clerk/nextjs';
+import { useSafeUser as useUser } from '@/lib/auth-client';
 import { useRouter } from 'next/navigation';
 import { DURATION, EASE_CSS } from '@/lib/motion';
 
