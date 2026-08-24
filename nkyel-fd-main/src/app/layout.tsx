@@ -28,8 +28,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'Ñkyel AI — Sovereign African Intelligence',
-  description: 'Ñkyel AI by SmartANDJ AI Technologies — Sovereign African artificial intelligence',
+  title: 'Ñkyel AI — Sovereign Global Intelligence',
+  description: 'Ñkyel AI by SmartANDJ AI Technologies — Next-Generation Global Intelligence Architecture',
   icons: { icon: '/favicon.png' },
   robots: 'noindex,nofollow',
 };

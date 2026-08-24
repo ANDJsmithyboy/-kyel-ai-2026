@@ -15,28 +15,23 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  SidebarSimple,
-  MagnifyingGlass,
-  Sparkle,
-  ShareNetwork,
-  DotsThree,
-  Plus,
-  ArrowUp,
-  Square,
-  Microphone,
-  CheckCircle,
-  Copy,
-  ArrowsClockwise,
-  Activity,
-  Globe,
-  Wrench,
-  Cpu,
-  PlugsConnected,
-  Eye,
-  FileText,
-  Camera,
-  Paperclip,
-} from '@phosphor-icons/react';
+  GeistSidebar,
+  GeistSearch,
+  GeistSparkle,
+  GeistPlus,
+  GeistArrowUp,
+  GeistMic,
+  GeistCheck,
+  GeistCopy,
+  GeistRefresh,
+  GeistActivity,
+  GeistGlobe,
+  GeistWrench,
+  GeistCpu,
+  GeistPlugs,
+  GeistFile,
+  GeistCross,
+} from '@/components/icons/GeistIcons';
 import { useWorkspaceLayout } from '@/hooks/useWorkspaceLayout';
 import RightContextInspector, { SourceItem, ToolItem, SkillItem, McpConnectorItem } from '@/components/inspector/RightContextInspector';
 import Surface from '@/components/ui/Surface';
@@ -185,7 +180,7 @@ export default function AdaptiveChatWorkspace({
               title={isLeftOpen ? 'Masquer la barre latérale' : 'Afficher la barre latérale'}
               aria-label="Toggle Sidebar"
             >
-              <SidebarSimple size={17} weight={isLeftOpen ? 'fill' : 'regular'} />
+              <GeistSidebar size={16} />
             </button>
 
             <span className="font-semibold text-xs text-[var(--text-primary)] truncate max-w-[280px] sm:max-w-md">
@@ -200,7 +195,7 @@ export default function AdaptiveChatWorkspace({
               onClick={() => window.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', metaKey: true, bubbles: true }))}
               className="hidden sm:flex h-7 items-center gap-1.5 px-2.5 rounded-lg border border-[var(--border)] bg-[var(--surface-raised)] text-[11px] text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:border-[var(--border-strong)] transition-colors"
             >
-              <MagnifyingGlass size={13} className="text-[#D5AE57]" />
+              <GeistSearch size={13} className="text-[#D5AE57]" />
               <span>⌘K</span>
             </button>
 
@@ -215,7 +210,7 @@ export default function AdaptiveChatWorkspace({
               }`}
               title="Mode concentration (masque les panneaux latéraux)"
             >
-              <Eye size={13} />
+              <GeistSparkle size={13} />
               <span>Focus</span>
             </button>
 
@@ -230,7 +225,7 @@ export default function AdaptiveChatWorkspace({
               }`}
               title="Afficher l'inspecteur contextuel (Run, Sources, Tools)"
             >
-              <Activity size={14} className={isStreaming ? 'animate-spin text-[#D5AE57]' : 'text-[var(--text-tertiary)]'} />
+              <GeistActivity size={14} className={isStreaming ? 'animate-spin text-[#D5AE57]' : 'text-[var(--text-tertiary)]'} />
               <span className="hidden sm:inline">Contexte</span>
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
             </button>
@@ -277,10 +272,10 @@ export default function AdaptiveChatWorkspace({
                       {/* Tool Execution Pill (Compact) */}
                       {msg.toolActivity && (
                         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-xl bg-[var(--surface)] border border-[var(--border)] text-[11px] text-[var(--text-secondary)] shadow-sm">
-                          <Wrench size={13} className="text-[#D5AE57]" />
+                          <GeistWrench size={13} className="text-[#D5AE57]" />
                           <span>{msg.toolActivity.name}</span>
                           <span className="text-[10px] font-mono text-[var(--text-tertiary)]">({msg.toolActivity.duration})</span>
-                          <CheckCircle size={13} weight="fill" className="text-emerald-400" />
+                          <GeistCheck size={13} className="text-emerald-400" strokeWidth={2} />
                         </div>
                       )}
 
@@ -313,14 +308,14 @@ export default function AdaptiveChatWorkspace({
                           onClick={() => copyMessage(msg.id, msg.content)}
                           className="p-1.5 rounded-lg hover:bg-[var(--hover)] hover:text-[var(--text-primary)] transition-colors flex items-center gap-1"
                         >
-                          <Copy size={13} />
+                          <GeistCopy size={13} />
                           <span>{copiedMsgId === msg.id ? 'Copié' : 'Copier'}</span>
                         </button>
                         <button
                           onClick={() => handleSend()}
                           className="p-1.5 rounded-lg hover:bg-[var(--hover)] hover:text-[var(--text-primary)] transition-colors flex items-center gap-1"
                         >
-                          <ArrowsClockwise size={13} />
+                          <GeistRefresh size={13} />
                           <span>Régénérer</span>
                         </button>
                       </div>
@@ -378,7 +373,7 @@ export default function AdaptiveChatWorkspace({
                     className="w-8 h-8 rounded-xl bg-[var(--surface)] hover:bg-[var(--surface-raised)] border border-[var(--border)] flex items-center justify-center text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
                     title="Ajouter des fichiers ou du contexte (+)"
                   >
-                    <Plus size={15} weight="bold" />
+                    <GeistPlus size={15} strokeWidth={2} />
                   </button>
 
                   {plusMenuOpen && (
@@ -387,21 +382,21 @@ export default function AdaptiveChatWorkspace({
                         onClick={() => setPlusMenuOpen(false)}
                         className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl hover:bg-[var(--hover)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] text-left transition-colors"
                       >
-                        <FileText size={15} className="text-[#D5AE57]" />
+                        <GeistFile size={15} className="text-[#D5AE57]" />
                         <span>Téléverser Fichier</span>
                       </button>
                       <button
                         onClick={() => setPlusMenuOpen(false)}
                         className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl hover:bg-[var(--hover)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] text-left transition-colors"
                       >
-                        <Camera size={15} className="text-emerald-400" />
-                        <span>Capture Caméra</span>
+                        <GeistGlobe size={15} className="text-emerald-400" />
+                        <span>Recherche Web</span>
                       </button>
                       <button
                         onClick={() => setPlusMenuOpen(false)}
                         className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl hover:bg-[var(--hover)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] text-left transition-colors"
                       >
-                        <Paperclip size={15} className="text-amber-300" />
+                        <GeistPlugs size={15} className="text-amber-300" />
                         <span>Associer Connecteur MCP</span>
                       </button>
                     </div>
@@ -415,7 +410,7 @@ export default function AdaptiveChatWorkspace({
                     className="w-8 h-8 rounded-xl hover:bg-[var(--hover)] text-[var(--text-tertiary)] hover:text-[var(--text-primary)] flex items-center justify-center transition-colors"
                     title="Dictée vocale"
                   >
-                    <Microphone size={16} />
+                    <GeistMic size={16} />
                   </button>
 
                   {isStreaming ? (
@@ -424,7 +419,7 @@ export default function AdaptiveChatWorkspace({
                       className="w-8 h-8 rounded-xl bg-red-500/20 hover:bg-red-500/30 text-red-400 flex items-center justify-center transition-colors border border-red-500/30"
                       title="Arrêter l'exécution"
                     >
-                      <Square size={13} weight="fill" />
+                      <GeistCross size={13} strokeWidth={2} />
                     </button>
                   ) : (
                     <button
@@ -438,7 +433,7 @@ export default function AdaptiveChatWorkspace({
                       }`}
                       title="Envoyer le message"
                     >
-                      <ArrowUp size={16} weight="bold" />
+                      <GeistArrowUp size={16} strokeWidth={2} />
                     </button>
                   )}
                 </div>

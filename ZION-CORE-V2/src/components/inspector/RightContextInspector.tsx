@@ -15,22 +15,17 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  Activity,
-  Globe,
-  Wrench,
-  Sparkle,
-  PlugsConnected,
-  X,
-  CheckCircle,
-  Clock,
-  ArrowSquareOut,
-  Cpu,
-  FileText,
-  ShieldCheck,
-  Lightning,
-  TreeStructure,
-  Database,
-} from '@phosphor-icons/react';
+  GeistActivity,
+  GeistGlobe,
+  GeistWrench,
+  GeistSparkle,
+  GeistPlugs,
+  GeistCross,
+  GeistCheck,
+  GeistCpu,
+  GeistFile,
+  GeistShield,
+} from '@/components/icons/GeistIcons';
 import { useWorkspaceLayout, InspectorTab } from '@/hooks/useWorkspaceLayout';
 import Surface from '@/components/ui/Surface';
 
@@ -237,11 +232,11 @@ export default function RightContextInspector({
   if (!isRightOpen) return null;
 
   const TABS: { id: InspectorTab; label: string; icon: React.ComponentType<any>; count?: number }[] = [
-    { id: 'run', label: 'Run', icon: Activity },
-    { id: 'sources', label: 'Sources', icon: Globe, count: sources.length },
-    { id: 'tools', label: 'Tools', icon: Wrench, count: tools.length },
-    { id: 'skills', label: 'Skills', icon: Sparkle, count: skills.length },
-    { id: 'mcp', label: 'MCP', icon: PlugsConnected, count: mcpConnectors.length },
+    { id: 'run', label: 'Run', icon: GeistActivity },
+    { id: 'sources', label: 'Sources', icon: GeistGlobe, count: sources.length },
+    { id: 'tools', label: 'Tools', icon: GeistWrench, count: tools.length },
+    { id: 'skills', label: 'Skills', icon: GeistSparkle, count: skills.length },
+    { id: 'mcp', label: 'MCP', icon: GeistPlugs, count: mcpConnectors.length },
   ];
 
   return (
@@ -253,8 +248,8 @@ export default function RightContextInspector({
       <div className="h-12 px-4 border-b border-[var(--border)] flex items-center justify-between shrink-0">
         <div className="flex items-center gap-2 min-w-0">
           <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-          <span className="text-xs font-semibold text-[var(--text-primary)] truncate">
-            Contexte de la Mission
+          <span className="text-xs font-semibold text-[var(--text-primary)] truncate font-mono">
+            MISSION CONTEXT
           </span>
         </div>
 
@@ -264,7 +259,7 @@ export default function RightContextInspector({
           title="Fermer l'inspecteur contextuel (Esc)"
           aria-label="Fermer"
         >
-          <X size={15} />
+          <GeistCross size={14} />
         </button>
       </div>
 

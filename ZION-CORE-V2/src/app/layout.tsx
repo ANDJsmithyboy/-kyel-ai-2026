@@ -1,6 +1,6 @@
-/* Ñkyel AI · layout.tsx · SmartANDJ AI Technologies · Constitution Zion Core
+/* Ñkyel AI · layout.tsx · SmartANDJ AI Technologies
    Fondateur : Daniel Jonathan ANDJ
-   Root layout Next.js — Clerk + PostHog + Sentry + Geist Sans/Mono + Ñkyel Design System V4 */
+   Root layout Next.js — Clerk + PostHog + Geist Typography */
 
 import type { Metadata, Viewport } from 'next';
 import Script from 'next/script';
@@ -14,9 +14,10 @@ import GlobalShortcuts from '@/components/shortcuts/GlobalShortcuts';
 import CommandPalette from '@/components/palette/CommandPalette';
 import './globals.css';
 
-const geistSans = Geist({
+/* ── Typography: Geist Sans + Geist Mono only ──────── */
+const geist = Geist({
   subsets: ['latin'],
-  variable: '--font-geist-sans',
+  variable: '--font-geist',
   display: 'swap',
 });
 
@@ -27,61 +28,59 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'Ñkyel AI — Intelligence Souveraine',
-  description: 'Ñkyel AI par SmartANDJ AI Technologies — Intelligence souveraine, internationale, vérifiable.',
+  title: 'Ñkyel AI — Sovereign Global Intelligence',
+  description: 'Ñkyel AI by SmartANDJ AI Technologies — Next-Generation Global Intelligence Architecture',
   icons: { icon: '/favicon.png' },
   robots: 'noindex,nofollow',
 };
 
 export const viewport: Viewport = {
-  themeColor: '#08090D',
+  themeColor: '#FAFAF8',
   width: 'device-width',
   initialScale: 1,
-  maximumScale: 5,
+  maximumScale: 1,
   viewportFit: 'cover',
   interactiveWidget: 'resizes-content',
 };
+
+const enableSplash = process.env.NEXT_PUBLIC_ENABLE_SPLASH === 'true';
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <ClerkProvider localization={frFR} appearance={{
       variables: {
-        colorPrimary: '#C5A059',
-        colorBackground: '#0E1117',
-        colorDanger: '#BE6254',
-        borderRadius: '14px',
+        colorPrimary: '#B8922A',
+        colorBackground: 'hsl(0 0% 100%)',
+        colorDanger: '#DC2626',
+        borderRadius: '12px',
       },
       elements: {
-        card: 'bg-[var(--bg)] border border-[var(--border-default)] shadow-lg',
+        card: 'bg-[var(--bg)] border border-[var(--border)] shadow-lg',
         headerTitle: 'hidden',
         headerSubtitle: 'hidden',
-        formButtonPrimary: 'bg-[var(--accent)] hover:opacity-90 text-[var(--accent-fg)] font-semibold border-0 transition-opacity',
-        footerActionLink: 'text-[var(--accent)] hover:text-[var(--fg)] transition-colors font-medium',
-        formFieldInput: 'bg-[var(--surface)] border border-[var(--border-default)] focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--focus-ring)] text-[var(--fg)]',
-        dividerLine: 'bg-[var(--border-default)]',
-        dividerText: 'text-[var(--fg-muted)]',
-        socialButtonsBlockButton: 'bg-[var(--surface)] border border-[var(--border-default)] hover:bg-[var(--surface-raised)] text-[var(--fg)] transition-colors',
-        socialButtonsBlockButtonText: 'text-[var(--fg)] font-medium',
-        socialButtonsBlockButtonArrow: 'text-[var(--fg)]',
+        formButtonPrimary: 'bg-[var(--accent)] hover:opacity-90 text-[var(--accent-fg)] font-bold border-0 transition-opacity',
+        footerActionLink: 'text-[var(--accent)] hover:text-[var(--text-primary)] transition-colors font-semibold',
+        formFieldInput: 'bg-[var(--surface)] border border-[var(--border)] focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent-muted)] text-[var(--text-primary)]',
+        dividerLine: 'bg-[var(--border)]',
+        dividerText: 'text-[var(--text-secondary)]',
+        socialButtonsBlockButton: 'bg-[var(--surface)] border border-[var(--border)] hover:bg-[var(--bg-elevated)] text-[var(--text-primary)] transition-colors',
+        socialButtonsBlockButtonText: 'text-[var(--text-primary)] font-medium',
+        socialButtonsBlockButtonArrow: 'text-[var(--text-primary)]',
         watermark: 'hidden',
       },
     }}>
-      <html lang="fr" className="dark" data-theme="black-panther" suppressHydrationWarning>
+      <html lang="fr" className="light" data-theme="neo-blanc" data-accent="gold" suppressHydrationWarning>
         <head>
-          {/* FOUC prevention — apply theme + accent + direction before first paint */}
+          {/* FOUC prevention — apply theme + accent before first paint */}
           <Script
             id="fouc-prevention"
             strategy="beforeInteractive"
             dangerouslySetInnerHTML={{
-              __html: `(function(){try{var t=localStorage.getItem('Nkyel AI_theme')||'black-panther';var a=localStorage.getItem('Nkyel AI_accent')||'foret';var ok=['black-panther','nuit-lope','aurore-ogoue','bleu-nuit','violette-mandrille','neo-blanc'];if(ok.indexOf(t)===-1)t='black-panther';var lt=t==='aurore-ogoue'||t==='neo-blanc';document.documentElement.className=lt?'light':'dark';document.documentElement.setAttribute('data-theme',t);document.documentElement.setAttribute('data-accent',a);var mc={'black-panther':'#08090D','nuit-lope':'#030305','aurore-ogoue':'#F8F8F5','bleu-nuit':'#060A14','violette-mandrille':'#08060F','neo-blanc':'#FAFAF8'};var meta=document.querySelector('meta[name="theme-color"]');if(meta)meta.setAttribute('content',mc[t]||'#08090D');var dir=localStorage.getItem('nkyel-language-preferences');if(dir){try{var lp=JSON.parse(dir);var d=lp&&lp.state&&lp.state.uiLanguage;if(d==='ar'||d==='he'||d==='fa'||d==='ur')document.documentElement.dir='rtl';else document.documentElement.dir='ltr'}catch(e){}}var fs=localStorage.getItem('Nkyel AI_fontSize');if(fs){var sc=fs==='small'?0.9:fs==='large'?1.1:1;document.documentElement.style.setProperty('--app-text-scale',String(sc))}}catch(e){}})();`,
+              __html: `(function(){try{var t=localStorage.getItem('Nkyel AI_theme')||'neo-blanc';var a=localStorage.getItem('Nkyel AI_accent')||'gold';var tm=localStorage.getItem('Nkyel AI_themeMode')||'light';var theme=tm==='auto'?(window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches?'black-panther':'neo-blanc'):t;var ok=['black-panther','nuit-lope','aurore-ogoue','bleu-nuit','violette-mandrille','neo-blanc'];if(ok.indexOf(theme)===-1)theme='neo-blanc';var lt=theme==='aurore-ogoue'||theme==='neo-blanc';document.documentElement.className=lt?'light':'dark';document.documentElement.setAttribute('data-theme',theme);document.documentElement.setAttribute('data-accent',a);var mc={'black-panther':'#0F0F0F','nuit-lope':'#050507','aurore-ogoue':'#F8F8F4','bleu-nuit':'#060A14','violette-mandrille':'#08060F','neo-blanc':'#FAFAF8'};var meta=document.querySelector('meta[name="theme-color"]');if(meta)meta.setAttribute('content',mc[theme]||'#FAFAF8');var fs=localStorage.getItem('Nkyel AI_fontSize')||'normal';document.documentElement.setAttribute('data-font-size',fs);var den=localStorage.getItem('Nkyel AI_density')||'comfortable';document.documentElement.setAttribute('data-density',den)}catch(e){}})();`,
             }}
           />
         </head>
-        <body
-          className={`antialiased overflow-hidden ${geistSans.variable} ${geistMono.variable}`}
-          style={{ fontFamily: 'var(--font-sans)' }}
-          suppressHydrationWarning
-        >
+        <body className={`antialiased overflow-hidden ${geist.variable} ${geistMono.variable}`} suppressHydrationWarning>
           <PostHogProvider>
             {enableSplash && <SplashScreen />}
             <GlobalShortcuts />
@@ -91,12 +90,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               position="bottom-right"
               toastOptions={{
                 style: {
-                  background: 'var(--surface-raised)',
-                  border: '1px solid var(--border-default)',
-                  color: 'var(--fg)',
+                  background: 'var(--bg-elevated)',
+                  border: '1px solid var(--border)',
+                  color: 'var(--text-primary)',
                   fontFamily: 'var(--font-sans)',
-                  borderRadius: 'var(--radius-lg)',
-                  boxShadow: 'var(--shadow-lg)',
                 },
               }}
             />
