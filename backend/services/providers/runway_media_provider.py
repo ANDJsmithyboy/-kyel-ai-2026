@@ -53,12 +53,21 @@ class RunwayMediaProvider:
 
     @classmethod
     def get_api_key(cls) -> str:
+        from core.key_rotator import runway_rotator
+        active_key = runway_rotator.get_active_key()
+        if active_key:
+            return active_key
         pool = settings.runway_keys_pool
         if pool:
             key = pool[cls._key_index % len(pool)]
             cls._key_index += 1
             return key
-        return os.getenv("RUNWAY_API_KEY") or settings.runway_api_key or ""
+        return os.getenv("RUNWAY_API_KEY") or getattr(settings, "runway_api_key", "") or ""
+
+    @classmethod
+    def report_rate_limit(cls, key: str, cooldown_seconds: int = 60) -> None:
+        from core.key_rotator import runway_rotator
+        runway_rotator.report_rate_limit(key, cooldown_seconds)
 
     @classmethod
     def get_base_url(cls) -> str:
