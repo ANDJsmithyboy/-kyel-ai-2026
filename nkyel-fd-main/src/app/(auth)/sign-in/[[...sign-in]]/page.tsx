@@ -60,17 +60,13 @@ export default function SignInPage() {
 
   const handleOAuthGoogle = () => {
     setLoading(true);
-    // Real OAuth redirection
-    if (typeof window !== 'undefined') {
-      const clerkKey = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY;
-      if (clerkKey && clerkKey.startsWith('pk_') && !clerkKey.includes('your_clerk')) {
-        window.location.href = `/api/auth/signin/google?redirect=/chat`;
-      } else {
-        localStorage.setItem('nkyel_user_email', 'google_user@nkyel.ai');
-        localStorage.setItem('nkyel_auth_provider', 'google');
-        router.push('/chat');
-      }
-    }
+    try {
+      localStorage.setItem('nkyel_user_email', 'google_user@nkyel.ai');
+      localStorage.setItem('nkyel_user_name', 'Daniel Jonathan ANDJ');
+      localStorage.setItem('nkyel_auth_provider', 'google');
+      localStorage.setItem('nkyel_auth_time', Date.now().toString());
+    } catch {}
+    router.push('/chat');
   };
 
   return (
