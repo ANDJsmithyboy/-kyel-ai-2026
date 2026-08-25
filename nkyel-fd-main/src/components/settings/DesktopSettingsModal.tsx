@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { useSafeUser as useUser } from '@/lib/auth-client';
+import { useSafeUser as useUser, useSafeClerk as useClerk } from '@/lib/auth-client';
 import {
   User,
   SlidersHorizontal,
@@ -19,20 +19,47 @@ import {
   Sparkle,
   TextT,
   Check,
+  CaretDown,
+  CaretUp,
+  Key,
+  ShieldCheck,
+  HardDrives,
+  Robot,
 } from '@phosphor-icons/react';
 import { useSettingsModal } from '@/hooks/useSettingsModal';
+import { useLanguageStore, type SupportedLocale } from '@/stores/language.store';
 import {
   ACCENTS,
-  THEMES,
   useSettingsStore,
   type Density,
   type FontSize,
-  type ThemeKey,
-  type AccentKey,
 } from '@/stores/settings.store';
 
-type SettingsSection = 'general' | 'personalization' | 'account' | 'usage' | 'shortcuts' | 'connectors' | 'skills' | 'mail' | 'computer';
+type SettingsSection =
+  | 'general'
+  | 'account'
+  | 'usage'
+  | 'shortcuts'
+  | 'personalization'
+  | 'connectors'
+  | 'skills'
+  | 'mail'
+  | 'computer';
+
 type ThemeMode = 'light' | 'dark' | 'auto';
+
+const LANGUAGES: Array<{ code: SupportedLocale | string; label: string }> = [
+  { code: 'de-DE', label: 'Deutsch' },
+  { code: 'en-US', label: 'English' },
+  { code: 'es-ES', label: 'Español' },
+  { code: 'es-419', label: 'Español (Latinoamérica)' },
+  { code: 'fr-FR', label: 'Français' },
+  { code: 'it-IT', label: 'Italiano' },
+  { code: 'pt-BR', label: 'Português (Brasil)' },
+  { code: 'pt-PT', label: 'Português (Portugal)' },
+  { code: 'vi-VN', label: 'Tiếng Việt' },
+  { code: 'tr-TR', label: 'Türkçe' },
+];
 
 const THEME_OPTIONS: Array<{ id: ThemeMode; label: string; icon: any }> = [
   { id: 'light', label: 'Clair', icon: Sun },
@@ -59,7 +86,6 @@ const NAV_GROUPS: Array<{
     label: 'Paramètres',
     items: [
       { id: 'general', label: 'Général', icon: SlidersHorizontal },
-      { id: 'personalization', label: 'Personnalisation & Textes', icon: TextT },
       { id: 'account', label: 'Compte', icon: User },
       { id: 'usage', label: 'Utilisation et facturation', icon: CreditCard },
       { id: 'shortcuts', label: 'Raccourcis', icon: Monitor },
@@ -68,10 +94,11 @@ const NAV_GROUPS: Array<{
   {
     label: 'Fonctionnalités',
     items: [
+      { id: 'personalization', label: 'Personnalisation', icon: TextT },
       { id: 'connectors', label: 'Connecteurs', icon: PlugsConnected },
       { id: 'skills', label: 'Compétences', icon: PuzzlePiece },
-      { id: 'mail', label: 'Messagerie Ñkyel', icon: EnvelopeSimple },
-      { id: 'computer', label: 'Ñkyel Bureau', icon: Monitor },
+      { id: 'mail', label: 'Mail Ñkyel', icon: EnvelopeSimple },
+      { id: 'computer', label: 'My Computer', icon: Monitor },
     ],
   },
 ];
@@ -94,9 +121,8 @@ function readBool(key: string, fallback: boolean) {
   return stored === null ? fallback : stored === 'true';
 }
 
-function persistBool(key: string, current: boolean) {
-  if (typeof window !== 'undefined') localStorage.setItem(key, String(!current));
-  return !current;
+function persistBool(key: string, value: boolean) {
+  if (typeof window !== 'undefined') localStorage.setItem(key, String(value));
 }
 
 function Toggle({ checked, onChange, label }: { checked: boolean; onChange: () => void; label: string }) {
@@ -107,13 +133,13 @@ function Toggle({ checked, onChange, label }: { checked: boolean; onChange: () =
       aria-label={label}
       aria-checked={checked}
       onClick={onChange}
-      className={`relative h-5 w-9 rounded-full transition-colors ${
-        checked ? 'bg-[var(--accent)]' : 'bg-[var(--surface-raised)] border border-[var(--border)]'
+      className={`relative h-6 w-11 rounded-full transition-colors ${
+        checked ? 'bg-[#0070F3]' : 'bg-[var(--surface-raised)] border border-[var(--border)]'
       }`}
     >
       <span
-        className={`absolute top-0.5 h-4 w-4 rounded-full transition-transform ${
-          checked ? 'translate-x-[18px] bg-[var(--accent-fg)]' : 'translate-x-0.5 bg-[var(--text-tertiary)]'
+        className={`absolute top-0.5 h-5 w-5 rounded-full bg-white shadow-sm transition-transform ${
+          checked ? 'translate-x-[22px]' : 'translate-x-0.5'
         }`}
       />
     </button>
@@ -122,22 +148,26 @@ function Toggle({ checked, onChange, label }: { checked: boolean; onChange: () =
 
 export default function DesktopSettingsModal() {
   const { user } = useUser();
+  const { signOut } = useClerk();
   const isOpen = useSettingsModal((state: any) => state.isOpen);
   const close = useSettingsModal((state: any) => state.close);
+  const { uiLocale, setUiLocale } = useLanguageStore();
+
   const [activeSection, setActiveSection] = useState<SettingsSection>('general');
   const [query, setQuery] = useState('');
+  const [languageDropdownOpen, setLanguageDropdownOpen] = useState(false);
+
   const [browserNotifications, setBrowserNotifications] = useState(() =>
     readBool('Nkyel AI_browserNotifications', true)
   );
   const [soundAlerts, setSoundAlerts] = useState(() => readBool('Nkyel AI_soundAlerts', true));
-  const [productUpdates, setProductUpdates] = useState(() => readBool('Nkyel AI_productUpdates', true));
+
   const [themeMode, setThemeMode] = useState<ThemeMode>(() => {
     if (typeof window === 'undefined') return 'light';
     const stored = localStorage.getItem('Nkyel AI_themeMode');
     return stored === 'light' || stored === 'dark' || stored === 'auto' ? stored : 'light';
   });
 
-  const theme = useSettingsStore((state: any) => state.theme);
   const accent = useSettingsStore((state: any) => state.accent);
   const fontSize = useSettingsStore((state: any) => state.fontSize);
   const density = useSettingsStore((state: any) => state.density);
@@ -157,11 +187,25 @@ export default function DesktopSettingsModal() {
   const toggleSyntax = useSettingsStore((state: any) => state.toggleSyntax);
 
   const dialogRef = useRef<HTMLDivElement>(null);
+  const languageDropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     hydrateSettings();
   }, [hydrateSettings]);
 
+  // Close language dropdown on outside click
+  useEffect(() => {
+    if (!languageDropdownOpen) return;
+    const handler = (e: MouseEvent) => {
+      if (languageDropdownRef.current && !languageDropdownRef.current.contains(e.target as Node)) {
+        setLanguageDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, [languageDropdownOpen]);
+
+  // Theme synchronization
   useEffect(() => {
     if (themeMode !== 'auto' || typeof window === 'undefined') return;
     const media = window.matchMedia('(prefers-color-scheme: light)');
@@ -190,18 +234,25 @@ export default function DesktopSettingsModal() {
     }
   };
 
-  const handlePreference = (
-    key: string,
-    current: boolean,
-    setter: React.Dispatch<React.SetStateAction<boolean>>
-  ) => {
-    setter(!current);
-    persistBool(key, current);
+  const handleToggleNotifications = () => {
+    const next = !browserNotifications;
+    setBrowserNotifications(next);
+    persistBool('Nkyel AI_browserNotifications', next);
   };
 
-  const displayName = user?.fullName || user?.username || 'Daniel Jonathan ANDJ';
-  const email = user?.primaryEmailAddress?.emailAddress || 'founder@nkyel.ai';
+  const handleToggleSound = () => {
+    const next = !soundAlerts;
+    setSoundAlerts(next);
+    persistBool('Nkyel AI_soundAlerts', next);
+  };
+
+  const displayName = user?.fullName || user?.username || 'Christ pour la VOP';
+  const email = user?.primaryEmailAddress?.emailAddress || 'fondateur@nkyel.ai';
   const initials = initialsFor(displayName);
+
+  const currentLanguageLabel =
+    LANGUAGES.find((l) => l.code === uiLocale || (uiLocale.startsWith('fr') && l.code === 'fr-FR'))
+      ?.label || 'Français';
 
   const visibleGroups = useMemo(
     () =>
@@ -214,292 +265,418 @@ export default function DesktopSettingsModal() {
 
   if (!isOpen) return null;
 
-  const renderPersonalizationControls = () => (
-    <>
-      <section className="mt-6 border-t border-[var(--border)] pt-6">
-        <h2 className="text-[16px] font-semibold text-[var(--text-primary)]">Mode d’affichage</h2>
-        <p className="mt-1 text-[13px] text-[var(--text-secondary)]">Choisis entre le mode clair, sombre ou automatique.</p>
-        <div className="mt-4 grid max-w-[520px] grid-cols-3 gap-3">
-          {THEME_OPTIONS.map(({ id, label, icon: Icon }) => (
-            <button
-              key={id}
-              type="button"
-              onClick={() => handleThemeMode(id)}
-              aria-pressed={themeMode === id}
-              className={`nkyel-preference-card flex h-[84px] flex-col items-center justify-center gap-2 rounded-xl border text-[13px] font-medium transition-all ${
-                themeMode === id
-                  ? 'border-[var(--accent)] bg-[var(--surface-raised)] text-[var(--text-primary)] shadow-sm'
-                  : 'border-[var(--border)] bg-[var(--surface)] text-[var(--text-secondary)] hover:bg-[var(--hover)] hover:text-[var(--text-primary)]'
-              }`}
-            >
-              <Icon size={22} />
-              <span>{label}</span>
-            </button>
-          ))}
-        </div>
-      </section>
-
-      <section className="mt-8 border-t border-[var(--border)] pt-6">
-        <div className="flex items-end justify-between gap-4">
-          <div>
-            <h2 className="text-[16px] font-semibold text-[var(--text-primary)]">Couleur d’accent</h2>
-            <p className="mt-1 text-[12px] text-[var(--text-secondary)]">Les accents souverains SmartANDJ AI.</p>
-          </div>
-          <span className="font-mono text-[11px] uppercase tracking-[0.12em] text-[var(--text-tertiary)]">
-            {ACCENTS.find((item) => item.key === accent)?.name || 'Or SmartANDJ'}
-          </span>
-        </div>
-        <div className="mt-4 grid max-w-[620px] grid-cols-5 gap-3">
-          {ACCENTS.map((item) => (
-            <button
-              key={item.key}
-              type="button"
-              onClick={() => setAccent(item.key)}
-              aria-label={`Accent ${item.name}`}
-              aria-pressed={accent === item.key}
-              className={`nkyel-accent-swatch group flex h-[68px] flex-col items-center justify-center gap-2 rounded-xl border transition-all ${
-                accent === item.key
-                  ? 'border-[var(--text-primary)] bg-[var(--surface-raised)] shadow-sm'
-                  : 'border-[var(--border)] bg-[var(--surface)] hover:bg-[var(--hover)]'
-              }`}
-            >
-              <span
-                className="h-5 w-5 rounded-full border border-black/10 shadow-sm"
-                style={{ backgroundColor: item.color }}
-              />
-              <span className="max-w-full truncate px-1 text-[10px] font-medium text-[var(--text-secondary)]">
-                {item.name}
-              </span>
-            </button>
-          ))}
-        </div>
-      </section>
-
-      <section className="mt-8 border-t border-[var(--border)] pt-6">
-        <h2 className="text-[16px] font-semibold text-[var(--text-primary)]">Taille du texte et Densité</h2>
-        <p className="mt-1 text-[13px] text-[var(--text-secondary)]">Ajuste la lisibilité et l’espacement des conversations.</p>
-        <div className="mt-4 grid max-w-[620px] grid-cols-2 gap-3">
-          <div className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-3.5">
-            <p className="mb-2.5 text-[11px] font-semibold uppercase tracking-[0.12em] text-[var(--text-tertiary)]">
-              Taille de police
-            </p>
-            <div className="flex gap-2">
-              {FONT_OPTIONS.map((item) => (
-                <button
-                  key={item.id}
-                  type="button"
-                  onClick={() => setFontSize(item.id)}
-                  aria-pressed={fontSize === item.id}
-                  className={`flex h-9 flex-1 items-center justify-center rounded-lg border text-[12px] font-medium transition-all ${
-                    fontSize === item.id
-                      ? 'border-[var(--accent)] bg-[var(--surface-raised)] text-[var(--text-primary)] font-semibold shadow-sm'
-                      : 'border-[var(--border)] bg-transparent text-[var(--text-secondary)] hover:bg-[var(--hover)] hover:text-[var(--text-primary)]'
-                  }`}
-                >
-                  <span className={item.id === 'small' ? 'text-[11px]' : item.id === 'large' ? 'text-[15px]' : 'text-[13px]'}>
-                    {item.sample}
-                  </span>
-                  <span className="ml-1.5">{item.label}</span>
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-3.5">
-            <p className="mb-2.5 text-[11px] font-semibold uppercase tracking-[0.12em] text-[var(--text-tertiary)]">
-              Densité de l’espace
-            </p>
-            <div className="flex gap-2">
-              {DENSITY_OPTIONS.map((item) => (
-                <button
-                  key={item.id}
-                  type="button"
-                  onClick={() => setDensity(item.id)}
-                  aria-pressed={density === item.id}
-                  className={`flex h-9 flex-1 flex-col items-center justify-center rounded-lg border text-[11px] font-medium transition-all ${
-                    density === item.id
-                      ? 'border-[var(--accent)] bg-[var(--surface-raised)] text-[var(--text-primary)] font-semibold shadow-sm'
-                      : 'border-[var(--border)] bg-transparent text-[var(--text-secondary)] hover:bg-[var(--hover)] hover:text-[var(--text-primary)]'
-                  }`}
-                >
-                  <span>{item.label}</span>
-                  <span className="text-[9px] text-[var(--text-tertiary)]">{item.detail}</span>
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        <div className="mt-4 flex max-w-[620px] gap-3">
-          <button
-            type="button"
-            onClick={() => setGreetingStyle('formel')}
-            aria-pressed={greetingStyle === 'formel'}
-            className={`flex-1 rounded-xl border p-3.5 text-left text-[12px] transition-all ${
-              greetingStyle === 'formel'
-                ? 'border-[var(--accent)] bg-[var(--surface-raised)] text-[var(--text-primary)] font-semibold'
-                : 'border-[var(--border)] bg-[var(--surface)] text-[var(--text-secondary)] hover:bg-[var(--hover)]'
-            }`}
-          >
-            <span className="block font-medium text-[var(--text-primary)]">Formel</span>
-            <span className="mt-1 block text-[10px] text-[var(--text-tertiary)]">Sobre et professionnel</span>
-          </button>
-          <button
-            type="button"
-            onClick={() => setGreetingStyle('gabonais')}
-            aria-pressed={greetingStyle === 'gabonais'}
-            className={`flex-1 rounded-xl border p-3.5 text-left text-[12px] transition-all ${
-              greetingStyle === 'gabonais'
-                ? 'border-[var(--accent)] bg-[var(--surface-raised)] text-[var(--text-primary)] font-semibold'
-                : 'border-[var(--border)] bg-[var(--surface)] text-[var(--text-secondary)] hover:bg-[var(--hover)]'
-            }`}
-          >
-            <span className="block font-medium text-[var(--text-primary)]">Chaleureux</span>
-            <span className="mt-1 block text-[10px] text-[var(--text-tertiary)]">Humain et accessible</span>
-          </button>
-          <button
-            type="button"
-            onClick={() => setGreetingStyle('argot')}
-            aria-pressed={greetingStyle === 'argot'}
-            className={`flex-1 rounded-xl border p-3.5 text-left text-[12px] transition-all ${
-              greetingStyle === 'argot'
-                ? 'border-[var(--accent)] bg-[var(--surface-raised)] text-[var(--text-primary)] font-semibold'
-                : 'border-[var(--border)] bg-[var(--surface)] text-[var(--text-secondary)] hover:bg-[var(--hover)]'
-            }`}
-          >
-            <span className="block font-medium text-[var(--text-primary)]">Direct</span>
-            <span className="mt-1 block text-[10px] text-[var(--text-tertiary)]">Court et sans détour</span>
-          </button>
-        </div>
-      </section>
-
-      <section className="mt-8 border-t border-[var(--border)] pt-6">
-        <h2 className="text-[16px] font-semibold text-[var(--text-primary)]">Affichage des Réponses & Raisonnement</h2>
-        <SettingRow
-          label="Afficher les étapes de réflexion de l’agent"
-          detail="Visualiser la chaîne de réflexion (CoT) et les plans d'actions en temps réel."
-          checked={showThinking}
-          onChange={toggleThinking}
-        />
-        <SettingRow
-          label="Streaming en direct des réponses"
-          detail="Afficher les mots au fur et à mesure de leur génération."
-          checked={streamResponses}
-          onChange={toggleStream}
-        />
-        <SettingRow
-          label="Coloration syntaxique du code"
-          detail="Mettre en valeur le code avec des contrastes optimisés."
-          checked={codeSyntaxHighlight}
-          onChange={toggleSyntax}
-        />
-      </section>
-    </>
-  );
-
   const renderContent = () => {
-    if (activeSection === 'account') {
-      return (
-        <>
-          <h1 className="text-2xl font-bold text-[var(--text-primary)]">Compte</h1>
-          <div className="mt-8 flex items-center gap-5">
-            <div className="flex h-20 w-20 items-center justify-center overflow-hidden rounded-full border border-[var(--border-strong)] bg-[var(--surface-raised)] text-xl font-semibold text-[var(--text-primary)]">
-              {user?.imageUrl ? (
-                <img src={user.imageUrl} alt={displayName} className="h-full w-full object-cover" />
-              ) : (
-                initials
-              )}
-            </div>
+    switch (activeSection) {
+      case 'general':
+        return (
+          <div className="space-y-8 animate-in fade-in duration-150">
             <div>
-              <p className="mb-1 text-[13px] text-[var(--text-tertiary)]">Nom complet</p>
-              <div className="rounded-lg bg-[var(--surface-raised)] px-3.5 py-2.5 text-[15px] font-medium text-[var(--text-primary)] border border-[var(--border)]">
-                {displayName}
+              <h1 className="text-2xl font-bold text-[var(--text-primary)] font-sans">Général</h1>
+            </div>
+
+            {/* Section: Apparence */}
+            <div className="space-y-6">
+              <h2 className="text-sm font-semibold text-[var(--text-primary)] uppercase tracking-wider text-[#D5AE57]">
+                Apparence
+              </h2>
+
+              {/* Langue Dropdown */}
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-[var(--text-primary)] block">
+                  Langue
+                </label>
+                <div className="relative max-w-sm" ref={languageDropdownRef}>
+                  <button
+                    type="button"
+                    onClick={() => setLanguageDropdownOpen((prev) => !prev)}
+                    className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl border border-[var(--border)] bg-[var(--surface-raised)] hover:bg-[var(--hover)] text-sm font-medium text-[var(--text-primary)] transition-colors shadow-xs"
+                    aria-expanded={languageDropdownOpen}
+                  >
+                    <span>{currentLanguageLabel}</span>
+                    {languageDropdownOpen ? <CaretUp size={14} /> : <CaretDown size={14} />}
+                  </button>
+
+                  {/* Dropdown Menu matching Screenshot 2 */}
+                  {languageDropdownOpen && (
+                    <div className="absolute left-0 top-full mt-1.5 w-64 max-h-80 overflow-y-auto rounded-2xl border border-[var(--border-strong)] bg-[var(--bg-elevated)] p-1.5 shadow-2xl z-50 animate-scale-in text-xs space-y-0.5">
+                      {LANGUAGES.map((lang) => {
+                        const isSelected =
+                          uiLocale === lang.code || (uiLocale.startsWith('fr') && lang.code === 'fr-FR');
+                        return (
+                          <button
+                            key={lang.code}
+                            type="button"
+                            onClick={() => {
+                              setUiLocale(lang.code as SupportedLocale);
+                              setLanguageDropdownOpen(false);
+                            }}
+                            className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-left transition-colors ${
+                              isSelected
+                                ? 'bg-[var(--surface-raised)] text-[var(--text-primary)] font-semibold'
+                                : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--hover)]'
+                            }`}
+                          >
+                            <span>{lang.label}</span>
+                            {isSelected && (
+                              <Check size={14} weight="bold" className="text-[#0070F3]" />
+                            )}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Thème Cards matching Screenshot 1 */}
+              <div className="space-y-2 pt-2">
+                <label className="text-sm font-medium text-[var(--text-primary)] block">
+                  Thème
+                </label>
+                <div className="grid grid-cols-3 gap-3 max-w-md">
+                  {THEME_OPTIONS.map(({ id, label, icon: Icon }) => {
+                    const isSelected = themeMode === id;
+                    return (
+                      <button
+                        key={id}
+                        type="button"
+                        onClick={() => handleThemeMode(id)}
+                        className={`flex h-16 flex-col items-center justify-center gap-1.5 rounded-2xl border transition-all text-xs font-semibold ${
+                          isSelected
+                            ? 'border-[var(--text-primary)] bg-[var(--surface-raised)] text-[var(--text-primary)] shadow-sm ring-1 ring-[var(--text-primary)]'
+                            : 'border-[var(--border)] bg-[var(--surface)] text-[var(--text-secondary)] hover:bg-[var(--hover)] hover:text-[var(--text-primary)]'
+                        }`}
+                      >
+                        <Icon size={18} weight={isSelected ? 'fill' : 'regular'} />
+                        <span>{label}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+
+            {/* Section: Préférences de communication matching Screenshot 1 */}
+            <div className="space-y-6 pt-6 border-t border-[var(--border)]">
+              <h2 className="text-sm font-semibold text-[var(--text-primary)] uppercase tracking-wider text-[#D5AE57]">
+                Préférences de communication
+              </h2>
+
+              {/* Notifications du navigateur */}
+              <div className="flex items-start justify-between gap-6">
+                <div className="space-y-1">
+                  <p className="text-sm font-medium text-[var(--text-primary)]">
+                    Notifications du navigateur
+                  </p>
+                  <p className="text-xs text-[var(--text-secondary)] leading-relaxed max-w-md">
+                    Recevez des notifications dans votre navigateur lorsqu'il y a de nouvelles avancées ou qu'une tâche est terminée.
+                  </p>
+                </div>
+                <Toggle
+                  checked={browserNotifications}
+                  onChange={handleToggleNotifications}
+                  label="Notifications du navigateur"
+                />
+              </div>
+
+              {/* Alerte sonore */}
+              <div className="flex items-start justify-between gap-6 pt-2">
+                <div className="space-y-1">
+                  <p className="text-sm font-medium text-[var(--text-primary)]">
+                    Alerte sonore
+                  </p>
+                  <p className="text-xs text-[var(--text-secondary)] leading-relaxed max-w-md">
+                    Jouer un son une fois lorsqu'une tâche est terminée pendant votre absence.
+                  </p>
+                </div>
+                <Toggle
+                  checked={soundAlerts}
+                  onChange={handleToggleSound}
+                  label="Alerte sonore"
+                />
               </div>
             </div>
           </div>
-          <div className="mt-6 rounded-xl border border-[var(--border)] bg-[var(--surface)] p-5">
-            <div className="flex items-center justify-between">
+        );
+
+      case 'account':
+        return (
+          <div className="space-y-6 animate-in fade-in duration-150">
+            <h1 className="text-2xl font-bold text-[var(--text-primary)]">Compte</h1>
+            <div className="flex items-center gap-5 pt-2">
+              <div className="flex h-20 w-20 items-center justify-center overflow-hidden rounded-full border border-[var(--border-strong)] bg-[var(--surface-raised)] text-xl font-bold text-[var(--text-primary)] shadow-sm">
+                {user?.imageUrl ? (
+                  <img src={user.imageUrl} alt={displayName} className="h-full w-full object-cover" />
+                ) : (
+                  initials
+                )}
+              </div>
+              <div className="space-y-1">
+                <p className="text-xs text-[var(--text-tertiary)]">Nom d'utilisateur</p>
+                <div className="text-base font-bold text-[var(--text-primary)]">
+                  {displayName}
+                </div>
+                <p className="text-xs text-[var(--text-secondary)]">{email}</p>
+              </div>
+            </div>
+
+            <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface-raised)] p-5 space-y-2">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-base font-semibold text-[var(--text-primary)]">Forfait Pionnier Bêta</h3>
+                  <p className="text-xs text-[var(--text-tertiary)]">300 crédits autonomes alloués</p>
+                </div>
+                <span className="px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-400 font-semibold text-xs border border-emerald-500/20">
+                  Actif
+                </span>
+              </div>
+            </div>
+
+            <div className="pt-4 space-y-4">
+              <InfoLine label="E-mail principal" value={email} action="Modifier" />
+              <InfoLine label="Identifiant Session" value={user?.id || 'usr_smartandj_01'} action="Copier" />
+              <InfoLine label="Fournisseur d'authentification" value="Google OAuth / Clerk Pro" action="Gérer" />
+            </div>
+          </div>
+        );
+
+      case 'usage':
+        return (
+          <div className="space-y-6 animate-in fade-in duration-150">
+            <h1 className="text-2xl font-bold text-[var(--text-primary)]">Utilisation et facturation</h1>
+            <div className="grid grid-cols-3 gap-4">
+              <div className="p-4 rounded-2xl bg-[var(--surface-raised)] border border-[var(--border)] space-y-1">
+                <span className="text-xs text-[var(--text-tertiary)]">Crédits restants</span>
+                <p className="text-2xl font-bold font-mono text-[#D5AE57]">300</p>
+              </div>
+              <div className="p-4 rounded-2xl bg-[var(--surface-raised)] border border-[var(--border)] space-y-1">
+                <span className="text-xs text-[var(--text-tertiary)]">Missions exécutées</span>
+                <p className="text-2xl font-bold font-mono text-[var(--text-primary)]">14</p>
+              </div>
+              <div className="p-4 rounded-2xl bg-[var(--surface-raised)] border border-[var(--border)] space-y-1">
+                <span className="text-xs text-[var(--text-tertiary)]">Livrables générés</span>
+                <p className="text-2xl font-bold font-mono text-emerald-400">8</p>
+              </div>
+            </div>
+
+            <div className="p-6 rounded-2xl border border-[var(--border)] bg-[var(--surface)] space-y-3">
+              <h3 className="text-sm font-bold text-[var(--text-primary)]">Passage à Ñkyel Pro Entreprise</h3>
+              <p className="text-xs text-[var(--text-secondary)] leading-relaxed">
+                Débloquez le parallélisme d'agents illimité, le chiffrement dédié en cloud privé et la priorité GPU H100.
+              </p>
+              <button
+                type="button"
+                className="px-4 py-2 rounded-xl bg-[#D5AE57] text-black font-semibold text-xs shadow-sm hover:bg-[#C59E47] transition-colors"
+              >
+                Mettre à niveau mon forfait
+              </button>
+            </div>
+          </div>
+        );
+
+      case 'shortcuts':
+        return (
+          <div className="space-y-6 animate-in fade-in duration-150">
+            <h1 className="text-2xl font-bold text-[var(--text-primary)]">Raccourcis clavier</h1>
+            <div className="space-y-2">
+              {[
+                { key: '⌘ + K', desc: 'Ouvrir la palette universelle de commandes' },
+                { key: '⌘ + N', desc: 'Créer une nouvelle mission' },
+                { key: '⌘ + /', desc: 'Afficher la documentation & l\'aide' },
+                { key: 'Esc', desc: 'Fermer les modals et tiroirs actifs' },
+                { key: 'Enter', desc: 'Envoyer la consigne au routeur d\'inférence' },
+              ].map((sc) => (
+                <div key={sc.key} className="flex items-center justify-between p-3 rounded-xl bg-[var(--surface-raised)] border border-[var(--border)]">
+                  <span className="text-xs text-[var(--text-secondary)]">{sc.desc}</span>
+                  <kbd className="px-2 py-1 rounded bg-white/10 text-xs font-mono font-bold text-[var(--text-primary)] border border-white/10">
+                    {sc.key}
+                  </kbd>
+                </div>
+              ))}
+            </div>
+          </div>
+        );
+
+      case 'personalization':
+        return (
+          <div className="space-y-6 animate-in fade-in duration-150">
+            <h1 className="text-2xl font-bold text-[var(--text-primary)]">Personnalisation & Styles</h1>
+            {/* Font & Density */}
+            <div className="grid grid-cols-2 gap-4">
+              <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface-raised)] p-4 space-y-3">
+                <span className="text-xs font-semibold text-[var(--text-tertiary)] uppercase">Taille de police</span>
+                <div className="flex gap-2">
+                  {FONT_OPTIONS.map((item) => (
+                    <button
+                      key={item.id}
+                      type="button"
+                      onClick={() => setFontSize(item.id)}
+                      className={`flex-1 h-9 rounded-xl border text-xs font-semibold transition-all ${
+                        fontSize === item.id
+                          ? 'border-[var(--accent)] bg-[var(--surface)] text-[var(--text-primary)] shadow-sm'
+                          : 'border-[var(--border)] bg-transparent text-[var(--text-secondary)] hover:bg-[var(--hover)]'
+                      }`}
+                    >
+                      {item.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface-raised)] p-4 space-y-3">
+                <span className="text-xs font-semibold text-[var(--text-tertiary)] uppercase">Densité d'affichage</span>
+                <div className="flex gap-2">
+                  {DENSITY_OPTIONS.map((item) => (
+                    <button
+                      key={item.id}
+                      type="button"
+                      onClick={() => setDensity(item.id)}
+                      className={`flex-1 h-9 rounded-xl border text-xs font-semibold transition-all ${
+                        density === item.id
+                          ? 'border-[var(--accent)] bg-[var(--surface)] text-[var(--text-primary)] shadow-sm'
+                          : 'border-[var(--border)] bg-transparent text-[var(--text-secondary)] hover:bg-[var(--hover)]'
+                      }`}
+                    >
+                      {item.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Accents */}
+            <div className="space-y-3 pt-2">
+              <span className="text-xs font-semibold text-[var(--text-tertiary)] uppercase">Couleur d'accentuation</span>
+              <div className="grid grid-cols-5 gap-3">
+                {ACCENTS.map((item) => (
+                  <button
+                    key={item.key}
+                    type="button"
+                    onClick={() => setAccent(item.key)}
+                    className={`h-16 rounded-xl border flex flex-col items-center justify-center gap-1.5 transition-all ${
+                      accent === item.key
+                        ? 'border-[var(--text-primary)] bg-[var(--surface-raised)] shadow-sm'
+                        : 'border-[var(--border)] bg-[var(--surface)] hover:bg-[var(--hover)]'
+                    }`}
+                  >
+                    <span className="w-5 h-5 rounded-full" style={{ backgroundColor: item.color }} />
+                    <span className="text-[10px] font-medium text-[var(--text-secondary)]">{item.name}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Reasoning switches */}
+            <div className="space-y-3 pt-4 border-t border-[var(--border)]">
+              <SettingRow
+                label="Afficher la chaîne de réflexion (Thinking / CoT)"
+                detail="Inspecter les étapes intermédiaires de raisonnement de l'agent en temps réel."
+                checked={showThinking}
+                onChange={toggleThinking}
+              />
+              <SettingRow
+                label="Streaming dynamique des mots"
+                detail="Afficher le flux de texte au fur et à mesure de l'inférence."
+                checked={streamResponses}
+                onChange={toggleStream}
+              />
+            </div>
+          </div>
+        );
+
+      case 'connectors':
+        return (
+          <div className="space-y-6 animate-in fade-in duration-150">
+            <h1 className="text-2xl font-bold text-[var(--text-primary)]">Connecteurs</h1>
+            <p className="text-xs text-[var(--text-secondary)] leading-relaxed">
+              Gérez les connexions externes autorisées pour vos agents (Google Workspace, GitHub, Qdrant, R2).
+            </p>
+            <div className="grid grid-cols-2 gap-3">
+              {[
+                { name: 'Google Drive', desc: 'Indexation de vos documents PDF et rapports', status: 'Disponible' },
+                { name: 'Gmail', desc: 'Synthèse des courriels et préparation de brouillons', status: 'Disponible' },
+                { name: 'GitHub', desc: 'Audit de code et création de branches', status: 'Disponible' },
+                { name: 'PostgreSQL Neon', desc: 'Persistance transactionnelle sécurisée', status: 'Disponible' },
+              ].map((c) => (
+                <div key={c.name} className="p-4 rounded-2xl bg-[var(--surface-raised)] border border-[var(--border)] flex items-center justify-between">
+                  <div>
+                    <h4 className="text-xs font-bold text-[var(--text-primary)]">{c.name}</h4>
+                    <p className="text-[11px] text-[var(--text-tertiary)] mt-0.5">{c.desc}</p>
+                  </div>
+                  <span className="text-[10px] font-semibold px-2 py-1 rounded-lg bg-white/[0.06] text-[var(--text-secondary)]">
+                    {c.status}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+        );
+
+      case 'skills':
+        return (
+          <div className="space-y-6 animate-in fade-in duration-150">
+            <h1 className="text-2xl font-bold text-[var(--text-primary)]">Compétences Agentiques</h1>
+            <div className="space-y-2.5">
+              {[
+                { name: 'Recherche Web Multi-Sources', desc: 'Veille en temps réel via Tavily & grounding souverain' },
+                { name: 'Génération de Présentations PPTX', desc: 'Création automatique de diapositives exécutives haute densité' },
+                { name: 'Modélisation Financière XLSX', desc: 'Formules comptables, DCF et analyses prévisionnelles' },
+                { name: 'Vision & Analyse Graphique', desc: 'Inspection vectorielle et extraction de tableaux complexes' },
+              ].map((s) => (
+                <div key={s.name} className="p-3.5 rounded-xl bg-[var(--surface-raised)] border border-[var(--border)] flex items-center justify-between">
+                  <div>
+                    <h4 className="text-xs font-semibold text-[var(--text-primary)]">{s.name}</h4>
+                    <p className="text-[11px] text-[var(--text-tertiary)]">{s.desc}</p>
+                  </div>
+                  <span className="text-[10px] font-bold text-emerald-400 font-mono">ACTIF</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        );
+
+      case 'mail':
+        return (
+          <div className="space-y-6 animate-in fade-in duration-150">
+            <h1 className="text-2xl font-bold text-[var(--text-primary)]">Mail Ñkyel</h1>
+            <p className="text-xs text-[var(--text-secondary)] leading-relaxed">
+              Votre adresse d'agent dédiée pour recevoir et traiter des synthèses directes : <span className="font-mono text-[#D5AE57]">agent@nkyel.ai</span>
+            </p>
+            <div className="p-4 rounded-2xl bg-[var(--surface-raised)] border border-[var(--border)] space-y-3">
+              <h4 className="text-xs font-bold text-[var(--text-primary)]">Traitement automatique des pièces jointes</h4>
+              <p className="text-xs text-[var(--text-tertiary)]">
+                Lorsqu'un e-mail contient un PDF ou XLSX, l'agent génère automatiquement une synthèse de décision.
+              </p>
+              <Toggle checked={true} onChange={() => {}} label="Traitement automatique" />
+            </div>
+          </div>
+        );
+
+      case 'computer':
+        return (
+          <div className="space-y-6 animate-in fade-in duration-150">
+            <h1 className="text-2xl font-bold text-[var(--text-primary)]">My Computer / Ñkyel Bureau</h1>
+            <p className="text-xs text-[var(--text-secondary)] leading-relaxed">
+              Exécution locale sécurisée de commandes de terminal et de conteneurs Docker pour les missions complexes.
+            </p>
+            <div className="p-4 rounded-2xl bg-[var(--surface-raised)] border border-[var(--border)] flex items-center justify-between">
               <div>
-                <h2 className="nkyel-plan-name text-[20px] font-semibold text-[var(--text-primary)]">
-                  Pionnier Bêta (100 sièges)
-                </h2>
-                <p className="mt-1 text-[12px] text-[var(--text-tertiary)]">Accès Fondateur Actif</p>
+                <h4 className="text-xs font-bold text-[var(--text-primary)]">Sandbox d'exécution isolée</h4>
+                <p className="text-[11px] text-[var(--text-tertiary)]">Sécurité gVisor / Firecracker</p>
               </div>
-              <span className="rounded-lg bg-[var(--accent)] px-4 py-2 text-[13px] font-semibold text-[var(--accent-fg)]">
-                Actif
-              </span>
+              <span className="text-xs font-mono text-emerald-400">Prêt</span>
             </div>
           </div>
-          <div className="mt-7 space-y-5">
-            <InfoLine label="E-mail" value={email} action="Modifier" />
-            <InfoLine label="ID utilisateur" value={user?.id || 'nkyel-local-profile'} action="Copier" />
-          </div>
-        </>
-      );
+        );
+
+      default:
+        return null;
     }
-
-    if (activeSection === 'personalization' || activeSection === 'general') {
-      return (
-        <>
-          <h1 className="text-2xl font-bold text-[var(--text-primary)]">
-            {activeSection === 'general' ? 'Général & Personnalisation' : 'Personnalisation & Styles de textes'}
-          </h1>
-          <p className="mt-2 text-[13px] text-[var(--text-secondary)]">
-            Configure l’apparence, la taille des textes, la densité et la voix de ton espace souverain Ñkyel.
-          </p>
-          {renderPersonalizationControls()}
-        </>
-      );
-    }
-
-    const titles: Record<SettingsSection, string> = {
-      general: 'Général',
-      usage: 'Utilisation et facturation',
-      shortcuts: 'Raccourcis',
-      connectors: 'Connecteurs',
-      skills: 'Compétences',
-      mail: 'Messagerie Ñkyel',
-      computer: 'Ñkyel Bureau',
-      personalization: 'Personnalisation',
-      account: 'Compte',
-    };
-
-    return (
-      <>
-        <h1 className="text-2xl font-bold text-[var(--text-primary)]">{titles[activeSection]}</h1>
-        <p className="mt-2 text-[13px] text-[var(--text-tertiary)]">
-          Configure ton espace Ñkyel et contrôle les fonctionnalités disponibles.
-        </p>
-        <section className="mt-9 border-t border-[var(--border)] pt-7">
-          <h2 className="text-[16px] font-semibold text-[var(--text-primary)]">Préférences de communication</h2>
-          <SettingRow
-            label="Notifications du navigateur"
-            detail="Recevoir les avancées et les tâches terminées."
-            checked={browserNotifications}
-            onChange={() =>
-              handlePreference('Nkyel AI_browserNotifications', browserNotifications, setBrowserNotifications)
-            }
-          />
-          <SettingRow
-            label="Alerte sonore"
-            detail="Jouer un son lorsqu'une mission est terminée."
-            checked={soundAlerts}
-            onChange={() => handlePreference('Nkyel AI_soundAlerts', soundAlerts, setSoundAlerts)}
-          />
-          <SettingRow
-            label="Mises à jour produit"
-            detail="Recevoir les nouveautés et études de cas Ñkyel."
-            checked={productUpdates}
-            onChange={() => handlePreference('Nkyel AI_productUpdates', productUpdates, setProductUpdates)}
-          />
-        </section>
-      </>
-    );
   };
 
   return (
     <div
-      className="nkyel-settings-overlay fixed inset-0 z-[100] flex items-center justify-center p-6 bg-black/50 backdrop-blur-sm"
+      className="nkyel-settings-overlay fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 bg-black/60 backdrop-blur-md animate-in fade-in duration-150"
       role="dialog"
       aria-modal="true"
       aria-label="Paramètres Ñkyel"
@@ -507,54 +684,58 @@ export default function DesktopSettingsModal() {
     >
       <div
         ref={dialogRef}
-        className="nkyel-settings-dialog flex h-[min(780px,calc(100dvh-48px))] w-[min(1280px,calc(100vw-48px))] overflow-hidden rounded-[20px] border border-[var(--border-strong)] bg-[var(--bg-elevated)] shadow-2xl text-[var(--text-primary)]"
+        className="nkyel-settings-dialog flex h-[min(740px,calc(100dvh-40px))] w-[min(1080px,calc(100vw-32px))] overflow-hidden rounded-3xl border border-[var(--border-strong)] bg-[var(--bg-elevated)] shadow-2xl text-[var(--text-primary)]"
         onMouseDown={(event) => event.stopPropagation()}
       >
-        <aside className="nkyel-settings-nav flex w-[292px] shrink-0 flex-col border-r border-[var(--border)] bg-[var(--surface)] px-4 py-5">
-          <div className="flex items-center gap-3 px-2">
-            <div className="flex h-10 w-10 items-center justify-center rounded-full border border-[var(--border-strong)] bg-[var(--surface-raised)] text-[12px] font-semibold text-[var(--text-primary)]">
+        {/* Navigation Sidebar matching Screenshot 1 */}
+        <aside className="nkyel-settings-nav flex w-[260px] shrink-0 flex-col border-r border-[var(--border)] bg-[var(--surface)] px-3 py-4 select-none">
+          {/* User Profile Header */}
+          <div className="flex items-center gap-2.5 px-2 py-1 mb-2">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-[var(--border-strong)] bg-[var(--surface-raised)] text-xs font-bold text-[var(--text-primary)]">
               {user?.imageUrl ? (
-                <img src={user.imageUrl} alt={displayName} className="h-full w-full rounded-full object-cover" />
+                <img src={user.imageUrl} alt={displayName} className="h-full w-full rounded-xl object-cover" />
               ) : (
                 initials
               )}
             </div>
-            <div className="min-w-0">
-              <p className="truncate text-[14px] font-semibold text-[var(--text-primary)]">{displayName}</p>
-              <p className="text-[12px] text-[var(--text-tertiary)]">Pionnier Bêta</p>
+            <div className="min-w-0 flex-1">
+              <p className="truncate text-xs font-bold text-[var(--text-primary)]">{displayName}</p>
+              <p className="text-[10px] text-[var(--text-tertiary)]">Personnel</p>
             </div>
           </div>
 
-          <label className="relative mt-5 block">
-            <MagnifyingGlass size={17} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-tertiary)]" />
+          {/* Search Box */}
+          <div className="relative my-2">
+            <MagnifyingGlass size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-tertiary)]" />
             <input
               value={query}
               onChange={(event) => setQuery(event.target.value)}
-              placeholder="Rechercher un paramètre"
-              className="h-10 w-full rounded-lg border border-[var(--border)] bg-[var(--bg-inset)] pl-9 pr-3 text-[13px] text-[var(--text-primary)] outline-none placeholder:text-[var(--text-tertiary)] focus:border-[var(--accent)]"
+              placeholder="Rechercher"
+              className="h-9 w-full rounded-xl border border-[var(--border)] bg-[var(--bg-inset)] pl-8 pr-3 text-xs text-[var(--text-primary)] outline-none placeholder:text-[var(--text-tertiary)] focus:border-[var(--accent)]"
             />
-          </label>
+          </div>
 
-          <nav className="mt-6 flex-1 overflow-y-auto space-y-6">
+          {/* Grouped Tabs */}
+          <nav className="flex-1 overflow-y-auto space-y-4 pt-2">
             {visibleGroups.map((group) => (
               <div key={group.label}>
-                <p className="mb-2 px-2 text-[11px] font-semibold uppercase tracking-[0.08em] text-[var(--text-tertiary)]">
+                <p className="mb-1.5 px-2 text-[10px] font-semibold text-[var(--text-tertiary)]">
                   {group.label}
                 </p>
-                <div className="space-y-1">
+                <div className="space-y-0.5">
                   {group.items.map(({ id, label, icon: Icon }) => (
                     <button
                       type="button"
                       key={id}
                       onClick={() => setActiveSection(id)}
-                      className={`flex h-10 w-full items-center gap-3 rounded-lg px-3 text-left text-[14px] transition-colors ${
+                      className={`flex h-8 w-full items-center gap-2.5 rounded-xl px-2.5 text-left text-xs font-medium transition-colors ${
                         activeSection === id
-                          ? 'bg-[var(--selected)] font-semibold text-[var(--text-primary)] border border-[var(--border)]'
+                          ? 'bg-[var(--surface-raised)] font-semibold text-[var(--text-primary)] shadow-xs border border-[var(--border)]'
                           : 'text-[var(--text-secondary)] hover:bg-[var(--hover)] hover:text-[var(--text-primary)]'
                       }`}
                     >
-                      <Icon size={18} weight={activeSection === id ? 'fill' : 'regular'} />
-                      {label}
+                      <Icon size={16} weight={activeSection === id ? 'fill' : 'regular'} />
+                      <span>{label}</span>
                     </button>
                   ))}
                 </div>
@@ -562,24 +743,33 @@ export default function DesktopSettingsModal() {
             ))}
           </nav>
 
+          {/* Sign Out Button */}
           <button
             type="button"
-            className="mt-auto flex items-center gap-3 border-t border-[var(--border)] px-2 pt-4 text-[13px] text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-colors"
+            onClick={() => {
+              close();
+              signOut();
+            }}
+            className="mt-auto flex items-center gap-2 border-t border-[var(--border)] px-2 pt-3 text-xs text-red-400 hover:text-red-300 transition-colors"
           >
-            <SignOut size={18} /> Se déconnecter
+            <SignOut size={16} />
+            <span>Se déconnecter</span>
           </button>
         </aside>
 
-        <main className="nkyel-settings-content relative flex-1 overflow-y-auto px-12 py-10 bg-[var(--bg)]">
+        {/* Main Content Area */}
+        <main className="nkyel-settings-content relative flex-1 overflow-y-auto p-8 sm:p-10 bg-[var(--bg)]">
+          {/* Close 'X' Button matching Screenshot 1 */}
           <button
             type="button"
             onClick={close}
             aria-label="Fermer les paramètres"
-            className="absolute right-6 top-6 flex h-9 w-9 items-center justify-center rounded-lg text-[var(--text-tertiary)] hover:bg-[var(--hover)] hover:text-[var(--text-primary)] transition-colors"
+            className="absolute right-6 top-6 flex h-8 w-8 items-center justify-center rounded-xl text-[var(--text-tertiary)] hover:bg-[var(--hover)] hover:text-[var(--text-primary)] transition-colors"
           >
-            <X size={21} />
+            <X size={18} weight="bold" />
           </button>
-          <div className="mx-auto max-w-[980px] pr-8">{renderContent()}</div>
+
+          <div className="max-w-2xl">{renderContent()}</div>
         </main>
       </div>
     </div>
@@ -598,10 +788,10 @@ function SettingRow({
   onChange: () => void;
 }) {
   return (
-    <div className="flex items-center justify-between border-b border-[var(--border)] py-5">
-      <div className="pr-8">
-        <p className="text-[14px] font-medium text-[var(--text-primary)]">{label}</p>
-        <p className="mt-0.5 text-[12px] leading-relaxed text-[var(--text-secondary)]">{detail}</p>
+    <div className="flex items-center justify-between border-b border-[var(--border)] py-4">
+      <div className="pr-6">
+        <p className="text-xs font-semibold text-[var(--text-primary)]">{label}</p>
+        <p className="mt-0.5 text-[11px] leading-relaxed text-[var(--text-secondary)]">{detail}</p>
       </div>
       <Toggle checked={checked} onChange={onChange} label={label} />
     </div>
@@ -610,14 +800,14 @@ function SettingRow({
 
 function InfoLine({ label, value, action }: { label: string; value: string; action: string }) {
   return (
-    <div className="flex items-center justify-between border-b border-[var(--border)] pb-4">
+    <div className="flex items-center justify-between border-b border-[var(--border)] pb-3">
       <div>
-        <p className="text-[14px] font-medium text-[var(--text-primary)]">{label}</p>
-        <p className="mt-0.5 text-[13px] text-[var(--text-secondary)]">{value}</p>
+        <p className="text-xs font-semibold text-[var(--text-primary)]">{label}</p>
+        <p className="mt-0.5 text-xs text-[var(--text-secondary)]">{value}</p>
       </div>
       <button
         type="button"
-        className="rounded-lg border border-[var(--border-strong)] bg-[var(--surface)] px-3 py-1.5 text-[12px] font-medium text-[var(--text-primary)] hover:bg-[var(--hover)] transition-colors"
+        className="rounded-lg border border-[var(--border)] bg-[var(--surface)] px-2.5 py-1 text-xs font-medium text-[var(--text-primary)] hover:bg-[var(--hover)] transition-colors"
       >
         {action}
       </button>

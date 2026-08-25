@@ -60,13 +60,8 @@ export default function SignInPage() {
 
   const handleOAuthGoogle = () => {
     setLoading(true);
-    try {
-      localStorage.setItem('nkyel_user_email', 'google_user@nkyel.ai');
-      localStorage.setItem('nkyel_user_name', 'Daniel Jonathan ANDJ');
-      localStorage.setItem('nkyel_auth_provider', 'google');
-      localStorage.setItem('nkyel_auth_time', Date.now().toString());
-    } catch {}
-    router.push('/chat');
+    const returnUrl = encodeURIComponent(window.location.origin + '/chat');
+    window.location.href = `https://holy-cicada-90.clerk.accounts.dev/sign-in?redirect_url=${returnUrl}`;
   };
 
   return (
