@@ -66,6 +66,7 @@ import {
 import { useSidebar } from '@/hooks/useSidebar';
 import { useSafeUser as useUser } from '@/lib/auth-client';
 import { useLanguageStore } from '@/stores/language.store';
+import { useChatStore } from '@/stores/chat.store';
 import { IbogaNavigationTrigger } from '@/components/brand';
 
 /* ═══════════════════════════════════════════════════════
