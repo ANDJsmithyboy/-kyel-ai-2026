@@ -1,12 +1,13 @@
 /**
- * Ñkyel AI · IntelligenceModePicker.tsx
+ * Ñkyel AI · TierPicker.tsx
  * SmartANDJ AI Technologies · Founder: Daniel Jonathan ANDJ
  *
- * Canonical 4 Intelligence Modes:
- * 1. Auto (Default — Dynamic Router)
- * 2. Rapide / Fast (Ultra-fast concise response)
- * 3. Profond / Deep (Deep reasoning & complex synthesis)
- * 4. Recherche / Research (Live web groundings & multi-sources)
+ * User Models:
+ * 1. Ñkyel (Auto - Dynamic Router)
+ * 2. Ñkyel Chui (Deep reasoning & complex code - Pro)
+ * 3. Ñkyel Radi (Ultra-fast & concise)
+ * 4. Ñkyel Research (Live web search & deep grounding)
+ * 5. Ñkyel Tai (Multimodal reasoning & creativity - Plus)
  */
 
 'use client';
@@ -14,17 +15,16 @@
 import React, { useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { cn } from '@/lib/utils';
-import { Sparkle, Lightning, Brain, Globe, Check } from '@phosphor-icons/react';
-import { useLanguageStore } from '@/stores/language.store';
-import type { IntelligenceModeId } from '@/hooks/useNkyelModel';
+import { Sparkle, Lightning, Brain, Globe, Eye, Check } from '@phosphor-icons/react';
+import { ENGINES, type NkyelEngineId } from '@/hooks/useNkyelModel';
 
-export type TierKey = IntelligenceModeId;
+export type TierKey = NkyelEngineId;
 
-interface IntelligenceModePickerProps {
+interface TierPickerProps {
   isOpen: boolean;
   onClose: () => void;
-  selectedMode: IntelligenceModeId;
-  onSelect: (mode: IntelligenceModeId) => void;
+  selectedMode: NkyelEngineId;
+  onSelect: (mode: NkyelEngineId) => void;
 }
 
 export default function TierPicker({
@@ -32,45 +32,19 @@ export default function TierPicker({
   onClose,
   selectedMode,
   onSelect,
-}: IntelligenceModePickerProps) {
+}: TierPickerProps) {
   const shouldReduceMotion = useReducedMotion();
   const containerRef = useRef<HTMLDivElement>(null);
-  const { uiLocale } = useLanguageStore();
-  const isFr = !uiLocale || uiLocale.startsWith('fr');
 
-  const modes: Array<{
-    id: IntelligenceModeId;
-    label: string;
-    description: string;
-    icon: React.ComponentType<any>;
-    badge?: string;
-  }> = [
-    {
-      id: 'auto',
-      label: isFr ? 'Auto' : 'Auto',
-      description: isFr ? 'Routage dynamique intelligent (recommandé)' : 'Intelligent dynamic routing (recommended)',
-      icon: Sparkle,
-      badge: isFr ? 'Défaut' : 'Default',
-    },
-    {
-      id: 'fast',
-      label: isFr ? 'Rapide' : 'Fast',
-      description: isFr ? 'Réponse ultra-rapide et concise' : 'Ultra-fast concise response',
-      icon: Lightning,
-    },
-    {
-      id: 'deep',
-      label: isFr ? 'Profond' : 'Deep',
-      description: isFr ? 'Raisonnement profond et synthèse complexe' : 'Deep reasoning & complex synthesis',
-      icon: Brain,
-    },
-    {
-      id: 'research',
-      label: isFr ? 'Recherche' : 'Research',
-      description: isFr ? 'Veille et recherche multi-sources en direct' : 'Live web groundings & multi-sources',
-      icon: Globe,
-    },
-  ];
+  const iconMap: Record<NkyelEngineId, React.ComponentType<any>> = {
+    auto: Sparkle,
+    chui: Brain,
+    radi: Lightning,
+    research: Globe,
+    tai: Eye,
+  };
+
+  const modelsList = Object.values(ENGINES);
 
   /* Close on click outside */
   const handleClickOutside = useCallback(
@@ -134,17 +108,17 @@ export default function TierPicker({
             {/* Header */}
             <div className="px-4 py-3 border-b border-[var(--border-subtle)] flex items-center justify-between">
               <div className="text-xs font-semibold text-[var(--text-primary)]">
-                {isFr ? "Mode d'intelligence" : 'Intelligence Mode'}
+                Modèles Ñkyel
               </div>
               <span className="text-[10px] text-[var(--text-tertiary)] font-mono">
-                Ñkyel Router
+                SmartANDJ AI
               </span>
             </div>
 
-            {/* List of Modes */}
+            {/* List of Models */}
             <div className="p-2 space-y-1">
-              {modes.map((m) => {
-                const Icon = m.icon;
+              {modelsList.map((m) => {
+                const Icon = iconMap[m.id as NkyelEngineId] || Sparkle;
                 const isSelected = selectedMode === m.id;
 
                 return (
@@ -152,7 +126,7 @@ export default function TierPicker({
                     key={m.id}
                     type="button"
                     onClick={() => {
-                      onSelect(m.id);
+                      onSelect(m.id as NkyelEngineId);
                       onClose();
                     }}
                     className={cn(
@@ -176,7 +150,7 @@ export default function TierPicker({
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between">
                         <span className="text-xs font-semibold text-[var(--text-primary)]">
-                          {m.label}
+                          {m.name}
                         </span>
                         {m.badge && (
                           <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-[#D5AE57]/15 text-[#D5AE57] font-medium">
@@ -185,7 +159,7 @@ export default function TierPicker({
                         )}
                       </div>
                       <p className="text-[11px] text-[var(--text-secondary)] leading-snug mt-0.5">
-                        {m.description}
+                        {m.desc}
                       </p>
                     </div>
 

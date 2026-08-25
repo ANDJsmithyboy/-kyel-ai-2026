@@ -2,73 +2,100 @@
 
 import { create } from 'zustand';
 
-export type IntelligenceModeId = 'auto' | 'fast' | 'deep' | 'research';
-// Backward compatibility alias
-export type NkyelEngineId = IntelligenceModeId | 'chui' | 'radi';
+export type NkyelEngineId = 'auto' | 'chui' | 'radi' | 'research' | 'tai';
+export type IntelligenceModeId = NkyelEngineId;
 
-export interface IntelligenceMode {
-  id: IntelligenceModeId;
+export interface NkyelEngine {
+  id: NkyelEngineId;
+  name: string;
+  label: string;
   labelFr: string;
   labelEn: string;
+  desc: string;
   descFr: string;
   descEn: string;
+  badge?: string;
   apiModel: string;
 }
 
-const MODES: Record<IntelligenceModeId, IntelligenceMode> = {
+export const ENGINES: Record<NkyelEngineId, NkyelEngine> = {
   auto: {
     id: 'auto',
-    labelFr: 'Auto',
-    labelEn: 'Auto',
-    descFr: 'Routage dynamique intelligent',
-    descEn: 'Dynamic intelligent routing',
+    name: 'Ñkyel',
+    label: 'Ñkyel',
+    labelFr: 'Ñkyel',
+    labelEn: 'Ñkyel',
+    desc: 'Routage intelligent autonome',
+    descFr: 'Routage intelligent autonome',
+    descEn: 'Intelligent autonomous routing',
     apiModel: 'auto',
   },
-  fast: {
-    id: 'fast',
-    labelFr: 'Rapide',
-    labelEn: 'Fast',
-    descFr: 'Réponse ultra-rapide et concise',
-    descEn: 'Ultra-fast concise response',
-    apiModel: 'fast',
+  chui: {
+    id: 'chui',
+    name: 'Ñkyel Chui',
+    label: 'Ñkyel Chui',
+    labelFr: 'Ñkyel Chui',
+    labelEn: 'Ñkyel Chui',
+    desc: 'Raisonnement profond et code complexe',
+    descFr: 'Raisonnement profond et code complexe',
+    descEn: 'Deep reasoning & complex code',
+    badge: 'Pro',
+    apiModel: 'chui',
   },
-  deep: {
-    id: 'deep',
-    labelFr: 'Profond',
-    labelEn: 'Deep',
-    descFr: 'Raisonnement profond et synthèse complexe',
-    descEn: 'Deep reasoning & complex synthesis',
-    apiModel: 'deep',
+  radi: {
+    id: 'radi',
+    name: 'Ñkyel Radi',
+    label: 'Ñkyel Radi',
+    labelFr: 'Ñkyel Radi',
+    labelEn: 'Ñkyel Radi',
+    desc: 'Ultra-rapide, concis et langues locales',
+    descFr: 'Ultra-rapide, concis et langues locales',
+    descEn: 'Ultra-fast, concise & local languages',
+    apiModel: 'radi',
   },
   research: {
     id: 'research',
-    labelFr: 'Recherche',
-    labelEn: 'Research',
-    descFr: 'Veille multi-sources et web en direct',
-    descEn: 'Live web groundings & multi-sources',
+    name: 'Ñkyel Research',
+    label: 'Ñkyel Research',
+    labelFr: 'Ñkyel Research',
+    labelEn: 'Ñkyel Research',
+    desc: 'Recherche web et veille en direct',
+    descFr: 'Recherche web et veille en direct',
+    descEn: 'Live web search & deep grounding',
     apiModel: 'research',
+  },
+  tai: {
+    id: 'tai',
+    name: 'Ñkyel Tai',
+    label: 'Ñkyel Tai',
+    labelFr: 'Ñkyel Tai',
+    labelEn: 'Ñkyel Tai',
+    desc: 'Raisonnement multimodal & créativité',
+    descFr: 'Raisonnement multimodal & créativité',
+    descEn: 'Multimodal reasoning & creativity',
+    badge: 'Plus',
+    apiModel: 'tai',
   },
 };
 
-export const getIntelligenceMode = (id: string): IntelligenceMode => {
-  if (id === 'radi') return MODES.fast;
-  if (id === 'chui') return MODES.deep;
-  return MODES[id as IntelligenceModeId] ?? MODES.auto;
+export const getNkyelEngine = (id: string): NkyelEngine => {
+  if (id === 'fast') return ENGINES.radi;
+  if (id === 'deep') return ENGINES.chui;
+  return ENGINES[id as NkyelEngineId] ?? ENGINES.auto;
 };
 
-// Backward-compatibility export
-export const getNkyelEngine = getIntelligenceMode;
+export const getIntelligenceMode = getNkyelEngine;
 
-interface IntelligenceModelState {
-  modeId: IntelligenceModeId;
-  engineId: IntelligenceModeId;
-  setModeId: (modeId: IntelligenceModeId) => void;
-  setEngineId: (modeId: IntelligenceModeId) => void;
+interface NkyelModelState {
+  engineId: NkyelEngineId;
+  modeId: NkyelEngineId;
+  setEngineId: (engineId: NkyelEngineId) => void;
+  setModeId: (modeId: NkyelEngineId) => void;
 }
 
-export const useNkyelModel = create<IntelligenceModelState>((set) => ({
-  modeId: 'auto',
+export const useNkyelModel = create<NkyelModelState>((set) => ({
   engineId: 'auto',
-  setModeId: (modeId) => set({ modeId, engineId: modeId }),
-  setEngineId: (engineId) => set({ modeId: engineId, engineId }),
+  modeId: 'auto',
+  setEngineId: (engineId) => set({ engineId, modeId: engineId }),
+  setModeId: (modeId) => set({ engineId: modeId, modeId }),
 }));
