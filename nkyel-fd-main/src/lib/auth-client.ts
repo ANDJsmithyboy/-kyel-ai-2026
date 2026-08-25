@@ -1,10 +1,22 @@
 /* Ñkyel AI · auth-client.ts · SmartANDJ AI Technologies
-   Safe resilient auth hooks (Clerk-compatible + Sovereign JWT Session Engine)
+   Safe resilient auth hooks (Clerk-compatible + Sovereign Session Engine)
    Fondateur : Daniel Jonathan ANDJ */
 
 'use client';
 
 import React, { useState, useEffect } from 'react';
+
+export const DEMO_FOUNDER_USER = {
+  id: 'usr_smartandj_01',
+  fullName: 'Daniel Jonathan ANDJ',
+  firstName: 'Daniel Jonathan',
+  lastName: 'ANDJ',
+  username: 'daniel_andj',
+  primaryEmailAddress: { emailAddress: 'fondateur@nkyel.ai' },
+  imageUrl: '/brand/nkyel-ai-ios.png',
+  publicMetadata: { role: 'admin', credits: 300 },
+  reload: async () => {},
+};
 
 export function useSafeUser(): { isSignedIn: boolean; isLoaded: boolean; user: any } {
   const [state, setState] = useState({
@@ -51,6 +63,8 @@ export function useSafeUser(): { isSignedIn: boolean; isLoaded: boolean; user: a
   return state;
 }
 
+export const useUser = useSafeUser;
+
 export function useSafeAuth(): {
   userId: string | null;
   sessionId: string | null;
@@ -75,6 +89,8 @@ export function useSafeAuth(): {
   };
 }
 
+export const useAuth = useSafeAuth;
+
 export function useSafeClerk(): any {
   return {
     signOut: async () => {
@@ -96,6 +112,8 @@ export function useSafeClerk(): any {
     },
   };
 }
+
+export const useClerk = useSafeClerk;
 
 export const SignInButton = (props: any) => {
   return React.createElement(
@@ -121,4 +139,16 @@ export const UserButton = (props: any) => {
     },
     'Ñ'
   );
+};
+
+export const SignedIn = ({ children }: { children: React.ReactNode }) => {
+  const { isSignedIn, isLoaded } = useSafeUser();
+  if (!isLoaded || !isSignedIn) return null;
+  return React.createElement(React.Fragment, null, children);
+};
+
+export const SignedOut = ({ children }: { children: React.ReactNode }) => {
+  const { isSignedIn, isLoaded } = useSafeUser();
+  if (!isLoaded || isSignedIn) return null;
+  return React.createElement(React.Fragment, null, children);
 };
