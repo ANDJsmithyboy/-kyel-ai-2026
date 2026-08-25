@@ -18,6 +18,7 @@ import CapabilitiesDrawer from '@/components/capabilities/CapabilitiesDrawer';
 import type { WorkspaceViewMode } from './WorkspaceModeSwitcher';
 import BetaClosedScreen from '@/components/beta/BetaClosedScreen';
 import BetaFeedbackModal from '@/components/feedback/BetaFeedbackModal';
+import ProductionFeedbackModal, { FeedbackCategory } from '@/components/feedback/ProductionFeedbackModal';
 import DesktopSettingsModal from '@/components/settings/DesktopSettingsModal';
 import { fetchBetaStatus, type BetaStatusResponse } from '@/lib/betaStateMachine';
 
@@ -34,6 +35,8 @@ export default function NkyelAppShell({
 }: NkyelAppShellProps) {
   const [capabilitiesOpen, setCapabilitiesOpen] = useState(false);
   const [feedbackOpen, setFeedbackOpen] = useState(false);
+  const [feedbackCategory, setFeedbackCategory] = useState<FeedbackCategory>('SUGGESTION');
+  const [feedbackContext, setFeedbackContext] = useState<{ missionId?: string; runId?: string; artifactId?: string }>({});
   const [, setViewMode] = useState(activeViewMode);
   const [betaStatus, setBetaStatus] = useState<BetaStatusResponse | null>(null);
   const [dismissClosedScreen, setDismissClosedScreen] = useState(false);
@@ -42,6 +45,22 @@ export default function NkyelAppShell({
     fetchBetaStatus()
       .then((data) => setBetaStatus(data))
       .catch(() => {});
+
+    const handleFeedbackEvent = (e: Event) => {
+      const custom = e as CustomEvent<{ category?: FeedbackCategory; missionId?: string; runId?: string; artifactId?: string }>;
+      if (custom.detail) {
+        if (custom.detail.category) setFeedbackCategory(custom.detail.category);
+        setFeedbackContext({
+          missionId: custom.detail.missionId,
+          runId: custom.detail.runId,
+          artifactId: custom.detail.artifactId,
+        });
+      }
+      setFeedbackOpen(true);
+    };
+
+    window.addEventListener('nkyel:open-feedback', handleFeedbackEvent);
+    return () => window.removeEventListener('nkyel:open-feedback', handleFeedbackEvent);
   }, []);
 
   const handleModeChange = (mode: typeof activeViewMode) => {
@@ -81,12 +100,16 @@ export default function NkyelAppShell({
         <ArtifactStudio />
       </div>
 
-      {/* Modal de Retour d'Expérience Bêta Structuré */}
+      {/* Modales de Configuration et Feedback de Production */}
       <DesktopSettingsModal />
 
-      <BetaFeedbackModal
+      <ProductionFeedbackModal
         isOpen={feedbackOpen}
         onClose={() => setFeedbackOpen(false)}
+        defaultCategory={feedbackCategory}
+        missionId={feedbackContext.missionId}
+        runId={feedbackContext.runId}
+        artifactId={feedbackContext.artifactId}
       />
 
       {/* Écran de Fin de Bêta post-24 août 06h00 Libreville */}

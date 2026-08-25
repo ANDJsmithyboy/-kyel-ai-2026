@@ -114,7 +114,7 @@ RETRY_MAX_DELAY = 8.0
 
 def _retry_with_backoff(fn, *args, **kwargs) -> Any:
     """Call fn with exponential backoff on failure."""
-    last_error = None
+    last_error: Optional[Exception] = None
     for attempt in range(MAX_RETRIES):
         try:
             return fn(*args, **kwargs)
@@ -126,7 +126,9 @@ def _retry_with_backoff(fn, *args, **kwargs) -> Any:
                 time.sleep(delay)
             else:
                 logger.error(f"Gemini call failed after {MAX_RETRIES} attempts: {e}")
-    raise last_error
+    if last_error is not None:
+        raise last_error
+    raise RuntimeError("Retry failed without exception")
 
 
 # ─── Client Init ─────────────────────────────────────────
@@ -174,7 +176,7 @@ def _call_gemini_once(
 
     if genai is not None:
         # Official SDK path
-        generation_config = {"temperature": temperature}
+        generation_config: Dict[str, Any] = {"temperature": temperature}
         if response_mime_type:
             generation_config["response_mime_type"] = response_mime_type
 

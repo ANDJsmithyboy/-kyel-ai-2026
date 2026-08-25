@@ -7,6 +7,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
+import { IbogaNavigationTrigger } from '@/components/brand';
 
 export default function TopBar() {
   const router = useRouter();
@@ -25,23 +26,23 @@ export default function TopBar() {
       className="fixed inset-x-0 top-0 z-30 flex h-[52px] items-center justify-between px-4"
       style={{ background: 'transparent' }}
     >
-      {/* LEFT — Hamburger */}
-      <button
-        type="button"
-        onClick={handleOpenSidebar}
-        className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg transition-colors"
-        style={{ color: 'var(--text-secondary)' }}
-        aria-label="Ouvrir le menu"
-      >
-        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-          <path
-            d="M3 5.5H17M3 10H17M3 14.5H17"
-            stroke="currentColor"
-            strokeWidth="1.5"
-            strokeLinecap="round"
-          />
-        </svg>
-      </button>
+      {/* LEFT — Iboga Navigation Trigger + Wordmark */}
+      <div className="flex items-center gap-2">
+        <IbogaNavigationTrigger
+          open={false}
+          onToggle={handleOpenSidebar}
+          glyphSize={20}
+          variant="mobile"
+          title="Ouvrir la navigation"
+          label="Ouvrir la navigation"
+        />
+        <span
+          className="select-none text-[15px] font-semibold tracking-tight text-[var(--text-primary)]"
+          style={{ letterSpacing: '-0.025em' }}
+        >
+          Ñkyel
+        </span>
+      </div>
 
       {/* CENTER — Empty */}
       <div />

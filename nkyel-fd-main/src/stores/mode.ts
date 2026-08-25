@@ -88,7 +88,7 @@ interface ModeState {
   setMode: (mode: Mode) => void;
 }
 
-export const useModeStore = create<ModeState>((set) => ({
+export const useModeStore = create<ModeState>((set: any) => ({
   activeMode: 'flash',
 
   setMode: (mode: Mode) => {

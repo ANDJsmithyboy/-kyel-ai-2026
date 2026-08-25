@@ -64,6 +64,7 @@ import {
 } from '@phosphor-icons/react';
 import { useSidebar } from '@/hooks/useSidebar';
 import { useSafeUser as useUser } from '@/lib/auth-client';
+import { IbogaNavigationTrigger } from '@/components/brand';
 
 /* ═══════════════════════════════════════════════════════
    NAV CONFIGURATION — P0 Canonical Order
@@ -78,10 +79,10 @@ interface NavItem {
 }
 
 const PRIMARY_NAV: NavItem[] = [
-  { id: 'agent',      label: 'Agent Ñkyel',   href: '/agent',      icon: Robot },
-  { id: 'connectors', label: 'Connecteurs',   href: '/connectors', icon: PlugsConnected },
-  { id: 'scheduled',  label: 'Programmé',     href: '/scheduled',  icon: CalendarCheck },
-  { id: 'library',    label: 'Bibliothèque',  href: '/library',    icon: Books },
+  { id: 'agent',      label: 'Agent',        href: '/agent',      icon: Robot },
+  { id: 'plugins',    label: 'Plugins',      href: '/connectors', icon: PlugsConnected },
+  { id: 'scheduled',  label: 'Programmé',    href: '/scheduled',  icon: CalendarCheck },
+  { id: 'library',    label: 'Bibliothèque', href: '/library',    icon: Books },
 ];
 
 /* ═══════════════════════════════════════════════════════
@@ -213,7 +214,7 @@ export default function NkyelSidebar() {
         aria-label="Navigation principale Ñkyel"
       >
         {/* ═══════════════════════════════════════════════════
-           ZONE 1: Header — Logo + Collapse Toggle
+           ZONE 1: Header — Wordmark + Iboga Navigation Signature
            ═══════════════════════════════════════════════════ */}
         <div
           className={`flex items-center ${isCollapsed ? 'justify-center' : 'justify-between'} shrink-0`}
@@ -224,20 +225,19 @@ export default function NkyelSidebar() {
           }}
         >
           {isCollapsed ? (
-            <button
-              type="button"
-              onClick={toggleSidebar}
-              className="w-8 h-8 rounded-lg flex items-center justify-center font-bold text-base text-[var(--text-primary)] hover:bg-[var(--hover)] transition-colors select-none"
-              title="Développer la barre latérale"
-              aria-label="Développer la barre latérale"
-            >
-              Ñ
-            </button>
+            <IbogaNavigationTrigger
+              open={false}
+              onToggle={toggleSidebar}
+              glyphSize={20}
+              variant="desktop"
+              title="Développer la navigation"
+              label="Développer la navigation"
+            />
           ) : (
             <>
               <Link
                 href="/"
-                className="flex items-center gap-2 overflow-hidden rounded-lg px-2 py-1.5"
+                className="flex items-center gap-2 overflow-hidden rounded-lg px-2 py-1.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]"
                 title="Ñkyel — Accueil"
                 onClick={handleNavClick}
               >
@@ -252,26 +252,21 @@ export default function NkyelSidebar() {
               </Link>
 
               {!isMobile && (
-                <button
-                  type="button"
-                  onClick={toggleSidebar}
-                  className="flex items-center justify-center rounded-lg text-[var(--text-tertiary)] hover:text-[var(--text-primary)] hover:bg-[var(--hover)] transition-colors"
-                  style={{
-                    width: 32,
-                    height: 32,
-                  }}
+                <IbogaNavigationTrigger
+                  open={true}
+                  onToggle={toggleSidebar}
+                  glyphSize={19}
+                  variant="desktop"
                   title="Réduire la navigation"
-                  aria-label="Réduire"
-                >
-                  <SidebarSimple size={18} weight="fill" />
-                </button>
+                  label="Réduire la navigation"
+                />
               )}
             </>
           )}
         </div>
 
         {/* ═══════════════════════════════════════════════════
-           ZONE 2: New Mission Button
+           ZONE 2: New Task Button (Manus style)
            ═══════════════════════════════════════════════════ */}
         <div style={{ padding: `var(--space-3) var(--space-3) var(--space-2)` }}>
           <Link
@@ -286,7 +281,7 @@ export default function NkyelSidebar() {
               color: 'var(--accent-fg)',
               transition: `all var(--transition-fast)`,
             }}
-            title="Lancer une nouvelle mission"
+            title="Nouvelle tâche"
             onClick={handleNavClick}
             onMouseEnter={(e: any) => {
               e.currentTarget.style.background = 'var(--accent-hover)';
@@ -295,8 +290,8 @@ export default function NkyelSidebar() {
               e.currentTarget.style.background = 'var(--accent)';
             }}
           >
-            <Plus size={16} weight="bold" className="shrink-0" />
-            {!isCollapsed && <span className="truncate">Nouvelle mission</span>}
+            <PencilSimple size={16} weight="bold" className="shrink-0" />
+            {!isCollapsed && <span className="truncate">Nouvelle tâche</span>}
           </Link>
         </div>
 
@@ -679,7 +674,7 @@ export default function NkyelSidebar() {
         </div>
 
         {/* ═══════════════════════════════════════════════════
-           ZONE 6: Profile Footer (bottom-anchored)
+           ZONE 6: Profile Footer (bottom-anchored · Manus × Apple Spirit)
            ═══════════════════════════════════════════════════ */}
         <div
           ref={profileRef}
@@ -689,189 +684,199 @@ export default function NkyelSidebar() {
             borderTop: '1px solid var(--border-subtle)',
           }}
         >
-          {/* Profile Menu Popover */}
-          {profileMenuOpen && !isCollapsed && (
+          {/* Manus Profile Menu Popover (Screenshot 3) */}
+          {profileMenuOpen && (
             <div
-              className="absolute bottom-full left-2 right-2 mb-2"
+              className="absolute bottom-full left-2 right-2 mb-2 animate-in fade-in slide-in-from-bottom-2 duration-150"
               style={{
-                padding: 'var(--space-1)',
-                borderRadius: 'var(--radius-floating)',
-                background: 'var(--material-glass-elevated)',
-                backdropFilter: 'blur(28px) saturate(180%)',
-                WebkitBackdropFilter: 'blur(28px) saturate(180%)',
-                border: '1px solid var(--border-strong)',
-                boxShadow: 'var(--shadow-modal)',
-                zIndex: 'var(--z-dropdown)',
+                width: isCollapsed ? 260 : 'auto',
+                minWidth: 250,
+                padding: '10px',
+                borderRadius: '16px',
+                background: 'rgba(18, 18, 20, 0.95)',
+                backdropFilter: 'blur(30px) saturate(190%)',
+                WebkitBackdropFilter: 'blur(30px) saturate(190%)',
+                border: '1px solid rgba(255, 255, 255, 0.12)',
+                boxShadow: '0 20px 40px -10px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,255,255,0.06)',
+                zIndex: 'var(--z-dropdown, 100)',
                 fontSize: '13px',
+                color: '#EDEDEC',
               }}
             >
-              {/* User header */}
+              {/* Top Row: Google Avatar + Name + "Personnel" + Caret */}
               <div
-                className="flex items-center gap-2.5"
-                style={{
-                  padding: 'var(--space-2) var(--space-3)',
-                  borderBottom: '1px solid var(--border-subtle)',
-                  marginBottom: 'var(--space-1)',
-                }}
+                className="flex items-center justify-between p-2 rounded-xl hover:bg-white/[0.04] transition-colors cursor-pointer"
+                onClick={() => { setProfileMenuOpen(false); router.push('/settings'); }}
               >
-                <div
-                  className="w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs shrink-0"
-                  style={{
-                    background: 'var(--accent)',
-                    color: 'var(--accent-fg)',
-                  }}
-                >
-                  {userInitials}
-                </div>
-                <div className="min-w-0 flex-1">
-                  <div className="font-semibold truncate" style={{ color: 'var(--text-primary)', fontSize: '13px' }}>
-                    {displayName}
+                <div className="flex items-center gap-2.5 min-w-0">
+                  {user?.imageUrl ? (
+                    <img
+                      src={user.imageUrl}
+                      alt={displayName}
+                      referrerPolicy="no-referrer"
+                      className="w-9 h-9 rounded-full object-cover shrink-0 ring-1 ring-white/20"
+                    />
+                  ) : (
+                    <div
+                      className="w-9 h-9 rounded-full flex items-center justify-center font-bold text-xs shrink-0 ring-1 ring-white/20"
+                      style={{
+                        background: 'linear-gradient(135deg, #D5AE57 0%, #B88E36 100%)',
+                        color: '#000000',
+                      }}
+                    >
+                      {userInitials}
+                    </div>
+                  )}
+                  <div className="min-w-0 flex-1">
+                    <div className="font-semibold truncate text-[13px] text-white">
+                      {displayName}
+                    </div>
+                    <div className="text-[11px] text-white/50 truncate">
+                      Personnel
+                    </div>
                   </div>
-                  <div className="truncate" style={{ fontSize: '11px', color: 'var(--text-tertiary)', fontFamily: 'var(--font-mono)' }}>
-                    {userEmail}
-                  </div>
                 </div>
+                <CaretDown size={14} className="text-white/40 shrink-0" />
               </div>
 
-              {/* Menu actions */}
-              <div className="flex flex-col" style={{ gap: '1px' }}>
+              {/* Tier Row: "Gratuit" / "Pro" + "Mise à niveau" pill */}
+              <div className="flex items-center justify-between px-2.5 py-2.5 my-1 rounded-xl bg-white/[0.03] border border-white/[0.04]">
+                <span className="text-xs font-semibold text-white/90">
+                  Gratuit
+                </span>
+                <Link
+                  href="/settings?tab=subscription"
+                  onClick={() => setProfileMenuOpen(false)}
+                  className="px-3 py-1 rounded-full bg-white text-black font-semibold text-xs hover:bg-white/90 transition-all shadow-sm active:scale-95"
+                >
+                  Mise à niveau
+                </Link>
+              </div>
+
+              {/* Credits Row */}
+              <Link
+                href="/settings?tab=usage"
+                onClick={() => setProfileMenuOpen(false)}
+                className="flex items-center justify-between px-2.5 py-2 rounded-xl text-xs hover:bg-white/[0.04] text-white/80 hover:text-white transition-colors"
+              >
+                <div className="flex items-center gap-1.5">
+                  <Sparkle size={14} className="text-[#D5AE57]" weight="fill" />
+                  <span>Crédits</span>
+                  <span className="text-[10px] text-white/40 font-mono">ⓘ</span>
+                </div>
+                <div className="flex items-center gap-1 font-mono text-white font-medium">
+                  <span>300</span>
+                  <CaretRight size={12} className="text-white/40" />
+                </div>
+              </Link>
+
+              {/* Separator */}
+              <div style={{ height: 1, background: 'rgba(255,255,255,0.08)', margin: '6px 0' }} />
+
+              {/* Main Nav Items */}
+              <div className="flex flex-col gap-0.5">
                 {[
                   { icon: User, label: 'Compte', href: '/settings' },
-                  { icon: Sparkle, label: 'Utilisation', href: '/settings' },
+                  { icon: SlidersHorizontal, label: 'Personnalisation', href: '/settings' },
                   { icon: Gear, label: 'Paramètres', href: '/settings' },
                 ].map((item) => (
                   <Link
                     key={item.label}
                     href={item.href}
                     onClick={() => { setProfileMenuOpen(false); handleNavClick(); }}
-                    className="flex items-center gap-2.5 rounded-lg"
-                    style={{
-                      padding: '8px var(--space-3)',
-                      color: 'var(--text-secondary)',
-                      fontWeight: 500,
-                      transition: `all var(--transition-fast)`,
-                    }}
-                    onMouseEnter={(e: any) => {
-                      e.currentTarget.style.background = 'var(--hover)';
-                      e.currentTarget.style.color = 'var(--text-primary)';
-                    }}
-                    onMouseLeave={(e: any) => {
-                      e.currentTarget.style.background = 'transparent';
-                      e.currentTarget.style.color = 'var(--text-secondary)';
-                    }}
+                    className="flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-white/80 hover:text-white hover:bg-white/[0.06] transition-colors"
                   >
-                    <item.icon size={15} style={{ color: 'var(--text-tertiary)' }} />
+                    <item.icon size={15} className="text-white/50" />
                     <span>{item.label}</span>
                   </Link>
                 ))}
               </div>
 
-              {/* Separator + Help */}
-              <div style={{ height: 1, background: 'var(--border-subtle)', margin: `var(--space-1) 0` }} />
-              <Link
-                href="/docs"
-                onClick={() => setProfileMenuOpen(false)}
-                className="flex items-center gap-2.5 rounded-lg"
-                style={{
-                  padding: '8px var(--space-3)',
-                  color: 'var(--text-secondary)',
-                  fontWeight: 500,
-                  transition: `all var(--transition-fast)`,
-                }}
-                onMouseEnter={(e: any) => {
-                  e.currentTarget.style.background = 'var(--hover)';
-                  e.currentTarget.style.color = 'var(--text-primary)';
-                }}
-                onMouseLeave={(e: any) => {
-                  e.currentTarget.style.background = 'transparent';
-                  e.currentTarget.style.color = 'var(--text-secondary)';
-                }}
-              >
-                <Question size={15} style={{ color: 'var(--text-tertiary)' }} />
-                <span>Aide & Documentation</span>
-              </Link>
+              {/* Separator */}
+              <div style={{ height: 1, background: 'rgba(255,255,255,0.08)', margin: '6px 0' }} />
+
+              {/* External Links */}
+              <div className="flex flex-col gap-0.5">
+                {[
+                  { icon: Browsers, label: "Page d'accueil", href: '/' },
+                  { icon: Question, label: "Obtenir de l'aide", href: '/docs' },
+                  { icon: FileText, label: 'Docs', href: '/docs' },
+                ].map((item) => (
+                  <Link
+                    key={item.label}
+                    href={item.href}
+                    onClick={() => setProfileMenuOpen(false)}
+                    className="flex items-center justify-between px-2.5 py-2 rounded-lg text-white/80 hover:text-white hover:bg-white/[0.06] transition-colors"
+                  >
+                    <div className="flex items-center gap-2.5">
+                      <item.icon size={15} className="text-white/50" />
+                      <span>{item.label}</span>
+                    </div>
+                    <span className="text-[11px] text-white/30 font-mono">↗</span>
+                  </Link>
+                ))}
+              </div>
+
+              {/* Separator */}
+              <div style={{ height: 1, background: 'rgba(255,255,255,0.08)', margin: '6px 0' }} />
 
               {/* Sign out */}
-              <div style={{ height: 1, background: 'var(--border-subtle)', margin: `var(--space-1) 0` }} />
               <button
                 type="button"
                 onClick={() => {
                   setProfileMenuOpen(false);
-                  if (typeof window !== 'undefined') window.location.href = '/';
+                  if (typeof window !== 'undefined') window.location.href = '/sign-in';
                 }}
-                className="w-full flex items-center gap-2.5 rounded-lg text-left"
-                style={{
-                  padding: '8px var(--space-3)',
-                  color: 'var(--error)',
-                  fontWeight: 500,
-                  transition: `all var(--transition-fast)`,
-                }}
-                onMouseEnter={(e: any) => {
-                  e.currentTarget.style.background = 'var(--hover)';
-                }}
-                onMouseLeave={(e: any) => {
-                  e.currentTarget.style.background = 'transparent';
-                }}
+                className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-left text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-colors"
               >
                 <SignOut size={15} />
-                <span>Déconnexion</span>
+                <span>Se déconnecter</span>
               </button>
             </div>
           )}
 
-          {/* Profile Trigger */}
+          {/* Profile Trigger in Sidebar Footer */}
           <button
             type="button"
             onClick={() => setProfileMenuOpen((prev) => !prev)}
-            className="w-full flex items-center justify-between rounded-xl text-left"
-            style={{
-              padding: 'var(--space-2)',
-              transition: `all var(--transition-fast)`,
-            }}
-            onMouseEnter={(e: any) => {
-              e.currentTarget.style.background = 'var(--hover)';
-            }}
-            onMouseLeave={(e: any) => {
-              e.currentTarget.style.background = 'transparent';
-            }}
+            className={`w-full flex items-center ${isCollapsed ? 'justify-center' : 'justify-between'} rounded-xl text-left transition-colors p-1.5 hover:bg-white/[0.06]`}
+            aria-label="Menu du compte"
           >
             <div className="flex items-center gap-2.5 min-w-0">
-              <div
-                className="w-7 h-7 rounded-full flex items-center justify-center font-bold text-[11px] shrink-0"
-                style={{
-                  background: 'var(--accent)',
-                  color: 'var(--accent-fg)',
-                }}
-              >
-                {userInitials}
-              </div>
+              {user?.imageUrl ? (
+                <img
+                  src={user.imageUrl}
+                  alt={displayName}
+                  referrerPolicy="no-referrer"
+                  className="w-8 h-8 rounded-full object-cover shrink-0 ring-1 ring-white/20"
+                />
+              ) : (
+                <div
+                  className="w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs shrink-0 ring-1 ring-white/20"
+                  style={{
+                    background: 'linear-gradient(135deg, #D5AE57 0%, #B88E36 100%)',
+                    color: '#000000',
+                  }}
+                >
+                  {userInitials}
+                </div>
+              )}
               {!isCollapsed && (
                 <div className="min-w-0 flex-1">
-                  <div className="text-xs font-semibold truncate" style={{ color: 'var(--text-primary)' }}>
+                  <div className="text-xs font-semibold truncate text-[var(--text-primary)]">
                     {displayName}
                   </div>
-                  <div className="flex items-center gap-1 mt-0.5">
-                    <span
-                      className="font-mono"
-                      style={{
-                        fontSize: '9px',
-                        padding: '1px 6px',
-                        borderRadius: 'var(--radius-pill)',
-                        background: 'var(--accent-subtle)',
-                        color: 'var(--accent)',
-                        border: '1px solid var(--accent-muted)',
-                        fontWeight: 600,
-                        textTransform: 'uppercase',
-                      }}
-                    >
-                      PRO
-                    </span>
+                  <div className="text-[11px] text-[var(--text-tertiary)] truncate">
+                    Personnel
                   </div>
                 </div>
               )}
             </div>
             {!isCollapsed && (
-              <DotsThreeVertical size={16} className="shrink-0" style={{ color: 'var(--text-tertiary)' }} />
+              <div className="flex items-center gap-1 text-[var(--text-tertiary)]">
+                <Browsers size={14} className="opacity-60" />
+                <CaretDown size={12} className="opacity-60" />
+              </div>
             )}
           </button>
         </div>

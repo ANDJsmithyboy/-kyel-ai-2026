@@ -68,11 +68,11 @@ interface AdminThemeState {
 
 export const useAdminTheme = create<AdminThemeState>()(
   persist(
-    (set) => ({
+    (set: any) => ({
       currentTheme: 'BLACK_PANTHER',
       sidebarCollapsed: false,
-      setTheme: (theme) => set({ currentTheme: theme }),
-      toggleSidebar: () => set((state) => ({ sidebarCollapsed: !state.sidebarCollapsed })),
+      setTheme: (theme: AdminThemeName) => set({ currentTheme: theme }),
+      toggleSidebar: () => set((state: AdminThemeState) => ({ sidebarCollapsed: !state.sidebarCollapsed })),
     }),
     {
       name: 'admin-theme-storage',

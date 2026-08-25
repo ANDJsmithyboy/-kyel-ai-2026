@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 
 import { useAudioSTT } from '@/hooks/useAudioSTT';
+import { IbogaNavigationTrigger } from '@/components/brand';
 
 /* -----------------------------------------------------------------------
    TYPES & CONSTANTS
@@ -471,17 +472,23 @@ export default function NkyelChatScreen({
           className="shrink-0 flex items-center justify-between px-4 h-14 glass"
           style={{ borderBottom: '1px solid var(--glass-border)' }}
         >
-          <div className="flex items-center gap-3">
-            {/* Menu trigger mobile */}
-            <button
-              onClick={() => setSidebarOpen(true)}
-              className="w-9 h-9 rounded-xl flex items-center justify-center transition-colors md:hidden"
-              style={{ background: 'var(--accent-06)' }}
-              aria-label="Ouvrir le menu"
-            >
-              <Image src="/nkyel-logo.png" alt="Nkyel AI" width={22} height={22} className="rounded-md" />
-            </button>
-          </div>
+            {/* Iboga Navigation Trigger + Wordmark Mobile */}
+            <div className="flex items-center gap-2 md:hidden">
+              <IbogaNavigationTrigger
+                open={sidebarOpen}
+                onToggle={() => setSidebarOpen(!sidebarOpen)}
+                glyphSize={20}
+                variant="mobile"
+                title="Ouvrir la navigation"
+                label="Ouvrir la navigation"
+              />
+              <span
+                className="select-none text-[15px] font-semibold tracking-tight text-[var(--text-primary)]"
+                style={{ letterSpacing: '-0.025em' }}
+              >
+                Ñkyel
+              </span>
+            </div>
 
           {/* Center: intentionally EMPTY during conversation */}
           <div className="flex-1 flex justify-center md:hidden">

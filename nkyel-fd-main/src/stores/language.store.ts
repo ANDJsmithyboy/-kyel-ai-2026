@@ -342,9 +342,52 @@ export function applyRTLToDOM(tag: string) {
   }
 }
 
+export const DICTIONARY: Record<string, Record<string, string>> = {
+  // Navigation & Shell
+  'nav.newTask': { 'en-US': 'New task', 'fr-FR': 'Nouvelle tâche', 'fr-GA': 'Nouvelle tâche' },
+  'nav.agent': { 'en-US': 'Agent', 'fr-FR': 'Agent', 'fr-GA': 'Agent' },
+  'nav.plugins': { 'en-US': 'Plugins', 'fr-FR': 'Plugins', 'fr-GA': 'Plugins' },
+  'nav.scheduled': { 'en-US': 'Scheduled', 'fr-FR': 'Programmé', 'fr-GA': 'Programmé' },
+  'nav.library': { 'en-US': 'Library', 'fr-FR': 'Bibliothèque', 'fr-GA': 'Bibliothèque' },
+  'nav.projects': { 'en-US': 'Projects', 'fr-FR': 'Projets', 'fr-GA': 'Projets' },
+  'nav.newProject': { 'en-US': 'New project', 'fr-FR': 'Nouveau projet', 'fr-GA': 'Nouveau projet' },
+  'nav.tasks': { 'en-US': 'Recent tasks', 'fr-FR': 'Tâches récentes', 'fr-GA': 'Tâches récentes' },
+  
+  // Profile & Popover
+  'profile.personal': { 'en-US': 'Personal', 'fr-FR': 'Personnel', 'fr-GA': 'Personnel' },
+  'profile.free': { 'en-US': 'Free', 'fr-FR': 'Gratuit', 'fr-GA': 'Gratuit' },
+  'profile.upgrade': { 'en-US': 'Upgrade', 'fr-FR': 'Mise à niveau', 'fr-GA': 'Mise à niveau' },
+  'profile.credits': { 'en-US': 'Credits', 'fr-FR': 'Crédits', 'fr-GA': 'Crédits' },
+  'profile.account': { 'en-US': 'Account', 'fr-FR': 'Compte', 'fr-GA': 'Compte' },
+  'profile.customization': { 'en-US': 'Customization', 'fr-FR': 'Personnalisation', 'fr-GA': 'Personnalisation' },
+  'profile.settings': { 'en-US': 'Settings', 'fr-FR': 'Paramètres', 'fr-GA': 'Paramètres' },
+  'profile.home': { 'en-US': 'Home page', 'fr-FR': "Page d'accueil", 'fr-GA': "Page d'accueil" },
+  'profile.help': { 'en-US': 'Get help', 'fr-FR': "Obtenir de l'aide", 'fr-GA': "Obtenir de l'aide" },
+  'profile.docs': { 'en-US': 'Docs', 'fr-FR': 'Docs', 'fr-GA': 'Docs' },
+  'profile.logout': { 'en-US': 'Log out', 'fr-FR': 'Se déconnecter', 'fr-GA': 'Se déconnecter' },
+  
+  // Auth
+  'auth.welcome': { 'en-US': 'Welcome', 'fr-FR': 'Accueillir', 'fr-GA': 'Accueillir' },
+  'auth.continueTo': { 'en-US': 'Sign in to continue to Ñkyel', 'fr-FR': 'Connectez-vous pour continuer sur Ñkyel', 'fr-GA': 'Connectez-vous pour continuer sur Ñkyel' },
+  'auth.email': { 'en-US': 'Email address', 'fr-FR': 'Adresse courriel', 'fr-GA': 'Adresse courriel' },
+  'auth.continue': { 'en-US': 'Continue', 'fr-FR': 'Continuer', 'fr-GA': 'Continuer' },
+  'auth.continueGoogle': { 'en-US': 'Continue with Google', 'fr-FR': 'Continuer avec Google', 'fr-GA': 'Continuer avec Google' },
+  'auth.noAccount': { 'en-US': "Don't have an account?", 'fr-FR': "Vous n'avez pas de compte ?", 'fr-GA': "Vous n'avez pas de compte ?" },
+  'auth.signUp': { 'en-US': 'Sign up', 'fr-FR': 'Inscrivez-vous', 'fr-GA': 'Inscrivez-vous' },
+  'auth.alreadyAccount': { 'en-US': 'Already have an account?', 'fr-FR': 'Vous avez déjà un compte ?', 'fr-GA': 'Vous avez déjà un compte ?' },
+  'auth.signIn': { 'en-US': 'Sign in', 'fr-FR': 'Connectez-vous', 'fr-GA': 'Connectez-vous' },
+  'auth.or': { 'en-US': 'or', 'fr-FR': 'ou', 'fr-GA': 'ou' },
+};
+
+export function t(key: string, locale: string = 'en-US'): string {
+  const entry = DICTIONARY[key];
+  if (!entry) return key;
+  return entry[locale] || entry['en-US'] || entry['fr-FR'] || key;
+}
+
 interface LanguageState {
-  uiLocale: string;           // Ex: 'fr-FR', 'fr-GA', 'en-US', 'ar-SA'
-  agentLanguage: string;      // Ex: 'auto', 'fr', 'en', 'fan', 'puu', 'ar', 'zh'
+  uiLocale: string;           // Default 'en-US' for international audience
+  agentLanguage: string;      // Ex: 'auto', 'en', 'fr', 'fan', 'puu', 'ar', 'zh'
   isModalOpen: boolean;
   searchQuery: string;
 
@@ -352,13 +395,14 @@ interface LanguageState {
   setAgentLanguage: (lang: string) => void;
   setModalOpen: (open: boolean) => void;
   setSearchQuery: (q: string) => void;
+  t: (key: string) => string;
   hydrate: () => void;
 }
 
 export const useLanguageStore = create<LanguageState>()(
   persist(
     (set: any, get: any) => ({
-      uiLocale: 'fr-FR',
+      uiLocale: 'en-US',
       agentLanguage: 'auto',
       isModalOpen: false,
       searchQuery: '',
@@ -375,16 +419,21 @@ export const useLanguageStore = create<LanguageState>()(
       setModalOpen: (open: boolean) => set({ isModalOpen: open }),
       setSearchQuery: (q: string) => set({ searchQuery: q }),
 
+      t: (key: string) => {
+        const locale = get().uiLocale || 'en-US';
+        return t(key, locale);
+      },
+
       hydrate: () => {
         const state = get();
-        applyRTLToDOM(state.uiLocale || 'fr-FR');
+        applyRTLToDOM(state.uiLocale || 'en-US');
       },
     }),
     {
       name: 'Nkyel_Language_Storage',
       onRehydrateStorage: () => (state: any) => {
         if (state) {
-          applyRTLToDOM(state.uiLocale || 'fr-FR');
+          applyRTLToDOM(state.uiLocale || 'en-US');
         }
       },
     }

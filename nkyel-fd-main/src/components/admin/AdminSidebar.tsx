@@ -14,35 +14,34 @@ import {
   Bell, Gear, CaretLeft, CaretRight
 } from '@phosphor-icons/react';
 import { useAdminTheme, adminThemes } from '@/stores/adminTheme';
-import { IbogaAiIcon } from '@/components/icons/IbogaAiIcon';
+import { IbogaNavigationTrigger } from '@/components/brand';
 import { AndjSovereignIcon } from '@/components/icons/AndjSovereignIcon';
 
 // -- Nav items -----------------------------------------------
 const navGroups = [
   {
-    label: 'PRINCIPAL',
+    label: 'COMMAND CENTER',
     items: [
-      { name: 'Dashboard', href: '/admin', icon: ChartBar },
-      { name: 'Meute', href: '/admin/meute', icon: Users },
-      { name: 'Pistes', href: '/admin/pistes', icon: ChatCircle },
-      { name: 'Vecteurs', href: '/admin/vecteurs', icon: Lightning },
+      { name: 'Cockpit 40h & Santé', href: '/admin', icon: ChartBar },
+      { name: 'Utilisateurs & Bêta', href: '/admin/users', icon: Users },
+      { name: 'Missions & Runs', href: '/admin/missions', icon: Robot },
+      { name: 'Artefacts & R2 Storage', href: '/admin/artifacts', icon: HardDrives },
     ],
   },
   {
-    label: 'INTELLIGENCE',
+    label: 'INTELLIGENCE & MCP',
     items: [
-      { name: 'AUTOMATA V2.0', href: '/admin/automata', icon: Robot },
-      { name: 'RAG Monitor', href: '/admin/rag', icon: Database },
+      { name: 'Fournisseurs & Budgets', href: '/admin/providers', icon: Lightning },
+      { name: 'Tools & Skills DeerFlow', href: '/admin/flow', icon: Database },
+      { name: 'Connecteurs MCP', href: '/admin/automata', icon: Robot },
     ],
   },
   {
-    label: 'OPÉRATIONS',
+    label: 'OPÉRATIONS & GOUVERNANCE',
     items: [
-      { name: 'Pactes', href: '/admin/pactes', icon: CreditCard },
-      { name: 'Nœud', href: '/admin/noeud', icon: HardDrives },
-      { name: 'DeerFlow Canvas', href: '/admin/flow', icon: Robot },
-      { name: 'Alertes', href: '/admin/alertes', icon: Bell },
-      { name: 'Settings', href: '/admin/settings', icon: Gear },
+      { name: 'Inbox Feedbacks (P0-P3)', href: '/admin/feedback', icon: Bell },
+      { name: 'Journal d’Audit', href: '/admin/audit-logs', icon: CreditCard },
+      { name: 'Paramètres Système', href: '/admin/settings', icon: Gear },
     ],
   },
 ];
@@ -128,13 +127,14 @@ export default function AdminSidebar({
           </AnimatePresence>
 
           {!isMobile && (
-            <button
-              onClick={() => storeToggleSidebar()}
-              className="w-7 h-7 flex items-center justify-center text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--glass)] rounded-md transition-colors"
-              title={sidebarCollapsed ? 'Ouvrir' : 'Fermer'}
-            >
-              <IbogaAiIcon className={`w-4 h-4 transition-transform duration-200 ${sidebarCollapsed ? '' : 'rotate-180'}`} />
-            </button>
+            <IbogaNavigationTrigger
+              open={!sidebarCollapsed}
+              onToggle={() => storeToggleSidebar()}
+              glyphSize={18}
+              variant="desktop"
+              title={sidebarCollapsed ? 'Développer la navigation' : 'Réduire la navigation'}
+              label={sidebarCollapsed ? 'Développer la navigation' : 'Réduire la navigation'}
+            />
           )}
         </div>
 

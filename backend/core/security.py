@@ -213,22 +213,44 @@ async def require_current_user(
     return user
 
 
+ADMIN_ROLES = frozenset({"OWNER", "SUPER_ADMIN", "AI_ADMIN", "SUPPORT", "OBSERVER", "admin"})
+
 async def require_admin(
     user: dict = Depends(get_current_user),
 ) -> dict:
-    """Dépendance qui vérifie que l'utilisateur est admin."""
+    """Dépendance qui vérifie que l'utilisateur possède un rôle administratif valide."""
     email = str(user.get("email", "")).lower()
     if email in SUPERADMIN_EMAILS:
         user["is_admin"] = True
-        user["role"] = "admin"
+        user["role"] = user.get("role") or "admin"
         return user
 
-    if not user.get("is_admin", False) and user.get("role") != "admin":
+    user_role = str(user.get("role", "")).upper()
+    if user.get("is_admin", False) or user_role in ADMIN_ROLES or user.get("role") in ADMIN_ROLES:
+        return user
+
+    raise HTTPException(
+        status_code=status.HTTP_403_FORBIDDEN,
+        detail="Accès réservé aux administrateurs autorisés de Ñkyel AI",
+    )
+
+
+def require_admin_role(*allowed_roles: str):
+    """Vérifie que l'administrateur possède au moins l'un des rôles spécifiés."""
+    allowed_set = {r.upper() for r in allowed_roles}
+    allowed_set.add("ADMIN")
+    async def role_checker(user: dict = Depends(require_admin)) -> dict:
+        email = str(user.get("email", "")).lower()
+        if email in SUPERADMIN_EMAILS:
+            return user
+        user_role = str(user.get("role", "")).upper()
+        if user_role in allowed_set or user_role in {"OWNER", "SUPER_ADMIN", "ADMIN"}:
+            return user
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail="Accès réservé aux administrateurs",
+            detail=f"Action non autorisée pour le rôle {user_role}. Rôles requis: {', '.join(allowed_roles)}",
         )
-    return user
+    return role_checker
 
 
 def get_current_user_id(user: dict = Depends(get_current_user)) -> str:

@@ -23,5 +23,4 @@ export {
   OnyxGrisIcon,
   NkyelAgentIcon,
 } from './NkyelIcons';
-/* Re-export nkyel/ sub-icons used by sidebar & input */
-export { PawNewIcon, PawHistoryIcon, ProjetsIcon, TropheeIcon, RadarWandanaIcon, WandanaIcon, OmbreIcon } from './nkyel';
+export { IbogaGlyph, IbogaNavigationTrigger } from '../brand';

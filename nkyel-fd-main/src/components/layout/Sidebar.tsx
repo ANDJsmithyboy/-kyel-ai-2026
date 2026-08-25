@@ -19,6 +19,7 @@ import { useSettingsStore } from '@/stores/settings.store';
 import { cn } from '@/lib/utils';
 import { v4 as uuidv4 } from 'uuid';
 import { useSafeClerk as useClerk } from '@/lib/auth-client';
+import { IbogaNavigationTrigger } from '@/components/brand';
 
 /* -- Salutations gabonaises par heure -- */
 function getGreeting(name: string, style: string): string {
@@ -162,13 +163,14 @@ export default function Sidebar() {
   if (!isOpen && !isMobile) {
     return (
       <div className="fixed top-0 left-0 z-50 h-screen w-[48px] flex flex-col items-center py-2 border-r border-[var(--border)] bg-[var(--zc-surface)]" suppressHydrationWarning>
-        <button
-          onClick={toggle}
-          className="p-2 rounded-xl hover:bg-[var(--accent-10)] transition-colors group text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
+        <IbogaNavigationTrigger
+          open={false}
+          onToggle={toggle}
+          glyphSize={20}
+          variant="desktop"
           title="Ouvrir la barre latérale (Ctrl+B)"
-        >
-          <NkyelAgentIcon className="w-6 h-6" />
-        </button>
+          label="Ouvrir la barre latérale"
+        />
 
         <button
           onClick={handleNewChat}
@@ -286,34 +288,23 @@ export default function Sidebar() {
           'transition-transform duration-250',
           isMobile ? 'shadow-2xl' : '',
         )}        suppressHydrationWarning      >
-        {/* -- En-tête : Logo + Nkyel AI + Iboga toggle -- */}
-        <div className="flex items-center gap-2 px-3 pt-3 pb-2 relative">
+        {/* -- En-tête : Wordmark-First Ñkyel + Iboga Navigation Signature -- */}
+        <div className="flex items-center justify-between gap-2 px-3 pt-3 pb-2 relative">
           {/* Dot indicator lumineux */}
-          <div className="absolute top-4 left-4 w-1.5 h-1.5 rounded-full bg-[var(--accent)] shadow-[0_0_10px_var(--accent)]" />
-          <a href="/chat" className="flex items-center gap-2 flex-1 min-w-0 pl-4" onClick={() => { if (isMobile) close(); }}>
-            {blackPantherMode ? (
-              <div className="w-8 h-8 rounded-xl bg-[var(--accent-10)] border border-[var(--accent-20)] flex items-center justify-center text-[var(--accent)] shrink-0">
-                <IconBlackPanther className="w-5 h-5" />
-              </div>
-            ) : (
-              <img
-                src="/Nkyel AI-logo.jpeg"
-                alt="Nkyel AI"
-                className="w-8 h-8 rounded-xl object-cover shrink-0 ring-1 ring-[var(--border)]"
-              />
-            )}
-            <div className="flex items-baseline gap-0 min-w-0">
-              <span className="text-[15px] font-semibold tracking-tight text-[var(--accent)]">Nkyel</span>
-              <span className="text-[15px] font-semibold tracking-tight text-[var(--gabon-blue,#38BDF8)]">AI</span>
-            </div>
+          <div className="absolute top-4 left-3 w-1.5 h-1.5 rounded-full bg-[var(--accent)] shadow-[0_0_10px_var(--accent)]" />
+          <a href="/chat" className="flex items-center gap-2 min-w-0 pl-3 focus-visible:outline-none" onClick={() => { if (isMobile) close(); }}>
+            <span className="text-[16px] font-semibold tracking-tight text-[var(--text-primary)]" style={{ letterSpacing: '-0.025em' }}>
+              Ñkyel
+            </span>
           </a>
-          <button
-            onClick={toggle}
-            className="p-1.5 rounded-xl hover:bg-white/[0.06] transition-colors shrink-0 text-[var(--text-tertiary)] hover:text-[var(--text-primary)]"
+          <IbogaNavigationTrigger
+            open={true}
+            onToggle={toggle}
+            glyphSize={19}
+            variant="desktop"
             title="Fermer la barre latérale (Ctrl+B)"
-          >
-            <NkyelAgentIcon className="w-6 h-6" />
-          </button>
+            label="Fermer la barre latérale"
+          />
         </div>
 
         {/* -- Boutons rapides : Nouveau chat + Recherche -- */}

@@ -22,7 +22,7 @@ interface AuthState {
   setLoading: (v: boolean) => void;
 }
 
-export const useAuthStore = create<AuthState>((set) => ({
+export const useAuthStore = create<AuthState>((set: any) => ({
   token: null,
   user: null,
   isAuthenticated: false,

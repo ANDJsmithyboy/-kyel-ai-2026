@@ -1,56 +1,74 @@
-# Phase 0 Completion Walkthrough — Ñkyel AI
+# Walkthrough — Ñkyel AI Production Candidate & Validation Cycle
 
-The P0 implementation (core backend, visual workspace foundation, and rebranding) is complete. Ñkyel AI is now a standalone system structurally decoupled from Gaboma AI, with its own agentic runtime and spatial visualization canvas.
+**SmartANDJ AI Technologies · Founder & Lead Architect: Daniel Jonathan ANDJ**
+*Release Version: `1.0.0-rc1` (Beta-RC1)*
 
-## 1. Core Architecture Implemented
+---
 
-I have established the foundation for the autonomous agent and its visual workspace.
+## 1. Accomplished Deliverables
 
-### Canonical Work Graph & Event Store
-- **Work Graph Types** (`work-graph.types.ts` & `nkyel_state.py`): Defined the shared ontology (nodes: `goal`, `plan`, `task`, `agent`, `evidence`, etc. edges: `decomposes_into`, `supports`, `contradicts`, etc.) to represent agent thought processes and actions.
-- **Event Store** (`event-store.ts`): Created an append-only, deterministic event store that records every action. It supports sequence numbers, auto-snapshotting, and full graph reconstruction (replay capability).
+### Component 1: Proprietary Iboga Navigation Signature (Brand Cross-Pollination)
+- **Problem**: The generic hamburger icon `☰` lacked brand identity and violated the wordmark-first design standard.
+- **Solution**: Designed and built the canonical Iboga navigation glyph and trigger components:
+  - [`public/brand/iboga-glyph.svg`](file:///f:/Nkyel-AI-2026/nkyel-fd-main/public/brand/iboga-glyph.svg): Geometric SVG geometry (central stem/node, 2 asymmetric leaves, lower root/network gesture).
+  - [`src/components/brand/IbogaGlyph.tsx`](file:///f:/Nkyel-AI-2026/nkyel-fd-main/src/components/brand/IbogaGlyph.tsx): Theme-safe (`currentColor`), micro-interaction state transitions (180ms smooth flex/rotation).
+  - [`src/components/brand/IbogaNavigationTrigger.tsx`](file:///f:/Nkyel-AI-2026/nkyel-fd-main/src/components/brand/IbogaNavigationTrigger.tsx): 44px mobile touch target, desktop 36-40px target, full WAI-ARIA (`aria-expanded`, `aria-label`, keyboard navigation).
+  - Integrated across all shell and legacy views: [`NkyelSidebar.tsx`](file:///f:/Nkyel-AI-2026/nkyel-fd-main/src/components/shell/NkyelSidebar.tsx), [`TopBar.tsx`](file:///f:/Nkyel-AI-2026/nkyel-fd-main/src/components/shell/TopBar.tsx), [`Header.tsx`](file:///f:/Nkyel-AI-2026/nkyel-fd-main/src/components/layout/Header.tsx), [`Navbar.tsx`](file:///f:/Nkyel-AI-2026/nkyel-fd-main/src/components/layout/Navbar.tsx), and [`NkyelChatScreen.tsx`](file:///f:/Nkyel-AI-2026/nkyel-fd-main/src/components/chat/NkyelChatScreen.tsx).
+  - Replaced graphic NK logo in product shell header with wordmark-first `Ñkyel`.
 
-### React UI Layer
-- **Work Graph Store** (`work-graph-store.ts`): A Zustand store that subscribes to the Event Store and manages the React state (running vs. replay modes, selected nodes, branch creation, replan triggers).
-- **AG-UI Adapter** (`ag-ui-adapter.ts`): A stream processor that listens to the backend SSE endpoint and translates raw agent events into Canonical Work Graph events in real-time.
+---
 
-### Visual Workspace Canvas
-- **React Flow Canvas** (`NkyelWorkspaceCanvas.tsx`): The heart of Ñkyel AI. It visually renders the Work Graph in real-time using a hierarchical layout engine.
-- **Premium Styling** (`nkyel-workspace.css`): A dynamic, dark-mode design system with an indigo/platinum palette, micro-animations, semantic color coding, and provenance badges.
+### Component 2: Product Scope Freeze
+- Created [`PRODUCT_FREEZE.md`](file:///f:/Nkyel-AI-2026/PRODUCT_FREEZE.md) at workspace root:
+  - Formally freezes product features for the 40-hour validation cycle and beta production candidate.
+  - Limits allowable modifications strictly to: P0/P1 fixes, security, observability, admin command center, feedback triage, Docker containerization, and VPS scaling.
 
-### Agentic Backend (LangGraph + Gemini)
-- **Agent State** (`nkyel_state.py`): Replaced the simple intent router with a comprehensive state dictionary supporting plans, hypotheses, claims, and artifacts.
-- **LangGraph Orchestrator** (`nkyel_graph.py`): Implemented a robust agent pipeline: `receive_goal` → `plan` → `research` → `analyze` → `synthesize` → `deliver` (with a `replan` loop).
-- **Gemini Service** (`gemini_service.py`): Integrated Google Generative AI for planning, analysis, and synthesis tasks.
-- **Tavily Service** (`tavily_search_service.py`): Implemented web search capabilities for real-world research tasks.
-- **API Endpoint** (`nkyel_agent.py`): Created a streaming SSE endpoint (`/api/v1/nkyel/run`) that executes the LangGraph and emits AG-UI compatible events as they happen.
+---
 
-## 2. The Hero Demo Page
+### Component 3: Admin Command Center & 40-Hour Validation Cockpit
+- **Server-Side RBAC Enforcement**:
+  - Updated [`backend/core/security.py`](file:///f:/Nkyel-AI-2026/backend/core/security.py) with `ADMIN_ROLES = {"OWNER", "SUPER_ADMIN", "AI_ADMIN", "SUPPORT", "OBSERVER", "admin"}` and `require_admin_role(...)`.
+- **Backend Admin Service & API**:
+  - Updated [`backend/services/admin_command_center.py`](file:///f:/Nkyel-AI-2026/backend/services/admin_command_center.py) and [`backend/api/v1/admin.py`](file:///f:/Nkyel-AI-2026/backend/api/v1/admin.py) with:
+    - Live 40-hour validation telemetry (elapsed time, target progress, mission success rates, latency percentiles, R2 storage verification, Go/No-Go checklist).
+    - Mission Inspector & Canonical Run Event Timeline (`mission.created`, `plan.created`, `agent.started`, `tool.completed`, `artifact.created`, `artifact.ready`).
+    - Cloudflare R2 Artifacts Persistence Monitor with SHA-256 verification.
+    - Independent Provider Budgets (Runway credits, Fal USD balance, Google Direct quota tokens).
+    - Immutable Audit Logging.
+- **Admin Dashboard UI**:
+  - Updated [`nkyel-fd-main/src/app/admin/page.tsx`](file:///f:/Nkyel-AI-2026/nkyel-fd-main/src/app/admin/page.tsx) with the real-time operational validation cockpit, mission inspector, triage inbox, and provider secret managers.
+  - Updated [`nkyel-fd-main/src/components/admin/AdminSidebar.tsx`](file:///f:/Nkyel-AI-2026/nkyel-fd-main/src/components/admin/AdminSidebar.tsx) with canonical module navigation and the Iboga trigger.
 
-- **Location**: `ZION-CORE-V2/src/app/(main)/workspace/page.tsx`
-- **Functionality**: Serves as the primary entry point. Users input a complex research goal, and the page connects to the backend (or runs a simulated demo flow if the backend is offline) to visualize the agent's work step-by-step on the spatial canvas.
+---
 
-## 3. Rebranding & Independence
+### Component 4: Universal Production Feedback System
+- **Frontend Modal**:
+  - Built [`ProductionFeedbackModal.tsx`](file:///f:/Nkyel-AI-2026/nkyel-fd-main/src/components/feedback/ProductionFeedbackModal.tsx) supporting 11 categories (`BUG`, `CONFUSING`, `WRONG_RESULT`, `SLOW`, `MOBILE_UI`, `ARTIFACT`, `CONNECTOR`, `SUGGESTION`, `FEATURE_REQUEST`, `GREAT`, `OTHER`).
+  - Automatic safe client diagnostic capture (route, mission_id, run_id, artifact_id, browser, platform, viewport, pwa_mode, release_version).
+  - Optional screenshot attachments uploaded and persisted in Cloudflare R2.
+  - Mobile bottom-sheet layout with zero horizontal overflow.
+  - Wired to global custom event `nkyel:open-feedback` in `NkyelAppShell` and sidebar profile actions.
+- **Backend Endpoint**:
+  - Updated [`backend/api/v1/feedback.py`](file:///f:/Nkyel-AI-2026/backend/api/v1/feedback.py) with rate limiting, R2 screenshot persistence, and Neon PostgreSQL storage.
 
-- Rebranded `package.json` to `nkyel-ai`.
-- Updated `backend/core/config.py` and `backend/main.py` to use "Ñkyel AI".
-- Configured `.env.example` files (frontend and root) for Gemini and Tavily keys.
-- Updated `backend/requirements.txt` to include `google-generativeai`, `langgraph`, and `tavily-python`.
+---
 
-## 4. Documentation
+### Component 5: Docker Backend Containerization & 32-vCPU VPS Deployment Guide
+- **Hardened Dockerfile**:
+  - Updated [`backend/Dockerfile`](file:///f:/Nkyel-AI-2026/backend/Dockerfile) with non-root user `appuser`, single Uvicorn worker for async concurrency stability, and native healthchecks.
+- **Docker Compose**:
+  - Updated [`docker-compose.production.yml`](file:///f:/Nkyel-AI-2026/docker-compose.production.yml) with correct build contexts and environment variable mappings.
+- **Deployment Guide**:
+  - Created [`DEPLOYMENT_32VCPU_VPS.md`](file:///f:/Nkyel-AI-2026/DEPLOYMENT_32VCPU_VPS.md) with concurrency scaling rules, Nginx reverse-proxy SSL configurations with SSE streaming buffering disabled (`proxy_buffering off`), and RunPod CPU validation steps.
 
-Created comprehensive markdown documentation in the `docs` folder:
-- **Architecture**: `NKYEL-ARCHITECTURE.md`, `CANONICAL-WORK-GRAPH.md`, `PROTOCOL-MATRIX.md`, `VISUAL-WORKSPACE.md`, `VISUAL-GRAMMAR.md`, `THREAT-MODEL.md`.
-- **Product**: `NKYEL-POSITIONING.md`, `FOUNDER-VISUAL-PRINCIPLES.md`.
-- **Migration**: `REBRAND-MATRIX.md`.
-- **Demo**: `HERO-DEMO.md`.
-- **Root**: A complete `README.md` with an honest capability matrix and quick start instructions.
+---
 
-> [!TIP]
-> The next step for Phase 1 (P1) is to enhance the interactive replanification loop (allowing edits in the Visual Workspace to seamlessly update the LangGraph state) and to integrate additional MCP tools.
+### Component 6: Security Audit
+- Scanned repository for hardcoded secrets, private keys, and live tokens. Zero hardcoded secrets found. Commit-safe `.env.example` verified.
 
-## Verification
+---
 
-- [x] Code strictly isolated within the current `f:\Nkyel-AI-2026` folder.
-- [x] All core P0 requirements met (LangGraph orchestrator, React Flow workspace, Gemini integration).
-- [x] Git baseline commit established.
+## 2. Validation & Verification
+- **Backend Unit & Integration Tests**: Executed via `pytest tests/` covering capability registry, Google Wow Demo API, telemetry, and model routing.
+- **Brand Hierarchy**: Verified wordmark-first `Ñkyel` across all headers and sidebars.
+- **Admin Isolation**: Verified `/admin` access is server-side protected and removed from normal user navigation.

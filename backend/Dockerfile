@@ -1,5 +1,5 @@
 # ==============================================================================
-# ÑKYEL AI — PRODUCTION DOCKERFILE POUR RUNPOD CPU (4 vCPU / 16 Go)
+# ÑKYEL AI — PRODUCTION DOCKERFILE (PORTABLE RUNPOD & 32-vCPU VPS)
 # SmartANDJ AI Technologies · Fondateur & Lead Architect : Daniel Jonathan ANDJ
 # ==============================================================================
 
@@ -10,7 +10,8 @@ ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
     PYTHONPATH=/app \
     PORT=8000 \
-    HOST=0.0.0.0
+    HOST=0.0.0.0 \
+    RELEASE_VERSION=1.0.0-rc1
 
 WORKDIR /app
 
@@ -21,6 +22,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libpq-dev \
     && rm -rf /var/lib/apt/lists/*
 
+# Création d'un utilisateur non-root pour l'isolation de sécurité
+RUN groupadd -g 1001 appgroup && \
+    useradd -u 1001 -g appgroup -s /bin/bash -m appuser
+
 # Installation de uv pour une résolution et installation optimisées des paquets
 RUN pip install --no-cache-dir uv
 
@@ -30,16 +35,18 @@ COPY requirements.txt .
 # Étape 2 : Installation des dépendances Python
 RUN uv pip install --no-cache --system -r requirements.txt
 
-# Étape 3 : Copie de l'ensemble du backend (Ñkyel Core, DeerFlow 2.0, LangGraph, API v1)
-COPY . .
+# Étape 3 : Copie de l'ensemble du backend
+COPY --chown=appuser:appgroup . .
 
-# Port d'écoute exposé pour RunPod et reverse proxies
+# Passage à l'utilisateur non-root
+USER appuser
+
+# Port d'écoute exposé
 EXPOSE 8000
 
 # Healthcheck natif Docker
 HEALTHCHECK --interval=20s --timeout=5s --start-period=10s --retries=3 \
     CMD curl -f http://localhost:8000/health || exit 1
 
-# Lancement d'Uvicorn avec 1 worker (état agentique, SSE streaming & verrous mémoire stables)
+# Lancement d'Uvicorn avec 1 worker par conteneur (scale horizontalement si besoin)
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "1", "--timeout-keep-alive", "75"]
-

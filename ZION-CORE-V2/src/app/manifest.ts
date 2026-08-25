@@ -12,16 +12,43 @@ export default function manifest(): MetadataRoute.Manifest {
     orientation: 'any',
     icons: [
       {
-        src: '/favicon.png',
+        src: '/icon-192x192.png',
+        sizes: '192x192',
+        type: 'image/png',
+        purpose: 'any',
+      },
+      {
+        src: '/maskable-icon-192x192.png',
         sizes: '192x192',
         type: 'image/png',
         purpose: 'maskable',
       },
       {
-        src: '/favicon.png',
+        src: '/icon-512x512.png',
+        sizes: '512x512',
+        type: 'image/png',
+        purpose: 'any',
+      },
+      {
+        src: '/maskable-icon-512x512.png',
         sizes: '512x512',
         type: 'image/png',
         purpose: 'maskable',
+      },
+      {
+        src: '/apple-touch-icon.png',
+        sizes: '180x180',
+        type: 'image/png',
+      },
+      {
+        src: '/nkyel-ai-android.png',
+        sizes: '1024x1024',
+        type: 'image/png',
+      },
+      {
+        src: '/nkyel-ai-ios.png',
+        sizes: '1024x1024',
+        type: 'image/png',
       },
     ],
     categories: ['productivity', 'utilities', 'business'],

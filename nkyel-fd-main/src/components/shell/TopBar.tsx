@@ -17,6 +17,7 @@ import { useTerrainPanel } from '@/hooks/useTerrainPanel';
 import { useIsMobile } from '@/hooks/useIsMobile';
 import { getNkyelEngine, useNkyelModel } from '@/hooks/useNkyelModel';
 import UpgradeModal from '@/components/subscription/UpgradeModal';
+import { IbogaNavigationTrigger } from '@/components/brand';
 
 interface TopBarProps {
   onOpenCapabilities?: () => void;
@@ -48,9 +49,14 @@ export default function TopBar({ onOpenCapabilities }: TopBarProps) {
       <header className="nkyel-topbar">
         <div className="nkyel-topbar-leading">
           {isMobile && (
-            <button type="button" onClick={open} aria-label="Barre latérale" className="flex h-8 w-8 items-center justify-center rounded-lg text-[var(--text-tertiary)] hover:bg-[var(--hover)] hover:text-[var(--text-primary)]">
-              <SidebarSimple size={18} />
-            </button>
+            <IbogaNavigationTrigger
+              open={false}
+              onToggle={open}
+              glyphSize={20}
+              variant="mobile"
+              title="Ouvrir la navigation"
+              label="Ouvrir la navigation"
+            />
           )}
           <div className="relative">
             <button

@@ -1,15 +1,12 @@
 /**
- * Ñkyel AI — Sovereign Authentication Architecture
- * SmartANDJ AI Technologies · Founder: Daniel Jonathan ANDJ
+ * Ñkyel AI — Sovereign Authentication Shell (Tavily × Replicate × Replit × Leonardo AI Spirit)
+ * SmartANDJ AI Technologies · Founder & Lead Architect: Daniel Jonathan ANDJ
  *
- * MISSION P0 — Design Target:
- * Simple comme Luma · Calme comme Apple · Net comme Geist · Identifiable comme Ñkyel.
- *
- * - Pas de sidebar, pas de dashboard, pas de gros panneau marketing.
- * - Desktop : surface centrée optiquement (max-width: 420px).
- * - Mobile : 100% de largeur avec 20–24px de padding horizontal.
- * - Thèmes Light / Dark / System 100% étanches (Zéro îlot sombre en light, zéro icône noire en dark).
- * - Localisation bilingue instantanée FR / EN.
+ * Visual Benchmark:
+ * - Atmospheric wallpaper background using /brand/nkyel-ai-ios.png with artistic depth & lighting.
+ * - Central floating pristine white auth card inspired by Tavily by Nebius.
+ * - Wordmark "Ñkyel by SmartANDJ" with sovereign logo emblem.
+ * - Google OAuth & Email auth integration.
  */
 
 'use client';
@@ -17,8 +14,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useLanguageStore } from '@/stores/language.store';
-import { useThemeStore } from '@/stores/theme';
-import { Moon, Sun, Globe } from '@phosphor-icons/react';
+import { Globe, CheckCircle } from '@phosphor-icons/react';
 
 interface AuthShellProps {
   mode: 'sign-in' | 'sign-up';
@@ -27,7 +23,6 @@ interface AuthShellProps {
 
 export default function AuthShell({ mode, children }: AuthShellProps) {
   const { uiLocale, setUiLocale } = useLanguageStore();
-  const { currentTheme, setTheme } = useThemeStore();
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -35,150 +30,146 @@ export default function AuthShell({ mode, children }: AuthShellProps) {
   }, []);
 
   const isEn = uiLocale.startsWith('en');
-  const isLight =
-    currentTheme === 'neo-blanc' ||
-    currentTheme === 'aurore-ogoue' ||
-    (typeof document !== 'undefined' &&
-      document.documentElement.classList.contains('light'));
 
   const toggleLanguage = () => {
     setUiLocale(isEn ? 'fr-FR' : 'en-US');
   };
 
-  const toggleTheme = () => {
-    const nextTheme = isLight ? 'black-panther' : 'neo-blanc';
-    setTheme(nextTheme);
-  };
-
   return (
-    <div className="min-h-screen w-full bg-[var(--material-canvas)] text-[var(--text-primary)] flex flex-col justify-between relative px-4 sm:px-6 py-6 sm:py-8 font-sans selection:bg-[var(--accent)]/20 selection:text-[var(--accent)]">
+    <div className="min-h-screen w-full relative flex flex-col justify-between items-center px-4 py-6 sm:py-10 font-sans select-none overflow-x-hidden">
       
-      {/* ── Top Header (Minimalist Apple × Geist) ────────────────── */}
-      <header className="w-full max-w-5xl mx-auto flex items-center justify-between shrink-0">
-        
+      {/* ── Background: Replicate / Leonardo AI Atmospheric Wallpaper ── */}
+      <div
+        className="fixed inset-0 z-0 bg-cover bg-center bg-no-repeat transform scale-105 filter blur-[2px] brightness-[0.9] transition-all duration-700"
+        style={{
+          backgroundImage: `url('/brand/nkyel-ai-ios.png')`,
+        }}
+      />
+      {/* Dark Ambient Vignette / Gradient Overlay */}
+      <div className="fixed inset-0 z-0 bg-gradient-to-b from-black/40 via-black/20 to-black/60 pointer-events-none" />
+
+      {/* ── Top Header Controls ──────────────────────────────────── */}
+      <header className="w-full max-w-5xl mx-auto flex items-center justify-between shrink-0 relative z-10">
         {/* Brand Mark (Left) */}
         <Link
           href="/"
-          className="inline-flex items-center gap-2.5 group transition-opacity hover:opacity-85 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] rounded-lg p-1"
+          className="inline-flex items-center gap-2 group transition-opacity hover:opacity-90 rounded-full px-3 py-1.5 bg-black/40 backdrop-blur-md border border-white/15 text-white shadow-lg"
           aria-label="Ñkyel AI Home"
         >
-          {/* Minimalist Ñ Emblem */}
-          <div className="w-7 h-7 rounded-lg bg-[var(--surface-raised)] border border-[var(--border-subtle)] flex items-center justify-center font-bold text-sm text-[var(--text-primary)] shadow-sm">
-            <span className="text-[var(--text-primary)] font-serif tracking-tighter">Ñ</span>
+          <div className="w-6 h-6 rounded-full bg-[#D5AE57] text-black flex items-center justify-center font-black text-xs shadow-sm">
+            Ñ
           </div>
-          <span className="font-semibold text-[15px] tracking-tight text-[var(--text-primary)]">
+          <span className="font-semibold text-sm tracking-tight text-white">
             Ñkyel
           </span>
         </Link>
 
-        {/* Quick Controls: Language & Theme (Right) */}
-        <div className="flex items-center gap-2">
-          {/* Language Toggle Pill */}
-          <button
-            type="button"
-            onClick={toggleLanguage}
-            className="h-8 px-2.5 rounded-lg bg-[var(--surface-raised)] border border-[var(--border-subtle)] hover:border-[var(--border-default)] text-[12px] font-mono text-[var(--text-secondary)] hover:text-[var(--text-primary)] flex items-center gap-1.5 transition-all shadow-sm active:scale-95"
-            title={isEn ? 'Basculer en Français' : 'Switch to English'}
-            aria-label="Toggle language"
-          >
-            <Globe size={13} className="text-[var(--text-tertiary)]" />
-            <span className="font-semibold">{isEn ? 'EN' : 'FR'}</span>
-          </button>
-
-          {/* Theme Toggle Button */}
-          {mounted && (
-            <button
-              type="button"
-              onClick={toggleTheme}
-              className="w-8 h-8 rounded-lg bg-[var(--surface-raised)] border border-[var(--border-subtle)] hover:border-[var(--border-default)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] flex items-center justify-center transition-all shadow-sm active:scale-95"
-              title={isLight ? 'Activer le mode sombre' : 'Activer le mode clair'}
-              aria-label="Toggle theme"
-            >
-              {isLight ? <Moon size={14} /> : <Sun size={14} />}
-            </button>
-          )}
-        </div>
+        {/* Language Pill (Right) */}
+        <button
+          type="button"
+          onClick={toggleLanguage}
+          className="h-8 px-3 rounded-full bg-black/40 backdrop-blur-md border border-white/15 hover:border-white/30 text-xs font-mono text-white/80 hover:text-white flex items-center gap-1.5 transition-all shadow-lg active:scale-95"
+          title={isEn ? 'Basculer en Français' : 'Switch to English'}
+        >
+          <Globe size={13} className="text-[#D5AE57]" />
+          <span className="font-semibold">{isEn ? 'EN' : 'FR'}</span>
+        </button>
       </header>
 
-      {/* ── Center Auth Surface (Optically Centered 420px) ────────── */}
-      <main className="w-full max-w-[420px] mx-auto my-auto py-8 sm:py-12 flex flex-col items-center">
-        
-        {/* Title & Subtitle */}
-        <div className="w-full text-center space-y-1.5 mb-6">
-          <h1 className="text-2xl font-bold tracking-tight text-[var(--text-primary)]">
-            {mode === 'sign-in'
-              ? isEn
-                ? 'Welcome back'
-                : 'Bon retour parmi nous'
-              : isEn
-              ? 'Create your Ñkyel account'
-              : 'Créez votre compte Ñkyel'}
-          </h1>
-          <p className="text-[13px] text-[var(--text-secondary)] leading-normal">
-            {mode === 'sign-in'
-              ? isEn
-                ? 'Continue with Ñkyel'
-                : 'Continuez avec Ñkyel'
-              : isEn
-              ? 'Start building with intelligence.'
-              : 'Commencez à construire avec intelligence.'}
-          </p>
-        </div>
+      {/* ── Center Floating Card (Tavily by Nebius Benchmark) ─────── */}
+      <main className="w-full max-w-[440px] mx-auto my-auto py-6 relative z-10 animate-in fade-in zoom-in-95 duration-200">
+        <div className="w-full rounded-[28px] bg-white text-slate-900 shadow-2xl shadow-black/40 border border-white/40 p-7 sm:p-9 space-y-6">
+          
+          {/* Card Brand Header (Tavily by Nebius style) */}
+          <div className="flex flex-col items-center justify-center space-y-3">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-100 border border-slate-200">
+              <div className="w-5 h-5 rounded-md bg-black text-white flex items-center justify-center font-bold text-xs">
+                Ñ
+              </div>
+              <span className="text-sm font-bold tracking-tight text-slate-900">
+                ñkyel
+              </span>
+              <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-white text-slate-700 font-semibold border border-slate-300 uppercase">
+                SMARTANDJ
+              </span>
+            </div>
 
-        {/* Auth Surface (Paper / Deep Near-Black Solid Layer) */}
-        <div className="w-full rounded-2xl bg-[var(--surface-raised)] border border-[var(--border-subtle)] shadow-lg shadow-black/5 p-5 sm:p-7 relative transition-colors">
+            {/* Title & Subtitle */}
+            <div className="text-center space-y-1">
+              <h1 className="text-2xl font-bold tracking-tight text-slate-900">
+                {mode === 'sign-in'
+                  ? isEn
+                    ? 'Welcome'
+                    : 'Accueillir'
+                  : isEn
+                  ? 'Get started'
+                  : 'Inscription'}
+              </h1>
+              <p className="text-xs text-slate-500">
+                {mode === 'sign-in'
+                  ? isEn
+                    ? 'Sign in to continue to Ñkyel'
+                    : 'Connectez-vous pour continuer sur Ñkyel'
+                  : isEn
+                  ? 'Create your account to start with Ñkyel'
+                  : 'Créez votre compte pour démarrer sur Ñkyel'}
+              </p>
+            </div>
+          </div>
+
+          {/* Form Content */}
           {children}
-        </div>
 
-        {/* Switch Link (Sign In ↔ Sign Up) */}
-        <div className="mt-5 text-center text-xs text-[var(--text-secondary)]">
-          {mode === 'sign-in' ? (
-            <p>
-              {isEn ? 'New to Ñkyel? ' : 'Nouveau sur Ñkyel ? '}
-              <Link
-                href="/sign-up"
-                className="font-medium text-[var(--text-primary)] hover:text-[var(--accent)] underline underline-offset-4 transition-colors"
-              >
-                {isEn ? 'Create an account' : 'Créer un compte'}
-              </Link>
-            </p>
-          ) : (
-            <p>
-              {isEn ? 'Already have an account? ' : 'Vous avez déjà un compte ? '}
-              <Link
-                href="/sign-in"
-                className="font-medium text-[var(--text-primary)] hover:text-[var(--accent)] underline underline-offset-4 transition-colors"
-              >
-                {isEn ? 'Sign in' : 'Se connecter'}
-              </Link>
-            </p>
-          )}
+          {/* Switch Link */}
+          <div className="text-center text-xs text-slate-600">
+            {mode === 'sign-in' ? (
+              <p>
+                {isEn ? "Don't have an account? " : "Vous n'avez pas de compte ? "}
+                <Link
+                  href="/sign-up"
+                  className="font-semibold text-blue-600 hover:text-blue-700 hover:underline transition-colors"
+                >
+                  {isEn ? 'Sign up' : 'Inscrivez-vous'}
+                </Link>
+              </p>
+            ) : (
+              <p>
+                {isEn ? 'Already have an account? ' : 'Vous avez déjà un compte ? '}
+                <Link
+                  href="/sign-in"
+                  className="font-semibold text-blue-600 hover:text-blue-700 hover:underline transition-colors"
+                >
+                  {isEn ? 'Sign in' : 'Connectez-vous'}
+                </Link>
+              </p>
+            )}
+          </div>
         </div>
       </main>
 
       {/* ── Bottom Legal Footer ─────────────────────────────────── */}
-      <footer className="w-full max-w-5xl mx-auto text-center shrink-0 pt-6 pb-2 text-[11px] text-[var(--text-tertiary)] space-y-2">
+      <footer className="w-full max-w-5xl mx-auto text-center shrink-0 pt-4 pb-2 text-[11px] text-white/70 space-y-1 relative z-10">
         <p>
           {isEn
             ? 'By continuing, you agree to our '
             : 'En continuant, vous acceptez nos '}
           <Link
             href="/terms"
-            className="hover:text-[var(--text-secondary)] underline underline-offset-2 transition-colors"
+            className="text-white hover:underline underline-offset-2 transition-colors font-medium"
           >
             {isEn ? 'Terms of Service' : "Conditions d'utilisation"}
           </Link>
           {isEn ? ' and ' : ' et notre '}
           <Link
             href="/privacy"
-            className="hover:text-[var(--text-secondary)] underline underline-offset-2 transition-colors"
+            className="text-white hover:underline underline-offset-2 transition-colors font-medium"
           >
             {isEn ? 'Privacy Policy' : 'Politique de confidentialité'}
           </Link>
           .
         </p>
-        <p className="font-mono text-[10px] opacity-75">
-          © 2026 Ñkyel AI · SmartANDJ AI Technologies
+        <p className="font-mono text-[10px] text-white/50">
+          © 2026 Ñkyel AI · SmartANDJ AI Technologies (Founder: Daniel Jonathan ANDJ)
         </p>
       </footer>
     </div>

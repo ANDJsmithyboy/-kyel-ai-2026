@@ -12,7 +12,8 @@ import { useSidebarStore } from '@/stores/sidebar';
 import { useSettingsStore, getDisplayModelName } from '@/stores/settings.store';
 import { useAuthStore } from '@/stores/auth.store';
 import { cn } from '@/lib/utils';
-import { IconAurata, IconNkyel, IconWandana, NkyelAILogo } from '@/components/icons';
+import { IconAurata, IconNkyel, IconWandana } from '@/components/icons';
+import { IbogaNavigationTrigger } from '@/components/brand';
 
 /* -- Modèles disponibles -- */
 const MODELS = [
@@ -40,31 +41,23 @@ export default function Header({ currentModel, onModelChange }: HeaderProps) {
 
   return (
     <header className="sticky top-0 z-30 flex items-center gap-2 px-3 py-2 navbar-glass border-b border-[var(--border)]">
-      {/* Logo Nkyel AI + Toggle (visible quand sidebar fermée ou mobile) */}
+      {/* Iboga Navigation Trigger + Wordmark (visible quand sidebar fermée ou mobile) */}
       {(isMobile || !isOpen) && (
-        <div className="group flex items-center gap-1.5 mr-2">
-          <div className="flex h-8 w-8 items-center justify-center">
-            <NkyelAILogo width={22} height={22} />
-          </div>
-          <button
-            onClick={toggle}
-            className="flex h-7 w-7 items-center justify-center rounded-lg opacity-0 transition-all group-hover:opacity-100"
-            style={{ color: 'var(--text-secondary)' }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.color = 'var(--accent)';
-              e.currentTarget.style.background = 'var(--accent-06)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.color = 'var(--text-secondary)';
-              e.currentTarget.style.background = 'transparent';
-            }}
-            aria-label="Ouvrir la barre latérale"
+        <div className="flex items-center gap-1.5 mr-2">
+          <IbogaNavigationTrigger
+            open={false}
+            onToggle={toggle}
+            glyphSize={19}
+            variant="header"
+            title="Ouvrir la navigation"
+            label="Ouvrir la navigation"
+          />
+          <span
+            className="select-none text-[15px] font-semibold tracking-tight text-[var(--text-primary)]"
+            style={{ letterSpacing: '-0.025em' }}
           >
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-              <line x1="9" y1="3" x2="9" y2="21"></line>
-            </svg>
-          </button>
+            Ñkyel
+          </span>
         </div>
       )}
 
@@ -121,16 +114,6 @@ export default function Header({ currentModel, onModelChange }: HeaderProps) {
         <Sparkles size={14} />
         <span className="hidden sm:inline">Black Panther</span>
       </button>
-
-      {/* Admin link */}
-      {isAdmin && (
-        <button
-          onClick={() => router.push('/admin')}
-          className="px-3 py-1.5 rounded-xl text-xs font-medium text-[var(--text-tertiary)] hover:bg-white/[0.04] transition-colors"
-        >
-          Admin
-        </button>
-      )}
     </header>
   );
 }

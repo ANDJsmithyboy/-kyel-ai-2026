@@ -23,12 +23,12 @@ interface AuthState {
   setLoading: (v: boolean) => void;
 }
 
-export const useAuthStore = create<AuthState>((set) => ({
+export const useAuthStore = create<AuthState>((set: any) => ({
   user: null,
   isLoading: true,
   isAuthenticated: false,
 
-  setUser: (user) => {
+  setUser: (user: User) => {
     if (typeof window !== 'undefined' && user.token) {
       localStorage.setItem('token', user.token);
     }
@@ -42,5 +42,5 @@ export const useAuthStore = create<AuthState>((set) => ({
     set({ user: null, isAuthenticated: false, isLoading: false });
   },
 
-  setLoading: (v) => set({ isLoading: v }),
+  setLoading: (v: boolean) => set({ isLoading: v }),
 }));

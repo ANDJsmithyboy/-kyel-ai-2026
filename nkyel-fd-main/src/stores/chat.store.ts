@@ -42,42 +42,42 @@ interface ChatState {
   getActiveConversation: () => Conversation | undefined;
 }
 
-export const useChatStore = create<ChatState>((set, get) => ({
+export const useChatStore = create<ChatState>((set: any, get: any) => ({
   conversations: [],
   activeConversationId: null,
   isGenerating: false,
 
-  setConversations: (convs) => set({ conversations: convs }),
-  setActiveConversation: (id) => set({ activeConversationId: id }),
+  setConversations: (convs: Conversation[]) => set({ conversations: convs }),
+  setActiveConversation: (id: string | null) => set({ activeConversationId: id }),
 
-  addConversation: (conv) =>
-    set((s) => ({ conversations: [conv, ...s.conversations] })),
+  addConversation: (conv: Conversation) =>
+    set((s: ChatState) => ({ conversations: [conv, ...s.conversations] })),
 
-  removeConversation: (id) =>
-    set((s) => ({
-      conversations: s.conversations.filter((c) => c.id !== id),
+  removeConversation: (id: string) =>
+    set((s: ChatState) => ({
+      conversations: s.conversations.filter((c: Conversation) => c.id !== id),
       activeConversationId: s.activeConversationId === id ? null : s.activeConversationId,
     })),
 
-  updateConversationTitle: (id, title) =>
-    set((s) => ({
-      conversations: s.conversations.map((c) =>
+  updateConversationTitle: (id: string, title: string) =>
+    set((s: ChatState) => ({
+      conversations: s.conversations.map((c: Conversation) =>
         c.id === id ? { ...c, title, updatedAt: Date.now() } : c
       ),
     })),
 
-  addMessage: (convId, msg) =>
-    set((s) => ({
-      conversations: s.conversations.map((c) =>
+  addMessage: (convId: string, msg: Message) =>
+    set((s: ChatState) => ({
+      conversations: s.conversations.map((c: Conversation) =>
         c.id === convId
           ? { ...c, messages: [...c.messages, msg], updatedAt: Date.now() }
           : c
       ),
     })),
 
-  updateLastAssistantMessage: (convId, content) =>
-    set((s) => ({
-      conversations: s.conversations.map((c) => {
+  updateLastAssistantMessage: (convId: string, content: string) =>
+    set((s: ChatState) => ({
+      conversations: s.conversations.map((c: Conversation) => {
         if (c.id !== convId) return c;
         const msgs = [...c.messages];
         const lastIdx = msgs.length - 1;
@@ -88,30 +88,30 @@ export const useChatStore = create<ChatState>((set, get) => ({
       }),
     })),
 
-  setStreaming: (convId, msgId, streaming) =>
-    set((s) => ({
-      conversations: s.conversations.map((c) => {
+  setStreaming: (convId: string, msgId: string, streaming: boolean) =>
+    set((s: ChatState) => ({
+      conversations: s.conversations.map((c: Conversation) => {
         if (c.id !== convId) return c;
         return {
           ...c,
-          messages: c.messages.map((m) =>
+          messages: c.messages.map((m: Message) =>
             m.id === msgId ? { ...m, isStreaming: streaming } : m
           ),
         };
       }),
     })),
 
-  setIsGenerating: (v) => set({ isGenerating: v }),
+  setIsGenerating: (v: boolean) => set({ isGenerating: v }),
 
-  clearMessages: (convId) =>
-    set((s) => ({
-      conversations: s.conversations.map((c) =>
+  clearMessages: (convId: string) =>
+    set((s: ChatState) => ({
+      conversations: s.conversations.map((c: Conversation) =>
         c.id === convId ? { ...c, messages: [] } : c
       ),
     })),
 
   getActiveConversation: () => {
-    const s = get();
-    return s.conversations.find((c) => c.id === s.activeConversationId);
+    const s: ChatState = get();
+    return s.conversations.find((c: Conversation) => c.id === s.activeConversationId);
   },
 }));

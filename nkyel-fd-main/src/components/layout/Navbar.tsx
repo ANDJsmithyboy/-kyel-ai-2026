@@ -4,9 +4,9 @@
    Migré depuis Navbar.svelte */
 'use client';
 
-import { Menu } from 'lucide-react';
 import { useSidebarStore } from '@/stores/sidebar';
 import { useModeStore, MODEL_MAP } from '@/stores/mode';
+import { IbogaNavigationTrigger } from '@/components/brand';
 
 export default function Navbar() {
   const { isOpen: sidebarOpen, isMobile, toggle } = useSidebarStore();
@@ -18,20 +18,22 @@ export default function Navbar() {
       {/* Gauche : toggle sidebar (mobile seulement quand fermé) */}
       <div className="flex items-center gap-2">
         {isMobile && !sidebarOpen && (
-          <button
-            onClick={toggle}
-            className="p-1.5 rounded-lg hover:bg-white/10 transition-colors"
-            aria-label="Ouvrir le menu"
-          >
-            <Menu size={20} className="text-[var(--text-secondary)]" />
-          </button>
-        )}
-        {isMobile && !sidebarOpen && (
-          <img
-            src="/Nkyel AI-logo.jpeg"
-            alt="Nkyel AI"
-            className="w-7 h-7 rounded-lg object-cover"
-          />
+          <div className="flex items-center gap-2">
+            <IbogaNavigationTrigger
+              open={false}
+              onToggle={toggle}
+              glyphSize={20}
+              variant="mobile"
+              title="Ouvrir la navigation"
+              label="Ouvrir la navigation"
+            />
+            <span
+              className="select-none text-[14px] font-semibold tracking-tight text-[var(--text-primary)]"
+              style={{ letterSpacing: '-0.025em' }}
+            >
+              Ñkyel
+            </span>
+          </div>
         )}
       </div>
 

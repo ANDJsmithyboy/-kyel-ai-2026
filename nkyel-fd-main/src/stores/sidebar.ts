@@ -10,7 +10,7 @@ interface SidebarState {
   setMobile: (v: boolean) => void;
 }
 
-export const useSidebarStore = create<SidebarState>((set, get) => ({
+export const useSidebarStore = create<SidebarState>((set: any, get: any) => ({
   isOpen: true,
   isMobile: false,
 

@@ -77,13 +77,13 @@ def push_frontend():
     status = subprocess.run(["git", "status", "--porcelain"], cwd=temp_dir, capture_output=True, text=True)
     if status.stdout.strip():
         commit_msg = (
-            "feat(frontend): Manus-Grade Sovereign Landing Page, Clerk Gateway & Complete Legal Policy Suite (nkyel-fd)\n\n"
-            "- Manus-Style Hero & Interactive Prompt Composer with live model capability routing\n"
-            "- Real-time WorkGraph 4-step execution simulator\n"
-            "- Global 38 AI Providers Matrix (France, US, Europe, China, Japan, Korea, India, Middle East, Africa, Local)\n"
-            "- 6 Legal & Compliance Policies (/terms, /privacy, /security, /acceptable-use, /legal, /cookies)\n"
-            "- Seamless Clerk Authentication (Modal Sign In / Sign Up)\n\n"
-            "SmartANDJ AI Technologies - Fondateur : Daniel Jonathan ANDJ"
+            "feat(frontend): Manus × Apple Navigation & Popover, Tavily-style Auth Card on Replicate/Leonardo Wallpaper\n\n"
+            "- Manus-Style Sidebar Navigation, Task Composer & Floating Glass Profile Popover\n"
+            "- Google Profile Image / Avatar sync in Sidebar Footer and Popover\n"
+            "- Tavily by Nebius Sign-In & Sign-Up Card on /brand/nkyel-ai-ios.png wallpaper\n"
+            "- Canonical Iboga Navigation Signature (shared across Ñkyel AI and Gaboma AI)\n"
+            "- Production Feedback Modal & 40-Hour Validation Cockpit\n\n"
+            "SmartANDJ AI Technologies - Founder & Lead Architect: Daniel Jonathan ANDJ"
         )
         subprocess.run(["git", "commit", "-m", commit_msg], cwd=temp_dir, check=True)
         log("[*] Push vers origin main de nkyel-fd...")
@@ -118,11 +118,13 @@ def push_backend():
     status = subprocess.run(["git", "status", "--porcelain"], cwd=root_dir, capture_output=True, text=True)
     if status.stdout.strip():
         commit_msg = (
-            "feat(platform): Manus-Grade Sovereign Landing Page, Clerk Gateway & Complete Legal Policy Suite\n\n"
-            "- Manus Landing Page & Clerk Gateway (/welcome & root smart router)\n"
-            "- 6 Legal & Compliance Policies (/terms, /privacy, /security, /acceptable-use, /legal, /cookies)\n"
-            "- Global AI Fabric (38 Providers) & 100% Functional Production Settings (13 sections)\n\n"
-            "SmartANDJ AI Technologies - Fondateur : Daniel Jonathan ANDJ"
+            "feat(platform): Manus × Apple UI, Tavily Auth Card, 40-Hour Validation Cockpit & Product Scope Freeze\n\n"
+            "- Manus Sidebar Navigation, Google Profile Image Sync & Floating Profile Popover\n"
+            "- Tavily by Nebius Auth Shell & Replicate/Leonardo Wallpaper (/brand/nkyel-ai-ios.png)\n"
+            "- 40-Hour Live Validation Cockpit, Mission Inspector & Canonical Run Event Timeline\n"
+            "- Universal Production Feedback System (P0-P3 Triage, R2 Screenshots, Neon DB)\n"
+            "- Product Scope Freeze (PRODUCT_FREEZE.md) & 32-vCPU VPS Deployment Guide\n\n"
+            "SmartANDJ AI Technologies - Founder & Lead Architect: Daniel Jonathan ANDJ"
         )
         subprocess.run(["git", "commit", "-m", commit_msg], cwd=root_dir, check=True)
         log("[*] Push vers origin main du backend (-kyel-ai-2026)...")

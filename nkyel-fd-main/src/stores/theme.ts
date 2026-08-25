@@ -89,7 +89,7 @@ interface ThemeState {
   setAccent: (a: AccentKey) => void;
 }
 
-export const useThemeStore = create<ThemeState>((set) => ({
+export const useThemeStore = create<ThemeState>((set: any) => ({
   theme: 'neo-blanc',
   accent: 'gold',
   setTheme: (t: ThemeKey) => {
