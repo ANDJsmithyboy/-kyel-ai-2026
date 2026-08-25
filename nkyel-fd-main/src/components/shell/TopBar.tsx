@@ -7,14 +7,17 @@ import {
   ShareNetwork,
   ChartBar,
   FileText,
-  DotsThree,
   MagnifyingGlass,
   Check,
   Gear,
+  SignOut,
+  User,
+  ShieldCheck,
 } from '@phosphor-icons/react';
 import { ENGINES, getNkyelEngine, useNkyelModel, type NkyelEngineId } from '@/hooks/useNkyelModel';
 import { useSidebar } from '@/hooks/useSidebar';
 import { useSettingsModal } from '@/hooks/useSettingsModal';
+import { useSafeUser as useUser, useSafeClerk as useClerk } from '@/lib/auth-client';
 import UpgradeModal from '@/components/subscription/UpgradeModal';
 import { useLanguageStore } from '@/stores/language.store';
 import { IbogaNavigationTrigger } from '@/components/brand';
@@ -23,21 +26,39 @@ interface TopBarProps {
   onOpenCapabilities?: () => void;
 }
 
+function initialsFor(name: string) {
+  return (
+    name
+      .split(/\s+/)
+      .filter(Boolean)
+      .slice(0, 2)
+      .map((part) => part[0])
+      .join('')
+      .toUpperCase() || 'C'
+  );
+}
+
 export default function TopBar({ onOpenCapabilities }: TopBarProps) {
+  const { user } = useUser();
+  const { signOut } = useClerk();
   const engineId = useNkyelModel((state) => state.engineId);
   const setEngineId = useNkyelModel((state) => state.setEngineId);
   const { open: openMobileSidebar } = useSidebar();
   const openSettings = useSettingsModal((state: any) => state.open);
 
   const [modelDropdown, setModelDropdown] = useState(false);
-  const [actionsMenuOpen, setActionsMenuOpen] = useState(false);
+  const [profileMenuOpen, setProfileMenuOpen] = useState(false);
   const [isUpgradeOpen, setIsUpgradeOpen] = useState(false);
 
   const dropdownRef = useRef<HTMLDivElement>(null);
-  const actionsMenuRef = useRef<HTMLDivElement>(null);
+  const profileMenuRef = useRef<HTMLDivElement>(null);
   const { t } = useLanguageStore();
 
   const currentEngine = getNkyelEngine(engineId);
+
+  const displayName = user?.fullName || user?.username || 'Christ pour la VOP';
+  const email = user?.primaryEmailAddress?.emailAddress || 'fondateur@nkyel.ai';
+  const initials = initialsFor(displayName);
 
   // Close model dropdown on click outside
   useEffect(() => {
@@ -51,25 +72,25 @@ export default function TopBar({ onOpenCapabilities }: TopBarProps) {
     return () => document.removeEventListener('mousedown', handler);
   }, [modelDropdown]);
 
-  // Close actions menu on click outside
+  // Close profile menu on click outside
   useEffect(() => {
-    if (!actionsMenuOpen) return;
+    if (!profileMenuOpen) return;
     const handler = (e: MouseEvent) => {
-      if (actionsMenuRef.current && !actionsMenuRef.current.contains(e.target as Node)) {
-        setActionsMenuOpen(false);
+      if (profileMenuRef.current && !profileMenuRef.current.contains(e.target as Node)) {
+        setProfileMenuOpen(false);
       }
     };
     document.addEventListener('mousedown', handler);
     return () => document.removeEventListener('mousedown', handler);
-  }, [actionsMenuOpen]);
+  }, [profileMenuOpen]);
 
   const handleOpenCommands = () => {
-    setActionsMenuOpen(false);
+    setProfileMenuOpen(false);
     window.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', metaKey: true, bubbles: true }));
   };
 
   const handleShare = () => {
-    setActionsMenuOpen(false);
+    setProfileMenuOpen(false);
     if (typeof window !== 'undefined' && navigator.share) {
       navigator.share({
         title: 'Ñkyel AI',
@@ -164,7 +185,7 @@ export default function TopBar({ onOpenCapabilities }: TopBarProps) {
           </div>
         </div>
 
-        {/* Trailing: Upgrade Button, Search, Share, Action Button [•••] at the far right */}
+        {/* Trailing: Upgrade Button, Search, Share, and Manus-Style Miniature Profile Button */}
         <div className="flex items-center gap-1.5 sm:gap-2">
           {/* Universal Search / Command Palette Trigger */}
           <button
@@ -181,7 +202,7 @@ export default function TopBar({ onOpenCapabilities }: TopBarProps) {
             </kbd>
           </button>
 
-          {/* Upgrade Button (Desktop) */}
+          {/* Upgrade Button (Manus Style Desktop) */}
           <button
             type="button"
             onClick={() => setIsUpgradeOpen(true)}
@@ -203,26 +224,60 @@ export default function TopBar({ onOpenCapabilities }: TopBarProps) {
             <span className="text-[11px] font-medium">Partager</span>
           </button>
 
-          {/* Action Menu at Far Right [•••] */}
-          <div className="relative" ref={actionsMenuRef}>
+          {/* Manus-Style Miniature Profile Button (Present on Both PC & Mobile) */}
+          <div className="relative" ref={profileMenuRef}>
             <button
               type="button"
-              onClick={() => setActionsMenuOpen((prev) => !prev)}
-              aria-expanded={actionsMenuOpen}
-              aria-label="Menu d'actions"
-              title="Menu d'actions"
-              className="flex h-8 w-8 items-center justify-center rounded-xl text-[var(--text-tertiary)] transition-colors hover:bg-[var(--hover)] hover:text-[var(--text-primary)] border border-transparent hover:border-[var(--border)]"
+              onClick={() => setProfileMenuOpen((prev) => !prev)}
+              aria-expanded={profileMenuOpen}
+              aria-label="Menu du profil utilisateur"
+              title={displayName}
+              className="flex items-center gap-1.5 p-0.5 rounded-full hover:ring-2 hover:ring-[var(--accent)] transition-all cursor-pointer"
             >
-              <DotsThree size={20} weight="bold" />
+              {/* Miniature Avatar Circle */}
+              <div className="h-7 w-7 sm:h-8 sm:w-8 rounded-full overflow-hidden border border-[var(--border-strong)] bg-[var(--surface-raised)] flex items-center justify-center text-xs font-bold text-[var(--text-primary)] shadow-xs">
+                {user?.imageUrl ? (
+                  <img src={user.imageUrl} alt={displayName} className="h-full w-full object-cover" />
+                ) : (
+                  <span className="text-[11px] font-bold">{initials}</span>
+                )}
+              </div>
             </button>
 
-            {/* Action Menu Popover */}
-            {actionsMenuOpen && (
-              <div className="absolute right-0 top-full mt-1.5 w-56 space-y-1 rounded-2xl border border-[var(--border-strong)] bg-[var(--bg-elevated)] p-1.5 shadow-2xl z-50 animate-scale-in text-xs">
+            {/* Profile & Settings Dropdown Popover (Manus Style) */}
+            {profileMenuOpen && (
+              <div className="absolute right-0 top-full mt-1.5 w-64 space-y-1 rounded-2xl border border-[var(--border-strong)] bg-[var(--bg-elevated)] p-2 shadow-2xl z-50 animate-scale-in text-xs">
+                {/* User Identity Header */}
+                <div className="flex items-center gap-2.5 p-2 rounded-xl bg-[var(--surface-raised)]/60 border border-[var(--border-subtle)] mb-1.5">
+                  <div className="h-8 w-8 rounded-full overflow-hidden border border-[var(--border)] bg-[var(--surface-raised)] flex items-center justify-center font-bold text-xs text-[var(--text-primary)] shrink-0">
+                    {user?.imageUrl ? (
+                      <img src={user.imageUrl} alt={displayName} className="h-full w-full object-cover" />
+                    ) : (
+                      initials
+                    )}
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate font-semibold text-[var(--text-primary)] text-xs">{displayName}</p>
+                    <p className="truncate text-[10px] text-[var(--text-tertiary)]">{email}</p>
+                  </div>
+                </div>
+
                 <button
                   type="button"
                   onClick={() => {
-                    setActionsMenuOpen(false);
+                    setProfileMenuOpen(false);
+                    openSettings();
+                  }}
+                  className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-left hover:bg-[var(--hover)] text-[var(--text-primary)] transition-colors"
+                >
+                  <Gear size={16} />
+                  <span>Paramètres</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setProfileMenuOpen(false);
                     setIsUpgradeOpen(true);
                   }}
                   className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-left hover:bg-[var(--hover)] text-[var(--text-primary)] transition-colors"
@@ -242,20 +297,6 @@ export default function TopBar({ onOpenCapabilities }: TopBarProps) {
 
                 <button
                   type="button"
-                  onClick={() => {
-                    setActionsMenuOpen(false);
-                    openSettings();
-                  }}
-                  className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-left hover:bg-[var(--hover)] text-[var(--text-primary)] transition-colors"
-                >
-                  <Gear size={16} />
-                  <span>Paramètres</span>
-                </button>
-
-                <div className="h-px bg-[var(--border-subtle)] my-1" />
-
-                <button
-                  type="button"
                   onClick={handleOpenCommands}
                   className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-left hover:bg-[var(--hover)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
                 >
@@ -264,6 +305,20 @@ export default function TopBar({ onOpenCapabilities }: TopBarProps) {
                     <span>Commandes</span>
                   </div>
                   <kbd className="px-1.5 py-0.5 rounded bg-white/10 text-[9px] font-mono">⌘K</kbd>
+                </button>
+
+                <div className="h-px bg-[var(--border-subtle)] my-1" />
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setProfileMenuOpen(false);
+                    signOut();
+                  }}
+                  className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-left text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-colors"
+                >
+                  <SignOut size={16} />
+                  <span>Se déconnecter</span>
                 </button>
               </div>
             )}
