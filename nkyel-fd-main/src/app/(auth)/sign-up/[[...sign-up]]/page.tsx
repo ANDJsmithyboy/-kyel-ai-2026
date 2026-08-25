@@ -8,14 +8,18 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import AuthShell from '@/components/auth/AuthShell';
+import { useLanguageStore } from '@/stores/language.store';
 import { CheckCircle } from '@phosphor-icons/react';
 
 export default function SignUpPage() {
   const router = useRouter();
+  const { t, uiLocale } = useLanguageStore();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+
+  const isEn = uiLocale.startsWith('en');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -39,7 +43,7 @@ export default function SignUpPage() {
         {/* Name Input */}
         <div className="space-y-1">
           <label className="text-xs font-semibold text-slate-700 block">
-            Nom complet <span className="text-red-500">*</span>
+            {isEn ? 'Full name' : 'Nom complet'} <span className="text-red-500">*</span>
           </label>
           <input
             type="text"
@@ -47,29 +51,29 @@ export default function SignUpPage() {
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder="Daniel Jonathan ANDJ"
-            className="w-full h-11 px-3.5 rounded-xl border border-slate-300 bg-white text-slate-900 placeholder:text-slate-400 focus:border-black focus:ring-1 focus:ring-black text-sm outline-none transition-all"
+            className="w-full h-11 px-3.5 rounded-xl border border-slate-300 bg-white text-slate-900 placeholder:text-slate-400 focus:border-black focus:ring-1 focus:ring-black text-sm outline-none transition-all touch-manipulation"
           />
         </div>
 
         {/* Email Input */}
         <div className="space-y-1">
           <label className="text-xs font-semibold text-slate-700 block">
-            Adresse courriel <span className="text-red-500">*</span>
+            {t('auth.email')} <span className="text-red-500">*</span>
           </label>
           <input
             type="email"
             required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            placeholder="nom@exemple.com"
-            className="w-full h-11 px-3.5 rounded-xl border border-slate-300 bg-white text-slate-900 placeholder:text-slate-400 focus:border-black focus:ring-1 focus:ring-black text-sm outline-none transition-all"
+            placeholder={isEn ? 'name@example.com' : 'nom@exemple.com'}
+            className="w-full h-11 px-3.5 rounded-xl border border-slate-300 bg-white text-slate-900 placeholder:text-slate-400 focus:border-black focus:ring-1 focus:ring-black text-sm outline-none transition-all touch-manipulation"
           />
         </div>
 
         {/* Password Input */}
         <div className="space-y-1">
           <label className="text-xs font-semibold text-slate-700 block">
-            Mot de passe <span className="text-red-500">*</span>
+            {isEn ? 'Password' : 'Mot de passe'} <span className="text-red-500">*</span>
           </label>
           <input
             type="password"
@@ -77,7 +81,7 @@ export default function SignUpPage() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder="••••••••••••"
-            className="w-full h-11 px-3.5 rounded-xl border border-slate-300 bg-white text-slate-900 placeholder:text-slate-400 focus:border-black focus:ring-1 focus:ring-black text-sm outline-none transition-all"
+            className="w-full h-11 px-3.5 rounded-xl border border-slate-300 bg-white text-slate-900 placeholder:text-slate-400 focus:border-black focus:ring-1 focus:ring-black text-sm outline-none transition-all touch-manipulation"
           />
         </div>
 
@@ -91,12 +95,12 @@ export default function SignUpPage() {
         <button
           type="submit"
           disabled={loading}
-          className="w-full h-11 rounded-xl bg-black hover:bg-slate-800 text-white font-semibold text-sm shadow-md transition-all flex items-center justify-center cursor-pointer active:scale-[0.99] disabled:opacity-50"
+          className="w-full h-11 rounded-xl bg-black hover:bg-slate-800 text-white font-semibold text-sm shadow-md transition-all flex items-center justify-center cursor-pointer active:scale-[0.99] disabled:opacity-50 touch-manipulation min-h-[44px]"
         >
           {loading ? (
             <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
           ) : (
-            <span>Créer mon compte</span>
+            <span>{isEn ? 'Create my account' : 'Créer mon compte'}</span>
           )}
         </button>
 
@@ -104,7 +108,7 @@ export default function SignUpPage() {
         <div className="relative flex items-center justify-center my-3">
           <div className="w-full border-t border-slate-200" />
           <span className="absolute px-2 bg-white text-[11px] font-mono text-slate-400 uppercase">
-            ou
+            {t('auth.or')}
           </span>
         </div>
 
@@ -113,7 +117,7 @@ export default function SignUpPage() {
           type="button"
           onClick={handleOAuthGoogle}
           disabled={loading}
-          className="w-full h-11 px-4 rounded-xl bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 font-medium text-xs flex items-center justify-center gap-2.5 transition-all shadow-sm active:scale-[0.99]"
+          className="w-full h-11 px-4 rounded-xl bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 font-medium text-xs flex items-center justify-center gap-2.5 transition-all shadow-sm active:scale-[0.99] touch-manipulation min-h-[44px]"
         >
           <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24">
             <path
@@ -133,7 +137,7 @@ export default function SignUpPage() {
               d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"
             />
           </svg>
-          <span>Continuer avec Google</span>
+          <span>{t('auth.continueGoogle')}</span>
         </button>
       </form>
     </AuthShell>

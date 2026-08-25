@@ -65,7 +65,7 @@ const isClerkConfigured = Boolean(
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   const content = (
-    <html lang="fr" className="light" data-theme="neo-blanc" data-accent="gold" suppressHydrationWarning>
+    <html lang="en" className="light" data-theme="neo-blanc" data-accent="gold" suppressHydrationWarning>
       <head>
         {/* FOUC prevention — apply theme + accent before first paint */}
         <Script

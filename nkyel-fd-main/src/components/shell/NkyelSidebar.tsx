@@ -58,12 +58,14 @@ import {
   Question,
   Bell,
   PencilSimple,
+  Sliders,
   Archive,
   Trash,
   Copy,
 } from '@phosphor-icons/react';
 import { useSidebar } from '@/hooks/useSidebar';
 import { useSafeUser as useUser } from '@/lib/auth-client';
+import { useLanguageStore } from '@/stores/language.store';
 import { IbogaNavigationTrigger } from '@/components/brand';
 
 /* ═══════════════════════════════════════════════════════
@@ -136,6 +138,7 @@ export default function NkyelSidebar() {
   const router = useRouter();
   const { user } = useUser();
   const { isCollapsed, toggleSidebar, isMobile, isOpen, closeMobileSidebar } = useSidebar();
+  const { t } = useLanguageStore();
 
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
@@ -146,6 +149,13 @@ export default function NkyelSidebar() {
   const displayName = user?.fullName || user?.firstName || 'Daniel Jonathan ANDJ';
   const userEmail = user?.primaryEmailAddress?.emailAddress || 'daniel@nkyel.ai';
   const userInitials = (displayName.slice(0, 2) || 'DJ').toUpperCase();
+
+  const navItems: NavItem[] = [
+    { id: 'agent',      label: t('nav.agent'),      href: '/agent',      icon: Robot },
+    { id: 'plugins',    label: t('nav.plugins'),    href: '/connectors', icon: PlugsConnected },
+    { id: 'scheduled',  label: t('nav.scheduled'),  href: '/scheduled',  icon: CalendarCheck },
+    { id: 'library',    label: t('nav.library'),    href: '/library',    icon: Books },
+  ];
 
   // Close profile menu on outside click
   useEffect(() => {
@@ -205,8 +215,8 @@ export default function NkyelSidebar() {
                 left: 0,
                 bottom: 0,
                 transform: isOpen ? 'translateX(0)' : 'translateX(-100%)',
-                width: 'var(--sidebar-width)',
-                boxShadow: isOpen ? 'var(--shadow-modal)' : 'none',
+                width: 'min(280px, 85vw)',
+                boxShadow: 'var(--shadow-modal)',
                 transition: `transform var(--motion-context) var(--ease-apple)`,
               }
             : {}),
@@ -230,15 +240,15 @@ export default function NkyelSidebar() {
               onToggle={toggleSidebar}
               glyphSize={20}
               variant="desktop"
-              title="Développer la navigation"
-              label="Développer la navigation"
+              title="Expand navigation"
+              label="Expand navigation"
             />
           ) : (
             <>
               <Link
                 href="/"
                 className="flex items-center gap-2 overflow-hidden rounded-lg px-2 py-1.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]"
-                title="Ñkyel — Accueil"
+                title="Ñkyel — Home"
                 onClick={handleNavClick}
               >
                 <span
@@ -257,8 +267,8 @@ export default function NkyelSidebar() {
                   onToggle={toggleSidebar}
                   glyphSize={19}
                   variant="desktop"
-                  title="Réduire la navigation"
-                  label="Réduire la navigation"
+                  title="Collapse navigation"
+                  label="Collapse navigation"
                 />
               )}
             </>
@@ -271,7 +281,7 @@ export default function NkyelSidebar() {
         <div style={{ padding: `var(--space-3) var(--space-3) var(--space-2)` }}>
           <Link
             href="/chat?new=true"
-            className="group flex items-center gap-2.5 w-full font-medium"
+            className="group flex items-center gap-2.5 w-full font-medium min-h-[40px] touch-manipulation"
             style={{
               borderRadius: 'var(--radius-control)',
               padding: isCollapsed ? '10px' : '10px var(--space-3)',
@@ -281,7 +291,7 @@ export default function NkyelSidebar() {
               color: 'var(--accent-fg)',
               transition: `all var(--transition-fast)`,
             }}
-            title="Nouvelle tâche"
+            title={t('nav.newTask')}
             onClick={handleNavClick}
             onMouseEnter={(e: any) => {
               e.currentTarget.style.background = 'var(--accent-hover)';
@@ -291,7 +301,7 @@ export default function NkyelSidebar() {
             }}
           >
             <PencilSimple size={16} weight="bold" className="shrink-0" />
-            {!isCollapsed && <span className="truncate">Nouvelle tâche</span>}
+            {!isCollapsed && <span className="truncate">{t('nav.newTask')}</span>}
           </Link>
         </div>
 
@@ -303,7 +313,7 @@ export default function NkyelSidebar() {
           style={{ paddingInline: 'var(--space-2)', paddingBottom: 'var(--space-2)' }}
         >
           <div className="flex flex-col" style={{ gap: '2px' }}>
-            {PRIMARY_NAV.map((item) => {
+            {navItems.map((item) => {
               const Icon = item.icon;
               const active = isActive(item.href);
 
@@ -312,11 +322,10 @@ export default function NkyelSidebar() {
                   key={item.id}
                   href={item.href}
                   onClick={handleNavClick}
-                  className="group relative flex items-center font-medium"
+                  className="group relative flex items-center font-medium min-h-[38px] touch-manipulation"
                   style={{
                     gap: 'var(--space-3)',
                     paddingInline: 'var(--space-3)',
-                    minHeight: 38,
                     borderRadius: 'var(--radius-control)',
                     fontSize: 'var(--text-sm)',
                     justifyContent: isCollapsed ? 'center' : 'flex-start',
@@ -410,7 +419,7 @@ export default function NkyelSidebar() {
             <button
               type="button"
               onClick={() => setProjectsExpanded(!projectsExpanded)}
-              className="w-full flex items-center justify-between rounded-lg"
+              className="w-full flex items-center justify-between rounded-lg min-h-[32px] touch-manipulation"
               style={{
                 padding: `var(--space-1) var(--space-2)`,
                 fontSize: '11px',
@@ -427,7 +436,7 @@ export default function NkyelSidebar() {
                 e.currentTarget.style.color = 'var(--text-tertiary)';
               }}
             >
-              <span>Projets</span>
+              <span>{t('nav.projects')}</span>
               <div className="flex items-center gap-1">
                 <button
                   type="button"
@@ -450,7 +459,7 @@ export default function NkyelSidebar() {
                     e.currentTarget.style.color = 'var(--text-tertiary)';
                     e.currentTarget.style.background = 'transparent';
                   }}
-                  title="Nouveau projet"
+                  title={t('nav.newProject')}
                 >
                   <Plus size={12} weight="bold" />
                 </button>
@@ -463,7 +472,7 @@ export default function NkyelSidebar() {
                 <Link
                   href="/projects"
                   onClick={handleNavClick}
-                  className="flex items-center gap-2.5 rounded-lg"
+                  className="flex items-center gap-2.5 rounded-lg min-h-[32px] touch-manipulation"
                   style={{
                     padding: `6px var(--space-3)`,
                     fontSize: 'var(--text-sm)',
@@ -480,7 +489,7 @@ export default function NkyelSidebar() {
                   }}
                 >
                   <FolderSimple size={15} className="shrink-0" style={{ color: 'var(--text-tertiary)' }} />
-                  <span className="truncate text-[13px]">Nouveau projet</span>
+                  <span className="truncate text-[13px]">{t('nav.newProject')}</span>
                 </Link>
               </div>
             )}
@@ -732,24 +741,24 @@ export default function NkyelSidebar() {
                       {displayName}
                     </div>
                     <div className="text-[11px] text-white/50 truncate">
-                      Personnel
+                      {t('profile.personal')}
                     </div>
                   </div>
                 </div>
                 <CaretDown size={14} className="text-white/40 shrink-0" />
               </div>
 
-              {/* Tier Row: "Gratuit" / "Pro" + "Mise à niveau" pill */}
+              {/* Tier Row: "Free" / "Pro" + "Upgrade" pill */}
               <div className="flex items-center justify-between px-2.5 py-2.5 my-1 rounded-xl bg-white/[0.03] border border-white/[0.04]">
                 <span className="text-xs font-semibold text-white/90">
-                  Gratuit
+                  {t('profile.free')}
                 </span>
                 <Link
                   href="/settings?tab=subscription"
                   onClick={() => setProfileMenuOpen(false)}
-                  className="px-3 py-1 rounded-full bg-white text-black font-semibold text-xs hover:bg-white/90 transition-all shadow-sm active:scale-95"
+                  className="px-3 py-1 rounded-full bg-white text-black font-semibold text-xs hover:bg-white/90 transition-all shadow-sm active:scale-95 touch-manipulation"
                 >
-                  Mise à niveau
+                  {t('profile.upgrade')}
                 </Link>
               </div>
 
@@ -757,11 +766,11 @@ export default function NkyelSidebar() {
               <Link
                 href="/settings?tab=usage"
                 onClick={() => setProfileMenuOpen(false)}
-                className="flex items-center justify-between px-2.5 py-2 rounded-xl text-xs hover:bg-white/[0.04] text-white/80 hover:text-white transition-colors"
+                className="flex items-center justify-between px-2.5 py-2 rounded-xl text-xs hover:bg-white/[0.04] text-white/80 hover:text-white transition-colors touch-manipulation"
               >
                 <div className="flex items-center gap-1.5">
                   <Sparkle size={14} className="text-[#D5AE57]" weight="fill" />
-                  <span>Crédits</span>
+                  <span>{t('profile.credits')}</span>
                   <span className="text-[10px] text-white/40 font-mono">ⓘ</span>
                 </div>
                 <div className="flex items-center gap-1 font-mono text-white font-medium">
@@ -776,15 +785,15 @@ export default function NkyelSidebar() {
               {/* Main Nav Items */}
               <div className="flex flex-col gap-0.5">
                 {[
-                  { icon: User, label: 'Compte', href: '/settings' },
-                  { icon: SlidersHorizontal, label: 'Personnalisation', href: '/settings' },
-                  { icon: Gear, label: 'Paramètres', href: '/settings' },
+                  { icon: User, label: t('profile.account'), href: '/settings' },
+                  { icon: Sliders, label: t('profile.customization'), href: '/settings' },
+                  { icon: Gear, label: t('profile.settings'), href: '/settings' },
                 ].map((item) => (
                   <Link
                     key={item.label}
                     href={item.href}
                     onClick={() => { setProfileMenuOpen(false); handleNavClick(); }}
-                    className="flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-white/80 hover:text-white hover:bg-white/[0.06] transition-colors"
+                    className="flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-white/80 hover:text-white hover:bg-white/[0.06] transition-colors touch-manipulation min-h-[34px]"
                   >
                     <item.icon size={15} className="text-white/50" />
                     <span>{item.label}</span>
@@ -798,15 +807,15 @@ export default function NkyelSidebar() {
               {/* External Links */}
               <div className="flex flex-col gap-0.5">
                 {[
-                  { icon: Browsers, label: "Page d'accueil", href: '/' },
-                  { icon: Question, label: "Obtenir de l'aide", href: '/docs' },
-                  { icon: FileText, label: 'Docs', href: '/docs' },
+                  { icon: Browsers, label: t('profile.home'), href: '/' },
+                  { icon: Question, label: t('profile.help'), href: '/docs' },
+                  { icon: FileText, label: t('profile.docs'), href: '/docs' },
                 ].map((item) => (
                   <Link
                     key={item.label}
                     href={item.href}
                     onClick={() => setProfileMenuOpen(false)}
-                    className="flex items-center justify-between px-2.5 py-2 rounded-lg text-white/80 hover:text-white hover:bg-white/[0.06] transition-colors"
+                    className="flex items-center justify-between px-2.5 py-2 rounded-lg text-white/80 hover:text-white hover:bg-white/[0.06] transition-colors touch-manipulation min-h-[34px]"
                   >
                     <div className="flex items-center gap-2.5">
                       <item.icon size={15} className="text-white/50" />
@@ -827,10 +836,10 @@ export default function NkyelSidebar() {
                   setProfileMenuOpen(false);
                   if (typeof window !== 'undefined') window.location.href = '/sign-in';
                 }}
-                className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-left text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-colors"
+                className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-left text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-colors touch-manipulation min-h-[34px]"
               >
                 <SignOut size={15} />
-                <span>Se déconnecter</span>
+                <span>{t('profile.logout')}</span>
               </button>
             </div>
           )}
@@ -839,7 +848,7 @@ export default function NkyelSidebar() {
           <button
             type="button"
             onClick={() => setProfileMenuOpen((prev) => !prev)}
-            className={`w-full flex items-center ${isCollapsed ? 'justify-center' : 'justify-between'} rounded-xl text-left transition-colors p-1.5 hover:bg-white/[0.06]`}
+            className={`w-full flex items-center ${isCollapsed ? 'justify-center' : 'justify-between'} rounded-xl text-left transition-colors p-1.5 hover:bg-white/[0.06] min-h-[44px] touch-manipulation`}
             aria-label="Menu du compte"
           >
             <div className="flex items-center gap-2.5 min-w-0">
@@ -867,7 +876,7 @@ export default function NkyelSidebar() {
                     {displayName}
                   </div>
                   <div className="text-[11px] text-[var(--text-tertiary)] truncate">
-                    Personnel
+                    {t('profile.personal')}
                   </div>
                 </div>
               )}
