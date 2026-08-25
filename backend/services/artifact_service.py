@@ -275,6 +275,24 @@ class ArtifactService:
         storage_url = f"/static/artifacts/{actual_filename}"
         storage_key = f"artifacts/{actual_filename}"
 
+        # ── Persistance Cloudflare R2 Souveraine (si configuré) ──
+        if settings.cloudflare_account_id and settings.cloudflare_api_token:
+            try:
+                from services.r2_storage_service import R2StorageService
+                user_id = metadata.get("user_id", "default_user") if metadata else "default_user"
+                r2_res = await R2StorageService.upload_bytes(
+                    data=raw_bytes,
+                    user_id=user_id,
+                    category="artifacts",
+                    file_name=actual_filename,
+                    content_type=mime_type,
+                )
+                if r2_res and r2_res.get("url"):
+                    storage_url = r2_res["url"]
+                    storage_key = r2_res.get("object_key", storage_key)
+            except Exception as e:
+                logger.warning(f"R2 storage background upload note: {e}")
+
         # Déterminer exports et actions disponibles
         export_formats = cls._get_supported_exports(type)
         available_actions = cls._get_supported_actions(type)
