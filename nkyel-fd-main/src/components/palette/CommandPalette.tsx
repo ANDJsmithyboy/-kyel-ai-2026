@@ -76,8 +76,8 @@ export default function CommandPalette() {
   const inputRef = useRef<HTMLInputElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
 
-  const { locale, setLocale } = useLanguageStore();
-  const { preferences, updatePreference, setTheme } = useSettingsStore();
+  const { uiLocale, setUiLocale } = useLanguageStore();
+  const { theme, setTheme, updatePreferences, memoryEnabled } = useSettingsStore();
   const { toggleFocusMode, toggleRight, toggleLeft, setRightTab } = useWorkspaceLayout();
 
   const isSuperAdmin = useMemo(() => {
@@ -103,28 +103,28 @@ export default function CommandPalette() {
   };
 
   // ── Command Handlers with REAL Backend Execution ──────────
-  const handleSetTheme = useCallback(async (themeKey: string, themeLabel: string) => {
+  const handleSetTheme = useCallback(async (themeKey: any, themeLabel: string) => {
     setTheme(themeKey);
-    await updatePreference('theme', themeKey);
+    await updatePreferences({ theme: themeKey });
     showToast(`Thème changé : ${themeLabel}`);
-  }, [setTheme, updatePreference]);
+  }, [setTheme, updatePreferences]);
 
   const handleSetLocale = useCallback(async (newLocale: string, label: string) => {
-    setLocale(newLocale);
-    await updatePreference('ui_locale', newLocale);
+    setUiLocale(newLocale);
+    await updatePreferences({ uiLocale: newLocale });
     showToast(`Langue d'interface : ${label}`);
-  }, [setLocale, updatePreference]);
+  }, [setUiLocale, updatePreferences]);
 
-  const handleSetAutonomy = useCallback(async (level: string, label: string) => {
-    await updatePreference('autonomy_level', level);
+  const handleSetAutonomy = useCallback(async (level: any, label: string) => {
+    await updatePreferences({ autonomyLevel: level });
     showToast(`Autonomie réglée sur : ${label}`);
-  }, [updatePreference]);
+  }, [updatePreferences]);
 
   const handleToggleMemory = useCallback(async () => {
-    const current = preferences?.memory_enabled ?? true;
-    await updatePreference('memory_enabled', !current);
-    showToast(`Mémoire DeerMem : ${!current ? 'Activée' : 'Désactivée'}`);
-  }, [preferences, updatePreference]);
+    const next = !memoryEnabled;
+    await updatePreferences({ memoryEnabled: next });
+    showToast(`Mémoire DeerMem : ${next ? 'Activée' : 'Désactivée'}`);
+  }, [memoryEnabled, updatePreferences]);
 
   // ── Registered Commands Catalog ───────────────────────────
   const allCommands = useMemo<CommandItem[]>(() => {

@@ -243,6 +243,37 @@ export const useSettingsStore = create<UserPreferencesState>()(
         get().saveToServer();
       },
 
+      greetingStyle: 'formal',
+      setGreetingStyle: (s: string) => {
+        set({ greetingStyle: s });
+        get().saveToServer();
+      },
+      toggleThinking: () => {
+        const next = !get().showThinking;
+        set({ showThinking: next });
+        get().saveToServer();
+      },
+      toggleStream: () => {
+        const next = !get().streamResponses;
+        set({ streamResponses: next });
+        get().saveToServer();
+      },
+      toggleSyntax: () => {
+        const next = !get().codeSyntaxHighlight;
+        set({ codeSyntaxHighlight: next });
+        get().saveToServer();
+      },
+      hydrate: () => {
+        get().hydrateDOM();
+      },
+      updatePreference: async (key: string, val: any) => {
+        const updates: any = {};
+        const camelKey = key.replace(/_([a-z])/g, (_, letter) => letter.toUpperCase());
+        updates[camelKey] = val;
+        updates[key] = val;
+        await get().updatePreferences(updates);
+      },
+
       setUiLocale: (locale: string) => {
         applyRTLToDOM(locale);
         set({ uiLocale: locale });

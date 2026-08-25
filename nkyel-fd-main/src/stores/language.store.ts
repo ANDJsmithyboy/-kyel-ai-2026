@@ -387,11 +387,13 @@ export function t(key: string, locale: string = 'en-US'): string {
 
 interface LanguageState {
   uiLocale: string;           // Default 'en-US' for international audience
+  locale?: string;
   agentLanguage: string;      // Ex: 'auto', 'en', 'fr', 'fan', 'puu', 'ar', 'zh'
   isModalOpen: boolean;
   searchQuery: string;
 
   setUiLocale: (tag: string) => void;
+  setLocale?: (tag: string) => void;
   setAgentLanguage: (lang: string) => void;
   setModalOpen: (open: boolean) => void;
   setSearchQuery: (q: string) => void;
@@ -403,13 +405,19 @@ export const useLanguageStore = create<LanguageState>()(
   persist(
     (set: any, get: any) => ({
       uiLocale: 'en-US',
+      locale: 'en-US',
       agentLanguage: 'auto',
       isModalOpen: false,
       searchQuery: '',
 
       setUiLocale: (tag: string) => {
         applyRTLToDOM(tag);
-        set({ uiLocale: tag });
+        set({ uiLocale: tag, locale: tag });
+      },
+
+      setLocale: (tag: string) => {
+        applyRTLToDOM(tag);
+        set({ uiLocale: tag, locale: tag });
       },
 
       setAgentLanguage: (lang: string) => {
