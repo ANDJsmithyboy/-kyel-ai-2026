@@ -183,6 +183,11 @@ class Settings(BaseSettings):
         keys = []
         if self.tavily_api_keys:
             keys.extend([k.strip() for k in self.tavily_api_keys.split(",") if k.strip()])
+        # Also check numbered environment variables (e.g. TAVILY_API_KEY_1, TAVILY_API_KEY_2, etc.)
+        for i in range(1, 10):
+            env_k = os.getenv(f"TAVILY_API_KEY_{i}")
+            if env_k and env_k.strip() and env_k.strip() not in keys:
+                keys.append(env_k.strip())
         if self.tavily_api_key and self.tavily_api_key not in keys:
             keys.insert(0, self.tavily_api_key)
         return keys
