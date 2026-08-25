@@ -143,6 +143,12 @@ export default function NkyelSidebar() {
     { id: 'library',    label: t('nav.library'),    href: '/library',    icon: Books },
   ];
 
+  const hydrateFromStorage = useSidebar((s) => s.hydrateFromStorage);
+
+  useEffect(() => {
+    hydrateFromStorage();
+  }, [hydrateFromStorage]);
+
   // Close profile menu on outside click
   useEffect(() => {
     if (!profileMenuOpen) return;
@@ -402,10 +408,11 @@ export default function NkyelSidebar() {
            ═══════════════════════════════════════════════════ */}
         {!isCollapsed && (
           <div style={{ padding: `var(--space-2) var(--space-2) 0` }}>
-            <button
-              type="button"
+            <div
+              role="button"
+              tabIndex={0}
               onClick={() => setProjectsExpanded(!projectsExpanded)}
-              className="w-full flex items-center justify-between rounded-lg min-h-[32px] touch-manipulation"
+              className="w-full flex items-center justify-between rounded-lg min-h-[32px] touch-manipulation cursor-pointer select-none"
               style={{
                 padding: `var(--space-1) var(--space-2)`,
                 fontSize: '11px',
@@ -451,7 +458,7 @@ export default function NkyelSidebar() {
                 </button>
                 {projectsExpanded ? <CaretDown size={11} /> : <CaretRight size={11} />}
               </div>
-            </button>
+            </div>
 
             {projectsExpanded && (
               <div style={{ marginTop: 2 }}>
@@ -535,14 +542,15 @@ export default function NkyelSidebar() {
 
                         return (
                           <div key={mission.id} className="relative group">
-                            <button
-                              type="button"
+                            <div
+                              role="button"
+                              tabIndex={0}
                               onClick={() => {
                                 setActiveConversation(mission.id);
                                 router.push('/chat');
                                 handleNavClick();
                               }}
-                              className="w-full flex items-center justify-between rounded-lg text-left"
+                              className="w-full flex items-center justify-between rounded-lg text-left cursor-pointer select-none"
                               style={{
                                 padding: `6px var(--space-2)`,
                                 fontSize: '13px',
@@ -583,7 +591,7 @@ export default function NkyelSidebar() {
                               >
                                 <DotsThreeVertical size={13} weight="bold" />
                               </button>
-                            </button>
+                            </div>
 
                             {/* Context menu */}
                             {contextMenuId === mission.id && (

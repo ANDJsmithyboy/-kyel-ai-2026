@@ -1,22 +1,22 @@
 /**
- * Ñkyel AI · Service Worker (Production PWA Hardened)
+ * Ñkyel AI · Service Worker (Production PWA Hardened v3)
  * SmartANDJ AI Technologies · Founder: Daniel Jonathan ANDJ
  *
- * Conservative production caching:
- * - App shell & offline fallback
- * - Static versioned assets (icons, fonts)
- * - NEVER caches: private APIs, auth endpoints, SSE streams, tokens
+ * Production Caching Rules:
+ * - NEVER pre-caches or caches navigation HTML (prevents stale React chunk mismatches)
+ * - Navigation requests are strictly Network-First with offline fallback
+ * - NEVER caches API routes (/api/*), SSE streams (/stream*), or auth tokens
+ * - Only caches immutable versioned static assets (fonts, images)
  */
 
-const CACHE_NAME = 'nkyel-pwa-v2';
+const CACHE_NAME = 'nkyel-pwa-v3';
 const STATIC_ASSETS = [
-  '/',
   '/manifest.webmanifest',
   '/offline.html',
   '/favicon.png',
 ];
 
-// Install — pre-cache offline shell
+// Install — pre-cache offline fallback shell only (NO HTML root pages)
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => cache.addAll(STATIC_ASSETS))
@@ -24,7 +24,7 @@ self.addEventListener('install', (event) => {
   self.skipWaiting();
 });
 
-// Activate — purge old caches
+// Activate — purge ALL old cache versions immediately
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((keys) =>
@@ -38,29 +38,40 @@ self.addEventListener('activate', (event) => {
   self.clients.claim();
 });
 
-// Fetch — strict network-first for dynamic content, cache-first only for static assets
+// Fetch — strict network-first for navigation, bypass for APIs
 self.addEventListener('fetch', (event) => {
   const { request } = event;
   const url = new URL(request.url);
 
-  // 1. NEVER intercept or cache non-GET requests
+  // 1. NEVER intercept non-GET requests
   if (request.method !== 'GET') {
     return;
   }
 
-  // 2. NEVER cache dynamic/authenticated APIs, SSE, or auth endpoints
+  // 2. NEVER cache dynamic/authenticated APIs, SSE, or external auth
   if (
     url.pathname.startsWith('/api/') ||
     url.pathname.includes('/stream') ||
     url.pathname.includes('clerk') ||
     url.hostname.includes('clerk') ||
     url.hostname.includes('neon') ||
-    url.hostname.includes('runpod')
+    url.hostname.includes('runpod') ||
+    url.hostname.includes('google')
   ) {
-    return; // Pass through directly to network
+    return;
   }
 
-  // 3. Static assets (fonts, icons, immutable files)
+  // 3. Navigation requests (HTML pages) MUST ALWAYS BE NETWORK-FIRST
+  if (request.mode === 'navigate') {
+    event.respondWith(
+      fetch(request).catch(() => {
+        return caches.match('/offline.html');
+      })
+    );
+    return;
+  }
+
+  // 4. Static assets (fonts, icons, immutable hashed next files)
   event.respondWith(
     caches.match(request).then((cachedResponse) => {
       if (cachedResponse) {
@@ -68,7 +79,6 @@ self.addEventListener('fetch', (event) => {
       }
       return fetch(request)
         .then((networkResponse) => {
-          // Only cache successful static responses (same origin)
           if (
             networkResponse.status === 200 &&
             url.origin === self.location.origin &&
@@ -83,10 +93,7 @@ self.addEventListener('fetch', (event) => {
           return networkResponse;
         })
         .catch(() => {
-          // Offline fallback for navigation
-          if (request.mode === 'navigate') {
-            return caches.match('/offline.html');
-          }
+          return new Response('', { status: 408, statusText: 'Request timed out' });
         });
     })
   );

@@ -2,6 +2,7 @@
  * Ñkyel AI · useSidebar Hook (Zustand)
  * SmartANDJ AI Technologies · Founder: Daniel Jonathan ANDJ
  * State persistence with desktop collapse & mobile drawer synchronization
+ * SSR-safe: deterministic initial state (isCollapsed: false) to prevent hydration mismatches
  */
 
 'use client';
@@ -22,21 +23,12 @@ interface SidebarState {
   closeMobileSidebar: () => void;
   setCollapsed: (collapsed: boolean) => void;
   setIsMobile: (isMobile: boolean) => void;
-}
-
-function readPersistedCollapsed(): boolean {
-  if (typeof window === 'undefined') return false;
-  try {
-    const saved = localStorage.getItem(SIDEBAR_STORAGE_KEY);
-    return saved === 'true';
-  } catch {
-    return false;
-  }
+  hydrateFromStorage: () => void;
 }
 
 export const useSidebar = create<SidebarState>((set, get) => ({
   isOpen: false,
-  isCollapsed: readPersistedCollapsed(),
+  isCollapsed: false, // Deterministic initial state for SSR and initial hydration
   isMobile: false,
 
   open: () => set({ isOpen: true }),
@@ -76,4 +68,14 @@ export const useSidebar = create<SidebarState>((set, get) => ({
   },
 
   setIsMobile: (isMobile) => set({ isMobile }),
+
+  hydrateFromStorage: () => {
+    if (typeof window === 'undefined') return;
+    try {
+      const saved = localStorage.getItem(SIDEBAR_STORAGE_KEY);
+      if (saved === 'true') {
+        set({ isCollapsed: true });
+      }
+    } catch {}
+  },
 }));

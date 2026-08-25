@@ -48,7 +48,7 @@ export default function TopBar({ onOpenCapabilities }: TopBarProps) {
       <UpgradeModal isOpen={isUpgradeOpen} onClose={() => setIsUpgradeOpen(false)} />
       <header className="nkyel-topbar">
         <div className="nkyel-topbar-leading">
-          {isMobile && (
+          <div className="block md:hidden">
             <IbogaNavigationTrigger
               open={false}
               onToggle={open}
@@ -57,7 +57,7 @@ export default function TopBar({ onOpenCapabilities }: TopBarProps) {
               title="Ouvrir la navigation"
               label="Ouvrir la navigation"
             />
-          )}
+          </div>
           <div className="relative">
             <button
               type="button"
