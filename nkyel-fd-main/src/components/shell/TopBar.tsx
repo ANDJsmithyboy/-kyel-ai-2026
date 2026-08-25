@@ -22,6 +22,7 @@ interface TopBarProps {
 export default function TopBar({ onOpenCapabilities }: TopBarProps) {
   const engineId = useNkyelModel((state) => state.engineId);
   const setEngineId = useNkyelModel((state) => state.setEngineId);
+  const { open: openMobileSidebar } = useSidebar();
   const [modelDropdown, setModelDropdown] = useState(false);
   const [isUpgradeOpen, setIsUpgradeOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -61,10 +62,24 @@ export default function TopBar({ onOpenCapabilities }: TopBarProps) {
     <>
       <UpgradeModal isOpen={isUpgradeOpen} onClose={() => setIsUpgradeOpen(false)} />
 
-      <header className="h-12 flex items-center justify-between px-4 border-b border-[var(--border-subtle)] bg-[var(--material-glass-regular)] backdrop-blur-md select-none z-30">
+      <header className="h-12 flex items-center justify-between px-3 sm:px-4 border-b border-[var(--border-subtle)] bg-[var(--material-glass-regular)] backdrop-blur-md select-none z-30">
         {/* Leading: Logo Wordmark + Model Selector Dropdown (Near Iboga) */}
-        <div className="flex items-center gap-3">
-          <div className="text-[15px] font-semibold tracking-[-0.02em] text-[var(--text-primary)] font-serif">
+        <div className="flex items-center gap-2 sm:gap-3">
+          {/* Mobile Tap Trigger for Navigation */}
+          <button
+            type="button"
+            onClick={openMobileSidebar}
+            className="md:hidden flex items-center gap-1 p-1 rounded-lg hover:bg-[var(--hover)] text-[var(--text-primary)] transition-colors focus-visible:outline-none"
+            title="Ouvrir la navigation"
+            aria-label="Ouvrir la navigation"
+          >
+            <span className="text-[15px] font-semibold tracking-[-0.02em] font-serif">
+              Ñkyel
+            </span>
+          </button>
+
+          {/* Desktop Brand Label */}
+          <div className="hidden md:block text-[15px] font-semibold tracking-[-0.02em] text-[var(--text-primary)] font-serif">
             Ñkyel
           </div>
 
@@ -75,10 +90,10 @@ export default function TopBar({ onOpenCapabilities }: TopBarProps) {
               onClick={() => setModelDropdown((prev) => !prev)}
               aria-expanded={modelDropdown}
               aria-label="Choisir le modèle Ñkyel"
-              className="flex h-8 items-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--surface-raised)] px-2.5 text-xs font-semibold text-[var(--text-primary)] shadow-xs transition-colors hover:border-[var(--accent-muted)] hover:bg-[var(--active)]"
+              className="flex h-8 items-center gap-1.5 sm:gap-2 rounded-xl border border-[var(--border)] bg-[var(--surface-raised)] px-2 sm:px-2.5 text-xs font-semibold text-[var(--text-primary)] shadow-xs transition-colors hover:border-[var(--accent-muted)] hover:bg-[var(--active)]"
             >
               <span className="w-1.5 h-1.5 rounded-full bg-[#D5AE57]" />
-              <span>{currentEngine.name}</span>
+              <span className="truncate max-w-[90px] sm:max-w-none">{currentEngine.name}</span>
               <CaretDown size={12} weight="bold" className="text-[var(--text-secondary)] opacity-70" />
             </button>
 
