@@ -227,36 +227,24 @@ export default function NkyelSidebar() {
             <button
               type="button"
               onClick={toggleSidebar}
-              className="flex items-center justify-center rounded-lg hover:bg-[var(--hover)] transition-colors p-1"
+              className="w-8 h-8 rounded-lg flex items-center justify-center font-bold text-base text-[var(--text-primary)] hover:bg-[var(--hover)] transition-colors select-none"
               title="Développer la barre latérale"
               aria-label="Développer la barre latérale"
             >
-              <img
-                src="/nkyel-ai.svg"
-                alt="Ñkyel AI"
-                className="w-7 h-7 object-contain shrink-0 rounded-lg"
-              />
+              Ñ
             </button>
           ) : (
             <>
               <Link
                 href="/"
-                className="flex items-center gap-2.5 overflow-hidden rounded-lg"
-                style={{ padding: 'var(--space-1)' }}
-                title="Ñkyel AI — Accueil"
+                className="flex items-center gap-2 overflow-hidden rounded-lg px-2 py-1.5"
+                title="Ñkyel — Accueil"
                 onClick={handleNavClick}
               >
-                <img
-                  src="/nkyel-ai.svg"
-                  alt="Ñkyel AI"
-                  className="w-7 h-7 object-contain shrink-0 rounded-lg"
-                />
                 <span
-                  className="font-semibold truncate"
+                  className="font-semibold truncate tracking-tight text-[17px] select-none text-[var(--text-primary)]"
                   style={{
-                    fontSize: 'var(--text-base)',
-                    color: 'var(--fg, var(--text-primary))',
-                    letterSpacing: '-0.01em',
+                    letterSpacing: '-0.025em',
                   }}
                 >
                   Ñkyel

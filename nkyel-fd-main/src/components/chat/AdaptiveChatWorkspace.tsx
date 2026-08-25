@@ -345,11 +345,8 @@ export default function AdaptiveChatWorkspace({
                       {/* Assistant Identity Pill */}
                       {!isUser && (
                         <div className="flex items-center gap-2 mb-2 px-1">
-                          <div className="w-5 h-5 rounded-md bg-[#D5AE57] text-black flex items-center justify-center font-black text-[10px] shadow-sm">
-                            Ñ
-                          </div>
-                          <span className="text-[11px] font-semibold text-[var(--text-primary)]">Ñkyel</span>
-                          <span className="text-[10px] text-[var(--text-tertiary)] font-mono">· {msg.timestamp}</span>
+                          <span className="text-[13px] font-semibold text-[var(--text-primary)] tracking-tight">Ñkyel</span>
+                          <span className="text-[11px] text-[var(--text-tertiary)] font-mono">· {msg.timestamp}</span>
                         </div>
                       )}
 
