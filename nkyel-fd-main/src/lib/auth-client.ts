@@ -13,7 +13,7 @@ export const DEMO_FOUNDER_USER: any = {
   lastName: 'ANDJ',
   username: 'daniel_andj',
   primaryEmailAddress: { emailAddress: 'fondateur@nkyel.ai' },
-  imageUrl: '/Nkyel AI-logo.jpeg',
+  imageUrl: '/brand/nkyel-ai-ios.png',
   publicMetadata: { role: 'admin' },
   reload: async () => {},
 };
