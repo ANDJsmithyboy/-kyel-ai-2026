@@ -11,6 +11,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import NkyelSidebar from './NkyelSidebar';
 import TopBar from './TopBar';
 import ArtifactStudio from '@/components/rendu/ArtifactStudio';
@@ -21,6 +22,7 @@ import BetaFeedbackModal from '@/components/feedback/BetaFeedbackModal';
 import ProductionFeedbackModal, { FeedbackCategory } from '@/components/feedback/ProductionFeedbackModal';
 import DesktopSettingsModal from '@/components/settings/DesktopSettingsModal';
 import { fetchBetaStatus, type BetaStatusResponse } from '@/lib/betaStateMachine';
+import { useSafeUser } from '@/lib/auth-client';
 
 interface NkyelAppShellProps {
   children?: React.ReactNode;
@@ -33,6 +35,9 @@ export default function NkyelAppShell({
   activeViewMode = 'conversation',
   onViewModeChange,
 }: NkyelAppShellProps) {
+  const router = useRouter();
+  const { isSignedIn, isLoaded } = useSafeUser();
+
   const [capabilitiesOpen, setCapabilitiesOpen] = useState(false);
   const [feedbackOpen, setFeedbackOpen] = useState(false);
   const [feedbackCategory, setFeedbackCategory] = useState<FeedbackCategory>('SUGGESTION');
@@ -40,6 +45,12 @@ export default function NkyelAppShell({
   const [, setViewMode] = useState(activeViewMode);
   const [betaStatus, setBetaStatus] = useState<BetaStatusResponse | null>(null);
   const [dismissClosedScreen, setDismissClosedScreen] = useState(false);
+
+  useEffect(() => {
+    if (isLoaded && !isSignedIn) {
+      router.push('/sign-in');
+    }
+  }, [isLoaded, isSignedIn, router]);
 
   useEffect(() => {
     fetchBetaStatus()
