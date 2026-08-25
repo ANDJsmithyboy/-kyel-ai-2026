@@ -4,6 +4,7 @@ Settings Pydantic v2 pour tout le backend.
 Fondateur : Daniel Jonathan ANDJ
 """
 
+import os
 from pydantic_settings import BaseSettings
 from pydantic import Field
 from typing import List
