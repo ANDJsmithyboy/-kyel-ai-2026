@@ -48,12 +48,20 @@ def tavily_search(
     - content: str (snippet)
     - score: float
     """
-    api_key = os.getenv("TAVILY_API_KEY", "")
-    if not api_key:
+    keys = []
+    from core.config import settings
+    if settings.tavily_keys_pool:
+        keys = settings.tavily_keys_pool
+    elif os.getenv("TAVILY_API_KEYS"):
+        keys = [k.strip() for k in os.getenv("TAVILY_API_KEYS", "").split(",") if k.strip()]
+    elif os.getenv("TAVILY_API_KEY"):
+        keys = [os.getenv("TAVILY_API_KEY")]
+
+    if not keys:
         return [{
             "title": "Tavily API key not configured",
             "url": "",
-            "content": "Set TAVILY_API_KEY in .env to enable web search.",
+            "content": "Set TAVILY_API_KEY or TAVILY_API_KEYS in .env to enable web search.",
             "score": 0.0,
         }]
 
@@ -71,46 +79,47 @@ def tavily_search(
     # Clamp max_results to sane bounds
     max_results = max(1, min(max_results, 10))
 
-    try:
-        with httpx.Client(timeout=30.0) as client:
-            response = client.post(
-                TAVILY_API_URL,
-                json={
-                    "api_key": api_key,
-                    "query": query,
-                    "max_results": max_results,
-                    "search_depth": search_depth,
-                    "include_answer": True,
-                },
-            )
-            response.raise_for_status()
-            data = response.json()
+    last_err = None
+    for api_key in keys:
+        try:
+            with httpx.Client(timeout=30.0) as client:
+                response = client.post(
+                    TAVILY_API_URL,
+                    json={
+                        "api_key": api_key,
+                        "query": query,
+                        "max_results": max_results,
+                        "search_depth": search_depth,
+                        "include_answer": True,
+                    },
+                )
+                response.raise_for_status()
+                data = response.json()
 
-        results = []
-        for r in data.get("results", []):
-            results.append({
-                "title": r.get("title", ""),
-                "url": r.get("url", ""),
-                "content": r.get("content", ""),
-                "score": r.get("score", 0.0),
-            })
+            results = []
+            for r in data.get("results", []):
+                results.append({
+                    "title": r.get("title", ""),
+                    "url": r.get("url", ""),
+                    "content": r.get("content", ""),
+                    "score": r.get("score", 0.0),
+                })
 
-        logger.info(f"Tavily search '{query[:50]}' returned {len(results)} results")
-        return results
+            logger.info(f"Tavily search '{query[:50]}' returned {len(results)} results")
+            return results
 
-    except httpx.TimeoutException:
-        logger.error(f"Tavily search timed out for query: {query[:80]}")
-        return [{
-            "title": "Search Timeout",
-            "url": "",
-            "content": "Web search timed out after 30 seconds. Please try again.",
-            "score": 0.0,
-        }]
-    except Exception as e:
-        logger.error(f"Tavily search error: {e}")
-        return [{
-            "title": "Search Error",
-            "url": "",
-            "content": f"Web search failed: {str(e)}",
-            "score": 0.0,
-        }]
+        except httpx.TimeoutException:
+            logger.error(f"Tavily search timed out for query: {query[:80]}")
+            last_err = "Web search timed out after 30 seconds."
+            continue
+        except Exception as e:
+            logger.error(f"Tavily search error with key: {e}")
+            last_err = str(e)
+            continue
+
+    return [{
+        "title": "Search Error",
+        "url": "",
+        "content": f"Web search failed across configured Tavily keys: {last_err}",
+        "score": 0.0,
+    }]

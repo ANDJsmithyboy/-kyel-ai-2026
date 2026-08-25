@@ -71,6 +71,7 @@ export default function ChatPage() {
         initialMessages={messages.length > 0 ? messages : undefined}
         missionTitle={chat.messages[0]?.content ? chat.messages[0].content.slice(0, 48) + '...' : 'Nouvelle Mission Ñkyel'}
         onSendMessage={handleSendMessage}
+        onStopStreaming={chat.stop}
         isStreaming={chat.isStreaming}
       />
     </div>

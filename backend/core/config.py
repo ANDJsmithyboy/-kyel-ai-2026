@@ -40,8 +40,9 @@ class Settings(BaseSettings):
     clerk_secret_key: str = ""
     clerk_webhook_secret: str = ""
 
-    # ── Groq (AURATA / SONAR) ───────────────────────────────
+    # ── Groq (AURATA / SONAR & Pool) ────────────────────────
     groq_api_key: str = ""
+    groq_api_keys: str = ""
     aurata_model: str = "openai/gpt-oss-120b"
     sonar_model: str = "groq/compound"
 
@@ -59,8 +60,9 @@ class Settings(BaseSettings):
     nkyel_primary_model: str = "gemini-3.5-flash-lite"
     nkyel_planning_model: str = "gemini-3.6-flash"
 
-    # ── Tavily (Web Search pour DeerFlow) ───────────────────
+    # ── Tavily (Web Search pour DeerFlow & Agent Pool) ──────
     tavily_api_key: str = ""
+    tavily_api_keys: str = ""
 
     # ── Fireworks AI ────────────────────────────────────────
     fireworks_api_key: str = ""
@@ -111,13 +113,18 @@ class Settings(BaseSettings):
     google_showcase_mode: bool = False
     google_video_fast_model: str = "veo-3.1-fast-generate-preview"
 
-    # ── Runway Model Router (Media Routing) ─────────────────
+    # ── Runway Model Router & Multi-Keys ────────────────────
     runway_api_key: str = ""
+    runway_api_keys: str = ""
+    runwayml_api_secret: str = ""
     runway_base_url: str = "https://api.runwayml.com/v1"
     runway_image_model: str = "gen3a_turbo"
     runway_video_model: str = "gen3a_turbo"
 
-    # ── Multimedia Providers ────────────────────────────────
+    # ── Multimedia Providers (Fal.ai, SiliconFlow, Pollinations) ──
+    fal_key: str = ""
+    fal_api_key: str = ""
+    siliconflow_api_key: str = ""
     pollinations_api_key: str = ""
     cloudflare_account_id: str = ""
     cloudflare_api_token: str = ""
@@ -152,6 +159,33 @@ class Settings(BaseSettings):
     @property
     def clerk_jwks_url(self) -> str:
         return f"https://{self.clerk_domain}/.well-known/jwks.json"
+
+    @property
+    def groq_keys_pool(self) -> List[str]:
+        keys = []
+        if self.groq_api_keys:
+            keys.extend([k.strip() for k in self.groq_api_keys.split(",") if k.strip()])
+        if self.groq_api_key and self.groq_api_key not in keys:
+            keys.insert(0, self.groq_api_key)
+        return keys
+
+    @property
+    def runway_keys_pool(self) -> List[str]:
+        keys = []
+        if self.runway_api_keys:
+            keys.extend([k.strip() for k in self.runway_api_keys.split(",") if k.strip()])
+        if self.runway_api_key and self.runway_api_key not in keys:
+            keys.insert(0, self.runway_api_key)
+        return keys
+
+    @property
+    def tavily_keys_pool(self) -> List[str]:
+        keys = []
+        if self.tavily_api_keys:
+            keys.extend([k.strip() for k in self.tavily_api_keys.split(",") if k.strip()])
+        if self.tavily_api_key and self.tavily_api_key not in keys:
+            keys.insert(0, self.tavily_api_key)
+        return keys
 
     model_config = {
         "env_file": ".env",

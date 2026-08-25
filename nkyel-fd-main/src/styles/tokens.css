@@ -220,6 +220,11 @@ html.dark {
   --composer-border:         rgba(255, 255, 255, 0.10);
   --settings-bg:             #0D0F17;
   --settings-nav-bg:         #080A0F;
+  --bg-elevated:             var(--material-content-raised);
+  --bg-surface:              var(--material-content);
+  --bg-card:                 var(--material-content);
+  --accent-10:               rgba(213, 174, 87, 0.12);
+  --accent-06:               rgba(213, 174, 87, 0.06);
 
   /* Graphes Sémantiques & VIE */
   --graph-canvas:            #08090D;
@@ -318,6 +323,11 @@ html.light {
   --composer-border:         rgba(9, 10, 14, 0.10);
   --settings-bg:             #FFFFFF;
   --settings-nav-bg:         #F7F7F4;
+  --bg-elevated:             var(--material-content-raised);
+  --bg-surface:              var(--material-content);
+  --bg-card:                 var(--material-content);
+  --accent-10:               rgba(213, 174, 87, 0.12);
+  --accent-06:               rgba(213, 174, 87, 0.06);
 
   /* Graphes Sémantiques & VIE */
   --graph-canvas:            #F4F4F0;

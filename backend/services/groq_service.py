@@ -36,6 +36,19 @@ NKYEL_SYSTEM_PROMPT = (
 )
 
 
+_key_index = 0
+
+
+def get_next_groq_key() -> str:
+    global _key_index
+    pool = settings.groq_keys_pool
+    if not pool:
+        return settings.groq_api_key
+    key = pool[_key_index % len(pool)]
+    _key_index += 1
+    return key
+
+
 async def stream_groq(
     messages: list[dict],
     model: str = "AURATA",
@@ -51,6 +64,7 @@ async def stream_groq(
     """
     groq_model = _MODEL_MAP.get(model, settings.aurata_model)
     completion_id = f"chatcmpl-{uuid.uuid4().hex[:12]}"
+    active_key = get_next_groq_key()
 
     # Construire le prompt système
     system_content = NKYEL_SYSTEM_PROMPT
@@ -72,7 +86,7 @@ async def stream_groq(
             response = await client.post(
                 "https://api.groq.com/openai/v1/chat/completions",
                 headers={
-                    "Authorization": f"Bearer {settings.groq_api_key}",
+                    "Authorization": f"Bearer {active_key}",
                     "Content-Type": "application/json",
                 },
                 json={

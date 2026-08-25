@@ -1,19 +1,16 @@
 /**
- * Nkyel AI · Agent Page (ONYX / BLACK PANTHER)
- * SmartANDJ AI Technologies
- * Expérience "Wide Search" (Clone Manus AI) avec Generative UI
+ * Ñkyel AI · Agent Page
+ * SmartANDJ AI Technologies · Founder: Daniel Jonathan ANDJ
+ *
+ * Route: /agent
+ * Personal Ñkyel Agent Workspace
  */
 
 'use client';
 
 import React from 'react';
-import WideSearchInterface from '@/components/agent/WideSearchInterface';
+import NkyelAgentView from '@/components/agent/NkyelAgentView';
 
 export default function AgentPage() {
-  return (
-    <div className="h-full w-full bg-[var(--bg)]">
-      <WideSearchInterface />
-    </div>
-  );
+  return <NkyelAgentView />;
 }
-

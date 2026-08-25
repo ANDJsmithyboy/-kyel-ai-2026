@@ -26,6 +26,7 @@ import {
   GeistFile,
   GeistShield,
 } from '@/components/icons/GeistIcons';
+import { Clock, Cpu, CheckCircle, Globe, ArrowSquareOut } from '@phosphor-icons/react';
 import { useWorkspaceLayout, InspectorTab } from '@/hooks/useWorkspaceLayout';
 import Surface from '@/components/ui/Surface';
 
@@ -248,8 +249,8 @@ export default function RightContextInspector({
       <div className="h-12 px-4 border-b border-[var(--border)] flex items-center justify-between shrink-0">
         <div className="flex items-center gap-2 min-w-0">
           <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-          <span className="text-xs font-semibold text-[var(--text-primary)] truncate font-mono">
-            MISSION CONTEXT
+          <span className="text-xs font-semibold text-[var(--text-primary)] truncate font-sans">
+            Contexte de la Mission
           </span>
         </div>
 

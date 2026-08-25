@@ -1,26 +1,30 @@
 /**
- * Nkyel AI · Service Worker
- * Offline shell + cache-first for static, network-first for API
+ * Ñkyel AI · Service Worker (Production PWA Hardened)
+ * SmartANDJ AI Technologies · Founder: Daniel Jonathan ANDJ
+ *
+ * Conservative production caching:
+ * - App shell & offline fallback
+ * - Static versioned assets (icons, fonts)
+ * - NEVER caches: private APIs, auth endpoints, SSE streams, tokens
  */
 
-const CACHE_NAME = 'nkyel-ai-v1';
+const CACHE_NAME = 'nkyel-pwa-v2';
 const STATIC_ASSETS = [
   '/',
-  '/manifest.json',
+  '/manifest.webmanifest',
   '/offline.html',
+  '/favicon.png',
 ];
 
-// Install — cache the app shell
+// Install — pre-cache offline shell
 self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(STATIC_ASSETS);
-    })
+    caches.open(CACHE_NAME).then((cache) => cache.addAll(STATIC_ASSETS))
   );
   self.skipWaiting();
 });
 
-// Activate — clean old caches
+// Activate — purge old caches
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((keys) =>
@@ -34,49 +38,56 @@ self.addEventListener('activate', (event) => {
   self.clients.claim();
 });
 
-// Fetch — network-first for API, cache-first for assets
+// Fetch — strict network-first for dynamic content, cache-first only for static assets
 self.addEventListener('fetch', (event) => {
   const { request } = event;
   const url = new URL(request.url);
 
-  // Skip SSE streams (never cache)
-  if (url.pathname.includes('/api/v1/chat/stream')) {
+  // 1. NEVER intercept or cache non-GET requests
+  if (request.method !== 'GET') {
     return;
   }
 
-  // API calls → network-first
-  if (url.pathname.startsWith('/api/')) {
-    event.respondWith(
-      fetch(request)
-        .then((response) => {
-          // Cache GET API responses
-          if (request.method === 'GET' && response.status === 200) {
-            const clone = response.clone();
+  // 2. NEVER cache dynamic/authenticated APIs, SSE, or auth endpoints
+  if (
+    url.pathname.startsWith('/api/') ||
+    url.pathname.includes('/stream') ||
+    url.pathname.includes('clerk') ||
+    url.hostname.includes('clerk') ||
+    url.hostname.includes('neon') ||
+    url.hostname.includes('runpod')
+  ) {
+    return; // Pass through directly to network
+  }
+
+  // 3. Static assets (fonts, icons, immutable files)
+  event.respondWith(
+    caches.match(request).then((cachedResponse) => {
+      if (cachedResponse) {
+        return cachedResponse;
+      }
+      return fetch(request)
+        .then((networkResponse) => {
+          // Only cache successful static responses (same origin)
+          if (
+            networkResponse.status === 200 &&
+            url.origin === self.location.origin &&
+            (url.pathname.startsWith('/_next/static/') ||
+              url.pathname.endsWith('.png') ||
+              url.pathname.endsWith('.svg') ||
+              url.pathname.endsWith('.woff2'))
+          ) {
+            const clone = networkResponse.clone();
             caches.open(CACHE_NAME).then((cache) => cache.put(request, clone));
           }
-          return response;
+          return networkResponse;
         })
-        .catch(() => caches.match(request))
-    );
-    return;
-  }
-
-  // Static assets → cache-first
-  event.respondWith(
-    caches.match(request).then((cached) => {
-      if (cached) return cached;
-      return fetch(request).then((response) => {
-        if (response.status === 200 && request.method === 'GET') {
-          const clone = response.clone();
-          caches.open(CACHE_NAME).then((cache) => cache.put(request, clone));
-        }
-        return response;
-      });
-    }).catch(() => {
-      // Offline fallback for navigation
-      if (request.mode === 'navigate') {
-        return caches.match('/offline.html');
-      }
+        .catch(() => {
+          // Offline fallback for navigation
+          if (request.mode === 'navigate') {
+            return caches.match('/offline.html');
+          }
+        });
     })
   );
 });

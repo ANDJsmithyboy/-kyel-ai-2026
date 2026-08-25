@@ -1,6 +1,9 @@
 /**
- * Ñkyel AI — Page Projets Souverains
- * Route : /projects
+ * Ñkyel AI · Projects Workspace
+ * SmartANDJ AI Technologies · Founder: Daniel Jonathan ANDJ
+ *
+ * Route: /projects
+ * Project isolation organizing missions, evidence, artifacts, and memory.
  */
 
 'use client';
@@ -11,11 +14,12 @@ import {
   Folder,
   Plus,
   ArrowRight,
-  GitBranch,
   Sparkle,
   ShieldCheck,
   Clock,
   DotsThreeVertical,
+  Books,
+  ChatCircleDots,
 } from '@phosphor-icons/react';
 
 interface ProjectItem {
@@ -82,111 +86,186 @@ export default function ProjectsPage() {
   };
 
   return (
-    <div className="flex-1 bg-[#08090D] p-6 text-[#F1EEE7] overflow-y-auto">
-      <div className="max-w-5xl mx-auto">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-8 pb-4 border-b border-white/[0.06]">
+    <div className="flex-1 flex flex-col h-full overflow-hidden" style={{ background: 'var(--material-canvas)' }}>
+      {/* Header */}
+      <div
+        className="shrink-0 p-6"
+        style={{
+          borderBottom: '1px solid var(--border-subtle)',
+          background: 'var(--surface-raised)',
+        }}
+      >
+        <div className="max-w-5xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <h1 className="text-xl font-bold font-heading text-[#F1EEE7] flex items-center gap-2">
-              <Folder size={24} className="text-[#C39A52]" />
-              Projets & Espaces Dédiés
-            </h1>
-            <p className="text-xs text-[#7E8795] mt-1">
-              Cloisonnement par projet avec mémoire isolée <code className="text-[#AAA2C8]">user/&#123;id&#125;/projects/&#123;projectId&#125;</code>
+            <div className="flex items-center gap-2.5">
+              <div
+                className="w-8 h-8 rounded-xl flex items-center justify-center"
+                style={{ background: 'var(--accent-subtle)', color: 'var(--accent)' }}
+              >
+                <Folder size={18} weight="bold" />
+              </div>
+              <h1 className="text-xl font-bold tracking-tight" style={{ color: 'var(--text-primary)' }}>
+                Projets & Espaces Dédiés
+              </h1>
+            </div>
+            <p className="text-xs mt-1" style={{ color: 'var(--text-secondary)' }}>
+              Organisez vos missions, sources de recherche, mémoire et livrables par espace stratégique.
             </p>
           </div>
+
           <button
+            type="button"
             onClick={() => setShowModal(true)}
-            className="px-4 py-2 rounded-xl bg-[#665F9E] hover:bg-[#665F9E]/80 text-white text-xs font-semibold flex items-center gap-2 transition-all shadow-lg"
+            className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold shadow-sm transition-all"
+            style={{
+              background: 'var(--accent)',
+              color: 'var(--accent-fg)',
+            }}
           >
-            <Plus size={16} weight="bold" />
-            Nouveau Projet
+            <Plus size={14} weight="bold" />
+            <span>Nouveau projet</span>
           </button>
         </div>
+      </div>
 
-        {/* Project Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+      {/* Projects Grid */}
+      <div className="flex-1 overflow-y-auto p-6 scrollbar-thin">
+        <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {projects.map((proj) => (
-            <Link
+            <div
               key={proj.id}
-              href={`/projects/${proj.id}`}
-              className="p-5 rounded-2xl bg-[#0E121A] border border-white/[0.06] hover:border-[#665F9E]/50 transition-all group flex flex-col justify-between min-h-[190px]"
+              className="p-5 rounded-2xl flex flex-col justify-between transition-all min-h-[190px] cursor-pointer"
+              style={{
+                background: 'var(--surface-raised)',
+                border: '1px solid var(--border-subtle)',
+                boxShadow: 'var(--shadow-key)',
+              }}
+              onMouseEnter={(e: any) => {
+                e.currentTarget.style.borderColor = 'var(--accent-muted)';
+                e.currentTarget.style.transform = 'translateY(-1px)';
+              }}
+              onMouseLeave={(e: any) => {
+                e.currentTarget.style.borderColor = 'var(--border-subtle)';
+                e.currentTarget.style.transform = 'translateY(0)';
+              }}
             >
               <div>
                 <div className="flex items-center justify-between mb-3">
-                  <span className="w-8 h-8 rounded-xl bg-[#C39A52]/10 border border-[#C39A52]/20 flex items-center justify-center text-[#C39A52]">
-                    <Folder size={18} />
-                  </span>
-                  <span className="text-[10px] px-2 py-0.5 rounded-md bg-white/[0.04] text-[#7E8795] font-mono">
+                  <div
+                    className="w-8 h-8 rounded-xl flex items-center justify-center shrink-0"
+                    style={{ background: 'var(--accent-subtle)', color: 'var(--accent)' }}
+                  >
+                    <Folder size={16} weight="fill" />
+                  </div>
+                  <span className="text-[10px] px-2 py-0.5 rounded-md font-mono" style={{ color: 'var(--text-tertiary)' }}>
                     {proj.updatedAt}
                   </span>
                 </div>
-                <h3 className="text-sm font-semibold text-[#F1EEE7] group-hover:text-[#AAA2C8] transition-colors line-clamp-1">
+
+                <h3 className="text-sm font-bold truncate mb-1" style={{ color: 'var(--text-primary)' }}>
                   {proj.name}
                 </h3>
-                <p className="text-xs text-[#7E8795] mt-1.5 line-clamp-2 leading-relaxed">
+                <p className="text-xs leading-relaxed line-clamp-2" style={{ color: 'var(--text-secondary)' }}>
                   {proj.description}
                 </p>
               </div>
 
-              <div className="flex items-center justify-between pt-4 border-t border-white/[0.04] mt-4 text-[11px] text-[#B8C0CC]">
-                <div className="flex items-center gap-3">
+              <div className="flex items-center justify-between pt-3 mt-4 border-t text-[11px]" style={{ borderColor: 'var(--border-subtle)' }}>
+                <div className="flex items-center gap-3" style={{ color: 'var(--text-tertiary)' }}>
                   <span>{proj.threadsCount} missions</span>
                   <span>•</span>
                   <span>{proj.artifactsCount} livrables</span>
                 </div>
-                <ArrowRight size={14} className="text-[#7E8795] group-hover:text-white group-hover:translate-x-1 transition-all" />
+                <ArrowRight size={13} style={{ color: 'var(--accent)' }} />
               </div>
-            </Link>
+            </div>
           ))}
         </div>
+      </div>
 
-        {/* Create Modal */}
-        {showModal && (
-          <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-            <div className="w-full max-w-md bg-[#0E121A] border border-white/[0.1] rounded-2xl p-6 shadow-2xl">
-              <h3 className="text-base font-bold text-[#F1EEE7] mb-4">Créer un Nouveau Projet</h3>
-              <div className="space-y-4">
-                <div>
-                  <label className="text-xs text-[#7E8795] block mb-1">Nom du projet</label>
-                  <input
-                    type="text"
-                    value={newProjectName}
-                    onChange={(e) => setNewProjectName(e.target.value)}
-                    placeholder="Ex: Plan Stratégique 2026"
-                    className="w-full px-3 py-2 rounded-xl bg-white/[0.04] border border-white/[0.08] text-sm text-[#F1EEE7] outline-none focus:border-[#665F9E]"
-                  />
-                </div>
-                <div>
-                  <label className="text-xs text-[#7E8795] block mb-1">Description / Objectifs</label>
-                  <textarea
-                    value={newProjectDesc}
-                    onChange={(e) => setNewProjectDesc(e.target.value)}
-                    placeholder="Précisez les enjeux et livrables attendus..."
-                    rows={3}
-                    className="w-full px-3 py-2 rounded-xl bg-white/[0.04] border border-white/[0.08] text-sm text-[#F1EEE7] outline-none focus:border-[#665F9E]"
-                  />
-                </div>
-                <div className="flex items-center justify-end gap-3 pt-2">
-                  <button
-                    onClick={() => setShowModal(false)}
-                    className="px-4 py-2 rounded-xl bg-white/[0.04] text-xs text-[#7E8795] hover:text-white"
-                  >
-                    Annuler
-                  </button>
-                  <button
-                    onClick={handleCreateProject}
-                    disabled={!newProjectName.trim()}
-                    className="px-4 py-2 rounded-xl bg-[#665F9E] text-white text-xs font-semibold hover:bg-[#665F9E]/80 disabled:opacity-50"
-                  >
-                    Créer l’espace
-                  </button>
-                </div>
+      {/* Creation Modal */}
+      {showModal && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4"
+          style={{ background: 'var(--material-scrim)' }}
+          onClick={() => setShowModal(false)}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="w-full max-w-md rounded-2xl p-5 space-y-4 animate-in zoom-in-95 duration-150"
+            style={{
+              background: 'var(--surface-raised)',
+              border: '1px solid var(--border-strong)',
+              boxShadow: 'var(--shadow-modal)',
+            }}
+          >
+            <h3 className="text-sm font-bold" style={{ color: 'var(--text-primary)' }}>
+              Créer un Nouveau Projet
+            </h3>
+
+            <div className="space-y-3 text-xs">
+              <div>
+                <label className="block font-semibold mb-1" style={{ color: 'var(--text-secondary)' }}>
+                  Nom du projet
+                </label>
+                <input
+                  type="text"
+                  value={newProjectName}
+                  onChange={(e) => setNewProjectName(e.target.value)}
+                  placeholder="Ex: Stratégie Énergétique 2026"
+                  className="w-full px-3 py-2 rounded-xl border outline-none text-xs"
+                  style={{
+                    background: 'var(--surface)',
+                    borderColor: 'var(--border-subtle)',
+                    color: 'var(--text-primary)',
+                  }}
+                />
+              </div>
+
+              <div>
+                <label className="block font-semibold mb-1" style={{ color: 'var(--text-secondary)' }}>
+                  Description / Objectifs
+                </label>
+                <textarea
+                  value={newProjectDesc}
+                  onChange={(e) => setNewProjectDesc(e.target.value)}
+                  placeholder="Précisez le périmètre et les livrables attendus..."
+                  rows={3}
+                  className="w-full px-3 py-2 rounded-xl border outline-none text-xs leading-relaxed"
+                  style={{
+                    background: 'var(--surface)',
+                    borderColor: 'var(--border-subtle)',
+                    color: 'var(--text-primary)',
+                  }}
+                />
+              </div>
+
+              <div className="flex justify-end gap-2 pt-3 border-t" style={{ borderColor: 'var(--border-subtle)' }}>
+                <button
+                  type="button"
+                  onClick={() => setShowModal(false)}
+                  className="px-3 py-1.5 rounded-lg"
+                  style={{ color: 'var(--text-secondary)' }}
+                >
+                  Annuler
+                </button>
+                <button
+                  type="button"
+                  onClick={handleCreateProject}
+                  disabled={!newProjectName.trim()}
+                  className="px-4 py-1.5 rounded-xl font-semibold"
+                  style={{
+                    background: 'var(--accent)',
+                    color: 'var(--accent-fg)',
+                  }}
+                >
+                  Créer l’espace
+                </button>
               </div>
             </div>
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 }

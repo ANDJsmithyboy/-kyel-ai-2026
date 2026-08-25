@@ -49,9 +49,15 @@ class RunwayMediaProvider:
 
     PROVIDER_ID = "runway"
     ACCESS_METHOD = "RUNWAY_ROUTER"
+    _key_index = 0
 
     @classmethod
     def get_api_key(cls) -> str:
+        pool = settings.runway_keys_pool
+        if pool:
+            key = pool[cls._key_index % len(pool)]
+            cls._key_index += 1
+            return key
         return os.getenv("RUNWAY_API_KEY") or settings.runway_api_key or ""
 
     @classmethod

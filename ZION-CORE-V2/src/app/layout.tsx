@@ -30,15 +30,26 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: 'Ñkyel AI — Sovereign Global Intelligence',
   description: 'Ñkyel AI by SmartANDJ AI Technologies — Next-Generation Global Intelligence Architecture',
-  icons: { icon: '/favicon.png' },
+  manifest: '/manifest.webmanifest',
+  icons: {
+    icon: '/favicon.png',
+    apple: '/favicon.png',
+  },
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'default',
+    title: 'Ñkyel AI',
+  },
   robots: 'noindex,nofollow',
 };
 
 export const viewport: Viewport = {
-  themeColor: '#FAFAF8',
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: '#FAFAF8' },
+    { media: '(prefers-color-scheme: dark)', color: '#090B0E' },
+  ],
   width: 'device-width',
   initialScale: 1,
-  maximumScale: 1,
   viewportFit: 'cover',
   interactiveWidget: 'resizes-content',
 };
@@ -51,8 +62,6 @@ const isClerkConfigured = Boolean(
   !clerkKey.includes('xxxx') &&
   clerkKey.startsWith('pk_')
 );
-
-import { nkyelClerkAppearance } from '@/lib/clerk-theme';
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   const content = (
@@ -68,27 +77,34 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
       </head>
       <body className={`antialiased overflow-hidden ${geist.variable} ${geistMono.variable}`} suppressHydrationWarning>
-        <ClerkProvider localization={frFR} appearance={nkyelClerkAppearance}>
-          <PostHogProvider>
-            {enableSplash && <SplashScreen />}
-            <GlobalShortcuts />
-            <CommandPalette />
-            {children}
-            <Toaster
-              position="bottom-right"
-              toastOptions={{
-                style: {
-                  background: 'var(--bg-elevated)',
-                  border: '1px solid var(--border)',
-                  color: 'var(--text-primary)',
-                  fontFamily: 'var(--font-sans)',
-                },
-              }}
-            />
-          </PostHogProvider>
-        </ClerkProvider>
+        <PostHogProvider>
+          {enableSplash && <SplashScreen />}
+          <GlobalShortcuts />
+          <CommandPalette />
+          {children}
+          <Toaster
+            position="bottom-right"
+            toastOptions={{
+              style: {
+                background: 'var(--bg-elevated)',
+                border: '1px solid var(--border)',
+                color: 'var(--text-primary)',
+                fontFamily: 'var(--font-sans)',
+              },
+            }}
+          />
+        </PostHogProvider>
       </body>
     </html>
   );
+
+  if (isClerkConfigured && clerkKey) {
+    return (
+      <ClerkProvider publishableKey={clerkKey} localization={frFR}>
+        {content}
+      </ClerkProvider>
+    );
+  }
+
   return content;
 }
