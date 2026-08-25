@@ -80,50 +80,29 @@ interface NavItem {
   badge?: string;
 }
 
-const PRIMARY_NAV: NavItem[] = [
-  { id: 'agent',      label: 'Agent',        href: '/agent',      icon: Robot },
-  { id: 'plugins',    label: 'Plugins',      href: '/connectors', icon: PlugsConnected },
-  { id: 'scheduled',  label: 'Programmé',    href: '/scheduled',  icon: CalendarCheck },
-  { id: 'library',    label: 'Bibliothèque', href: '/library',    icon: Books },
-];
-
 /* ═══════════════════════════════════════════════════════
-   DEMO RECENT MISSIONS (replace with real store data)
+   CONVERSATION GROUPING
    ═══════════════════════════════════════════════════════ */
 
-interface RecentMission {
-  id: string;
-  title: string;
-  icon: React.ComponentType<any>;
-  updatedAt: number;
-}
-
-const DEMO_MISSIONS: RecentMission[] = [
-  { id: 'm-1', title: 'Analyse Économique & Transition Énergétique',   icon: Presentation, updatedAt: Date.now() },
-  { id: 'm-2', title: 'Synthèse Rapports de Veille Stratégique',       icon: FileText,     updatedAt: Date.now() - 3600000 },
-  { id: 'm-3', title: 'Recherche Web Multilingue (Fang/FR)',           icon: Globe,        updatedAt: Date.now() - 86400000 },
-  { id: 'm-4', title: 'Génération Multimédia FLUX & Wan2.1',          icon: ImageIcon,    updatedAt: Date.now() - 86400000 * 3 },
-  { id: 'm-5', title: 'Développement Landing Page Tourisme',          icon: Code,         updatedAt: Date.now() - 86400000 * 5 },
-];
-
-function groupByTime(missions: RecentMission[]) {
+function groupConversationsByTime(conversations: any[]) {
   const now = Date.now();
   const todayStart = new Date().setHours(0, 0, 0, 0);
   const yesterdayStart = todayStart - 86400000;
   const weekAgo = todayStart - 7 * 86400000;
 
-  const groups: { label: string; items: RecentMission[] }[] = [
-    { label: "Aujourd'hui", items: [] },
-    { label: 'Hier', items: [] },
-    { label: '7 derniers jours', items: [] },
-    { label: 'Plus ancien', items: [] },
+  const groups: { label: string; items: any[] }[] = [
+    { label: "Today", items: [] },
+    { label: 'Yesterday', items: [] },
+    { label: 'Previous 7 days', items: [] },
+    { label: 'Older', items: [] },
   ];
 
-  missions.forEach((m) => {
-    if (m.updatedAt >= todayStart) groups[0].items.push(m);
-    else if (m.updatedAt >= yesterdayStart) groups[1].items.push(m);
-    else if (m.updatedAt >= weekAgo) groups[2].items.push(m);
-    else groups[3].items.push(m);
+  (conversations || []).forEach((c) => {
+    const time = c.updatedAt || c.createdAt || now;
+    if (time >= todayStart) groups[0].items.push(c);
+    else if (time >= yesterdayStart) groups[1].items.push(c);
+    else if (time >= weekAgo) groups[2].items.push(c);
+    else groups[3].items.push(c);
   });
 
   return groups.filter((g) => g.items.length > 0);
@@ -140,6 +119,12 @@ export default function NkyelSidebar() {
   const { isCollapsed, toggleSidebar, isMobile, isOpen, closeMobileSidebar } = useSidebar();
   const { t } = useLanguageStore();
 
+  const conversations = useChatStore((s) => s.conversations);
+  const activeConversationId = useChatStore((s) => s.activeConversationId);
+  const setActiveConversation = useChatStore((s) => s.setActiveConversation);
+  const removeConversation = useChatStore((s) => s.removeConversation);
+  const updateConversationTitle = useChatStore((s) => s.updateConversationTitle);
+
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
   const [projectsExpanded, setProjectsExpanded] = useState(true);
@@ -147,7 +132,7 @@ export default function NkyelSidebar() {
   const profileRef = useRef<HTMLDivElement>(null);
 
   const displayName = user?.fullName || user?.firstName || 'Daniel Jonathan ANDJ';
-  const userEmail = user?.primaryEmailAddress?.emailAddress || 'daniel@nkyel.ai';
+  const userEmail = user?.primaryEmailAddress?.emailAddress || 'fondateur@nkyel.ai';
   const userInitials = (displayName.slice(0, 2) || 'DJ').toUpperCase();
 
   const navItems: NavItem[] = [
@@ -180,7 +165,7 @@ export default function NkyelSidebar() {
     return pathname === base || pathname.startsWith(base + '/');
   };
 
-  const recentGroups = groupByTime(DEMO_MISSIONS);
+  const recentGroups = groupConversationsByTime(conversations);
 
   /* ─── Render ─── */
 
@@ -512,97 +497,117 @@ export default function NkyelSidebar() {
         >
           {!isCollapsed && (
             <div className="flex flex-col" style={{ gap: 'var(--space-3)' }}>
-              {recentGroups.map((group) => (
-                <div key={group.label}>
-                  <div
-                    style={{
-                      padding: `var(--space-1) var(--space-2)`,
-                      fontSize: '11px',
-                      fontWeight: 600,
-                      textTransform: 'uppercase',
-                      letterSpacing: '0.06em',
-                      color: 'var(--text-tertiary)',
-                    }}
-                  >
-                    {group.label}
+              {recentGroups.length === 0 ? (
+                <div className="px-3 py-6 text-center space-y-2">
+                  <div className="w-8 h-8 rounded-full bg-white/[0.04] border border-white/[0.08] flex items-center justify-center mx-auto text-white/40">
+                    <ChatCircleDots size={16} />
                   </div>
-                  <div className="flex flex-col" style={{ gap: '1px', marginTop: 2 }}>
-                    {group.items.map((mission) => {
-                      const Icon = mission.icon;
-                      const missionActive = pathname === `/chat/${mission.id}`;
+                  <div className="text-xs text-[var(--text-tertiary)]">
+                    {t('nav.tasks')}
+                  </div>
+                  <Link
+                    href="/chat?new=true"
+                    onClick={handleNavClick}
+                    className="inline-block text-[11px] font-medium text-[var(--accent)] hover:underline"
+                  >
+                    + {t('nav.newTask')}
+                  </Link>
+                </div>
+              ) : (
+                recentGroups.map((group) => (
+                  <div key={group.label}>
+                    <div
+                      style={{
+                        padding: `var(--space-1) var(--space-2)`,
+                        fontSize: '11px',
+                        fontWeight: 600,
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.06em',
+                        color: 'var(--text-tertiary)',
+                      }}
+                    >
+                      {group.label}
+                    </div>
+                    <div className="flex flex-col" style={{ gap: '1px', marginTop: 2 }}>
+                      {group.items.map((mission: any) => {
+                        const missionActive = activeConversationId === mission.id || pathname === `/chat/${mission.id}`;
 
-                      return (
-                        <div key={mission.id} className="relative group">
-                          <button
-                            type="button"
-                            onClick={() => router.push('/')}
-                            className="w-full flex items-center justify-between rounded-lg text-left"
-                            style={{
-                              padding: `6px var(--space-2)`,
-                              fontSize: '13px',
-                              color: missionActive ? 'var(--text-primary)' : 'var(--text-secondary)',
-                              background: missionActive ? 'var(--surface-raised)' : 'transparent',
-                              transition: `all var(--transition-fast)`,
-                            }}
-                            onMouseEnter={(e: any) => {
-                              if (!missionActive) {
-                                e.currentTarget.style.background = 'var(--hover)';
-                                e.currentTarget.style.color = 'var(--text-primary)';
-                              }
-                            }}
-                            onMouseLeave={(e: any) => {
-                              if (!missionActive) {
-                                e.currentTarget.style.background = 'transparent';
-                                e.currentTarget.style.color = 'var(--text-secondary)';
-                              }
-                            }}
-                          >
-                            <div className="flex items-center gap-2 min-w-0">
-                              <Icon size={14} className="shrink-0" style={{ color: 'var(--accent)' }} />
-                              <span className="truncate">{mission.title}</span>
-                            </div>
+                        return (
+                          <div key={mission.id} className="relative group">
                             <button
                               type="button"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                setContextMenuId(contextMenuId === mission.id ? null : mission.id);
+                              onClick={() => {
+                                setActiveConversation(mission.id);
+                                router.push('/chat');
+                                handleNavClick();
                               }}
-                              className="opacity-0 group-hover:opacity-100 shrink-0 flex items-center justify-center rounded"
+                              className="w-full flex items-center justify-between rounded-lg text-left"
                               style={{
-                                width: 20,
-                                height: 20,
-                                color: 'var(--text-tertiary)',
-                                transition: `opacity var(--transition-fast)`,
+                                padding: `6px var(--space-2)`,
+                                fontSize: '13px',
+                                color: missionActive ? 'var(--text-primary)' : 'var(--text-secondary)',
+                                background: missionActive ? 'var(--surface-raised)' : 'transparent',
+                                transition: `all var(--transition-fast)`,
+                              }}
+                              onMouseEnter={(e: any) => {
+                                if (!missionActive) {
+                                  e.currentTarget.style.background = 'var(--hover)';
+                                  e.currentTarget.style.color = 'var(--text-primary)';
+                                }
+                              }}
+                              onMouseLeave={(e: any) => {
+                                if (!missionActive) {
+                                  e.currentTarget.style.background = 'transparent';
+                                  e.currentTarget.style.color = 'var(--text-secondary)';
+                                }
                               }}
                             >
-                              <DotsThreeVertical size={13} weight="bold" />
+                              <div className="flex items-center gap-2 min-w-0">
+                                <ChatCircleDots size={14} className="shrink-0" style={{ color: 'var(--accent)' }} />
+                                <span className="truncate">{mission.title || 'Untitled task'}</span>
+                              </div>
+                              <button
+                                type="button"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setContextMenuId(contextMenuId === mission.id ? null : mission.id);
+                                }}
+                                className="opacity-0 group-hover:opacity-100 shrink-0 flex items-center justify-center rounded"
+                                style={{
+                                  width: 20,
+                                  height: 20,
+                                  color: 'var(--text-tertiary)',
+                                  transition: `opacity var(--transition-fast)`,
+                                }}
+                              >
+                                <DotsThreeVertical size={13} weight="bold" />
+                              </button>
                             </button>
-                          </button>
 
-                          {/* Context menu */}
-                          {contextMenuId === mission.id && (
-                            <div
-                              className="absolute right-2 top-8 z-50"
-                              style={{
-                                width: 160,
-                                padding: 'var(--space-1)',
-                                borderRadius: 'var(--radius-panel)',
-                                background: 'var(--surface-raised)',
-                                border: '1px solid var(--border-default)',
-                                boxShadow: 'var(--shadow-floating)',
-                                fontSize: '12px',
-                              }}
-                              onMouseLeave={() => setContextMenuId(null)}
-                            >
-                              {[
-                                { icon: PencilSimple, label: 'Renommer' },
-                                { icon: Copy, label: 'Dupliquer' },
-                                { icon: Archive, label: 'Archiver' },
-                              ].map((action) => (
+                            {/* Context menu */}
+                            {contextMenuId === mission.id && (
+                              <div
+                                className="absolute right-2 top-8 z-50"
+                                style={{
+                                  width: 160,
+                                  padding: 'var(--space-1)',
+                                  borderRadius: 'var(--radius-panel)',
+                                  background: 'var(--surface-raised)',
+                                  border: '1px solid var(--border-default)',
+                                  boxShadow: 'var(--shadow-floating)',
+                                  fontSize: '12px',
+                                }}
+                                onMouseLeave={() => setContextMenuId(null)}
+                              >
                                 <button
-                                  key={action.label}
                                   type="button"
-                                  onClick={() => setContextMenuId(null)}
+                                  onClick={() => {
+                                    setContextMenuId(null);
+                                    const newTitle = window.prompt('Rename task:', mission.title);
+                                    if (newTitle && newTitle.trim()) {
+                                      updateConversationTitle(mission.id, newTitle.trim());
+                                    }
+                                  }}
                                   className="w-full flex items-center gap-2 rounded-lg text-left"
                                   style={{
                                     padding: '6px var(--space-2)',
@@ -618,39 +623,43 @@ export default function NkyelSidebar() {
                                     e.currentTarget.style.color = 'var(--text-secondary)';
                                   }}
                                 >
-                                  <action.icon size={13} />
-                                  <span>{action.label}</span>
+                                  <PencilSimple size={13} />
+                                  <span>Rename</span>
                                 </button>
-                              ))}
-                              <div style={{ height: 1, background: 'var(--border-subtle)', margin: '4px 0' }} />
-                              <button
-                                type="button"
-                                onClick={() => setContextMenuId(null)}
-                                className="w-full flex items-center gap-2 rounded-lg text-left"
-                                style={{
-                                  padding: '6px var(--space-2)',
-                                  color: 'var(--error)',
-                                  fontWeight: 500,
-                                  transition: `all var(--transition-fast)`,
-                                }}
-                                onMouseEnter={(e: any) => {
-                                  e.currentTarget.style.background = 'var(--hover)';
-                                }}
-                                onMouseLeave={(e: any) => {
-                                  e.currentTarget.style.background = 'transparent';
-                                }}
-                              >
-                                <Trash size={13} />
-                                <span>Supprimer</span>
-                              </button>
-                            </div>
-                          )}
-                        </div>
-                      );
-                    })}
+                                
+                                <div style={{ height: 1, background: 'var(--border-subtle)', margin: '4px 0' }} />
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    setContextMenuId(null);
+                                    removeConversation(mission.id);
+                                  }}
+                                  className="w-full flex items-center gap-2 rounded-lg text-left"
+                                  style={{
+                                    padding: '6px var(--space-2)',
+                                    color: 'var(--error)',
+                                    fontWeight: 500,
+                                    transition: `all var(--transition-fast)`,
+                                  }}
+                                  onMouseEnter={(e: any) => {
+                                    e.currentTarget.style.background = 'var(--hover)';
+                                  }}
+                                  onMouseLeave={(e: any) => {
+                                    e.currentTarget.style.background = 'transparent';
+                                  }}
+                                >
+                                  <Trash size={13} />
+                                  <span>Delete</span>
+                                </button>
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))
+              )}
             </div>
           )}
 

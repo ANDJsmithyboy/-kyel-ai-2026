@@ -1,8 +1,5 @@
-/* Nkyel AI · chat.store.ts · SmartANDJ AI Technologies · Constitution Zion Core
-   Fondateur : Daniel Jonathan ANDJ
-   Store conversations et messages */
-
 import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 
 export interface Message {
   id: string;
@@ -42,10 +39,12 @@ interface ChatState {
   getActiveConversation: () => Conversation | undefined;
 }
 
-export const useChatStore = create<ChatState>((set: any, get: any) => ({
-  conversations: [],
-  activeConversationId: null,
-  isGenerating: false,
+export const useChatStore = create<ChatState>()(
+  persist(
+    (set: any, get: any) => ({
+      conversations: [],
+      activeConversationId: null,
+      isGenerating: false,
 
   setConversations: (convs: Conversation[]) => set({ conversations: convs }),
   setActiveConversation: (id: string | null) => set({ activeConversationId: id }),
@@ -114,4 +113,9 @@ export const useChatStore = create<ChatState>((set: any, get: any) => ({
     const s: ChatState = get();
     return s.conversations.find((c: Conversation) => c.id === s.activeConversationId);
   },
-}));
+}),
+    {
+      name: 'Nkyel_Chat_Storage_V2',
+    }
+  )
+);
