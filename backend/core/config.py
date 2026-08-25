@@ -145,7 +145,7 @@ class Settings(BaseSettings):
     r2_public_url: str = "https://artifacts.nkyel.ai"
 
     # ── CORS ────────────────────────────────────────────────
-    cors_origins: str = "http://localhost:3000,http://localhost:8081,http://localhost:5173,http://localhost:5175,https://nkyel.smartandjai.com,https://demo.nkyel.smartandjai.com,https://nkyel.ai"
+    cors_origins: str = "http://localhost:3000,http://localhost:8081,http://localhost:5173,http://localhost:5175,https://nkyel.smartandjai.com,https://demo.nkyel.smartandjai.com,https://nkyel.ai,https://nkyel-fd.vercel.app,https://nkyel-fd-two.vercel.app"
 
     @property
     def cors_origins_list(self) -> List[str]:
