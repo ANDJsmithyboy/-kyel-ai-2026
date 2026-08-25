@@ -147,11 +147,11 @@ export default function ScheduledPage() {
                 <CalendarCheck size={18} weight="bold" />
               </div>
               <h1 className="text-xl font-bold tracking-tight" style={{ color: 'var(--text-primary)' }}>
-                Missions Programmées
+                Automatisations
               </h1>
             </div>
             <p className="text-xs mt-1" style={{ color: 'var(--text-secondary)' }}>
-              Laissez Ñkyel continuer à travailler pendant votre absence : veilles automatiques, rapports et synthèses récurrentes.
+              Laissez votre Agent Ñkyel exécuter des veilles, des rapports et des processus récurrents en toute autonomie.
             </p>
           </div>
 
@@ -165,7 +165,7 @@ export default function ScheduledPage() {
             }}
           >
             <Plus size={14} weight="bold" />
-            <span>Créer une mission programmée</span>
+            <span>Nouvelle automatisation</span>
           </button>
         </div>
       </div>

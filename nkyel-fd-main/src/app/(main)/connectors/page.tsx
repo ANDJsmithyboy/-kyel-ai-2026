@@ -151,11 +151,11 @@ export default function ConnectorsPage() {
                 <PlugsConnected size={18} weight="bold" />
               </div>
               <h1 className="text-xl font-bold tracking-tight" style={{ color: 'var(--text-primary)' }}>
-                Connecteurs & Capacités
+                Connexions
               </h1>
             </div>
             <p className="text-xs mt-1" style={{ color: 'var(--text-secondary)' }}>
-              Étendez les capacités de votre Agent Ñkyel avec Google Workspace, vos outils professionnels et des compétences réutilisables.
+              Connectez les services, capacités et sources que Ñkyel peut utiliser dans vos missions.
             </p>
           </div>
 
@@ -176,7 +176,7 @@ export default function ConnectorsPage() {
               }}
             >
               <Plus size={14} weight="bold" />
-              <span>Créer une compétence</span>
+              <span>Nouvelle capacité</span>
             </button>
           </div>
         </div>
@@ -196,9 +196,9 @@ export default function ConnectorsPage() {
           {/* Main Taxonomy Navigation */}
           <div className="flex items-center gap-1 w-full sm:w-auto">
             {[
-              { id: 'connectors', label: 'Connecteurs', icon: PlugsConnected, count: connectors.length },
-              { id: 'skills', label: 'Compétences (Skills)', icon: PuzzlePiece, count: skills.length },
-              { id: 'data_sources', label: 'Sources de données', icon: Database, count: dataSources.length },
+              { id: 'connectors', label: 'Applications', icon: PlugsConnected, count: connectors.length },
+              { id: 'skills', label: 'Capacités', icon: Sparkle, count: skills.length },
+              { id: 'data_sources', label: 'Sources', icon: Database, count: dataSources.length },
             ].map((tab) => {
               const Icon = tab.icon;
               const isActive = activeTab === tab.id;
@@ -218,7 +218,10 @@ export default function ConnectorsPage() {
                   <span>{tab.label}</span>
                   <span
                     className="font-mono text-[10px] px-1.5 py-0.2 rounded-full"
-                    style={{ background: 'var(--hover)', color: 'var(--text-tertiary)' }}
+                    style={{
+                      background: isActive ? 'var(--accent-subtle)' : 'var(--surface-raised)',
+                      color: isActive ? 'var(--accent)' : 'var(--text-tertiary)',
+                    }}
                   >
                     {tab.count}
                   </span>

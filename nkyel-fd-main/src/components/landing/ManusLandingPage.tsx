@@ -414,7 +414,7 @@ export default function ManusLandingPage() {
               <li><Link href="/chat" className="hover:text-white transition-colors">Conversation & Chat</Link></li>
               <li><Link href="/workspace" className="hover:text-white transition-colors">WorkGraph Studio</Link></li>
               <li><Link href="/settings" className="hover:text-white transition-colors">Paramètres Souverains</Link></li>
-              <li><Link href="/welcome" className="hover:text-white transition-colors">Vitrine Manus-Grade</Link></li>
+              <li><Link href="/welcome" className="hover:text-white transition-colors">Vitrine Ñkyel</Link></li>
             </ul>
           </div>
 

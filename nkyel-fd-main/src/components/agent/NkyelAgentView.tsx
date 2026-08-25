@@ -92,21 +92,21 @@ export default function NkyelAgentView() {
             <div>
               <div className="flex items-center gap-2">
                 <h1 className="text-lg font-bold tracking-tight" style={{ color: 'var(--text-primary)' }}>
-                  Agent {agentName}
+                  Mon agent
                 </h1>
                 <span
-                  className="text-[10px] font-mono px-2 py-0.2 rounded-full font-semibold"
+                  className="text-[10px] font-mono px-2 py-0.5 rounded-full font-semibold"
                   style={{
                     background: 'rgba(34, 197, 94, 0.12)',
                     color: 'var(--success, #22c55e)',
                     border: '1px solid rgba(34, 197, 94, 0.25)',
                   }}
                 >
-                  Prêt à travailler
+                  Prêt
                 </span>
               </div>
               <p className="text-xs" style={{ color: 'var(--text-tertiary)' }}>
-                Votre agent autonome multi-disciplinaire souverain.
+                Votre agent persistant pour les missions complexes.
               </p>
             </div>
           </div>
@@ -122,7 +122,7 @@ export default function NkyelAgentView() {
             }}
           >
             <SlidersHorizontal size={14} />
-            <span>Personnaliser l&apos;agent</span>
+            <span>Personnaliser</span>
           </button>
         </div>
 

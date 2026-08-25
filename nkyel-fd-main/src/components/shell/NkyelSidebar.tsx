@@ -85,17 +85,17 @@ interface NavItem {
    CONVERSATION GROUPING
    ═══════════════════════════════════════════════════════ */
 
-function groupConversationsByTime(conversations: any[]) {
+function groupConversationsByTime(conversations: any[], t: (k: string) => string) {
   const now = Date.now();
   const todayStart = new Date().setHours(0, 0, 0, 0);
   const yesterdayStart = todayStart - 86400000;
   const weekAgo = todayStart - 7 * 86400000;
 
   const groups: { label: string; items: any[] }[] = [
-    { label: "Today", items: [] },
-    { label: 'Yesterday', items: [] },
-    { label: 'Previous 7 days', items: [] },
-    { label: 'Older', items: [] },
+    { label: t('time.today'), items: [] },
+    { label: t('time.yesterday'), items: [] },
+    { label: t('time.previous7Days'), items: [] },
+    { label: t('time.older'), items: [] },
   ];
 
   (conversations || []).forEach((c) => {
@@ -137,10 +137,10 @@ export default function NkyelSidebar() {
   const userInitials = (displayName.slice(0, 2) || 'DJ').toUpperCase();
 
   const navItems: NavItem[] = [
-    { id: 'agent',      label: t('nav.agent'),      href: '/agent',      icon: Robot },
-    { id: 'plugins',    label: t('nav.plugins'),    href: '/connectors', icon: PlugsConnected },
-    { id: 'scheduled',  label: t('nav.scheduled'),  href: '/scheduled',  icon: CalendarCheck },
-    { id: 'library',    label: t('nav.library'),    href: '/library',    icon: Books },
+    { id: 'agent',        label: t('nav.agent'),        href: '/agent',      icon: Robot },
+    { id: 'connections',  label: t('nav.connections'),  href: '/connectors', icon: PlugsConnected },
+    { id: 'automations',  label: t('nav.automations'),  href: '/scheduled',  icon: CalendarCheck },
+    { id: 'creations',    label: t('nav.creations'),    href: '/library',    icon: Books },
   ];
 
   const hydrateFromStorage = useSidebar((s) => s.hydrateFromStorage);
@@ -172,7 +172,7 @@ export default function NkyelSidebar() {
     return pathname === base || pathname.startsWith(base + '/');
   };
 
-  const recentGroups = groupConversationsByTime(conversations);
+  const recentGroups = groupConversationsByTime(conversations, t);
 
   /* ─── Render ─── */
 
@@ -244,7 +244,7 @@ export default function NkyelSidebar() {
                 onClick={handleNavClick}
               >
                 <span
-                  className="font-semibold truncate tracking-tight text-[17px] select-none text-[var(--text-primary)]"
+                  className="font-semibold truncate tracking-tight text-[17px] select-none text-[var(--text-primary)] font-serif"
                   style={{
                     letterSpacing: '-0.025em',
                   }}
@@ -268,12 +268,12 @@ export default function NkyelSidebar() {
         </div>
 
         {/* ═══════════════════════════════════════════════════
-           ZONE 2: New Task Button (Manus style)
+           ZONE 2: Nouvelle Mission Button (Canonical Ñkyel IA)
            ═══════════════════════════════════════════════════ */}
         <div style={{ padding: `var(--space-3) var(--space-3) var(--space-2)` }}>
           <Link
             href="/chat?new=true"
-            className="group flex items-center gap-2.5 w-full font-medium min-h-[40px] touch-manipulation"
+            className="group flex items-center gap-2.5 w-full font-medium min-h-[40px] touch-manipulation shadow-sm"
             style={{
               borderRadius: 'var(--radius-control)',
               padding: isCollapsed ? '10px' : '10px var(--space-3)',
@@ -283,7 +283,7 @@ export default function NkyelSidebar() {
               color: 'var(--accent-fg)',
               transition: `all var(--transition-fast)`,
             }}
-            title={t('nav.newTask')}
+            title={t('nav.newMission')}
             onClick={handleNavClick}
             onMouseEnter={(e: any) => {
               e.currentTarget.style.background = 'var(--accent-hover)';
@@ -293,7 +293,7 @@ export default function NkyelSidebar() {
             }}
           >
             <PencilSimple size={16} weight="bold" className="shrink-0" />
-            {!isCollapsed && <span className="truncate">{t('nav.newTask')}</span>}
+            {!isCollapsed && <span className="truncate">{t('nav.newMission')}</span>}
           </Link>
         </div>
 

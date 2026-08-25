@@ -343,31 +343,66 @@ export function applyRTLToDOM(tag: string) {
 }
 
 export const DICTIONARY: Record<string, Record<string, string>> = {
-  // Navigation & Shell
-  'nav.newTask': { 'en-US': 'New task', 'fr-FR': 'Nouvelle tâche', 'fr-GA': 'Nouvelle tâche' },
-  'nav.agent': { 'en-US': 'Agent', 'fr-FR': 'Agent', 'fr-GA': 'Agent' },
-  'nav.plugins': { 'en-US': 'Plugins', 'fr-FR': 'Plugins', 'fr-GA': 'Plugins' },
-  'nav.scheduled': { 'en-US': 'Scheduled', 'fr-FR': 'Programmé', 'fr-GA': 'Programmé' },
-  'nav.library': { 'en-US': 'Library', 'fr-FR': 'Bibliothèque', 'fr-GA': 'Bibliothèque' },
+  // Navigation & Shell (Canonical Ñkyel IA)
+  'nav.newMission': { 'en-US': 'New mission', 'fr-FR': 'Nouvelle mission', 'fr-GA': 'Nouvelle mission' },
+  'nav.newTask': { 'en-US': 'New mission', 'fr-FR': 'Nouvelle mission', 'fr-GA': 'Nouvelle mission' },
+  'nav.agent': { 'en-US': 'Agent', 'fr-FR': 'Mon agent', 'fr-GA': 'Mon agent' },
+  'nav.connections': { 'en-US': 'Connections', 'fr-FR': 'Connexions', 'fr-GA': 'Connexions' },
+  'nav.plugins': { 'en-US': 'Connections', 'fr-FR': 'Connexions', 'fr-GA': 'Connexions' },
+  'nav.automations': { 'en-US': 'Automations', 'fr-FR': 'Automatisations', 'fr-GA': 'Automatisations' },
+  'nav.scheduled': { 'en-US': 'Automations', 'fr-FR': 'Automatisations', 'fr-GA': 'Automatisations' },
+  'nav.creations': { 'en-US': 'Creations', 'fr-FR': 'Créations', 'fr-GA': 'Créations' },
+  'nav.library': { 'en-US': 'Creations', 'fr-FR': 'Créations', 'fr-GA': 'Créations' },
   'nav.projects': { 'en-US': 'Projects', 'fr-FR': 'Projets', 'fr-GA': 'Projets' },
   'nav.newProject': { 'en-US': 'New project', 'fr-FR': 'Nouveau projet', 'fr-GA': 'Nouveau projet' },
-  'nav.tasks': { 'en-US': 'Recent tasks', 'fr-FR': 'Tâches récentes', 'fr-GA': 'Tâches récentes' },
-  
+  'nav.recentMissions': { 'en-US': 'Recent missions', 'fr-FR': 'Missions récentes', 'fr-GA': 'Missions récentes' },
+  'nav.tasks': { 'en-US': 'Recent missions', 'fr-FR': 'Missions récentes', 'fr-GA': 'Missions récentes' },
+
+  // Groupings by time
+  'time.today': { 'en-US': 'Today', 'fr-FR': "Aujourd'hui", 'fr-GA': "Aujourd'hui" },
+  'time.yesterday': { 'en-US': 'Yesterday', 'fr-FR': 'Hier', 'fr-GA': 'Hier' },
+  'time.previous7Days': { 'en-US': 'Previous 7 days', 'fr-FR': '7 derniers jours', 'fr-GA': '7 derniers jours' },
+  'time.older': { 'en-US': 'Older', 'fr-FR': 'Plus anciennes', 'fr-GA': 'Plus anciennes' },
+
+  // Intelligence Modes
+  'mode.auto': { 'en-US': 'Auto', 'fr-FR': 'Auto', 'fr-GA': 'Auto' },
+  'mode.fast': { 'en-US': 'Fast', 'fr-FR': 'Rapide', 'fr-GA': 'Rapide' },
+  'mode.deep': { 'en-US': 'Deep', 'fr-FR': 'Profond', 'fr-GA': 'Profond' },
+  'mode.research': { 'en-US': 'Research', 'fr-FR': 'Recherche', 'fr-GA': 'Recherche' },
+  'mode.autoDesc': { 'en-US': 'Intelligent dynamic routing', 'fr-FR': 'Routage dynamique intelligent', 'fr-GA': 'Routage dynamique intelligent' },
+  'mode.fastDesc': { 'en-US': 'Ultra-fast concise response', 'fr-FR': 'Réponse ultra-rapide et concise', 'fr-GA': 'Réponse ultra-rapide et concise' },
+  'mode.deepDesc': { 'en-US': 'Deep reasoning & complex synthesis', 'fr-FR': 'Raisonnement profond et synthèse complexe', 'fr-GA': 'Raisonnement profond et synthèse complexe' },
+  'mode.researchDesc': { 'en-US': 'Live web groundings & multi-sources', 'fr-FR': 'Veille et recherche multi-sources en direct', 'fr-GA': 'Veille et recherche multi-sources en direct' },
+
+  // Actions & Global Header
+  'header.search': { 'en-US': 'Search', 'fr-FR': 'Recherche', 'fr-GA': 'Recherche' },
+  'header.share': { 'en-US': 'Share', 'fr-FR': 'Partager', 'fr-GA': 'Partager' },
+  'header.more': { 'en-US': 'More', 'fr-FR': 'Plus', 'fr-GA': 'Plus' },
+  'header.commands': { 'en-US': 'Commands', 'fr-FR': 'Commandes', 'fr-GA': 'Commandes' },
+  'header.mission': { 'en-US': 'Mission', 'fr-FR': 'Mission', 'fr-GA': 'Mission' },
+  'header.missionIntelligence': { 'en-US': 'Mission Intelligence', 'fr-FR': 'Intelligence de Mission', 'fr-GA': 'Intelligence de Mission' },
+
+  // Mission Views
+  'view.overview': { 'en-US': 'Overview', 'fr-FR': 'Aperçu', 'fr-GA': 'Aperçu' },
+  'view.workgraph': { 'en-US': 'WorkGraph', 'fr-FR': 'WorkGraph', 'fr-GA': 'WorkGraph' },
+  'view.vie': { 'en-US': 'VIE Studio', 'fr-FR': 'Studio VIE', 'fr-GA': 'Studio VIE' },
+  'view.liveFlow': { 'en-US': 'Live Flow', 'fr-FR': 'Live Flow', 'fr-GA': 'Live Flow' },
+
   // Profile & Popover
   'profile.personal': { 'en-US': 'Personal', 'fr-FR': 'Personnel', 'fr-GA': 'Personnel' },
-  'profile.free': { 'en-US': 'Free', 'fr-FR': 'Gratuit', 'fr-GA': 'Gratuit' },
-  'profile.upgrade': { 'en-US': 'Upgrade', 'fr-FR': 'Mise à niveau', 'fr-GA': 'Mise à niveau' },
+  'profile.free': { 'en-US': 'Free Plan', 'fr-FR': 'Forfait Gratuit', 'fr-GA': 'Forfait Gratuit' },
+  'profile.upgrade': { 'en-US': 'Plan & Usage', 'fr-FR': 'Forfait & Utilisation', 'fr-GA': 'Forfait & Utilisation' },
   'profile.credits': { 'en-US': 'Credits', 'fr-FR': 'Crédits', 'fr-GA': 'Crédits' },
   'profile.account': { 'en-US': 'Account', 'fr-FR': 'Compte', 'fr-GA': 'Compte' },
   'profile.customization': { 'en-US': 'Customization', 'fr-FR': 'Personnalisation', 'fr-GA': 'Personnalisation' },
   'profile.settings': { 'en-US': 'Settings', 'fr-FR': 'Paramètres', 'fr-GA': 'Paramètres' },
   'profile.home': { 'en-US': 'Home page', 'fr-FR': "Page d'accueil", 'fr-GA': "Page d'accueil" },
-  'profile.help': { 'en-US': 'Get help', 'fr-FR': "Obtenir de l'aide", 'fr-GA': "Obtenir de l'aide" },
-  'profile.docs': { 'en-US': 'Docs', 'fr-FR': 'Docs', 'fr-GA': 'Docs' },
+  'profile.help': { 'en-US': 'Help & Support', 'fr-FR': "Aide & Assistance", 'fr-GA': "Aide & Assistance" },
+  'profile.docs': { 'en-US': 'Documentation', 'fr-FR': 'Documentation', 'fr-GA': 'Documentation' },
   'profile.logout': { 'en-US': 'Log out', 'fr-FR': 'Se déconnecter', 'fr-GA': 'Se déconnecter' },
   
   // Auth
-  'auth.welcome': { 'en-US': 'Welcome', 'fr-FR': 'Accueillir', 'fr-GA': 'Accueillir' },
+  'auth.welcome': { 'en-US': 'Welcome to Ñkyel', 'fr-FR': 'Bienvenue sur Ñkyel', 'fr-GA': 'Bienvenue sur Ñkyel' },
   'auth.continueTo': { 'en-US': 'Sign in to continue to Ñkyel', 'fr-FR': 'Connectez-vous pour continuer sur Ñkyel', 'fr-GA': 'Connectez-vous pour continuer sur Ñkyel' },
   'auth.email': { 'en-US': 'Email address', 'fr-FR': 'Adresse courriel', 'fr-GA': 'Adresse courriel' },
   'auth.continue': { 'en-US': 'Continue', 'fr-FR': 'Continuer', 'fr-GA': 'Continuer' },

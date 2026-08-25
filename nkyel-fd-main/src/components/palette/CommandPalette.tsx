@@ -231,10 +231,10 @@ export default function CommandPalette() {
       // 2. Navigation
       {
         id: 'nav-welcome',
-        label: 'Vitrine d\'Accueil Manus-Grade',
+        label: "Vitrine d'Accueil Ñkyel",
         category: 'Navigation',
         icon: Sparkle,
-        keywords: ['accueil', 'welcome', 'vitrine', 'manus', 'gemini'],
+        keywords: ['accueil', 'welcome', 'vitrine', 'landing', 'presentation'],
         handler: () => {
           router.push('/welcome');
           setIsOpen(false);
