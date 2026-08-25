@@ -172,7 +172,26 @@ export default function NkyelSidebar() {
     return pathname === base || pathname.startsWith(base + '/');
   };
 
-  const recentGroups = groupConversationsByTime(conversations, t);
+  const touchStartX = useRef<number | null>(null);
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (touchStartX.current === null) return;
+    const currentX = e.touches[0].clientX;
+    const diffX = touchStartX.current - currentX;
+    if (diffX > 50) {
+      // Swiped left by > 50px -> slide-close drawer
+      closeMobileSidebar();
+      touchStartX.current = null;
+    }
+  };
+
+  const handleTouchEnd = () => {
+    touchStartX.current = null;
+  };
 
   /* ─── Render ─── */
 
@@ -193,6 +212,9 @@ export default function NkyelSidebar() {
       )}
 
       <aside
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
         className="h-full flex flex-col shrink-0 select-none"
         style={{
           width: isCollapsed ? 'var(--sidebar-collapsed)' : 'var(--sidebar-width)',

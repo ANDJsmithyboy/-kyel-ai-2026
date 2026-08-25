@@ -10,10 +10,14 @@ import {
   DotsThree,
   MagnifyingGlass,
   Check,
+  Gear,
 } from '@phosphor-icons/react';
 import { ENGINES, getNkyelEngine, useNkyelModel, type NkyelEngineId } from '@/hooks/useNkyelModel';
+import { useSidebar } from '@/hooks/useSidebar';
+import { useSettingsModal } from '@/hooks/useSettingsModal';
 import UpgradeModal from '@/components/subscription/UpgradeModal';
 import { useLanguageStore } from '@/stores/language.store';
+import { IbogaNavigationTrigger } from '@/components/brand';
 
 interface TopBarProps {
   onOpenCapabilities?: () => void;
@@ -23,14 +27,19 @@ export default function TopBar({ onOpenCapabilities }: TopBarProps) {
   const engineId = useNkyelModel((state) => state.engineId);
   const setEngineId = useNkyelModel((state) => state.setEngineId);
   const { open: openMobileSidebar } = useSidebar();
+  const openSettings = useSettingsModal((state: any) => state.open);
+
   const [modelDropdown, setModelDropdown] = useState(false);
+  const [actionsMenuOpen, setActionsMenuOpen] = useState(false);
   const [isUpgradeOpen, setIsUpgradeOpen] = useState(false);
+
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const actionsMenuRef = useRef<HTMLDivElement>(null);
   const { t } = useLanguageStore();
 
   const currentEngine = getNkyelEngine(engineId);
 
-  // Close dropdown on click outside
+  // Close model dropdown on click outside
   useEffect(() => {
     if (!modelDropdown) return;
     const handler = (e: MouseEvent) => {
@@ -42,11 +51,25 @@ export default function TopBar({ onOpenCapabilities }: TopBarProps) {
     return () => document.removeEventListener('mousedown', handler);
   }, [modelDropdown]);
 
+  // Close actions menu on click outside
+  useEffect(() => {
+    if (!actionsMenuOpen) return;
+    const handler = (e: MouseEvent) => {
+      if (actionsMenuRef.current && !actionsMenuRef.current.contains(e.target as Node)) {
+        setActionsMenuOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, [actionsMenuOpen]);
+
   const handleOpenCommands = () => {
+    setActionsMenuOpen(false);
     window.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', metaKey: true, bubbles: true }));
   };
 
   const handleShare = () => {
+    setActionsMenuOpen(false);
     if (typeof window !== 'undefined' && navigator.share) {
       navigator.share({
         title: 'Ñkyel AI',
@@ -63,23 +86,22 @@ export default function TopBar({ onOpenCapabilities }: TopBarProps) {
       <UpgradeModal isOpen={isUpgradeOpen} onClose={() => setIsUpgradeOpen(false)} />
 
       <header className="h-12 flex items-center justify-between px-3 sm:px-4 border-b border-[var(--border-subtle)] bg-[var(--material-glass-regular)] backdrop-blur-md select-none z-30">
-        {/* Leading: Logo Wordmark + Model Selector Dropdown (Near Iboga) */}
+        {/* Leading: Iboga Navigation Trigger (Mobile) + Wordmark + Model Selector */}
         <div className="flex items-center gap-2 sm:gap-3">
-          {/* Mobile Tap Trigger for Navigation */}
-          <button
-            type="button"
-            onClick={openMobileSidebar}
-            className="md:hidden flex items-center gap-1 p-1 rounded-lg hover:bg-[var(--hover)] text-[var(--text-primary)] transition-colors focus-visible:outline-none"
-            title="Ouvrir la navigation"
-            aria-label="Ouvrir la navigation"
-          >
-            <span className="text-[15px] font-semibold tracking-[-0.02em] font-serif">
-              Ñkyel
-            </span>
-          </button>
+          {/* Mobile Iboga Navigation Trigger Button */}
+          <div className="md:hidden">
+            <IbogaNavigationTrigger
+              open={false}
+              onToggle={openMobileSidebar}
+              glyphSize={18}
+              variant="mobile"
+              title="Ouvrir la navigation"
+              label="Ouvrir la navigation"
+            />
+          </div>
 
-          {/* Desktop Brand Label */}
-          <div className="hidden md:block text-[15px] font-semibold tracking-[-0.02em] text-[var(--text-primary)] font-serif">
+          {/* Product Wordmark */}
+          <div className="text-[15px] font-semibold tracking-[-0.02em] text-[var(--text-primary)] font-serif">
             Ñkyel
           </div>
 
@@ -142,8 +164,8 @@ export default function TopBar({ onOpenCapabilities }: TopBarProps) {
           </div>
         </div>
 
-        {/* Trailing: Upgrade Button, Search, Share, More Actions */}
-        <div className="flex items-center gap-2">
+        {/* Trailing: Upgrade Button, Search, Share, Action Button [•••] at the far right */}
+        <div className="flex items-center gap-1.5 sm:gap-2">
           {/* Universal Search / Command Palette Trigger */}
           <button
             type="button"
@@ -159,7 +181,7 @@ export default function TopBar({ onOpenCapabilities }: TopBarProps) {
             </kbd>
           </button>
 
-          {/* Upgrade Button (Manus Style) */}
+          {/* Upgrade Button (Desktop) */}
           <button
             type="button"
             onClick={() => setIsUpgradeOpen(true)}
@@ -169,7 +191,7 @@ export default function TopBar({ onOpenCapabilities }: TopBarProps) {
             <span>Mise à niveau</span>
           </button>
 
-          {/* Share Button */}
+          {/* Share Button (Desktop) */}
           <button
             type="button"
             onClick={handleShare}
@@ -181,33 +203,71 @@ export default function TopBar({ onOpenCapabilities }: TopBarProps) {
             <span className="text-[11px] font-medium">Partager</span>
           </button>
 
-          {/* Stats & Files icons */}
-          <button
-            type="button"
-            aria-label="Statistiques"
-            className="hidden lg:flex h-8 w-8 items-center justify-center rounded-xl text-[var(--text-tertiary)] transition-colors hover:bg-[var(--hover)] hover:text-[var(--text-primary)]"
-          >
-            <ChartBar size={17} />
-          </button>
+          {/* Action Menu at Far Right [•••] */}
+          <div className="relative" ref={actionsMenuRef}>
+            <button
+              type="button"
+              onClick={() => setActionsMenuOpen((prev) => !prev)}
+              aria-expanded={actionsMenuOpen}
+              aria-label="Menu d'actions"
+              title="Menu d'actions"
+              className="flex h-8 w-8 items-center justify-center rounded-xl text-[var(--text-tertiary)] transition-colors hover:bg-[var(--hover)] hover:text-[var(--text-primary)] border border-transparent hover:border-[var(--border)]"
+            >
+              <DotsThree size={20} weight="bold" />
+            </button>
 
-          <button
-            type="button"
-            aria-label="Fichiers"
-            className="hidden lg:flex h-8 w-8 items-center justify-center rounded-xl text-[var(--text-tertiary)] transition-colors hover:bg-[var(--hover)] hover:text-[var(--text-primary)]"
-          >
-            <FileText size={17} />
-          </button>
+            {/* Action Menu Popover */}
+            {actionsMenuOpen && (
+              <div className="absolute right-0 top-full mt-1.5 w-56 space-y-1 rounded-2xl border border-[var(--border-strong)] bg-[var(--bg-elevated)] p-1.5 shadow-2xl z-50 animate-scale-in text-xs">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setActionsMenuOpen(false);
+                    setIsUpgradeOpen(true);
+                  }}
+                  className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-left hover:bg-[var(--hover)] text-[var(--text-primary)] transition-colors"
+                >
+                  <Sparkle size={16} className="text-[#D5AE57]" weight="fill" />
+                  <span className="font-semibold">Mise à niveau</span>
+                </button>
 
-          {/* More options button */}
-          <button
-            type="button"
-            onClick={handleOpenCommands}
-            aria-label="Plus d'options"
-            title="Plus d'options"
-            className="flex h-8 w-8 items-center justify-center rounded-xl text-[var(--text-tertiary)] transition-colors hover:bg-[var(--hover)] hover:text-[var(--text-primary)]"
-          >
-            <DotsThree size={20} weight="bold" />
-          </button>
+                <button
+                  type="button"
+                  onClick={handleShare}
+                  className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-left hover:bg-[var(--hover)] text-[var(--text-primary)] transition-colors"
+                >
+                  <ShareNetwork size={16} />
+                  <span>Partager</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setActionsMenuOpen(false);
+                    openSettings();
+                  }}
+                  className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-left hover:bg-[var(--hover)] text-[var(--text-primary)] transition-colors"
+                >
+                  <Gear size={16} />
+                  <span>Paramètres</span>
+                </button>
+
+                <div className="h-px bg-[var(--border-subtle)] my-1" />
+
+                <button
+                  type="button"
+                  onClick={handleOpenCommands}
+                  className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-left hover:bg-[var(--hover)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
+                >
+                  <div className="flex items-center gap-2.5">
+                    <MagnifyingGlass size={16} className="text-[#D5AE57]" />
+                    <span>Commandes</span>
+                  </div>
+                  <kbd className="px-1.5 py-0.5 rounded bg-white/10 text-[9px] font-mono">⌘K</kbd>
+                </button>
+              </div>
+            )}
+          </div>
         </div>
       </header>
     </>
