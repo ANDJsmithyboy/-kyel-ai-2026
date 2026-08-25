@@ -161,10 +161,29 @@ class Settings(BaseSettings):
         return f"https://{self.clerk_domain}/.well-known/jwks.json"
 
     @property
+    def google_keys_pool(self) -> List[str]:
+        keys = []
+        if getattr(self, 'google_api_keys', None):
+            keys.extend([k.strip() for k in self.google_api_keys.split(",") if k.strip()])
+        for i in range(1, 21):
+            env_k = os.getenv(f"GOOGLE_API_KEY_{i}") or os.getenv(f"GOOGLE_GENERATIVE_AI_API_KEY_{i}")
+            if env_k and env_k.strip() and env_k.strip() not in keys:
+                keys.append(env_k.strip())
+        if self.google_api_key and self.google_api_key not in keys:
+            keys.insert(0, self.google_api_key)
+        if getattr(self, 'google_generative_ai_api_key', None) and self.google_generative_ai_api_key not in keys:
+            keys.insert(0, self.google_generative_ai_api_key)
+        return keys
+
+    @property
     def groq_keys_pool(self) -> List[str]:
         keys = []
         if self.groq_api_keys:
             keys.extend([k.strip() for k in self.groq_api_keys.split(",") if k.strip()])
+        for i in range(1, 21):
+            env_k = os.getenv(f"GROQ_API_KEY_{i}")
+            if env_k and env_k.strip() and env_k.strip() not in keys:
+                keys.append(env_k.strip())
         if self.groq_api_key and self.groq_api_key not in keys:
             keys.insert(0, self.groq_api_key)
         return keys
@@ -174,6 +193,10 @@ class Settings(BaseSettings):
         keys = []
         if self.runway_api_keys:
             keys.extend([k.strip() for k in self.runway_api_keys.split(",") if k.strip()])
+        for i in range(1, 21):
+            env_k = os.getenv(f"RUNWAY_API_KEY_{i}")
+            if env_k and env_k.strip() and env_k.strip() not in keys:
+                keys.append(env_k.strip())
         if self.runway_api_key and self.runway_api_key not in keys:
             keys.insert(0, self.runway_api_key)
         return keys
@@ -183,8 +206,7 @@ class Settings(BaseSettings):
         keys = []
         if self.tavily_api_keys:
             keys.extend([k.strip() for k in self.tavily_api_keys.split(",") if k.strip()])
-        # Also check numbered environment variables (e.g. TAVILY_API_KEY_1, TAVILY_API_KEY_2, etc.)
-        for i in range(1, 10):
+        for i in range(1, 21):
             env_k = os.getenv(f"TAVILY_API_KEY_{i}")
             if env_k and env_k.strip() and env_k.strip() not in keys:
                 keys.append(env_k.strip())

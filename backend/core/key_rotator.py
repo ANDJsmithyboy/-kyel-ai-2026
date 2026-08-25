@@ -1,10 +1,16 @@
 """
 Ñkyel AI — Multi-Key Rotator · SmartANDJ AI Technologies
 Gestionnaire de rotation multi-comptes avec cooldowns et retries pour :
-- Google Gemini (GOOGLE_API_KEYS / GOOGLE_GENERATIVE_AI_API_KEY)
-- Groq (GROQ_API_KEYS / GROQ_API_KEY)
-- Free Image APIs (FREE_IMAGE_API_KEYS / POLLINATIONS_API_KEYS)
-- Free Video APIs (FREE_VIDEO_API_KEYS / RUNPOD_API_KEYS)
+- Google Gemini (GOOGLE_API_KEYS, GOOGLE_API_KEY, GOOGLE_API_KEY_1..20)
+- Groq (GROQ_API_KEYS, GROQ_API_KEY, GROQ_API_KEY_1..20)
+- Tavily (TAVILY_API_KEYS, TAVILY_API_KEY, TAVILY_API_KEY_1..20)
+- Runway (RUNWAY_API_KEYS, RUNWAY_API_KEY, RUNWAY_API_KEY_1..20)
+- Mistral (MISTRAL_API_KEYS, MISTRAL_API_KEY, MISTRAL_API_KEY_1..20)
+- OpenAI (OPENAI_API_KEYS, OPENAI_API_KEY, OPENAI_API_KEY_1..20)
+- Anthropic (ANTHROPIC_API_KEYS, ANTHROPIC_API_KEY, ANTHROPIC_API_KEY_1..20)
+- Together AI (TOGETHER_API_KEYS, TOGETHER_API_KEY, TOGETHER_API_KEY_1..20)
+- Free Image APIs (FREE_IMAGE_API_KEYS, POLLINATIONS_API_KEYS, FAL_KEY)
+- Video APIs (RUNWAY_API_KEY, RUNPOD_API_KEY, COMFYUI_API_KEY)
 
 Fondateur : Daniel Jonathan ANDJ
 """
@@ -32,12 +38,18 @@ class KeyRotator:
     def _load_keys(self) -> None:
         loaded = []
         for env_var in self.env_var_names:
+            # 1. Direct variable (comma, semicolon, newline separated)
             raw_val = os.getenv(env_var, "")
             if raw_val:
-                # Support comma, semicolon, space separated keys
                 parts = [k.strip() for k in raw_val.replace(";", ",").replace("\n", ",").split(",") if k.strip()]
                 loaded.extend(parts)
-        
+            
+            # 2. Numbered variables (e.g., VAR_1, VAR_2 ... VAR_20)
+            for i in range(1, 21):
+                num_val = os.getenv(f"{env_var}_{i}", "")
+                if num_val and num_val.strip():
+                    loaded.append(num_val.strip())
+
         # Deduplicate while preserving order
         seen = set()
         deduped = []
@@ -45,17 +57,16 @@ class KeyRotator:
             if k and k not in seen:
                 seen.add(k)
                 deduped.append(k)
-        
+
         self.keys = deduped
         if self.keys:
-            logger.info(f"🔑 KeyRotator [{self.provider_name}]: {len(self.keys)} clés actives chargées.")
+            logger.info(f"🔑 KeyRotator [{self.provider_name}]: {len(self.keys)} clés actives chargées dans le pool.")
         else:
             logger.warning(f"⚠️ KeyRotator [{self.provider_name}]: Aucune clé configurée.")
 
     def get_active_key(self) -> Optional[str]:
         """Retourne la prochaine clé disponible non en cooldown."""
         if not self.keys:
-            # Essayer de recharger au cas où les variables d'environnement ont changé
             self._load_keys()
             if not self.keys:
                 return None
@@ -64,9 +75,10 @@ class KeyRotator:
         available = [k for k in self.keys if self.cooldowns.get(k, 0) <= now]
 
         if not available:
-            # Toutes les clés sont en cooldown, trouver celle qui expire le plus tôt
+            # Toutes les clés sont en cooldown, utiliser celle dont le cooldown expire le plus tôt
             earliest_key = min(self.keys, key=lambda k: self.cooldowns.get(k, 0))
-            logger.warning(f"⚠️ KeyRotator [{self.provider_name}]: Toutes les clés sont en cooldown. Utilisation de la plus ancienne.")
+            masked = earliest_key[:6] + "..." + earliest_key[-4:] if len(earliest_key) > 10 else "***"
+            logger.warning(f"⚠️ KeyRotator [{self.provider_name}]: Toutes les clés sont en cooldown. Utilisation de la clé {masked}.")
             return earliest_key
 
         self.current_index = (self.current_index + 1) % len(available)
@@ -80,12 +92,26 @@ class KeyRotator:
         self.cooldowns[key] = time.time() + cooldown_seconds
         logger.warning(f"⏳ KeyRotator [{self.provider_name}]: Clé {masked} mise en cooldown pour {cooldown_seconds}s.")
 
+    def report_success(self, key: str) -> None:
+        """Réinitialise le cooldown d'une clé en cas de succès confirmé."""
+        if key in self.cooldowns:
+            del self.cooldowns[key]
+
     def total_keys(self) -> int:
         return len(self.keys)
 
+    def get_all_keys(self) -> List[str]:
+        return list(self.keys)
 
-# Singletons pour le backend Ñkyel AI
+
+# ── Singletons de Rotation pour le backend Ñkyel AI ──────────
 gemini_rotator = KeyRotator("Google Gemini", ["GOOGLE_API_KEYS", "GOOGLE_GENERATIVE_AI_API_KEY", "GOOGLE_API_KEY"])
 groq_rotator = KeyRotator("Groq", ["GROQ_API_KEYS", "GROQ_API_KEY"])
-image_rotator = KeyRotator("Image Providers", ["FREE_IMAGE_API_KEYS", "POLLINATIONS_API_KEY", "CLOUDFLARE_API_TOKEN"])
-video_rotator = KeyRotator("Video Providers", ["FREE_VIDEO_API_KEYS", "RUNPOD_API_KEY", "COMFYUI_API_KEY"])
+tavily_rotator = KeyRotator("Tavily Search", ["TAVILY_API_KEYS", "TAVILY_API_KEY"])
+runway_rotator = KeyRotator("Runway ML", ["RUNWAY_API_KEYS", "RUNWAY_API_KEY", "RUNWAYML_API_SECRET"])
+mistral_rotator = KeyRotator("Mistral AI", ["MISTRAL_API_KEYS", "MISTRAL_API_KEY"])
+openai_rotator = KeyRotator("OpenAI", ["OPENAI_API_KEYS", "OPENAI_API_KEY"])
+anthropic_rotator = KeyRotator("Anthropic", ["ANTHROPIC_API_KEYS", "ANTHROPIC_API_KEY"])
+together_rotator = KeyRotator("Together AI", ["TOGETHER_API_KEYS", "TOGETHER_API_KEY"])
+image_rotator = KeyRotator("Image Providers", ["FREE_IMAGE_API_KEYS", "POLLINATIONS_API_KEY", "FAL_KEY", "SILICONFLOW_API_KEY", "CLOUDFLARE_API_TOKEN"])
+video_rotator = KeyRotator("Video Providers", ["FREE_VIDEO_API_KEYS", "RUNWAY_API_KEY", "RUNPOD_API_KEY", "COMFYUI_API_KEY"])
