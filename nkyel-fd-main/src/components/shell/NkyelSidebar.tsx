@@ -412,7 +412,13 @@ export default function NkyelSidebar() {
               role="button"
               tabIndex={0}
               onClick={() => setProjectsExpanded(!projectsExpanded)}
-              className="w-full flex items-center justify-between rounded-lg min-h-[32px] touch-manipulation cursor-pointer select-none"
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  setProjectsExpanded(!projectsExpanded);
+                }
+              }}
+              className="w-full flex items-center justify-between rounded-lg min-h-[32px] touch-manipulation cursor-pointer select-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--accent)]"
               style={{
                 padding: `var(--space-1) var(--space-2)`,
                 fontSize: '11px',
@@ -550,7 +556,15 @@ export default function NkyelSidebar() {
                                 router.push('/chat');
                                 handleNavClick();
                               }}
-                              className="w-full flex items-center justify-between rounded-lg text-left cursor-pointer select-none"
+                              onKeyDown={(e) => {
+                                if (e.key === 'Enter' || e.key === ' ') {
+                                  e.preventDefault();
+                                  setActiveConversation(mission.id);
+                                  router.push('/chat');
+                                  handleNavClick();
+                                }
+                              }}
+                              className="w-full flex items-center justify-between rounded-lg text-left cursor-pointer select-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--accent)]"
                               style={{
                                 padding: `6px var(--space-2)`,
                                 fontSize: '13px',
