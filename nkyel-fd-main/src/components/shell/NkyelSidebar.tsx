@@ -132,9 +132,9 @@ export default function NkyelSidebar() {
   const [contextMenuId, setContextMenuId] = useState<string | null>(null);
   const profileRef = useRef<HTMLDivElement>(null);
 
-  const displayName = user?.fullName || user?.firstName || 'Daniel Jonathan ANDJ';
+  const displayName = user?.fullName || user?.firstName || 'Christ pour la VOP Et tou...';
   const userEmail = user?.primaryEmailAddress?.emailAddress || 'fondateur@nkyel.ai';
-  const userInitials = (displayName.slice(0, 2) || 'DJ').toUpperCase();
+  const userInitials = (displayName.slice(0, 2) || 'CP').toUpperCase();
 
   const navItems: NavItem[] = [
     { id: 'agent',        label: t('nav.agent'),        href: '/agent',      icon: Robot },
@@ -929,16 +929,25 @@ export default function NkyelSidebar() {
                   <div className="text-xs font-semibold truncate text-[var(--text-primary)]">
                     {displayName}
                   </div>
-                  <div className="text-[11px] text-[var(--text-tertiary)] truncate">
-                    {t('profile.personal')}
-                  </div>
                 </div>
               )}
             </div>
             {!isCollapsed && (
-              <div className="flex items-center gap-1 text-[var(--text-tertiary)]">
-                <Browsers size={14} className="opacity-60" />
-                <CaretDown size={12} className="opacity-60" />
+              <div className="flex items-center gap-1.5 text-[var(--text-tertiary)] shrink-0">
+                <button
+                  type="button"
+                  aria-label="Bureau"
+                  className="p-1 rounded-md hover:bg-white/[0.08] hover:text-[var(--text-primary)] transition-colors"
+                >
+                  <Monitor size={15} />
+                </button>
+                <button
+                  type="button"
+                  aria-label="Notifications"
+                  className="p-1 rounded-md hover:bg-white/[0.08] hover:text-[var(--text-primary)] transition-colors"
+                >
+                  <Bell size={15} />
+                </button>
               </div>
             )}
           </button>

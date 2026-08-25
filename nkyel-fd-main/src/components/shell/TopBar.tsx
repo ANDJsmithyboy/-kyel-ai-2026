@@ -185,7 +185,7 @@ export default function TopBar({ onOpenCapabilities }: TopBarProps) {
           </div>
         </div>
 
-        {/* Trailing: Upgrade Button, Search, Share, and Manus-Style Miniature Profile Button */}
+        {/* Trailing: Manus-Style Action Trio [ 📄 ] [ 🔀 ] [ 👤 ] */}
         <div className="flex items-center gap-1.5 sm:gap-2">
           {/* Universal Search / Command Palette Trigger */}
           <button
@@ -224,7 +224,29 @@ export default function TopBar({ onOpenCapabilities }: TopBarProps) {
             <span className="text-[11px] font-medium">Partager</span>
           </button>
 
-          {/* Manus-Style Miniature Profile Button (Present on Both PC & Mobile) */}
+          {/* Manus Icon 1: Documents & Artifacts */}
+          <button
+            type="button"
+            onClick={onOpenCapabilities}
+            aria-label="Documents et Artefacts"
+            title="Documents et Artefacts"
+            className="flex h-8 w-8 items-center justify-center rounded-xl text-[var(--text-tertiary)] transition-colors hover:bg-[var(--hover)] hover:text-[var(--text-primary)]"
+          >
+            <FileText size={17} />
+          </button>
+
+          {/* Manus Icon 2: WorkGraph / DAG */}
+          <button
+            type="button"
+            onClick={onOpenCapabilities}
+            aria-label="WorkGraph DAG"
+            title="WorkGraph DAG"
+            className="flex h-8 w-8 items-center justify-center rounded-xl text-[var(--text-tertiary)] transition-colors hover:bg-[var(--hover)] hover:text-[var(--text-primary)]"
+          >
+            <ChartBar size={17} />
+          </button>
+
+          {/* Manus Icon 3: Miniature Profile Button (PC & Mobile) */}
           <div className="relative" ref={profileMenuRef}>
             <button
               type="button"
