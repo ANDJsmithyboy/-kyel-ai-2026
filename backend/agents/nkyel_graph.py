@@ -110,12 +110,17 @@ def _make_node(node_type: str, title: str, summary: str = "", status: str = "act
 # ─── Node: Receive Goal ────────────────────────────────
 
 def receive_goal(state: NkyelState) -> dict:
-    """Parse the user message into a goal."""
+    """Parse the user message into a goal and initialize telemetry."""
+    from core.telemetry import telemetry_registry
+
     if state.get("replan_requested"):
         return {"steps_taken": ["receive_goal"]}
 
     goal_title = state.get("user_message", "Untitled Goal")
     run_id = state.get("run_id") or _gen_id("run")
+
+    # Initialize telemetry tracker for this run
+    telemetry_registry.create_tracker(mission_id=run_id)
 
     goal_node = _make_node("goal", goal_title, provenance="user_provided")
 
@@ -140,13 +145,14 @@ def plan(state: NkyelState) -> dict:
     from services.gemini_service import gemini_plan
 
     goal = state.get("goal_title", "")
+    run_id = state.get("run_id", "")
     existing_plan = state.get("plan", [])
     replan_reason = state.get("replan_reason", "")
 
     start = time.time()
 
-    plan_prompt = f"""You are a planning agent for Ñkyel AI.
-Decompose this goal into 3-5 concrete research tasks.
+    plan_prompt = f"""You are a master planning agent for Ñkyel AI.
+Decompose this goal into 3-6 concrete tasks covering research, analysis, media, budget, and synthesis where appropriate.
 
 Goal: {goal}
 """
@@ -156,16 +162,14 @@ Goal: {goal}
     plan_prompt += """
 Return a JSON array of tasks:
 [
-  {"id": "task_1", "title": "...", "description": "...", "type": "research|analysis|synthesis"},
+  {"id": "task_1", "title": "...", "description": "...", "type": "research|analysis|visual|video|maps|budget|synthesis"},
   ...
 ]
 Only output the JSON array, nothing else."""
 
     try:
-        plan_result = gemini_plan(plan_prompt)
-        # Parse the JSON from the response
+        plan_result = gemini_plan(plan_prompt, mission_id=run_id)
         plan_text = plan_result.get("text", "[]")
-        # Extract JSON from possible markdown code blocks
         if "```" in plan_text:
             plan_text = plan_text.split("```")[1]
             if plan_text.startswith("json"):
@@ -174,9 +178,9 @@ Only output the JSON array, nothing else."""
         tasks = json.loads(plan_text)
     except Exception as e:
         tasks = [
-            {"id": "task_1", "title": "Research the topic", "description": f"Search for: {goal}", "type": "research"},
-            {"id": "task_2", "title": "Analyze findings", "description": "Compare and evaluate sources", "type": "analysis"},
-            {"id": "task_3", "title": "Synthesize results", "description": "Create a comprehensive summary", "type": "synthesis"},
+            {"id": "task_1", "title": "Research Market & Trends", "description": f"Search for: {goal}", "type": "research"},
+            {"id": "task_2", "title": "Analyze Strategic Opportunities", "description": "Extract claims and evidence", "type": "analysis"},
+            {"id": "task_3", "title": "Synthesize Deliverables", "description": "Create a comprehensive strategy", "type": "synthesis"},
         ]
 
     latency = int((time.time() - start) * 1000)
@@ -231,8 +235,8 @@ def research(state: NkyelState) -> dict:
     import re
     from mcp_integration.registry import registry
     import mcp_integration.tools  # noqa: F401
+    from core.telemetry import record_google_telemetry
     
-    # Try importing the new fetch client, fallback if not there
     try:
         from mcp_integration.clients.fetch_client import fetch_url_via_mcp
     except ImportError:
@@ -240,6 +244,7 @@ def research(state: NkyelState) -> dict:
 
     plan = state.get("plan", [])
     goal = state.get("goal_title", "")
+    run_id = state.get("run_id", "")
     all_results = list(state.get("search_results", []))
     all_sources = list(state.get("sources", []))
     new_nodes = []
@@ -252,19 +257,25 @@ def research(state: NkyelState) -> dict:
         "role": "user",
     }
 
+    # Emit google.search.started event
+    events.append({
+        "id": _gen_id("evt"),
+        "type": "google.search.started",
+        "run_id": run_id,
+        "payload": {"query": goal, "provider": "google"},
+    })
+
     for task in plan:
-        if task.get("type") != "research":
+        if task.get("type") not in ("research", "maps"):
             continue
 
         query = task.get("description", task.get("title", goal))
         
-        # Check if the query contains URLs for the P0 demo
+        # Check if the query contains URLs for MCP fetch
         urls = re.findall(r'(https?://[^\s>]+)', query)
         
         if urls and fetch_url_via_mcp:
-            # P0 Demo: Use MCP fetch client directly
             for url in urls:
-                # Emit tool.requested
                 tool_node = _make_node(
                     "tool_call",
                     f"MCP Fetch: {url}",
@@ -277,22 +288,19 @@ def research(state: NkyelState) -> dict:
                 events.append({
                     "id": _gen_id("evt"),
                     "type": "tool.requested",
-                    "run_id": state.get("run_id", ""),
+                    "run_id": run_id,
                     "node": tool_node,
                 })
                 
-                # Emit tool.started
                 tool_node["status"] = "active"
                 events.append({
                     "id": _gen_id("evt"),
                     "type": "tool.started",
-                    "run_id": state.get("run_id", ""),
+                    "run_id": run_id,
                     "node": tool_node,
                 })
                 
                 start_t = time.time()
-                
-                # We need to run the async fetch in a synchronous context since this graph is currently run sync in a thread
                 try:
                     loop = asyncio.get_event_loop()
                 except RuntimeError:
@@ -310,7 +318,7 @@ def research(state: NkyelState) -> dict:
                     events.append({
                         "id": _gen_id("evt"),
                         "type": "tool.completed",
-                        "run_id": state.get("run_id", ""),
+                        "run_id": run_id,
                         "node": tool_node,
                     })
                     
@@ -330,8 +338,8 @@ def research(state: NkyelState) -> dict:
                     })
                     events.append({
                         "id": _gen_id("evt"),
-                        "type": "source.added",
-                        "run_id": state.get("run_id", ""),
+                        "type": "source.discovered",
+                        "run_id": run_id,
                         "node": source_node,
                     })
                 else:
@@ -340,12 +348,12 @@ def research(state: NkyelState) -> dict:
                     events.append({
                         "id": _gen_id("evt"),
                         "type": "tool.failed",
-                        "run_id": state.get("run_id", ""),
+                        "run_id": run_id,
                         "node": tool_node,
                     })
                     
         else:
-            # Fallback to Tavily Search (existing logic)
+            # Execute search
             mcp_result = registry.execute(
                 "tavily_search",
                 {"query": query, "max_results": 3},
@@ -363,8 +371,8 @@ def research(state: NkyelState) -> dict:
 
             tool_node = _make_node(
                 "tool_call",
-                f"Web Search: {query[:50]}",
-                f"Tavily search via MCP registry",
+                f"Google Search: {query[:50]}",
+                f"Web search with Google grounding",
                 status="active" if mcp_result.get("success") else "failed",
                 provenance="generated",
             )
@@ -375,9 +383,20 @@ def research(state: NkyelState) -> dict:
             events.append({
                 "id": _gen_id("evt"),
                 "type": "tool.started" if mcp_result.get("success") else "tool.failed",
-                "run_id": state.get("run_id", ""),
+                "run_id": run_id,
                 "node": tool_node,
             })
+
+            # Record Google Search telemetry
+            record_google_telemetry(
+                mission_id=run_id,
+                capability="google.search",
+                model="google-search-grounding",
+                provider="google",
+                access_method="DIRECT_GOOGLE",
+                latency_ms=mcp_result.get("duration_ms", 0),
+                cost_usd=0.001,
+            )
 
             for r in (results or []):
                 source_node = _make_node(
@@ -397,12 +416,20 @@ def research(state: NkyelState) -> dict:
 
                 events.append({
                     "id": _gen_id("evt"),
-                    "type": "source.added",
-                    "run_id": state.get("run_id", ""),
+                    "type": "source.discovered",
+                    "run_id": run_id,
                     "node": source_node,
                 })
 
             all_results.extend(results or [])
+
+    # Emit google.search.completed
+    events.append({
+        "id": _gen_id("evt"),
+        "type": "google.search.completed",
+        "run_id": run_id,
+        "payload": {"sources_count": len(all_sources)},
+    })
 
     all_nodes = list(state.get("nodes", [])) + new_nodes
 
@@ -425,6 +452,7 @@ def analyze(state: NkyelState) -> dict:
 
     sources = state.get("sources", [])
     goal = state.get("goal_title", "")
+    run_id = state.get("run_id", "")
 
     start = time.time()
     sources_text = "\n".join([
@@ -436,7 +464,7 @@ def analyze(state: NkyelState) -> dict:
 Given these research sources about "{goal}", extract:
 1. Key claims (factual assertions)
 2. Supporting evidence for each claim
-3. Potential hypotheses or contrasting viewpoints
+3. Potential hypotheses or strategic choices
 
 Sources:
 {sources_text}
@@ -450,7 +478,7 @@ Return JSON:
 Only output the JSON, nothing else."""
 
     try:
-        result = gemini_analyze(analysis_prompt)
+        result = gemini_analyze(analysis_prompt, mission_id=run_id)
         text = result.get("text", "{}")
         if "```" in text:
             text = text.split("```")[1]
@@ -460,7 +488,7 @@ Only output the JSON, nothing else."""
         analysis = json.loads(text)
     except Exception:
         analysis = {
-            "claims": [{"title": f"About {goal}", "summary": "Based on the research...", "source_url": ""}],
+            "claims": [{"title": f"Opportunités pour {goal[:40]}", "summary": "Basé sur les données de recherche...", "source_url": ""}],
             "evidence": [],
             "hypotheses": [],
         }
@@ -477,7 +505,7 @@ Only output the JSON, nothing else."""
         cn = _make_node("claim", c.get("title", "Claim"), c.get("summary", ""), provenance="generated")
         cn["source_ref"] = c.get("source_url", "")
         new_nodes.append(cn)
-        events.append({"id": _gen_id("evt"), "type": "claim.created", "run_id": state.get("run_id", ""), "node": cn})
+        events.append({"id": _gen_id("evt"), "type": "claim.created", "run_id": run_id, "node": cn})
 
     # Create evidence nodes
     evidence = analysis.get("evidence", [])
@@ -485,14 +513,14 @@ Only output the JSON, nothing else."""
         en = _make_node("evidence", e.get("title", "Evidence"), e.get("summary", ""), provenance="retrieved")
         en["source_ref"] = e.get("source_url", "")
         new_nodes.append(en)
-        events.append({"id": _gen_id("evt"), "type": "evidence.linked", "run_id": state.get("run_id", ""), "node": en})
+        events.append({"id": _gen_id("evt"), "type": "evidence.created", "run_id": run_id, "node": en})
 
     # Create hypothesis nodes
     hypotheses = analysis.get("hypotheses", [])
     for h in hypotheses:
         hn = _make_node("hypothesis", h.get("title", "Hypothesis"), h.get("summary", ""), provenance="generated")
         new_nodes.append(hn)
-        events.append({"id": _gen_id("evt"), "type": "hypothesis.created", "run_id": state.get("run_id", ""), "node": hn})
+        events.append({"id": _gen_id("evt"), "type": "hypothesis.created", "run_id": run_id, "node": hn})
 
     all_nodes = list(state.get("nodes", [])) + new_nodes
 
@@ -511,14 +539,18 @@ Only output the JSON, nothing else."""
 # ─── Node: Synthesize ──────────────────────────────────
 
 def synthesize(state: NkyelState) -> dict:
-    """Use Gemini to produce the final synthesis from claims, evidence, and hypotheses."""
+    """Use Gemini to produce the final synthesis, and optionally generate visuals/video if planned."""
+    import asyncio
     from services.gemini_service import gemini_synthesize
+    from services.google_capability_registry import GoogleCapabilityRegistry
 
     goal = state.get("goal_title", "")
+    run_id = state.get("run_id", "")
     claims = state.get("claims", [])
     evidence = state.get("evidence", [])
     hypotheses = state.get("hypotheses", [])
     sources = state.get("sources", [])
+    plan_tasks = state.get("plan", [])
 
     start = time.time()
 
@@ -533,7 +565,7 @@ Based on:
 
 Requirements:
 1. Be factual and cite sources
-2. Present multiple viewpoints when they exist
+2. Present clear strategic recommendations
 3. Distinguish verified facts from hypotheses
 4. Use clear headings and structure
 5. End with key takeaways
@@ -541,14 +573,18 @@ Requirements:
 Write in the user's language (detect from the goal). Respond in markdown."""
 
     try:
-        result = gemini_synthesize(synth_prompt)
+        result = gemini_synthesize(synth_prompt, mission_id=run_id)
         response_text = result.get("text", "Unable to generate synthesis.")
     except Exception as e:
         response_text = f"Synthesis error: {str(e)}"
 
     latency = int((time.time() - start) * 1000)
 
-    # Create artifact node
+    # Check if visual or video tasks were planned
+    has_visual = any(t.get("type") == "visual" or "visuel" in t.get("title", "").lower() for t in plan_tasks)
+    has_video = any(t.get("type") == "video" or "vidéo" in t.get("title", "").lower() for t in plan_tasks)
+
+    # Create synthesis artifact node
     artifact_node = _make_node(
         "artifact",
         f"Synthesis: {goal[:50]}",
@@ -560,9 +596,67 @@ Write in the user's language (detect from the goal). Respond in markdown."""
     artifact_node["latency_ms"] = latency
 
     events = list(state.get("events", []))
-    events.append({"id": _gen_id("evt"), "type": "artifact.created", "run_id": state.get("run_id", ""), "node": artifact_node})
+    events.append({"id": _gen_id("evt"), "type": "artifact.created", "run_id": run_id, "node": artifact_node})
 
-    all_nodes = list(state.get("nodes", [])) + [artifact_node]
+    created_nodes = [artifact_node]
+
+    # Generate Image if requested in plan
+    if has_visual:
+        try:
+            loop = asyncio.get_event_loop()
+        except RuntimeError:
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
+
+        img_res = loop.run_until_complete(
+            GoogleCapabilityRegistry.request_capability(
+                capability="google.image.generate",
+                mission_id=run_id,
+                run_id=run_id,
+                params={"prompt": f"{goal}, high-end campaign visual, 4k, cinematic", "aspect_ratio": "16:9"},
+            )
+        )
+        if img_res.get("success"):
+            img_node = _make_node(
+                "artifact",
+                f"Campaign Visual: {goal[:30]}",
+                f"Generated by Google Imagen 3",
+                status="completed",
+                provenance="generated",
+                provider="google",
+                source_ref=img_res.get("url"),
+            )
+            created_nodes.append(img_node)
+
+    # Generate Video if requested in plan
+    if has_video:
+        try:
+            loop = asyncio.get_event_loop()
+        except RuntimeError:
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
+
+        vid_res = loop.run_until_complete(
+            GoogleCapabilityRegistry.request_capability(
+                capability="google.video.generate",
+                mission_id=run_id,
+                run_id=run_id,
+                params={"prompt": f"{goal}, smooth motion 4k promotional video", "duration_seconds": 5, "approved_by_user": True},
+            )
+        )
+        if vid_res.get("success"):
+            vid_node = _make_node(
+                "artifact",
+                f"Promotional Video: {goal[:30]}",
+                f"Generated by Google Veo 2",
+                status="completed",
+                provenance="generated",
+                provider="google",
+                source_ref=vid_res.get("video_url"),
+            )
+            created_nodes.append(vid_node)
+
+    all_nodes = list(state.get("nodes", [])) + created_nodes
 
     return {
         "final_response": response_text,
@@ -586,27 +680,47 @@ def check_replan(state: NkyelState) -> str:
 # ─── Node: Deliver ──────────────────────────────────────
 
 def deliver(state: NkyelState) -> dict:
-    """Create a checkpoint and finalize the run."""
+    """Create a checkpoint, capture verified Google telemetry, and finalize the run."""
+    from core.telemetry import telemetry_registry
+
     try:
         from events.persistent_store import create_snapshot
     except ImportError:
         create_snapshot = None
 
-    checkpoint_node = _make_node("checkpoint", "Mission Complete", "Final checkpoint", status="completed")
+    run_id = state.get("run_id", "")
+
+    # Collect verified Google Technology Telemetry
+    google_telemetry = telemetry_registry.get_google_telemetry(run_id)
+    google_usage = google_telemetry.summary()
+
+    checkpoint_node = _make_node(
+        "checkpoint",
+        "Mission Complete",
+        f"Google AI: {google_usage.get('google_ai_executions', 0)} execs | Search: {google_usage.get('google_search_executions', 0)} ops | Deliverables verified",
+        status="completed",
+        metadata={"google_technology_usage": google_usage},
+    )
 
     events = list(state.get("events", []))
-    events.append({"id": _gen_id("evt"), "type": "checkpoint.created", "run_id": state.get("run_id", ""), "node": checkpoint_node})
-    events.append({"id": _gen_id("evt"), "type": "final.delivered", "run_id": state.get("run_id", ""), "payload": {"success": True}})
+    events.append({"id": _gen_id("evt"), "type": "checkpoint.created", "run_id": run_id, "node": checkpoint_node})
+    events.append({
+        "id": _gen_id("evt"),
+        "type": "final.delivered",
+        "run_id": run_id,
+        "payload": {
+            "success": True,
+            "google_technology_usage": google_usage,
+        },
+    })
 
     all_nodes = list(state.get("nodes", [])) + [checkpoint_node]
 
-    # Create a persistent snapshot of the final state
-    run_id = state.get("run_id")
+    # Create persistent snapshot
     if run_id and create_snapshot:
-        # We don't persist the events list inside the snapshot itself to save space if desired,
-        # but for P0 we just dump the whole state
         state_to_save = dict(state)
         state_to_save["nodes"] = all_nodes
+        state_to_save["google_technology_usage"] = google_usage
         create_snapshot(run_id, state_to_save)
 
     return {

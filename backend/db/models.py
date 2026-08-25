@@ -648,3 +648,55 @@ class UserPreference(Base):
         onupdate=lambda: datetime.now(timezone.utc),
     )
 
+
+# ── 17. Modèle QuotaUsage (Plafonds Beta & Réservations Atomiques) ──
+class QuotaUsage(Base):
+    __tablename__ = "quota_usage"
+
+    user_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), primary_key=True
+    )
+    images_used: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    max_images: Mapped[int] = mapped_column(Integer, default=3, nullable=False)
+    
+    videos_used: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    max_videos: Mapped[int] = mapped_column(Integer, default=1, nullable=False)
+    
+    missions_today: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    max_missions_day: Mapped[int] = mapped_column(Integer, default=15, nullable=False)
+    
+    active_missions_count: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    max_concurrent_missions: Mapped[int] = mapped_column(Integer, default=1, nullable=False)
+    
+    last_reset_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=lambda: datetime.now(timezone.utc)
+    )
+
+
+# ── 18. Modèle BetaAccess (Éligibilité & Statut Beta) ─────────────
+class BetaStatus(str, enum.Enum):
+    INVITED = "INVITED"
+    ACTIVE = "ACTIVE"
+    WAITLIST = "WAITLIST"
+    SUSPENDED = "SUSPENDED"
+    EXPIRED = "EXPIRED"
+
+
+class BetaAccess(Base):
+    __tablename__ = "beta_access"
+
+    user_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), primary_key=True
+    )
+    status: Mapped[BetaStatus] = mapped_column(
+        SAEnum(BetaStatus), default=BetaStatus.ACTIVE, nullable=False
+    )
+    invited_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=lambda: datetime.now(timezone.utc)
+    )
+    expires_at: Mapped[Optional[datetime]] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
+    tier: Mapped[str] = mapped_column(String(32), default="BETA_PIONEER", nullable=False)
+
+

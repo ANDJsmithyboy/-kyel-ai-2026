@@ -575,9 +575,10 @@ export default function DesktopSettingsModal() {
             type="button"
             onClick={close}
             aria-label="Fermer les paramètres"
-            className="absolute right-6 top-6 flex h-9 w-9 items-center justify-center rounded-lg text-[var(--text-tertiary)] hover:bg-[var(--hover)] hover:text-[var(--text-primary)] transition-colors"
+            className="absolute right-6 top-6 flex items-center gap-1.5 px-3 py-1 rounded-full border border-[var(--border)] bg-[var(--surface-raised)] text-[11px] font-mono text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:border-[var(--accent)] transition-all shadow-sm"
           >
-            <X size={21} />
+            <X size={14} />
+            <span>ESC</span>
           </button>
           <div className="mx-auto max-w-[980px] pr-8">{renderContent()}</div>
         </main>

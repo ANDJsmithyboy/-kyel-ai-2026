@@ -37,6 +37,7 @@ from api.v1.memory import router as memory_router
 from api.v1.world_model import router as world_model_router
 from api.v1.vision_engine import router as vision_engine_router
 from api.v1.providers import router as providers_router
+from api.v1.artifacts import router as artifacts_router
 from api.auth import router as auth_router
 from services.language_registry_service import language_service
 
@@ -180,6 +181,7 @@ app.include_router(memory_router)
 app.include_router(world_model_router)
 app.include_router(vision_engine_router)
 app.include_router(providers_router)
+app.include_router(artifacts_router)
 app.include_router(auth_router)
 
 
@@ -201,45 +203,20 @@ async def get_supported_languages():
 # ══════════════════════════════════════════════════════════════
 
 @app.get("/health", tags=["System"])
+@app.get("/api/health", tags=["System"])
 async def health_check():
-    """Vérification authentique de la santé du système (DB, statut global)."""
-    db_status = "connected"
-    is_healthy = True
-    try:
-        from db.session import async_session
-        async with async_session() as session:
-            from sqlalchemy import text
-            await session.execute(text("SELECT 1"))
-    except Exception as e:
-        db_status = f"unreachable ({type(e).__name__})"
-        is_healthy = False
-
-    content = {
-        "status": "healthy" if is_healthy else "degraded",
+    """Health check ultra-rapide (RunPod / K8s / BetterStack)."""
+    return {
+        "status": "ok",
         "app": settings.app_name,
         "version": settings.app_version,
         "environment": settings.environment,
-        "database": db_status,
-        "uptime_seconds": int(time.time() - _STARTUP_TIME) if _STARTUP_TIME else 0,
-    }
-    return JSONResponse(
-        status_code=200 if is_healthy else 503,
-        content=content,
-    )
-
-
-@app.get("/health/liveness", tags=["System"])
-async def health_liveness():
-    """
-    Liveness probe — le processus est vivant et répond.
-    K8s redémarre le pod si cette route échoue.
-    """
-    return {
-        "status": "alive",
         "uptime_seconds": int(time.time() - _STARTUP_TIME) if _STARTUP_TIME else 0,
     }
 
 
+@app.get("/readiness", tags=["System"])
+@app.get("/api/readiness", tags=["System"])
 @app.get("/health/readiness", tags=["System"])
 async def health_readiness():
     """
@@ -285,6 +262,7 @@ async def health_readiness():
             "checks": checks,
         },
     )
+
 
 
 @app.get("/health/startup", tags=["System"])

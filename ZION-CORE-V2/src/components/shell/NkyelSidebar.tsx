@@ -44,6 +44,7 @@ import {
   Crown,
 } from '@phosphor-icons/react';
 import { useSidebar } from '@/hooks/useSidebar';
+import { useIsMobile } from '@/hooks/useIsMobile';
 import { useSafeUser as useUser } from '@/lib/auth-client';
 const SignOutButton = ({ children }: { children: React.ReactNode }) => <div onClick={() => { if (typeof window !== 'undefined') window.location.href = '/'; }}>{children}</div>;
 
@@ -75,7 +76,8 @@ export const NAV_SECTIONS: NavItemConfig[] = [
 export default function NkyelSidebar() {
   const pathname = usePathname();
   const { user } = useUser();
-  const { isCollapsed, toggleSidebar, isMobile, isOpen, closeMobileSidebar } = useSidebar();
+  const isMobile = useIsMobile();
+  const { isCollapsed, toggleSidebar, isOpen, closeMobileSidebar } = useSidebar();
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
 
@@ -178,29 +180,16 @@ export default function NkyelSidebar() {
             )}
           </Link>
 
-          {!isMobile && (
+          {/* Close button for mobile drawer only (Zero duplicate on desktop) */}
+          {isMobile && (
             <button
               type="button"
-              onClick={toggleSidebar}
-              className="flex items-center justify-center rounded-lg"
-              style={{
-                width: 32,
-                height: 32,
-                color: 'var(--fg-subtle)',
-                transition: `all var(--transition-fast)`,
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.color = 'var(--fg)';
-                e.currentTarget.style.background = 'var(--accent-subtle)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.color = 'var(--fg-subtle)';
-                e.currentTarget.style.background = 'transparent';
-              }}
-              title={isCollapsed ? 'Développer la navigation' : 'Réduire la navigation'}
-              aria-label={isCollapsed ? 'Développer' : 'Réduire'}
+              onClick={closeMobileSidebar}
+              className="flex items-center justify-center rounded-lg p-1 text-slate-400 hover:text-white hover:bg-white/10 transition-colors"
+              title="Fermer le menu"
+              aria-label="Fermer"
             >
-              <SidebarSimple size={18} weight={isCollapsed ? 'regular' : 'fill'} />
+              <SidebarSimple size={18} />
             </button>
           )}
         </div>

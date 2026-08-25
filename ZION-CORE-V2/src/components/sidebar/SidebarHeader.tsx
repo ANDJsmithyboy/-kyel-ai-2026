@@ -63,9 +63,9 @@ export default function SidebarHeader({
         )}
       </div>
 
-      {/* Right: Search + Collapse Toggle */}
-      {!isCollapsed && (
-        <div className="flex items-center gap-1">
+      {/* Right: Search & Mobile Close (Zero duplicate on desktop) */}
+      <div className="flex items-center gap-1">
+        {onSearchClick && !isCollapsed && (
           <button
             type="button"
             onClick={onSearchClick}
@@ -74,16 +74,18 @@ export default function SidebarHeader({
           >
             <MagnifyingGlass size={16} />
           </button>
+        )}
+        {isMobile && (
           <button
             type="button"
-            onClick={isMobile ? onClose : onToggleCollapse}
-            aria-label="Réduire la barre latérale"
+            onClick={onClose}
+            aria-label="Fermer la barre latérale"
             className="w-7 h-7 rounded-lg flex items-center justify-center text-[#9199A8] hover:text-white hover:bg-white/[0.06] transition-colors"
           >
             <SidebarSimple size={16} />
           </button>
-        </div>
-      )}
+        )}
+      </div>
 
       {/* Collapsed state expand button */}
       {isCollapsed && !isMobile && (

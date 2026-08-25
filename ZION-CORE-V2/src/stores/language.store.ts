@@ -344,11 +344,13 @@ export function applyRTLToDOM(tag: string) {
 
 interface LanguageState {
   uiLocale: string;           // Ex: 'fr-FR', 'fr-GA', 'en-US', 'ar-SA'
+  locale: string;             // Alias for uiLocale
   agentLanguage: string;      // Ex: 'auto', 'fr', 'en', 'fan', 'puu', 'ar', 'zh'
   isModalOpen: boolean;
   searchQuery: string;
 
   setUiLocale: (tag: string) => void;
+  setLocale: (tag: string) => void;
   setAgentLanguage: (lang: string) => void;
   setModalOpen: (open: boolean) => void;
   setSearchQuery: (q: string) => void;
@@ -359,13 +361,18 @@ export const useLanguageStore = create<LanguageState>()(
   persist(
     (set: any, get: any) => ({
       uiLocale: 'fr-FR',
+      locale: 'fr-FR',
       agentLanguage: 'auto',
       isModalOpen: false,
       searchQuery: '',
 
       setUiLocale: (tag: string) => {
         applyRTLToDOM(tag);
-        set({ uiLocale: tag });
+        set({ uiLocale: tag, locale: tag });
+      },
+
+      setLocale: (tag: string) => {
+        get().setUiLocale(tag);
       },
 
       setAgentLanguage: (lang: string) => {

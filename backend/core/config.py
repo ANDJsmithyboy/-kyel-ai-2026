@@ -56,8 +56,8 @@ class Settings(BaseSettings):
     # ── Gemini (Primary Model) ──────────────────────────────
     google_api_key: str = ""
     google_generative_ai_api_key: str = ""
-    nkyel_primary_model: str = "gemini-2.5-flash"
-    nkyel_planning_model: str = "gemini-2.5-pro"
+    nkyel_primary_model: str = "gemini-3.5-flash-lite"
+    nkyel_planning_model: str = "gemini-3.6-flash"
 
     # ── Tavily (Web Search pour DeerFlow) ───────────────────
     tavily_api_key: str = ""
@@ -86,6 +86,36 @@ class Settings(BaseSettings):
     # ── OpenTelemetry ───────────────────────────────────────
     otel_exporter_otlp_endpoint: str = ""
     otel_service_name: str = "nkyel-backend"
+
+    # ── Google Capability Fabric & Feature Flags ────────────
+    google_fabric_enabled: bool = True
+    google_search_enabled: bool = True
+    google_maps_enabled: bool = True
+    google_media_enabled: bool = True
+    google_workspace_enabled: bool = False
+    google_drive_enabled: bool = False
+    google_docs_enabled: bool = False
+    google_sheets_enabled: bool = False
+    google_gmail_enabled: bool = False
+    google_calendar_enabled: bool = False
+    google_computer_use_enabled: bool = False
+
+    # ── Current Official Google Model Identifiers ───────────
+    google_primary_model: str = "gemini-3.7-flash"
+    google_fast_model: str = "gemini-3.6-flash"
+    google_reasoning_model: str = "gemini-3.1-pro-preview"
+    google_planning_model: str = "gemini-3.7-flash"
+    google_image_fast_model: str = "gemini-3.1-flash-image"
+    google_image_pro_model: str = "gemini-3-pro-image"
+    google_video_model: str = "veo-3.1-generate-preview"
+    google_showcase_mode: bool = False
+    google_video_fast_model: str = "veo-3.1-fast-generate-preview"
+
+    # ── Runway Model Router (Media Routing) ─────────────────
+    runway_api_key: str = ""
+    runway_base_url: str = "https://api.runwayml.com/v1"
+    runway_image_model: str = "gen3a_turbo"
+    runway_video_model: str = "gen3a_turbo"
 
     # ── Multimedia Providers ────────────────────────────────
     pollinations_api_key: str = ""

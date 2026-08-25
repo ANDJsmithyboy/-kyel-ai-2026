@@ -1,0 +1,44 @@
+# Git
+.git
+.gitignore
+
+# Environment files and secrets (NEVER BAKE SECRETS IN DOCKER IMAGE)
+.env
+.env.*
+!.env.example
+
+# Python cache & artifacts
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache
+.mypy_cache
+.ruff_cache
+.coverage
+htmlcov
+.tox
+
+# Virtual environments
+.venv
+venv
+env
+ENV
+
+# Node / Frontend artifacts
+node_modules
+.next
+out
+dist
+build
+
+# Logs and debug
+logs
+*.log
+screenshots
+temporary files
+tmp/
+temp/
+.temp*
+storage/artifacts/*
+!storage/artifacts/.gitkeep

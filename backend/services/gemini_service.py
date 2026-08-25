@@ -155,6 +155,8 @@ def _call_gemini_once(
     response_mime_type: Optional[str] = None,
     temperature: float = 0.7,
     timeout: float = 60.0,
+    mission_id: str = "",
+    capability: str = "gemini.reason",
 ) -> dict:
     """
     Single Gemini call (no retry).
@@ -176,9 +178,22 @@ def _call_gemini_once(
         if response_mime_type:
             generation_config["response_mime_type"] = response_mime_type
 
-        model = genai.GenerativeModel(model_name, generation_config=generation_config)
-        response = model.generate_content(prompt)
-        text = response.text
+        # Use gemini-2.5-flash fallback if 3.x alias not yet provisioned in SDK
+        sdk_model = model_name
+        if "3.6-flash" in sdk_model or "3-flash" in sdk_model:
+            sdk_model = "gemini-2.5-flash"
+        elif "3.1-pro" in sdk_model:
+            sdk_model = "gemini-2.5-pro"
+
+        try:
+            model = genai.GenerativeModel(sdk_model, generation_config=generation_config)
+            response = model.generate_content(prompt)
+            text = response.text
+        except Exception:
+            # Fallback to gemini-2.5-flash
+            model = genai.GenerativeModel("gemini-2.5-flash", generation_config=generation_config)
+            response = model.generate_content(prompt)
+            text = response.text
 
         # Extract token counts if available
         if hasattr(response, "usage_metadata"):
@@ -188,14 +203,14 @@ def _call_gemini_once(
     else:
         # Fallback: OpenAI-compatible endpoint
         import httpx
-        api_key = os.getenv("GOOGLE_GENERATIVE_AI_API_KEY", "")
+        api_key = os.getenv("GOOGLE_GENERATIVE_AI_API_KEY", "") or os.getenv("GOOGLE_API_KEY", "")
         base_url = os.getenv(
             "NKYEL_GEMINI_BASE_URL",
             "https://generativelanguage.googleapis.com/v1beta/openai/"
         )
         with httpx.Client(timeout=timeout) as client:
             body: dict = {
-                "model": model_name,
+                "model": "gemini-2.5-flash",
                 "messages": [{"role": "user", "content": prompt}],
                 "temperature": temperature,
             }
@@ -227,6 +242,20 @@ def _call_gemini_once(
     # Record cost
     cost_entry = cost_tracker.record(model_name, input_tokens, output_tokens, latency)
 
+    # Enregistrer la télémétrie Google vérifiée
+    if mission_id:
+        from core.telemetry import record_google_telemetry
+        record_google_telemetry(
+            mission_id=mission_id,
+            capability=capability,
+            model=model_name,
+            provider="google",
+            access_method="DIRECT_GOOGLE",
+            latency_ms=latency,
+            cost_usd=cost_entry["cost_usd"],
+            metadata={"input_tokens": input_tokens, "output_tokens": output_tokens},
+        )
+
     return {
         "text": text,
         "model": model_name,
@@ -244,6 +273,8 @@ def _call_gemini(
     json_mode: bool = False,
     temperature: float = 0.7,
     timeout: float = 60.0,
+    mission_id: str = "",
+    capability: str = "gemini.reason",
 ) -> dict:
     """
     Call Gemini with retry and optional structured JSON output.
@@ -258,32 +289,35 @@ def _call_gemini(
         response_mime_type=mime_type,
         temperature=temperature,
         timeout=timeout,
+        mission_id=mission_id,
+        capability=capability,
     )
 
 
 # ─── Public API ──────────────────────────────────────────
 
-def gemini_plan(prompt: str) -> dict:
+def gemini_plan(prompt: str, mission_id: str = "") -> dict:
     """Use Gemini for planning tasks (structured JSON output)."""
     model = os.getenv("NKYEL_PLANNING_MODEL", "gemini-3.6-flash")
-    return _call_gemini(prompt, model, json_mode=True, temperature=0.4)
+    return _call_gemini(prompt, model, json_mode=True, temperature=0.4, mission_id=mission_id, capability="gemini.plan")
 
 
-def gemini_analyze(prompt: str) -> dict:
+def gemini_analyze(prompt: str, mission_id: str = "") -> dict:
     """Use Gemini for analysis tasks (structured JSON output)."""
-    return _call_gemini(prompt, json_mode=True, temperature=0.5)
+    return _call_gemini(prompt, json_mode=True, temperature=0.5, mission_id=mission_id, capability="gemini.analyze")
 
 
-def gemini_synthesize(prompt: str) -> dict:
+def gemini_synthesize(prompt: str, mission_id: str = "") -> dict:
     """Use Gemini for synthesis tasks (natural language output)."""
-    return _call_gemini(prompt, temperature=0.7)
+    return _call_gemini(prompt, temperature=0.7, mission_id=mission_id, capability="gemini.synthesize")
 
 
-def gemini_critique(prompt: str) -> dict:
+def gemini_critique(prompt: str, mission_id: str = "") -> dict:
     """Use Gemini for critique/verification tasks."""
-    return _call_gemini(prompt, json_mode=True, temperature=0.3)
+    return _call_gemini(prompt, json_mode=True, temperature=0.3, mission_id=mission_id, capability="gemini.reason")
 
 
 def get_cost_summary() -> dict:
     """Return cumulative cost/usage summary."""
     return cost_tracker.summary()
+

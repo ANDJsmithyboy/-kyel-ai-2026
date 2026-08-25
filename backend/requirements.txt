@@ -1,21 +1,41 @@
-fastapi==0.115.0
-uvicorn[standard]==0.30.0
+# Ñkyel AI · Production Dependencies for RunPod CPU · SmartANDJ AI Technologies
+# Fondateur : Daniel Jonathan ANDJ
+
+# ── Core API & Framework ─────────────────────────────────────
+fastAPI>=0.115.0
+uvicorn[standard]>=0.30.0
 pydantic>=2.9.0
 pydantic-settings>=2.5.0
 httpx>=0.27.0
-python-multipart==0.0.9
-redis[hiredis]==5.1.0
+python-multipart>=0.0.9
+python-dotenv>=1.0.1
+aiofiles>=24.1.0
+
+# ── Base de données & Caching ────────────────────────────────
+sqlalchemy[asyncio]>=2.0.32
 asyncpg>=0.29.0
-sqlalchemy[asyncio]==2.0.32
-qdrant-client==1.11.0
+greenlet>=3.1.0
+redis[hiredis]>=5.1.0
+qdrant-client>=1.11.0
+
+# ── Sécurité & Authentification ─────────────────────────────
 clerk-backend-api>=1.0.0
-python-jose[cryptography]==3.3.0
-Pillow==10.4.0
-beautifulsoup4==4.12.3
-goose3==3.1.19
-# ─── Ñkyel AI additions ───
+python-jose[cryptography]>=3.3.0
+
+# ── Orchestration & LLM ─────────────────────────────────────
 google-generativeai>=0.8.0
+groq>=0.13.0
+openai>=1.50.0
 langgraph>=0.2.0
 langchain-core>=0.3.0
+langchain-groq>=0.2.0
 tavily-python>=0.5.0
-mcp==1.2.0
+mcp>=1.2.0
+
+# ── Multimédia & Traitement ─────────────────────────────────
+Pillow>=10.4.0
+beautifulsoup4>=4.12.3
+goose3>=3.1.19
+
+# ── Observabilité & Télémétrie ──────────────────────────────
+sentry-sdk[fastapi]>=2.0.0

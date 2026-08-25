@@ -12,10 +12,13 @@ import { SIDEBAR_STORAGE_KEY } from '@/constants/sidebar.constants';
 interface SidebarState {
   isOpen: boolean;
   isCollapsed: boolean;
+  isMobile: boolean;
   open: () => void;
   close: () => void;
   toggle: () => void;
   toggleCollapse: () => void;
+  toggleSidebar: () => void;
+  closeMobileSidebar: () => void;
   setCollapsed: (collapsed: boolean) => void;
 }
 
@@ -28,9 +31,10 @@ function readPersistedCollapsed(): boolean {
   }
 }
 
-export const useSidebar = create<SidebarState>((set) => ({
+export const useSidebar = create<SidebarState>((set, get) => ({
   isOpen: false,
   isCollapsed: readPersistedCollapsed(),
+  isMobile: false,
 
   open: () => set({ isOpen: true }),
   close: () => set({ isOpen: false }),
@@ -42,6 +46,14 @@ export const useSidebar = create<SidebarState>((set) => ({
       try { localStorage.setItem(SIDEBAR_STORAGE_KEY, String(next)); } catch {}
       return { isCollapsed: next };
     }),
+
+  toggleSidebar: () => {
+    get().toggleCollapse();
+  },
+
+  closeMobileSidebar: () => {
+    get().close();
+  },
 
   setCollapsed: (collapsed) => {
     try { localStorage.setItem(SIDEBAR_STORAGE_KEY, String(collapsed)); } catch {}

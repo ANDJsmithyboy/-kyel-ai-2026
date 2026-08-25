@@ -236,6 +236,61 @@ function mapAgUiEventToNkyelEvent(raw: AgUiRawEvent, runId: string): NkyelEvent 
         },
       };
 
+    // -- Google Search / Maps Grounding --
+    case 'google.search.started':
+    case 'google.maps.started':
+      return {
+        ...baseEvent,
+        type: 'tool.started',
+        sequenceNumber: 0,
+        timestamp: '',
+        node: {
+          id: genId('tool'),
+          type: 'tool_call',
+          version: '1.0.0',
+          title: (raw.data?.query as string) || (raw.payload?.query as string) || 'Google Grounding',
+          summary: 'Google Search & Maps Grounding verification',
+          status: 'active',
+          provenance: 'retrieved',
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        },
+      };
+
+    case 'google.search.completed':
+    case 'google.maps.completed':
+      return {
+        ...baseEvent,
+        type: 'tool.completed',
+        sequenceNumber: 0,
+        timestamp: '',
+        payload: raw.data || raw.payload,
+      };
+
+    // -- Multimedia Artifacts (Imagen 3 & Veo 2) --
+    case 'media.image.completed':
+    case 'media.video.completed':
+    case 'google.sheets.created':
+    case 'google.docs.created':
+      return {
+        ...baseEvent,
+        type: 'artifact.created',
+        sequenceNumber: 0,
+        timestamp: '',
+        node: {
+          id: (raw.payload?.artifact_id as string) || genId('artifact'),
+          type: 'artifact',
+          version: '1.0.0',
+          title: (raw.payload?.title as string) || (raw.type?.includes('image') ? 'Campaign Visual (Imagen 3)' : raw.type?.includes('video') ? 'Promotional Video (Veo 2)' : 'Budget Model (Sheets)'),
+          summary: (raw.payload?.url as string) || (raw.payload?.video_url as string) || 'Google Sovereign Deliverable',
+          sourceRef: (raw.payload?.url as string) || (raw.payload?.video_url as string),
+          status: 'completed',
+          provenance: 'generated',
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        },
+      };
+
     // -- Errors --
     case 'error':
       return {
@@ -259,12 +314,13 @@ function mapAgUiEventToNkyelEvent(raw: AgUiRawEvent, runId: string): NkyelEvent 
     // -- Run End --
     case 'run_completed':
     case 'final':
+    case 'final.delivered':
       return {
         ...baseEvent,
         type: 'final.delivered',
         sequenceNumber: 0,
         timestamp: '',
-        payload: raw.data,
+        payload: raw.data || raw.payload,
       };
 
     default:

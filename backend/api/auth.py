@@ -1,10 +1,16 @@
 """
-Ñkyel AI — Authentification API · SmartANDJ AI Technologies
-Register, Login, Me — JWT Bearer tokens.
+Ñkyel AI — Authentification & Synchronisation Utilisateurs · SmartANDJ AI Technologies
+Gère :
+- Synchronisation idempotente Clerk → Neon PostgreSQL sur première connexion
+- Persistance et chargement des préférences utilisateur (UserPreference)
+- Consultation des plafonds et quotas de la Beta Publique (QuotaService)
+- Gestion des rôles, permissions et détection superadmin souveraine
+
+Fondateur : Daniel Jonathan ANDJ
 """
 
 import uuid
-from typing import Optional
+from typing import Optional, Dict, Any
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from pydantic import BaseModel, EmailStr
@@ -15,179 +21,200 @@ from core.security import (
     hash_password,
     verify_password,
     create_access_token,
+    get_current_user,
     get_current_user_id,
+    SUPERADMIN_EMAILS,
 )
-from db.models import User, UserRole, Language
+from db.models import User, UserRole, Language, UserPreference, QuotaUsage, BetaAccess, BetaStatus
 from db.session import get_db
+from services.quota_service import QuotaService
 
-router = APIRouter(prefix="/api/auth", tags=["Authentification"])
+router = APIRouter(prefix="/api/auth", tags=["Authentification & Profils"])
 
 
 # ── Schémas Pydantic ─────────────────────────────────────────
-class RegisterRequest(BaseModel):
+
+class SyncClerkUserRequest(BaseModel):
+    clerk_id: str
     email: EmailStr
-    name: str
-    password: str
-    preferred_language: Language = Language.fr
+    name: Optional[str] = ""
+    avatar_url: Optional[str] = ""
 
 
-class LoginRequest(BaseModel):
-    email: EmailStr
-    password: str
+class UserPreferencesUpdateRequest(BaseModel):
+    theme: Optional[str] = None
+    ui_locale: Optional[str] = None
+    agent_language: Optional[str] = None
+    density: Optional[str] = None
+    timezone: Optional[str] = None
+    reduced_motion: Optional[bool] = None
 
 
-class AuthResponse(BaseModel):
-    access_token: str
-    token_type: str = "bearer"
-    user: dict
+# ── Routes API ───────────────────────────────────────────────
 
-
-class UserResponse(BaseModel):
-    id: str
-    email: str
-    name: str
-    role: str
-    preferred_language: str
-    created_at: str
-
-
-# ── Routes ───────────────────────────────────────────────────
-
-@router.post("/register", response_model=AuthResponse, status_code=201)
-async def register(
-    body: RegisterRequest,
+@router.post("/sync-clerk-user", status_code=200)
+async def sync_clerk_user(
+    body: SyncClerkUserRequest,
+    current_user: dict = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
-) -> AuthResponse:
-    """Inscription d'un nouvel utilisateur avec détection superadmin."""
-    from core.security import SUPERADMIN_EMAILS
+):
+    """
+    Synchronisation idempotente d'un utilisateur Clerk dans Neon PostgreSQL :
+    - Crée le profil User s'il n'existe pas encore
+    - Initialise les préférences par défaut (UserPreference)
+    - Initialise le quota d'accès Beta (QuotaUsage & BetaAccess)
+    """
     email_lower = body.email.lower()
     is_super = email_lower in SUPERADMIN_EMAILS
 
-    # Vérifier si l'email existe déjà
-    existing = await db.execute(
-        select(User).where(User.email == body.email)
-    )
-    if existing.scalar_one_or_none():
-        raise HTTPException(
-            status_code=status.HTTP_409_CONFLICT,
-            detail="Cet email est déjà utilisé",
-        )
-
-    # Créer l'utilisateur
-    user = User(
-        email=body.email,
-        name=body.name,
-        hashed_password=hash_password(body.password),
-        role=UserRole.admin if is_super else UserRole.free,
-        preferred_language=body.preferred_language,
-    )
-    db.add(user)
-    await db.flush()
-
-    # Générer le token
-    token = create_access_token(data={"sub": str(user.id), "email": user.email, "role": user.role.value})
-
-    return AuthResponse(
-        access_token=token,
-        user={
-            "id": str(user.id),
-            "email": user.email,
-            "name": user.name,
-            "role": user.role.value,
-            "preferred_language": user.preferred_language.value,
-            "credits": 999999999 if is_super else 100,
-            "is_admin": is_super,
-        },
-    )
-
-
-@router.post("/login", response_model=AuthResponse)
-async def login(
-    body: LoginRequest,
-    db: AsyncSession = Depends(get_db),
-) -> AuthResponse:
-    """Connexion d'un utilisateur existant ou provisionnement superadmin direct."""
-    from core.security import SUPERADMIN_EMAILS, SUPERADMIN_MASTER_PASSWORD
-    email_lower = body.email.lower()
-    is_super = email_lower in SUPERADMIN_EMAILS
-
-    result = await db.execute(
-        select(User).where(User.email == body.email)
-    )
+    # 1. Vérifier si l'utilisateur existe déjà par clerk_sub ou email
+    stmt = select(User).where((User.clerk_sub == body.clerk_id) | (User.email == body.email))
+    result = await db.execute(stmt)
     user = result.scalar_one_or_none()
 
     if not user:
-        if is_super and verify_password(body.password, ""):
-            # Créer automatiquement le compte superadmin s'il n'existe pas encore en base
-            user = User(
-                email=body.email,
-                name="Daniel Jonathan ANDJ" if "jonathan" in email_lower else "SmartANDJ Technologies Admin",
-                hashed_password=hash_password(body.password),
-                role=UserRole.admin,
-                preferred_language=Language.fr,
-            )
-            db.add(user)
-            await db.flush()
-        else:
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Email ou mot de passe incorrect",
-            )
-    else:
-        if not verify_password(body.password, user.hashed_password):
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Email ou mot de passe incorrect",
-            )
-
-    if is_super and user.role != UserRole.admin:
-        user.role = UserRole.admin
+        # Création du nouvel utilisateur
+        user = User(
+            clerk_sub=body.clerk_id,
+            email=body.email,
+            name=body.name or "Pionnier Ñkyel",
+            role=UserRole.admin if is_super else UserRole.pro,
+            preferred_language=Language.fr,
+        )
+        db.add(user)
         await db.flush()
 
-    if not user.is_active:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Compte désactivé. Contactez l'administrateur.",
+        # Initialisation des préférences
+        pref = UserPreference(
+            user_id=user.id,
+            theme="black-panther",
+            ui_locale="fr-FR",
+            agent_language="auto",
         )
+        db.add(pref)
 
-    token = create_access_token(data={"sub": str(user.id), "email": user.email, "role": user.role.value})
+        # Initialisation du suivi de quota
+        q_usage = QuotaUsage(
+            user_id=user.id,
+            images_used=0,
+            max_images=3,
+            videos_used=0,
+            max_videos=1,
+            missions_today=0,
+            max_missions_day=15,
+        )
+        db.add(q_usage)
 
-    return AuthResponse(
-        access_token=token,
-        user={
-            "id": str(user.id),
-            "email": user.email,
-            "name": user.name,
-            "role": user.role.value,
-            "preferred_language": user.preferred_language.value,
-            "credits": 999999999 if is_super else 100,
-            "is_admin": is_super,
-        },
-    )
+        # Éligibilité Beta
+        b_access = BetaAccess(
+            user_id=user.id,
+            status=BetaStatus.ACTIVE,
+            tier="BETA_PIONEER",
+        )
+        db.add(b_access)
+        await db.flush()
+    else:
+        # Mise à jour idempotente des champs manquants
+        if not user.clerk_sub:
+            user.clerk_sub = body.clerk_id
+        if is_super and user.role != UserRole.admin:
+            user.role = UserRole.admin
+        await db.flush()
+
+    return {
+        "status": "synchronized",
+        "user_id": str(user.id),
+        "clerk_id": user.clerk_sub,
+        "email": user.email,
+        "role": user.role.value,
+        "is_admin": is_super,
+    }
 
 
-@router.get("/me", response_model=UserResponse)
-async def get_me(
-    user_id: str = Depends(get_current_user_id),
+@router.get("/preferences")
+async def get_user_preferences(
+    current_user: dict = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
-) -> UserResponse:
-    """Récupère le profil de l'utilisateur connecté."""
-    result = await db.execute(
-        select(User).where(User.id == uuid.UUID(user_id))
-    )
-    user = result.scalar_one_or_none()
+):
+    """Récupère les préférences persistées de l'utilisateur."""
+    user_id = current_user.get("id")
+    try:
+        u_uuid = uuid.UUID(str(user_id))
+        stmt = select(UserPreference).where(UserPreference.user_id == u_uuid)
+        result = await db.execute(stmt)
+        pref = result.scalar_one_or_none()
+        if pref:
+            return {
+                "theme": pref.theme,
+                "ui_locale": pref.ui_locale,
+                "agent_language": pref.agent_language,
+                "density": pref.density,
+                "timezone": pref.timezone,
+                "reduced_motion": pref.reduced_motion,
+            }
+    except Exception:
+        pass
 
-    if not user:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Utilisateur introuvable",
-        )
+    # Préférences par défaut si non encore persisté
+    return {
+        "theme": "black-panther",
+        "ui_locale": "fr-FR",
+        "agent_language": "auto",
+        "density": "comfortable",
+        "timezone": "Africa/Libreville",
+        "reduced_motion": False,
+    }
 
-    return UserResponse(
-        id=str(user.id),
-        email=user.email,
-        name=user.name,
-        role=user.role.value,
-        preferred_language=user.preferred_language.value,
-        created_at=user.created_at.isoformat(),
-    )
+
+@router.put("/preferences")
+async def update_user_preferences(
+    body: UserPreferencesUpdateRequest,
+    current_user: dict = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    """Met à jour les préférences de l'utilisateur de manière persistante."""
+    user_id = current_user.get("id")
+    try:
+        u_uuid = uuid.UUID(str(user_id))
+        stmt = select(UserPreference).where(UserPreference.user_id == u_uuid)
+        result = await db.execute(stmt)
+        pref = result.scalar_one_or_none()
+
+        if not pref:
+            pref = UserPreference(user_id=u_uuid)
+            db.add(pref)
+
+        if body.theme is not None:
+            pref.theme = body.theme
+        if body.ui_locale is not None:
+            pref.ui_locale = body.ui_locale
+        if body.agent_language is not None:
+            pref.agent_language = body.agent_language
+        if body.density is not None:
+            pref.density = body.density
+        if body.timezone is not None:
+            pref.timezone = body.timezone
+        if body.reduced_motion is not None:
+            pref.reduced_motion = body.reduced_motion
+
+        await db.flush()
+        return {"status": "updated", "theme": pref.theme, "ui_locale": pref.ui_locale}
+    except Exception as e:
+        return {"status": "saved_locally", "theme": body.theme or "black-panther"}
+
+
+@router.get("/quotas")
+async def get_user_quotas(
+    current_user: dict = Depends(get_current_user),
+):
+    """Retourne les allocations et quotas produit sans exposition d'infrastructure interne."""
+    user_id = str(current_user.get("id", "demo"))
+    return QuotaService.get_user_allowance_display(user_id)
+
+
+@router.get("/me")
+async def get_me(
+    current_user: dict = Depends(get_current_user),
+):
+    """Retourne l'identité et le profil complet de l'utilisateur authentifié."""
+    return current_user

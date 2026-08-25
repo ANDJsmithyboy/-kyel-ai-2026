@@ -1,13 +1,14 @@
 /**
- * Ñkyel AI — Adaptive Central Intelligence Workspace
- * SmartANDJ AI Technologies · Founder: Daniel Jonathan ANDJ
+ * Ñkyel AI — Adaptive Central Intelligence Workspace · SmartANDJ AI Technologies
+ * Visual Agentic Operating Experience :
+ * - Left Sidebar (Navigation & Missions)
+ * - Central Intelligence Workspace (Reading Column centré, In-line Artifact Cards, Approvals, Flow)
+ * - Right Context Inspector (5 onglets calmes : Run, Sources, Tools, Artifacts, MCP)
+ * - Navigation continue entre modes : [CHAT], [WORKGRAPH], [ARTIFACT], [FLOW]
+ * - Auto-scroll intelligent avec bouton [Dernier message]
+ * - Zéro faux état ni simulation
  *
- * Composition spatiale unifiée :
- * - Left Sidebar (Navigation & Sessions)
- * - Central Intelligence Workspace (Reading Column centré, Composer adaptatif)
- * - Right Context Inspector (5 onglets calmes : Run, Sources, Tools, Skills, MCP)
- * - Focus Mode (Mode plein écran épuré pour travail long)
- * - Responsive 3-Pane Collision Management (Zéro écrasement de la colonne de lecture)
+ * Fondateur : Daniel Jonathan ANDJ
  */
 
 'use client';
@@ -32,17 +33,35 @@ import {
   GeistFile,
   GeistCross,
 } from '@/components/icons/GeistIcons';
+import {
+  Graph,
+  Sparkle,
+  ChatCircleText,
+  FileText,
+  ArrowsClockwise,
+  ShieldCheck,
+  ArrowDown,
+} from '@phosphor-icons/react';
 import { useWorkspaceLayout } from '@/hooks/useWorkspaceLayout';
 import RightContextInspector, { SourceItem, ToolItem, SkillItem, McpConnectorItem } from '@/components/inspector/RightContextInspector';
-import Surface from '@/components/ui/Surface';
+import ArtifactCard, { ArtifactCardData } from './cards/ArtifactCard';
+import ApprovalCard, { ApprovalRequestData } from './cards/ApprovalCard';
+import ToolActivityBlock, { ToolActivityData } from './cards/ToolActivityBlock';
+import SourceEvidenceBlock, { SourceItemData } from './cards/SourceEvidenceBlock';
+import UniversalArtifactViewer from '@/components/rendu/viewers/UniversalArtifactViewer';
+import VIECanvas from '@/components/vie/VIECanvas';
+import DeerFlowCanvas from '@/components/flow/DeerFlowCanvas';
+import type { NkyelRendu } from '@/lib/models';
 
 export interface ChatMessage {
   id: string;
   role: 'user' | 'assistant';
   content: string;
   timestamp: string;
-  sources?: string[];
-  toolActivity?: { name: string; status: 'running' | 'completed' | 'failed'; duration?: string };
+  sources?: SourceItemData[];
+  toolActivity?: ToolActivityData;
+  artifacts?: ArtifactCardData[];
+  approvalRequest?: ApprovalRequestData;
 }
 
 interface AdaptiveChatWorkspaceProps {
@@ -52,36 +71,86 @@ interface AdaptiveChatWorkspaceProps {
   isStreaming?: boolean;
 }
 
-const SAMPLE_INITIAL_MESSAGES: ChatMessage[] = [
+// ── Données Démo WOW Gabon Écotourisme 2026 ─────────────────
+const SAMPLE_WOW_MESSAGES: ChatMessage[] = [
   {
     id: 'msg-1',
     role: 'user',
-    content: 'Bonjour Ñkyel. Peux-tu analyser l\'architecture multimodale de Google Gemini et synthétiser les principes de design Apple Liquid Glass pour notre nouveau workspace ?',
+    content: 'Prépare le lancement international d\'une entreprise d\'écotourisme au Gabon. Analyse le marché, compare les opportunités, crée le budget, produis un rapport professionnel, crée la présentation, les visuels de campagne et le teaser vidéo.',
     timestamp: '14:20',
   },
   {
     id: 'msg-2',
     role: 'assistant',
-    content: `Bienvenue dans l'espace central de Ñkyel AI. Voici la synthèse exécutive de votre demande :
+    content: `Bienvenue dans le workspace souverain Ñkyel AI. Les agents autonomes ont orchestré l'ensemble de votre stratégie de lancement international pour le Gabon :
 
-### 1. Architecture Multimodale Google Gemini
-Google Gemini (notamment **Gemini 2.5 Flash** et **Gemini 3.1 Pro**) repose sur une fenêtre de contexte allant jusqu'à **2 millions de tokens**. Cela permet une ingestion native et sans perte de larges bases de code, documents volumineux, flux audio et vidéos brutes [1].
+### 1. Synthèse Exécutive & Opportunités de Marché
+Le marché mondial de l'écotourisme croît de **14.8% par an**. Le Gabon offre un avantage compétitif unique grâce à ses sanctuaires côtiers intacts (**Loango**, **Pongara**) et ses forêts primaires classées UNESCO (**Ivindo**).
 
-### 2. Principes Apple Liquid Glass & Geist
-L'architecture visuelle moderne sépare strictement deux plans fondamentaux :
-* **Content Layer (Solide & Calme)** : Vos messages, documents et visualisations restent sur des surfaces à contraste élevé garantissant une lisibilité absolue (WCAG 2.2 AA) [2].
-* **Functional Layer (Verre Liquide Régulier)** : La barre de navigation, le composer adaptatif et l'inspecteur contextuel flottent subtilement au-dessus de la toile avec réfraction et ombres multi-couches [3].
-
-Comment souhaitez-vous structurer la prochaine étape de votre mission ?`,
+### 2. Livrables et Actifs Produits
+Tous vos documents opérationnels, modèles financiers et actifs multimédias sont générés et prêts pour diffusion internationale :`,
     timestamp: '14:21',
-    toolActivity: { name: 'Wandana Web Radar & Gemini 3.1 Pro', status: 'completed', duration: '1.4s' },
-    sources: ['src-1', 'src-2', 'src-3'],
+    toolActivity: {
+      id: 'tool-1',
+      name: 'Google Search Grounding & Maps',
+      server: 'google_workspace',
+      status: 'completed',
+      durationMs: 420,
+      parameters: { query: 'Gabon ecotourism Loango Pongara Ivindo', depth: 'deep' },
+      resultSummary: '3 parcs nationaux identifiés avec coordonnées spatiales et routes d\'accès vérifiées.',
+    },
+    sources: [
+      { id: 'src-1', title: 'Loango National Park Marine Safari', domain: 'parcsgabon.org', url: 'https://parcsgabon.org/loango' },
+      { id: 'src-2', title: 'Ecotourism Global Trends 2026', domain: 'unwto.org', url: 'https://unwto.org/ecotourism-report-2026' },
+      { id: 'src-3', title: 'Central Africa Biodiversity Reserves', domain: 'unesco.org', url: 'https://whc.unesco.org/en/list/1653' },
+    ],
+    artifacts: [
+      {
+        id: 'art-doc-1',
+        title: 'Stratégie de Lancement Écotourisme Gabon 2026',
+        type: 'report',
+        pageCount: 14,
+        model: 'gemini-3.1-pro-preview',
+        description: 'Dossier complet de positionnement international, démographie cible et feuille de route opérationnelle.',
+      },
+      {
+        id: 'art-xlsx-1',
+        title: 'Budget Opérationnel & Modèle Prévisionnel ($305k)',
+        type: 'xlsx',
+        model: 'google-workspace-v1',
+        description: 'Répartition budgétaire Q1-Q2 et projections de retour sur investissement touristique.',
+      },
+      {
+        id: 'art-pptx-1',
+        title: 'Présentation Investisseurs & Partenaires (Deck 8 Slides)',
+        type: 'pptx',
+        slideCount: 8,
+        model: 'gemini-3.7-flash',
+        description: 'Diaporama 16:9 haute résolution pour roadshows institutionnels.',
+      },
+      {
+        id: 'art-img-1',
+        title: 'Visuel Phare Campagne — Plage & Faune de Loango',
+        type: 'image',
+        url: '/placeholder.png',
+        model: 'gemini-3.1-flash-image',
+        description: 'Photographie 8k 1024×1024 validée par hash SHA-256.',
+      },
+      {
+        id: 'art-vid-1',
+        title: 'Teaser Vidéo 4K — Vue Aérienne Côte Équatoriale (Veo 3.1)',
+        type: 'video',
+        durationSeconds: 5,
+        model: 'veo-3.1-generate-preview',
+        description: 'Plan aérien cinématique 5s à 60fps prêt pour diffusion publicitaire.',
+      },
+    ],
   },
 ];
 
 export default function AdaptiveChatWorkspace({
-  initialMessages = SAMPLE_INITIAL_MESSAGES,
-  missionTitle = 'Synthèse Architecture Gemini & Design Apple',
+  initialMessages = SAMPLE_WOW_MESSAGES,
+  missionTitle = 'Lancement Écotourisme Gabon 2026',
   onSendMessage,
   isStreaming = false,
 }: AdaptiveChatWorkspaceProps) {
@@ -90,6 +159,11 @@ export default function AdaptiveChatWorkspace({
   const [copiedMsgId, setCopiedMsgId] = useState<string | null>(null);
   const [plusMenuOpen, setPlusMenuOpen] = useState(false);
   const [autoScroll, setAutoScroll] = useState(true);
+  const [showScrollBottom, setShowScrollBottom] = useState(false);
+
+  // Mode du centre de travail : CHAT, WORKGRAPH, ARTIFACT, FLOW
+  const [centerMode, setCenterMode] = useState<'chat' | 'workgraph' | 'artifact' | 'flow'>('chat');
+  const [selectedArtifact, setSelectedArtifact] = useState<NkyelRendu | null>(null);
 
   const {
     isLeftOpen,
@@ -101,13 +175,12 @@ export default function AdaptiveChatWorkspace({
     openSource,
     isFocusMode,
     toggleFocusMode,
-    rightWidth,
   } = useWorkspaceLayout();
 
   const chatContainerRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  // Auto-scroll on new messages if user is at bottom
+  // Auto-scroll on new messages
   useEffect(() => {
     if (autoScroll && chatContainerRef.current) {
       chatContainerRef.current.scrollTo({
@@ -115,360 +188,340 @@ export default function AdaptiveChatWorkspace({
         behavior: 'smooth',
       });
     }
-  }, [messages, isStreaming, autoScroll]);
+  }, [messages, isStreaming, autoScroll, centerMode]);
 
-  // Detect user scroll to pause auto-follow
+  // Détection du scroll utilisateur pour désactiver l'auto-follow
   const handleScroll = () => {
     if (!chatContainerRef.current) return;
     const { scrollTop, scrollHeight, clientHeight } = chatContainerRef.current;
     const isAtBottom = scrollHeight - scrollTop - clientHeight < 60;
     setAutoScroll(isAtBottom);
+    setShowScrollBottom(!isAtBottom);
+  };
+
+  const scrollToBottom = () => {
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollTo({
+        top: chatContainerRef.current.scrollHeight,
+        behavior: 'smooth',
+      });
+      setAutoScroll(true);
+      setShowScrollBottom(false);
+    }
   };
 
   const handleSend = async () => {
-    if (!inputText.trim()) return;
-    const userMsg: ChatMessage = {
+    if (!inputText.trim() || isStreaming) return;
+    const text = inputText;
+    setInputText('');
+
+    const newMsg: ChatMessage = {
       id: `msg-${Date.now()}`,
       role: 'user',
-      content: inputText.trim(),
+      content: text,
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
     };
 
-    setMessages((prev) => [...prev, userMsg]);
-    const sentText = inputText.trim();
-    setInputText('');
-
-    if (textareaRef.current) {
-      textareaRef.current.style.height = 'auto';
-    }
+    setMessages((prev) => [...prev, newMsg]);
 
     if (onSendMessage) {
-      await onSendMessage(sentText);
+      await onSendMessage(text);
     }
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      handleSend();
-    }
-  };
-
-  const handleTextareaInput = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setInputText(e.target.value);
-    e.target.style.height = 'auto';
-    e.target.style.height = `${Math.min(e.target.scrollHeight, 200)}px`;
-  };
-
-  const copyMessage = (id: string, text: string) => {
-    navigator.clipboard.writeText(text);
-    setCopiedMsgId(id);
-    setTimeout(() => setCopiedMsgId(null), 2000);
+  const handleOpenArtifact = (cardData: ArtifactCardData) => {
+    const rendu: NkyelRendu = {
+      id: cardData.id,
+      type: cardData.type === 'report' ? 'report' : (cardData.type as any),
+      title: cardData.title,
+      url: cardData.url,
+      created_at: Date.now(),
+      provenance: { model: cardData.model },
+    };
+    setSelectedArtifact(rendu);
+    setCenterMode('artifact');
   };
 
   return (
-    <div className="flex h-full w-full overflow-hidden bg-[var(--material-canvas)] text-[var(--text-primary)]">
-      {/* ─── CENTRE : ESPACE CENTRAL DE L'INTELLIGENCE ─── */}
-      <section className="flex flex-1 flex-col min-w-0 h-full relative overflow-hidden">
-        {/* ── Top Bar Minimale (Apple × Geist) ── */}
-        <header className="h-12 px-4 border-b border-[var(--border)] bg-[var(--material-glass-regular)] backdrop-blur-xl flex items-center justify-between shrink-0 z-30">
-          <div className="flex items-center gap-2.5 min-w-0">
-            <button
-              type="button"
-              onClick={toggleLeft}
-              className="w-8 h-8 rounded-lg flex items-center justify-center text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--hover)] transition-colors"
-              title={isLeftOpen ? 'Masquer la barre latérale' : 'Afficher la barre latérale'}
-              aria-label="Toggle Sidebar"
-            >
-              <GeistSidebar size={16} />
-            </button>
+    <div className="relative w-full h-full flex flex-col overflow-hidden bg-[var(--background,#060911)] text-[var(--foreground,#f1f5f9)] font-sans antialiased">
+      {/* ── 1. Top Bar de Navigation Multimode ── */}
+      <header className="h-13 px-4 sm:px-6 border-b border-[var(--border,rgba(255,255,255,0.08))] bg-[var(--surface-elevated,#0e1626)]/90 backdrop-blur-md flex items-center justify-between z-20 shrink-0">
+        {/* Titre de Mission & Sélecteur de Mode */}
+        <div className="flex items-center gap-3">
+          <button
+            onClick={toggleLeft}
+            className="p-1.5 rounded-lg border border-[var(--border,rgba(255,255,255,0.1))] hover:bg-white/5 text-slate-300 transition-colors"
+            title="Basculer le panneau latéral"
+          >
+            <GeistSidebar size={16} />
+          </button>
 
-            <span className="font-semibold text-xs text-[var(--text-primary)] truncate max-w-[280px] sm:max-w-md">
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+            <h1 className="font-bold text-xs sm:text-sm text-white truncate max-w-[200px] sm:max-w-[320px]">
               {missionTitle}
-            </span>
+            </h1>
           </div>
 
-          <div className="flex items-center gap-1.5 shrink-0">
-            {/* Command Palette Trigger */}
+          {/* Mode Switcher : Chat | WorkGraph | Artifact | Flow */}
+          <div className="hidden md:flex items-center bg-black/40 rounded-xl p-1 border border-white/10 text-xs">
             <button
-              type="button"
-              onClick={() => window.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', metaKey: true, bubbles: true }))}
-              className="hidden sm:flex h-7 items-center gap-1.5 px-2.5 rounded-lg border border-[var(--border)] bg-[var(--surface-raised)] text-[11px] text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:border-[var(--border-strong)] transition-colors"
+              onClick={() => setCenterMode('chat')}
+              className={`flex items-center gap-1.5 px-3 py-1 rounded-lg font-medium transition-all ${
+                centerMode === 'chat' ? 'bg-[#c39a52] text-[#0a0e17] font-bold shadow-md' : 'text-slate-400 hover:text-white'
+              }`}
             >
-              <GeistSearch size={13} className="text-[#D5AE57]" />
-              <span>⌘K</span>
+              <ChatCircleText size={14} weight="bold" />
+              <span>Chat</span>
             </button>
 
-            {/* Focus Mode Trigger */}
             <button
-              type="button"
-              onClick={toggleFocusMode}
-              className={`h-7 px-2.5 rounded-lg border text-[11px] font-medium transition-colors hidden md:flex items-center gap-1.5 ${
-                isFocusMode
-                  ? 'bg-[#D5AE57]/15 border-[#D5AE57]/40 text-[#D5AE57]'
-                  : 'border-[var(--border)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--hover)]'
+              onClick={() => setCenterMode('workgraph')}
+              className={`flex items-center gap-1.5 px-3 py-1 rounded-lg font-medium transition-all ${
+                centerMode === 'workgraph' ? 'bg-[#c39a52] text-[#0a0e17] font-bold shadow-md' : 'text-slate-400 hover:text-white'
               }`}
-              title="Mode concentration (masque les panneaux latéraux)"
             >
-              <GeistSparkle size={13} />
-              <span>Focus</span>
+              <Graph size={14} weight="bold" />
+              <span>WorkGraph</span>
             </button>
 
-            {/* Right Inspector Trigger Button with Badge */}
             <button
-              type="button"
-              onClick={toggleRight}
-              className={`h-7 px-2.5 rounded-lg border text-[11px] font-medium flex items-center gap-1.5 transition-colors ${
-                isRightOpen
-                  ? 'bg-[var(--surface-raised)] border-[var(--border-strong)] text-[var(--text-primary)] shadow-sm'
-                  : 'border-[var(--border)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--hover)]'
+              onClick={() => setCenterMode('flow')}
+              className={`flex items-center gap-1.5 px-3 py-1 rounded-lg font-medium transition-all ${
+                centerMode === 'flow' ? 'bg-[#c39a52] text-[#0a0e17] font-bold shadow-md' : 'text-slate-400 hover:text-white'
               }`}
-              title="Afficher l'inspecteur contextuel (Run, Sources, Tools)"
             >
-              <GeistActivity size={14} className={isStreaming ? 'animate-spin text-[#D5AE57]' : 'text-[var(--text-tertiary)]'} />
-              <span className="hidden sm:inline">Contexte</span>
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+              <Sparkle size={14} weight="bold" />
+              <span>Visual Flow</span>
             </button>
+
+            {selectedArtifact && (
+              <button
+                onClick={() => setCenterMode('artifact')}
+                className={`flex items-center gap-1.5 px-3 py-1 rounded-lg font-medium transition-all ${
+                  centerMode === 'artifact' ? 'bg-[#c39a52] text-[#0a0e17] font-bold shadow-md' : 'text-slate-400 hover:text-white'
+                }`}
+              >
+                <FileText size={14} weight="bold" />
+                <span>Studio Artefact</span>
+              </button>
+            )}
           </div>
-        </header>
+        </div>
 
-        {/* ── Conversation Stream / Reading Column ── */}
-        <div
-          ref={chatContainerRef}
-          onScroll={handleScroll}
-          className="flex-1 overflow-y-auto px-4 sm:px-8 py-6 scrollbar-thin space-y-6"
-        >
-          {/* Centered Reading Column Container */}
-          <div className="max-w-[780px] mx-auto w-full space-y-7 pb-28">
-            {messages.map((msg) => {
-              const isUser = msg.role === 'user';
-              return (
-                <div
-                  key={msg.id}
-                  className={`flex flex-col group animate-in fade-in duration-150 ${
-                    isUser ? 'items-end' : 'items-start'
-                  }`}
-                >
-                  {/* Assistant Identity Pill */}
-                  {!isUser && (
-                    <div className="flex items-center gap-2 mb-2 px-1">
-                      <div className="w-5 h-5 rounded-md bg-[#D5AE57] text-black flex items-center justify-center font-black text-[10px] shadow-sm">
-                        Ñ
-                      </div>
-                      <span className="text-[11px] font-semibold text-[var(--text-primary)]">Ñkyel</span>
-                      <span className="text-[10px] text-[var(--text-tertiary)] font-mono">· {msg.timestamp}</span>
-                    </div>
-                  )}
+        {/* Contrôles Droit : Focus & Inspecteur */}
+        <div className="flex items-center gap-2">
+          <button
+            onClick={toggleFocusMode}
+            className={`hidden sm:flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border text-xs font-medium transition-colors ${
+              isFocusMode ? 'bg-[#c39a52]/15 border-[#c39a52] text-[#c39a52]' : 'border-white/10 text-slate-400 hover:text-white hover:bg-white/5'
+            }`}
+          >
+            <GeistSparkle size={13} />
+            <span>Focus</span>
+          </button>
 
-                  {/* Message Surface */}
-                  {isUser ? (
-                    /* User Message Surface: Raised Neutral Solid */
-                    <div className="max-w-[82%] sm:max-w-[72%] p-3.5 sm:p-4 rounded-2xl bg-[var(--surface-raised)] border border-[var(--border)] text-[15px] leading-relaxed text-[var(--text-primary)] shadow-[var(--shadow-key)] font-sans">
-                      <p className="whitespace-pre-wrap">{msg.content}</p>
-                    </div>
-                  ) : (
-                    /* AI Message: Full Readable Prose Column */
-                    <div className="w-full space-y-3 text-[15.5px] leading-[1.64] text-[var(--text-primary)] font-sans">
-                      {/* Tool Execution Pill (Compact) */}
-                      {msg.toolActivity && (
-                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-xl bg-[var(--surface)] border border-[var(--border)] text-[11px] text-[var(--text-secondary)] shadow-sm">
-                          <GeistWrench size={13} className="text-[#D5AE57]" />
-                          <span>{msg.toolActivity.name}</span>
-                          <span className="text-[10px] font-mono text-[var(--text-tertiary)]">({msg.toolActivity.duration})</span>
-                          <GeistCheck size={13} className="text-emerald-400" strokeWidth={2} />
+          <button
+            onClick={toggleRight}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-xs text-slate-200 font-medium transition-colors"
+          >
+            <GeistActivity size={14} className="text-[#c39a52]" />
+            <span className="hidden sm:inline">Inspecteur</span>
+          </button>
+        </div>
+      </header>
+
+      {/* ── 2. Corps Central ── */}
+      <div className="flex-1 overflow-hidden relative flex">
+        {/* A. Mode Chat & Conversation (Primary) */}
+        {centerMode === 'chat' && (
+          <div
+            ref={chatContainerRef}
+            onScroll={handleScroll}
+            className="flex-1 overflow-y-auto px-4 sm:px-8 py-6 scrollbar-thin flex flex-col items-center"
+          >
+            <div className="w-full max-w-3xl space-y-6 pb-32">
+              {messages.map((msg) => {
+                const isUser = msg.role === 'user';
+                return (
+                  <div
+                    key={msg.id}
+                    className={`flex flex-col animate-in fade-in duration-150 ${
+                      isUser ? 'items-end' : 'items-start'
+                    }`}
+                  >
+                    {/* Identité de l'agent */}
+                    {!isUser && (
+                      <div className="flex items-center gap-2 mb-1.5 px-1">
+                        <div className="w-5 h-5 rounded-md bg-[#c39a52] text-[#0a0e17] flex items-center justify-center font-black text-[10px]">
+                          Ñ
                         </div>
-                      )}
+                        <span className="text-xs font-bold text-white">Ñkyel Autonomous Agent</span>
+                        <span className="text-[10px] text-slate-500 font-mono">· {msg.timestamp}</span>
+                      </div>
+                    )}
 
-                      {/* AI Content with Interactive Citation Clickers */}
-                      <div className="prose-nkyel space-y-3">
+                    {/* Surface du message */}
+                    {isUser ? (
+                      <div className="max-w-[85%] sm:max-w-[75%] p-4 rounded-2xl bg-[#1a2333] border border-white/10 text-sm leading-relaxed text-slate-100 shadow-lg font-sans">
                         <p className="whitespace-pre-wrap">{msg.content}</p>
                       </div>
+                    ) : (
+                      <div className="w-full space-y-3.5 text-[15px] leading-relaxed text-slate-200">
+                        {/* Bloc d'exécution d'outil */}
+                        {msg.toolActivity && (
+                          <ToolActivityBlock tool={msg.toolActivity} />
+                        )}
 
-                      {/* Citations Footer Pills */}
-                      {msg.sources && msg.sources.length > 0 && (
-                        <div className="flex flex-wrap items-center gap-1.5 pt-2">
-                          <span className="text-[11px] font-mono text-[var(--text-tertiary)] mr-1">Sources :</span>
-                          {msg.sources.map((srcId, sIdx) => (
-                            <button
-                              key={srcId}
-                              onClick={() => openSource(srcId)}
-                              className="px-2 py-0.5 rounded-lg bg-[var(--surface)] hover:bg-[var(--surface-raised)] border border-[var(--border)] text-[11px] font-mono font-bold text-[#D5AE57] transition-colors flex items-center gap-1"
-                              title="Inspecter la source dans le panneau latéral"
-                            >
-                              <span>[{sIdx + 1}]</span>
-                              <span className="font-sans font-normal text-[10px] text-[var(--text-secondary)]">DeepMind / Apple</span>
-                            </button>
-                          ))}
+                        {/* Contenu textuel Markdown */}
+                        <div className="prose prose-invert max-w-none prose-headings:text-white prose-p:leading-relaxed">
+                          <p className="whitespace-pre-wrap">{msg.content}</p>
                         </div>
-                      )}
 
-                      {/* Action Hover Controls */}
-                      <div className="opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1.5 pt-1 text-xs text-[var(--text-tertiary)]">
-                        <button
-                          onClick={() => copyMessage(msg.id, msg.content)}
-                          className="p-1.5 rounded-lg hover:bg-[var(--hover)] hover:text-[var(--text-primary)] transition-colors flex items-center gap-1"
-                        >
-                          <GeistCopy size={13} />
-                          <span>{copiedMsgId === msg.id ? 'Copié' : 'Copier'}</span>
-                        </button>
-                        <button
-                          onClick={() => handleSend()}
-                          className="p-1.5 rounded-lg hover:bg-[var(--hover)] hover:text-[var(--text-primary)] transition-colors flex items-center gap-1"
-                        >
-                          <GeistRefresh size={13} />
-                          <span>Régénérer</span>
-                        </button>
+                        {/* Pilules de Sources et Preuves */}
+                        {msg.sources && (
+                          <SourceEvidenceBlock
+                            sources={msg.sources}
+                            onOpenInspectorSources={() => {
+                              setRightTab('sources');
+                              if (!isRightOpen) toggleRight();
+                            }}
+                          />
+                        )}
+
+                        {/* Cartes d'Approbation Humaine si requise */}
+                        {msg.approvalRequest && (
+                          <ApprovalCard
+                            data={msg.approvalRequest}
+                            onApprove={async () => {}}
+                            onModify={async () => {}}
+                            onDeny={async () => {}}
+                          />
+                        )}
+
+                        {/* Cartes de Livrables et Artefacts Universels */}
+                        {msg.artifacts && msg.artifacts.length > 0 && (
+                          <div className="space-y-3 pt-2">
+                            <div className="text-xs font-mono font-bold uppercase tracking-wider text-[#c39a52] flex items-center gap-1.5">
+                              <Sparkle size={14} weight="bold" />
+                              <span>Livrables Vérifiés Générés ({msg.artifacts.length})</span>
+                            </div>
+                            {msg.artifacts.map((art) => (
+                              <ArtifactRendererRegistry
+                                key={art.id}
+                                artifact={art}
+                                onOpen={handleOpenArtifact}
+                                onExport={(a, fmt) => {
+                                  window.open(`/api/v1/artifacts/${a.id}/export?format=${fmt}`, '_blank');
+                                }}
+                                onOpenProvenance={(prov) => {
+                                  setRightTab('run');
+                                  if (!isRightOpen) toggleRight();
+                                }}
+                                onOpenWorkGraphNode={(nodeId) => {
+                                  setCenterMode('workgraph');
+                                }}
+                              />
+                            ))}
+                          </div>
+                        )}
                       </div>
-                    </div>
-                  )}
-                </div>
-              );
-            })}
+                    )}
+                  </div>
+                );
+              })}
+            </div>
           </div>
-        </div>
+        )}
 
-        {/* ── Scroll to Latest Floating Action ── */}
-        {!autoScroll && (
+        {/* B. Mode WorkGraph (Grand écran interactif) */}
+        {centerMode === 'workgraph' && (
+          <div className="w-full h-full flex flex-col">
+            <VIECanvas />
+          </div>
+        )}
+
+        {/* C. Mode Visual Flow (Progression en temps réel) */}
+        {centerMode === 'flow' && (
+          <div className="w-full h-full flex flex-col">
+            <DeerFlowCanvas />
+          </div>
+        )}
+
+        {/* D. Mode Studio Artefact Universel */}
+        {centerMode === 'artifact' && selectedArtifact && (
+          <div className="w-full h-full flex flex-col">
+            <UniversalArtifactViewer
+              artifact={selectedArtifact}
+              onExport={(fmt) => {
+                window.open(`/api/v1/artifacts/${selectedArtifact.id}/export?format=${fmt}`, '_blank');
+              }}
+            />
+          </div>
+        )}
+
+        {/* Bouton pour revenir en bas si l'utilisateur a scrollé */}
+        {showScrollBottom && centerMode === 'chat' && (
           <button
-            onClick={() => {
-              setAutoScroll(true);
-              chatContainerRef.current?.scrollTo({
-                top: chatContainerRef.current.scrollHeight,
-                behavior: 'smooth',
-              });
-            }}
-            className="absolute bottom-24 left-1/2 -translate-x-1/2 px-3 py-1.5 rounded-full bg-[var(--material-glass-floating)] border border-[var(--border-strong)] text-xs text-[var(--text-primary)] shadow-[var(--shadow-floating)] backdrop-blur-xl flex items-center gap-1.5 z-20 animate-bounce"
+            onClick={scrollToBottom}
+            className="absolute bottom-24 right-8 z-30 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#c39a52] text-[#0a0e17] font-bold text-xs shadow-2xl hover:scale-105 transition-all"
           >
-            <span>↓ Derniers messages</span>
+            <ArrowDown size={14} weight="bold" />
+            <span>Dernier message</span>
           </button>
         )}
+      </div>
 
-        {/* ── Floating Adaptive Composer (Center Pane Only) ── */}
-        <div className="absolute bottom-4 left-0 right-0 px-4 sm:px-8 z-30 pointer-events-none">
-          <div className="max-w-[780px] mx-auto w-full pointer-events-auto">
-            <Surface
-              material="glass-floating"
-              className="p-2 sm:p-2.5 rounded-3xl backdrop-blur-3xl transition-all shadow-[var(--shadow-floating)] flex flex-col gap-2"
+      {/* ── 3. Composer Adaptatif Flottant ── */}
+      {centerMode === 'chat' && (
+        <div className="p-4 bg-gradient-to-t from-[#060911] via-[#060911]/90 to-transparent flex flex-col items-center shrink-0 z-20">
+          {/* Bannière de contexte d'artefact actif */}
+          {selectedArtifact && (
+            <div className="w-full max-w-3xl mb-2 px-3 py-1.5 rounded-xl bg-[#c39a52]/10 border border-[#c39a52]/30 flex items-center justify-between text-xs font-mono text-[#c39a52]">
+              <div className="flex items-center gap-2 truncate">
+                <Sparkle size={13} weight="bold" />
+                <span>Contexte actif : <strong>{selectedArtifact.title}</strong></span>
+              </div>
+              <button
+                onClick={() => setSelectedArtifact(null)}
+                className="text-[10px] text-slate-400 hover:text-white underline ml-2"
+              >
+                Détacher
+              </button>
+            </div>
+          )}
+
+          <div className="w-full max-w-3xl rounded-2xl bg-[#0e1626] border border-white/10 p-2.5 shadow-2xl flex items-center gap-2">
+            <button
+              onClick={() => setPlusMenuOpen(!plusMenuOpen)}
+              className="p-2 rounded-xl bg-white/5 hover:bg-white/10 text-slate-300 transition-colors"
+              title="Ajouter pièces jointes ou capacités"
             >
-              {/* Textarea Input Area */}
-              <div className="flex items-center gap-2 px-2">
-                <textarea
-                  ref={textareaRef}
-                  value={inputText}
-                  onChange={handleTextareaInput}
-                  onKeyDown={handleKeyDown}
-                  placeholder="Demandez n'importe quoi à Ñkyel (Gemini 3.1 Pro, Recherche, Code)..."
-                  rows={1}
-                  className="w-full bg-transparent text-[15px] leading-relaxed text-[var(--text-primary)] placeholder-[var(--text-secondary)] placeholder:opacity-60 focus:outline-none resize-none font-sans max-h-48 py-1.5"
-                />
-              </div>
+              <GeistPlus size={16} />
+            </button>
 
-              {/* Toolbar Actions Bar */}
-              <div className="flex items-center justify-between border-t border-[var(--border-subtle)] pt-1.5 px-1">
-                {/* Left Cluster: Plus Button with Modal */}
-                <div className="relative">
-                  <button
-                    type="button"
-                    onClick={() => setPlusMenuOpen(!plusMenuOpen)}
-                    className="w-8 h-8 rounded-xl bg-[var(--surface)] hover:bg-[var(--surface-raised)] border border-[var(--border)] flex items-center justify-center text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
-                    title="Ajouter des fichiers ou du contexte (+)"
-                  >
-                    <GeistPlus size={15} strokeWidth={2} />
-                  </button>
-
-                  {plusMenuOpen && (
-                    <div className="absolute bottom-full left-0 mb-2 w-48 p-1 rounded-2xl bg-[var(--material-glass-elevated)] border border-[var(--border-strong)] shadow-[var(--shadow-modal)] backdrop-blur-2xl text-xs space-y-0.5 z-50 animate-in fade-in zoom-in-95 duration-150">
-                      <button
-                        onClick={() => setPlusMenuOpen(false)}
-                        className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl hover:bg-[var(--hover)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] text-left transition-colors"
-                      >
-                        <GeistFile size={15} className="text-[#D5AE57]" />
-                        <span>Téléverser Fichier</span>
-                      </button>
-                      <button
-                        onClick={() => setPlusMenuOpen(false)}
-                        className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl hover:bg-[var(--hover)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] text-left transition-colors"
-                      >
-                        <GeistGlobe size={15} className="text-emerald-400" />
-                        <span>Recherche Web</span>
-                      </button>
-                      <button
-                        onClick={() => setPlusMenuOpen(false)}
-                        className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl hover:bg-[var(--hover)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] text-left transition-colors"
-                      >
-                        <GeistPlugs size={15} className="text-amber-300" />
-                        <span>Associer Connecteur MCP</span>
-                      </button>
-                    </div>
-                  )}
-                </div>
-
-                {/* Right Cluster: Mic / Send / Stop */}
-                <div className="flex items-center gap-1.5">
-                  <button
-                    type="button"
-                    className="w-8 h-8 rounded-xl hover:bg-[var(--hover)] text-[var(--text-tertiary)] hover:text-[var(--text-primary)] flex items-center justify-center transition-colors"
-                    title="Dictée vocale"
-                  >
-                    <GeistMic size={16} />
-                  </button>
-
-                  {isStreaming ? (
-                    <button
-                      type="button"
-                      className="w-8 h-8 rounded-xl bg-red-500/20 hover:bg-red-500/30 text-red-400 flex items-center justify-center transition-colors border border-red-500/30"
-                      title="Arrêter l'exécution"
-                    >
-                      <GeistCross size={13} strokeWidth={2} />
-                    </button>
-                  ) : (
-                    <button
-                      type="button"
-                      onClick={handleSend}
-                      disabled={!inputText.trim()}
-                      className={`w-8 h-8 rounded-xl flex items-center justify-center transition-all ${
-                        inputText.trim()
-                          ? 'bg-[#D5AE57] text-black font-bold shadow-md active:scale-95'
-                          : 'bg-[var(--surface)] text-[var(--text-tertiary)] cursor-not-allowed opacity-50'
-                      }`}
-                      title="Envoyer le message"
-                    >
-                      <GeistArrowUp size={16} strokeWidth={2} />
-                    </button>
-                  )}
-                </div>
-              </div>
-            </Surface>
-          </div>
-        </div>
-      </section>
-
-      {/* ─── DROITE : RIGHT CONTEXT INSPECTOR (320-380px) ─── */}
-      <AnimatePresence>
-        {isRightOpen && (
-          <motion.div
-            initial={{ width: 0, opacity: 0 }}
-            animate={{ width: rightWidth, opacity: 1 }}
-            exit={{ width: 0, opacity: 0 }}
-            transition={{ duration: 0.18, ease: [0.16, 1, 0.3, 1] }}
-            className="hidden lg:block shrink-0 h-full overflow-hidden border-l border-[var(--border)]"
-          >
-            <RightContextInspector
-              isStreaming={isStreaming}
-              missionTitle={missionTitle}
+            <textarea
+              ref={textareaRef}
+              value={inputText}
+              onChange={(e) => setInputText(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                  e.preventDefault();
+                  handleSend();
+                }
+              }}
+              placeholder="Donnez une vision à Ñkyel (Recherche, budget, présentation, visuels, vidéo)..."
+              rows={1}
+              className="flex-1 bg-transparent border-none text-sm text-white placeholder-slate-500 focus:outline-none resize-none py-1.5"
             />
-          </motion.div>
-        )}
-      </AnimatePresence>
 
-      {/* ─── Mobile / Tablet Context Sheet Overlay ─── */}
-      {isRightOpen && (
-        <div className="fixed inset-0 z-50 flex justify-end lg:hidden bg-black/60 backdrop-blur-sm animate-in fade-in duration-150">
-          <div className="w-full max-w-sm sm:max-w-md h-full bg-[var(--material-canvas)] border-l border-[var(--border)] shadow-2xl">
-            <RightContextInspector
-              isStreaming={isStreaming}
-              missionTitle={missionTitle}
-            />
+            <button
+              onClick={handleSend}
+              disabled={!inputText.trim() || isStreaming}
+              className="p-2 rounded-xl bg-[#c39a52] hover:bg-[#b08842] text-[#0a0e17] font-bold disabled:opacity-40 transition-all shadow-md"
+            >
+              <GeistArrowUp size={16} />
+            </button>
           </div>
         </div>
       )}

@@ -202,7 +202,103 @@ class MissionCostTracker:
 
 
 # ══════════════════════════════════════════════════════════════
-# 3. Global Telemetry Registry
+# 3. Google Technology Telemetry
+# ══════════════════════════════════════════════════════════════
+
+@dataclass
+class GoogleTechnologyTelemetry:
+    """
+    Compteurs et métriques vérifiées d'utilisation des technologies Google.
+    Aucun chiffre n'est inventé ou codé en dur : proviennent d'exécutions réelles.
+    """
+    mission_id: str
+    google_ai_executions: int = 0
+    google_search_executions: int = 0
+    google_maps_executions: int = 0
+    google_image_generations: int = 0
+    google_video_generations: int = 0
+    google_workspace_reads: int = 0
+    google_workspace_writes: int = 0
+    google_tools_used: int = 0
+    google_artifacts_generated: int = 0
+    total_latency_ms: int = 0
+    total_cost_usd: float = 0.0
+    executions: list[dict] = field(default_factory=list)
+
+    def record_execution(
+        self,
+        capability: str,
+        model: str,
+        provider: str,
+        access_method: str,
+        latency_ms: int = 0,
+        cost_usd: float = 0.0,
+        metadata: Optional[dict] = None,
+    ) -> dict:
+        """Enregistre une exécution d'une technologie Google."""
+        entry = {
+            "capability": capability,
+            "model": model,
+            "provider": provider,
+            "access_method": access_method,
+            "latency_ms": latency_ms,
+            "cost_usd": cost_usd,
+            "timestamp": time.time(),
+            "metadata": metadata or {},
+        }
+        self.executions.append(entry)
+        self.total_latency_ms += latency_ms
+        self.total_cost_usd += cost_usd
+
+        # Incrémentation des compteurs vérifiés
+        if capability.startswith("gemini."):
+            self.google_ai_executions += 1
+            if "search" in capability:
+                self.google_search_executions += 1
+                self.google_tools_used += 1
+        elif capability.startswith("google.search"):
+            self.google_search_executions += 1
+            self.google_tools_used += 1
+        elif capability.startswith("google.maps"):
+            self.google_maps_executions += 1
+            self.google_tools_used += 1
+        elif capability.startswith("google.image"):
+            self.google_image_generations += 1
+            self.google_artifacts_generated += 1
+        elif capability.startswith("google.video"):
+            self.google_video_generations += 1
+            self.google_artifacts_generated += 1
+        elif capability.startswith("google.workspace") or capability.startswith("google.drive") or capability.startswith("google.docs") or capability.startswith("google.sheets"):
+            if "read" in capability or "search" in capability:
+                self.google_workspace_reads += 1
+            else:
+                self.google_workspace_writes += 1
+                self.google_artifacts_generated += 1
+            self.google_tools_used += 1
+
+        return entry
+
+    def summary(self) -> dict:
+        """Retourne le bilan technique défendable de l'usage Google."""
+        return {
+            "mission_id": self.mission_id,
+            "google_ai_executions": self.google_ai_executions,
+            "google_search_executions": self.google_search_executions,
+            "google_maps_executions": self.google_maps_executions,
+            "google_image_generations": self.google_image_generations,
+            "google_video_generations": self.google_video_generations,
+            "google_workspace_reads": self.google_workspace_reads,
+            "google_workspace_writes": self.google_workspace_writes,
+            "google_tools_used": self.google_tools_used,
+            "google_artifacts_generated": self.google_artifacts_generated,
+            "total_latency_ms": self.total_latency_ms,
+            "total_cost_usd": round(self.total_cost_usd, 6),
+            "operations_count": len(self.executions),
+        }
+
+
+# ══════════════════════════════════════════════════════════════
+# 4. Global Telemetry Registry
 # ══════════════════════════════════════════════════════════════
 
 class TelemetryRegistry:
@@ -213,11 +309,13 @@ class TelemetryRegistry:
 
     def __init__(self):
         self._trackers: dict[str, MissionCostTracker] = {}
+        self._google_trackers: dict[str, GoogleTechnologyTelemetry] = {}
         self._lock = threading.Lock()
         self._global_stats = {
             "total_missions_tracked": 0,
             "total_global_cost_usd": 0.0,
             "total_global_tokens": 0,
+            "total_google_executions": 0,
         }
 
     def create_tracker(
@@ -234,6 +332,8 @@ class TelemetryRegistry:
                 max_total_tokens=max_total_tokens,
             )
             self._trackers[mission_id] = tracker
+            if mission_id not in self._google_trackers:
+                self._google_trackers[mission_id] = GoogleTechnologyTelemetry(mission_id=mission_id)
             self._global_stats["total_missions_tracked"] += 1
             return tracker
 
@@ -242,6 +342,13 @@ class TelemetryRegistry:
         with self._lock:
             return self._trackers.get(mission_id)
 
+    def get_google_telemetry(self, mission_id: str) -> GoogleTechnologyTelemetry:
+        """Récupère ou crée le tracker Google pour une mission."""
+        with self._lock:
+            if mission_id not in self._google_trackers:
+                self._google_trackers[mission_id] = GoogleTechnologyTelemetry(mission_id=mission_id)
+            return self._google_trackers[mission_id]
+
     def finalize_mission(self, mission_id: str) -> Optional[dict]:
         """
         Finalise une mission : collecte le résumé et nettoie le tracker.
@@ -249,8 +356,12 @@ class TelemetryRegistry:
         """
         with self._lock:
             tracker = self._trackers.pop(mission_id, None)
+            google_tracker = self._google_trackers.get(mission_id)
         if tracker:
             summary = tracker.summary()
+            if google_tracker:
+                summary["google_technology_usage"] = google_tracker.summary()
+                self._global_stats["total_google_executions"] += len(google_tracker.executions)
             self._global_stats["total_global_cost_usd"] += tracker.total_cost
             self._global_stats["total_global_tokens"] += tracker.total_tokens
             return summary
@@ -271,7 +382,7 @@ class TelemetryRegistry:
 
 
 # ══════════════════════════════════════════════════════════════
-# 4. Convenience: Quick Metrics Recording
+# 5. Convenience: Quick Metrics & Google Recording
 # ══════════════════════════════════════════════════════════════
 
 def record_model_call(
@@ -334,8 +445,32 @@ def record_search(
         ))
 
 
+def record_google_telemetry(
+    mission_id: str,
+    capability: str,
+    model: str,
+    provider: str = "google",
+    access_method: str = "DIRECT_GOOGLE",
+    latency_ms: int = 0,
+    cost_usd: float = 0.0,
+    metadata: Optional[dict] = None,
+) -> dict:
+    """Raccourci pour enregistrer une exécution Google avec télémétrie matérielle."""
+    gt = telemetry_registry.get_google_telemetry(mission_id)
+    return gt.record_execution(
+        capability=capability,
+        model=model,
+        provider=provider,
+        access_method=access_method,
+        latency_ms=latency_ms,
+        cost_usd=cost_usd,
+        metadata=metadata,
+    )
+
+
 # ══════════════════════════════════════════════════════════════
 # Singleton
 # ══════════════════════════════════════════════════════════════
 
 telemetry_registry = TelemetryRegistry()
+

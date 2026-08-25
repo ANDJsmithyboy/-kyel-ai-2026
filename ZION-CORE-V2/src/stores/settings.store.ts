@@ -38,7 +38,27 @@ export const MODEL_DISPLAY_NAMES: Record<string, string> = {
   'claude-3-7-sonnet-latest': 'Claude 3.7 Sonnet',
   'gpt-4o': 'GPT-4o Omnimodal',
   'deepseek-reasoner': 'DeepSeek R1',
+  'aurata-spark': 'Aurata Fast',
+  'aurata': 'Aurata Fast',
+  'nyel-deep': 'Ñkyel Deep',
+  'nkyel': 'Ñkyel Sovereign',
+  'wandana-archive': 'Wandana Archive',
+  'wandana': 'Wandana Archive',
+  'onyx-gris': 'Onyx Gris',
+  'black-panther': 'Black Panther Autonomous',
 };
+
+export function getDisplayModelName(modelId: string, isAdmin: boolean = false): string {
+  if (MODEL_DISPLAY_NAMES[modelId]) {
+    return MODEL_DISPLAY_NAMES[modelId];
+  }
+  if (modelId === 'aurata-spark' || modelId === 'aurata') return 'Aurata';
+  if (modelId === 'nyel-deep' || modelId === 'nkyel') return 'Ñkyel';
+  if (modelId === 'wandana-archive' || modelId === 'wandana') return 'Wandana';
+  if (modelId === 'onyx-gris' || modelId === 'onyxgris') return 'Onyx Gris';
+  if (modelId === 'black-panther' || modelId === 'blackpanther') return 'Black Panther';
+  return modelId || 'Ñkyel';
+}
 
 export interface UserPreferencesState {
   // 1. Général & Formats
@@ -59,6 +79,8 @@ export interface UserPreferencesState {
   density: Density;
   reducedMotion: boolean;
   highContrast: boolean;
+  blackPantherMode: boolean;
+  greetingStyle: string;
 
   // 3. Personnalisation & Agent
   responseDepth: ResponseDepth;
@@ -69,6 +91,7 @@ export interface UserPreferencesState {
   showThinking: boolean;
   streamResponses: boolean;
   codeSyntaxHighlight: boolean;
+  showCopyButton: boolean;
   visualIntelligenceLevel: 'standard' | 'enhanced' | 'sovereign_vision';
   workgraphVisibility: 'full' | 'simplified' | 'collapsed';
 
@@ -96,8 +119,12 @@ export interface UserPreferencesState {
   isSyncing: boolean;
   lastSyncedAt: number | null;
 
+  // Preferences alias container
+  preferences: Partial<UserPreferencesState>;
+
   // Actions
   updatePreferences: (updates: Partial<UserPreferencesState>) => Promise<void>;
+  updatePreference: (key: string, value: any) => Promise<void>;
   setTheme: (t: ThemeKey) => void;
   setAccent: (a: AccentKey) => void;
   setFontSize: (f: FontSize) => void;
@@ -111,9 +138,16 @@ export interface UserPreferencesState {
   setResearchDepth: (r: ResearchDepth) => void;
   setMemoryPolicy: (p: 'never' | 'always_ask' | 'auto_preferences' | 'auto_all') => void;
   setDataResidency: (r: DataResidency) => void;
+  setGreetingStyle: (style: string) => void;
+  toggleBlackPanther: () => void;
+  toggleThinking: () => void;
+  toggleStream: () => void;
+  toggleSyntax: () => void;
+  toggleCopy: () => void;
   fetchFromServer: () => Promise<void>;
   saveToServer: () => Promise<void>;
   hydrateDOM: () => void;
+  hydrate: () => void;
 }
 
 const LIGHT_THEMES = new Set<string>(['light', 'aurore-ogoue', 'neo-blanc']);
@@ -172,6 +206,8 @@ export const useSettingsStore = create<UserPreferencesState>()(
       density: 'comfortable',
       reducedMotion: false,
       highContrast: false,
+      blackPantherMode: false,
+      greetingStyle: 'fang',
 
       responseDepth: 'balanced',
       researchDepth: 'deep',
@@ -181,6 +217,7 @@ export const useSettingsStore = create<UserPreferencesState>()(
       showThinking: true,
       streamResponses: true,
       codeSyntaxHighlight: true,
+      showCopyButton: true,
       visualIntelligenceLevel: 'enhanced',
       workgraphVisibility: 'full',
 
@@ -203,6 +240,10 @@ export const useSettingsStore = create<UserPreferencesState>()(
       isSyncing: false,
       lastSyncedAt: null,
 
+      get preferences() {
+        return get();
+      },
+
       hydrateDOM: () => {
         const state = get();
         applyDOMTheme(state.theme);
@@ -213,8 +254,27 @@ export const useSettingsStore = create<UserPreferencesState>()(
         applyRTLToDOM(state.uiLocale);
       },
 
+      hydrate: () => {
+        get().hydrateDOM();
+      },
+
       updatePreferences: async (updates: Partial<UserPreferencesState>) => {
         set((state: UserPreferencesState) => ({ ...state, ...updates }));
+        get().hydrateDOM();
+        await get().saveToServer();
+      },
+
+      updatePreference: async (key: string, value: any) => {
+        const keyMap: Record<string, string> = {
+          theme: 'theme',
+          ui_locale: 'uiLocale',
+          autonomy_level: 'autonomyLevel',
+          memory_enabled: 'memoryEnabled',
+          font_size: 'fontSize',
+          density: 'density',
+        };
+        const mappedKey = keyMap[key] || key;
+        set((state: any) => ({ ...state, [mappedKey]: value, [key]: value }));
         get().hydrateDOM();
         await get().saveToServer();
       },
@@ -286,6 +346,35 @@ export const useSettingsStore = create<UserPreferencesState>()(
 
       setDataResidency: (r: DataResidency) => {
         set({ dataResidency: r });
+        get().saveToServer();
+      },
+
+      setGreetingStyle: (style: string) => {
+        set({ greetingStyle: style });
+        get().saveToServer();
+      },
+
+      toggleBlackPanther: () => {
+        set((state: any) => ({ blackPantherMode: !state.blackPantherMode }));
+      },
+
+      toggleThinking: () => {
+        set((state: any) => ({ showThinking: !state.showThinking }));
+        get().saveToServer();
+      },
+
+      toggleStream: () => {
+        set((state: any) => ({ streamResponses: !state.streamResponses }));
+        get().saveToServer();
+      },
+
+      toggleSyntax: () => {
+        set((state: any) => ({ codeSyntaxHighlight: !state.codeSyntaxHighlight }));
+        get().saveToServer();
+      },
+
+      toggleCopy: () => {
+        set((state: any) => ({ showCopyButton: !state.showCopyButton }));
         get().saveToServer();
       },
 

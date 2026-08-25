@@ -84,9 +84,12 @@ class MediaProviderRouter:
         negative_prompt: Optional[str] = None,
         seed: Optional[int] = None,
         quality_mode: str = "fast",
+        preferred_provider: Optional[str] = None,
+        mission_id: str = "",
     ) -> Dict[str, Any]:
         """
-        Génère une image selon la hiérarchie :
+        Génère une image selon la hiérarchie souveraine :
+        0. Google Direct (Imagen 3) / Runway Media Router si demandé ou actif
         1. Cloudflare Workers AI (@cf/black-forest-labs/flux-1-schnell)
         2. Pollinations
         3. ComfyUI / RunPod (FLUX.2 Klein 4B)
@@ -94,6 +97,35 @@ class MediaProviderRouter:
         start_time = time.time()
         width, height = cls._aspect_ratio_to_dimensions(aspect_ratio)
         enhanced_prompt = f"{prompt}, {style}" if style else prompt
+
+        # ── 0. Google Direct (Imagen 3) / Runway Router ──
+        if preferred_provider == "google_direct" or (settings.google_media_enabled and (settings.google_api_key or os.getenv("GOOGLE_API_KEY"))):
+            try:
+                from services.providers.google_direct_provider import GoogleDirectProvider
+                g_res = await GoogleDirectProvider.generate_image(
+                    prompt=enhanced_prompt,
+                    aspect_ratio=aspect_ratio,
+                    mission_id=mission_id,
+                )
+                if g_res.get("success"):
+                    g_res["duration_ms"] = int((time.time() - start_time) * 1000)
+                    return g_res
+            except Exception as e:
+                logger.debug(f"Google Imagen 3 routing fallback note: {e}")
+
+        if preferred_provider == "runway_router" or (settings.runway_api_key or os.getenv("RUNWAY_API_KEY")):
+            try:
+                from services.providers.runway_media_provider import RunwayMediaProvider
+                r_res = await RunwayMediaProvider.generate_image(
+                    prompt=enhanced_prompt,
+                    aspect_ratio=aspect_ratio,
+                    mission_id=mission_id,
+                )
+                if r_res.get("success"):
+                    r_res["duration_ms"] = int((time.time() - start_time) * 1000)
+                    return r_res
+            except Exception as e:
+                logger.debug(f"Runway Router fallback note: {e}")
 
         # ── 1. Cloudflare Workers AI ──
         if settings.cloudflare_account_id and settings.cloudflare_api_token:
@@ -210,14 +242,48 @@ class MediaProviderRouter:
         duration_seconds: int = 5,
         aspect_ratio: str = "16:9",
         quality_mode: str = "standard",
+        preferred_provider: Optional[str] = None,
+        mission_id: str = "",
     ) -> Dict[str, Any]:
         """
-        Génère une vidéo de 5s selon la hiérarchie :
+        Génère une vidéo selon la hiérarchie souveraine :
+        0. Google Direct (Veo 2) / Runway Media Router si demandé ou actif
         1. Pollinations (si modèle dynamique disponible)
         2. RunPod ComfyUI Wan2.1 T2V-1.3B (standard) / Wan2.2 TI2V-5B (qualité)
         """
         start_time = time.time()
         width, height = cls._aspect_ratio_to_dimensions(aspect_ratio)
+
+        # ── 0. Google Direct (Veo 2) / Runway Router ──
+        if preferred_provider == "google_direct" or (settings.google_media_enabled and (settings.google_api_key or os.getenv("GOOGLE_API_KEY"))):
+            try:
+                from services.providers.google_direct_provider import GoogleDirectProvider
+                g_vid = await GoogleDirectProvider.generate_video(
+                    prompt=prompt,
+                    duration_seconds=duration_seconds,
+                    aspect_ratio=aspect_ratio,
+                    mission_id=mission_id,
+                )
+                if g_vid.get("success"):
+                    g_vid["duration_ms"] = int((time.time() - start_time) * 1000)
+                    return g_vid
+            except Exception as e:
+                logger.debug(f"Google Veo 2 fallback note: {e}")
+
+        if preferred_provider == "runway_router" or (settings.runway_api_key or os.getenv("RUNWAY_API_KEY")):
+            try:
+                from services.providers.runway_media_provider import RunwayMediaProvider
+                r_vid = await RunwayMediaProvider.generate_video(
+                    prompt=prompt,
+                    duration_seconds=duration_seconds,
+                    aspect_ratio=aspect_ratio,
+                    mission_id=mission_id,
+                )
+                if r_vid.get("success"):
+                    r_vid["duration_ms"] = int((time.time() - start_time) * 1000)
+                    return r_vid
+            except Exception as e:
+                logger.debug(f"Runway Router video fallback note: {e}")
 
         # 1. Pollinations Video
         try:

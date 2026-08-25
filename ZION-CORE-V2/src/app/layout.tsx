@@ -52,6 +52,8 @@ const isClerkConfigured = Boolean(
   clerkKey.startsWith('pk_')
 );
 
+import { nkyelClerkAppearance } from '@/lib/clerk-theme';
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   const content = (
     <html lang="fr" className="light" data-theme="neo-blanc" data-accent="gold" suppressHydrationWarning>
@@ -66,23 +68,25 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
       </head>
       <body className={`antialiased overflow-hidden ${geist.variable} ${geistMono.variable}`} suppressHydrationWarning>
-        <PostHogProvider>
-          {enableSplash && <SplashScreen />}
-          <GlobalShortcuts />
-          <CommandPalette />
-          {children}
-          <Toaster
-            position="bottom-right"
-            toastOptions={{
-              style: {
-                background: 'var(--bg-elevated)',
-                border: '1px solid var(--border)',
-                color: 'var(--text-primary)',
-                fontFamily: 'var(--font-sans)',
-              },
-            }}
-          />
-        </PostHogProvider>
+        <ClerkProvider localization={frFR} appearance={nkyelClerkAppearance}>
+          <PostHogProvider>
+            {enableSplash && <SplashScreen />}
+            <GlobalShortcuts />
+            <CommandPalette />
+            {children}
+            <Toaster
+              position="bottom-right"
+              toastOptions={{
+                style: {
+                  background: 'var(--bg-elevated)',
+                  border: '1px solid var(--border)',
+                  color: 'var(--text-primary)',
+                  fontFamily: 'var(--font-sans)',
+                },
+              }}
+            />
+          </PostHogProvider>
+        </ClerkProvider>
       </body>
     </html>
   );
