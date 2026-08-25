@@ -23,4 +23,3 @@ export {
   OnyxGrisIcon,
   NkyelAgentIcon,
 } from './NkyelIcons';
-export { IbogaGlyph, IbogaNavigationTrigger } from '../brand';

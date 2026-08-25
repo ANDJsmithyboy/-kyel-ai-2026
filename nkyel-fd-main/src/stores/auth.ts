@@ -2,56 +2,9 @@
    Fondateur : Daniel Jonathan ANDJ
    Authentification et gestion de session Open WebUI */
 
-import { create } from 'zustand';
+export * from './auth.store';
+import { useAuthStore, type User } from './auth.store';
 
-export interface User {
-  id: string;
-  name: string;
-  email: string;
-  role: 'admin' | 'user' | 'pending';
-  profile_image_url: string;
-}
-
-interface AuthState {
-  token: string | null;
-  user: User | null;
-  isAuthenticated: boolean;
-  isLoading: boolean;
-  setAuth: (token: string, user: User) => void;
-  logout: () => void;
-  setLoading: (v: boolean) => void;
-}
-
-export const useAuthStore = create<AuthState>((set: any) => ({
-  token: null,
-  user: null,
-  isAuthenticated: false,
-  isLoading: true,
-
-  setAuth: (token: string, user: User) => {
-    localStorage.setItem('token', token);
-    set({ token, user, isAuthenticated: true, isLoading: false });
-  },
-
-  logout: () => {
-    localStorage.removeItem('token');
-    set({ token: null, user: null, isAuthenticated: false, isLoading: false });
-  },
-
-  setLoading: (v: boolean) => set({ isLoading: v }),
-}));
-
-// Initialize from localStorage on client side only
-if (typeof window !== 'undefined') {
-  const token = localStorage.getItem('token');
-  if (token) {
-    useAuthStore.setState({ token, isAuthenticated: true, isLoading: false });
-  } else {
-    useAuthStore.setState({ isLoading: false });
-  }
-}
-
-/* -- API Auth helpers -------------------------------- */
 const BASE = '/api/v1';
 
 export async function signIn(email: string, password: string) {

@@ -167,6 +167,7 @@ export const useSettingsStore = create<UserPreferencesState>()(
       firstDayOfWeek: 'monday',
 
       theme: 'black-panther',
+      blackPantherMode: true,
       accent: 'gold',
       fontSize: 'normal',
       density: 'comfortable',
@@ -243,6 +244,11 @@ export const useSettingsStore = create<UserPreferencesState>()(
         get().saveToServer();
       },
 
+      toggleBlackPanther: () => {
+        const current = get().theme;
+        const next = current === 'black-panther' ? 'neo-blanc' : 'black-panther';
+        get().setTheme(next);
+      },
       greetingStyle: 'formal',
       setGreetingStyle: (s: string) => {
         set({ greetingStyle: s });
