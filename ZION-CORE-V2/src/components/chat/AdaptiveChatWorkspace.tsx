@@ -45,6 +45,7 @@ import {
 import { useWorkspaceLayout } from '@/hooks/useWorkspaceLayout';
 import RightContextInspector, { SourceItem, ToolItem, SkillItem, McpConnectorItem } from '@/components/inspector/RightContextInspector';
 import ArtifactCard, { ArtifactCardData } from './cards/ArtifactCard';
+import ArtifactRendererRegistry from './cards/ArtifactRendererRegistry';
 import ApprovalCard, { ApprovalRequestData } from './cards/ApprovalCard';
 import ToolActivityBlock, { ToolActivityData } from './cards/ToolActivityBlock';
 import SourceEvidenceBlock, { SourceItemData } from './cards/SourceEvidenceBlock';
