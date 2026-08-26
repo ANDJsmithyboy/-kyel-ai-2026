@@ -1,48 +1,51 @@
 /**
- * Nkyel AI · TierPicker.tsx · Client Component
- * SmartANDJ AI Technologies
- * Sélecteur de tier — Bottom sheet mobile, popover desktop.
+ * Ñkyel AI · TierPicker.tsx
+ * SmartANDJ AI Technologies · Founder: Daniel Jonathan ANDJ
+ *
+ * Canonical Intelligence Mode Picker (Modal / Bottom sheet for mobile fallback):
+ * 1. Auto (Auto - Autonomous Router)
+ * 2. Fast (Rapide - Ultra-fast & concise)
+ * 3. Deep (Profond - Deep reasoning & complex code)
+ * 4. Research (Recherche - Live web search & grounding)
  */
 
 'use client';
 
-import { useRef, useEffect, useCallback } from 'react';
+import React, { useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { cn } from '@/lib/utils';
-import { IconAurata, IconNkyel, IconOnyxGris, IconWandana, IconBlackPanther, IconBluePanther } from '@/components/icons';
+import { Sparkle, Lightning, Brain, Globe, Check } from '@phosphor-icons/react';
+import { INTELLIGENCE_MODES, type IntelligenceModeId } from '@/hooks/useNkyelModel';
+import { useLanguageStore } from '@/stores/language.store';
 
-/* -- Types ------------------------------------------ */
-export type TierKey = 'NKYEL_CHUI' | 'NKYEL_TAI' | 'RECHERCHE_WEB' | 'NKYEL_RADI' | 'BLUE_PANTHER';
+export type TierKey = IntelligenceModeId;
 
-interface Tier {
-  key: TierKey;
-  label: string;
-  description: string;
-  badge: string;
-  available: boolean;
-  accentColor: string;
-}
-
-const TIERS: Tier[] = [
-  { key: 'NKYEL_CHUI',    label: 'Nkyel Chui',    description: 'Réponses rapides & efficaces',       badge: 'CHUI',        available: true, accentColor: '#C5A059' },
-  { key: 'NKYEL_TAI',     label: 'Nkyel Tai',     description: 'Raisonnement profond & multimodal', badge: 'TAI',         available: true, accentColor: '#6B46C1' },
-  { key: 'RECHERCHE_WEB', label: 'Recherche Web', description: 'Recherche web & Deep Research',     badge: 'RECHERCHE',   available: true, accentColor: '#EAB308' },
-  { key: 'NKYEL_RADI',    label: 'Nkyel Radi',    description: 'Langues gabonaises & tâches légères', badge: 'RADI',       available: true, accentColor: '#10B981' },
-  { key: 'BLUE_PANTHER',  label: 'Blue Panther',  description: 'Mode Créateur Illimité',             badge: 'CRÉATEUR',   available: true, accentColor: '#0070F3' },
-];
-
-/* -- Props ------------------------------------------ */
 interface TierPickerProps {
   isOpen: boolean;
   onClose: () => void;
-  selectedTier: TierKey;
-  onSelect: (tier: TierKey) => void;
+  selectedMode: IntelligenceModeId | string;
+  onSelect: (mode: IntelligenceModeId) => void;
 }
 
-/* -- Component ------------------------------------- */
-export default function TierPicker({ isOpen, onClose, selectedTier, onSelect }: TierPickerProps) {
+export default function TierPicker({
+  isOpen,
+  onClose,
+  selectedMode,
+  onSelect,
+}: TierPickerProps) {
   const shouldReduceMotion = useReducedMotion();
   const containerRef = useRef<HTMLDivElement>(null);
+  const { uiLocale } = useLanguageStore();
+  const isFr = !uiLocale || uiLocale.startsWith('fr');
+
+  const iconMap: Record<IntelligenceModeId, React.ComponentType<any>> = {
+    auto: Sparkle,
+    fast: Lightning,
+    deep: Brain,
+    research: Globe,
+  };
+
+  const modesList = Object.values(INTELLIGENCE_MODES);
 
   /* Close on click outside */
   const handleClickOutside = useCallback(
@@ -81,176 +84,94 @@ export default function TierPicker({ isOpen, onClose, selectedTier, onSelect }: 
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.15 }}
-            className="fixed inset-0 z-40 lg:hidden"
-            style={{ background: 'rgba(0,0,0,0.5)' }}
+            className="fixed inset-0 z-40 bg-black/60 backdrop-blur-xs md:hidden"
             onClick={onClose}
           />
 
-          {/* Panel */}
+          {/* Bottom Sheet / Panel */}
           <motion.div
             ref={containerRef}
-            initial={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: 20 }}
+            initial={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: 20 }}
-            transition={{ duration: 0.18, ease: [0.25, 0.8, 0.25, 1] }}
-            /* Mobile: bottom sheet fixed. Desktop: popover absolute */
+            exit={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: 30 }}
+            transition={{ duration: 0.2, ease: [0.25, 0.8, 0.25, 1] }}
             className={cn(
-              'z-50 overflow-hidden',
-              /* Mobile */
-              'fixed inset-x-0 bottom-0 rounded-t-2xl lg:rounded-2xl',
-              /* Desktop */
-              'lg:absolute lg:inset-auto lg:bottom-full lg:left-0 lg:mb-2 lg:w-[320px]',
+              'z-50 overflow-hidden shadow-2xl',
+              'fixed inset-x-0 bottom-0 rounded-t-3xl md:rounded-2xl',
+              'md:absolute md:inset-auto md:bottom-full md:left-0 md:mb-2 md:w-[320px]',
+              'max-h-[85vh] overflow-y-auto pb-safe',
             )}
             style={{
               background: 'var(--bg-elevated)',
               border: '1px solid var(--border)',
             }}
-            drag={shouldReduceMotion ? false : 'y'}
-            dragConstraints={{ top: 0 }}
-            dragElastic={0.1}
-            onDragEnd={(_: any, info: any) => {
-              if (info.offset.y > 80) onClose();
-            }}
           >
-            {/* Drag handle — mobile */}
-            <div className="flex justify-center py-2 lg:hidden">
-              <div
-                className="h-1 w-8 rounded-full"
-                style={{ background: 'var(--text-tertiary)' }}
-              />
-            </div>
+            {/* Mobile Tactile Grab Handle */}
+            <div className="w-10 h-1 rounded-full bg-[var(--border-strong)] mx-auto mt-3 mb-1 md:hidden" />
 
             {/* Header */}
-            <div className="px-4 pb-2 pt-1 lg:pt-3">
-              <h3
-                className="text-sm font-semibold"
-                style={{
-                  fontFamily: 'var(--font-heading)',
-                  color: 'var(--text-primary)',
-                }}
-              >
-                Vecteur de Force
-              </h3>
+            <div className="px-4 py-3 border-b border-[var(--border-subtle)] flex items-center justify-between">
+              <div className="text-xs font-semibold text-[var(--text-primary)]">
+                {isFr ? "Mode d'intelligence" : "Intelligence Mode"}
+              </div>
+              <span className="text-[10px] text-[var(--text-tertiary)] font-mono">
+                SmartANDJ AI
+              </span>
             </div>
 
-            {/* Tier list */}
-            <div className="px-2 pb-3">
-              {TIERS.map((tier) => {
-                const isSelected = selectedTier === tier.key;
-                const isAvailable = tier.available;
+            {/* List of Models */}
+            <div className="p-2 space-y-1 pb-4 md:pb-2">
+              {modesList.map((m) => {
+                const Icon = iconMap[m.id] || Sparkle;
+                const isSelected = selectedMode === m.id || (selectedMode === 'radi' && m.id === 'fast') || (selectedMode === 'chui' && m.id === 'deep');
+                const label = m.name; // Keep sovereign African model name untranslated
+                const desc = isFr ? m.descFr : m.descEn;
 
                 return (
                   <button
-                    key={tier.key}
+                    key={m.id}
                     type="button"
-                    disabled={!isAvailable}
                     onClick={() => {
-                      if (isAvailable) {
-                        onSelect(tier.key);
-                        onClose();
-                      }
+                      onSelect(m.id);
+                      onClose();
                     }}
                     className={cn(
-                      'flex w-full items-center justify-between rounded-xl px-3 py-3 text-left transition-colors',
-                      isAvailable ? 'cursor-pointer' : 'cursor-not-allowed',
+                      'w-full min-h-[48px] flex items-start gap-3 p-3 rounded-2xl text-left transition-colors touch-manipulation active:scale-[0.99]',
+                      isSelected
+                        ? 'bg-[var(--surface-raised)] border border-[#D5AE57]/40 shadow-xs'
+                        : 'hover:bg-[var(--hover)] border border-transparent',
                     )}
-                    style={{
-                      opacity: isAvailable ? 1 : 0.4,
-                      background: isSelected ? 'var(--accent-10)' : 'transparent',
-                      transition: 'var(--transition-fast)',
-                    }}
-                    onMouseEnter={(e) => {
-                      if (isAvailable && !isSelected) {
-                        e.currentTarget.style.background = 'var(--accent-06)';
-                      }
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.background = isSelected
-                        ? 'var(--accent-10)'
-                        : 'transparent';
-                    }}
                   >
-                    <div className="flex items-center gap-3">
-                      {/* Tier Icon */}
-                      <div className="flex-shrink-0" style={{ color: tier.accentColor }}>
-                        {(() => {
-                          const props = { width: 16, height: 16 };
-                          switch (tier.key) {
-                            case 'NKYEL_CHUI': return <IconAurata {...props} />;
-                            case 'NKYEL_TAI': return <IconNkyel {...props} />;
-                            case 'RECHERCHE_WEB': return <IconWandana {...props} />;
-                            case 'NKYEL_RADI': return <IconOnyxGris {...props} />;
-                            case 'BLUE_PANTHER': return <IconBluePanther {...props} />;
-                            default: return <div className="h-2.5 w-2.5 rounded-full" style={{ background: tier.accentColor }} />;
-                          }
-                        })()}
-                      </div>
-                      <div>
-                        <div
-                          className="text-sm font-medium"
-                          style={{
-                            fontFamily: 'var(--font-body)',
-                            color: '#FFFFFF',
-                          }}
-                        >
-                          {tier.label}
-                        </div>
-                        <div
-                          className="text-xs"
-                          style={{
-                            fontFamily: 'var(--font-body)',
-                            color: 'var(--text-secondary)',
-                          }}
-                        >
-                          {tier.description}
-                        </div>
-                      </div>
+                    <div
+                      className={cn(
+                        'w-8 h-8 rounded-xl flex items-center justify-center shrink-0 mt-0.5',
+                        isSelected
+                          ? 'bg-[#D5AE57] text-black font-bold'
+                          : 'bg-white/[0.06] text-[var(--text-secondary)]',
+                      )}
+                    >
+                      <Icon size={16} weight={isSelected ? 'bold' : 'regular'} />
                     </div>
 
-                    <div className="flex items-center gap-2">
-                      {/* Badge */}
-                      {isAvailable ? (
-                        <span
-                          className="rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider"
-                          style={{
-                            fontFamily: 'var(--font-body)',
-                            background: 'var(--accent-06)',
-                            color: 'var(--accent)',
-                          }}
-                        >
-                          {tier.badge}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-semibold text-[var(--text-primary)]">
+                          {label}
                         </span>
-                      ) : (
-                        <span
-                          className="rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider"
-                          style={{
-                            background: 'rgba(224,88,75,0.08)',
-                            color: 'rgba(224,88,75,0.6)',
-                          }}
-                        >
-                          Verrouillé
-                        </span>
-                      )}
-
-                      {/* Check mark for selected */}
-                      {isSelected && (
-                        <svg
-                          width="16"
-                          height="16"
-                          viewBox="0 0 16 16"
-                          fill="none"
-                          style={{ color: 'var(--accent)' }}
-                        >
-                          <path
-                            d="M3.5 8.5L6.5 11.5L12.5 4.5"
-                            stroke="currentColor"
-                            strokeWidth="1.5"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          />
-                        </svg>
-                      )}
+                        {m.badge && (
+                          <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-[#D5AE57]/15 text-[#D5AE57] font-semibold">
+                            {m.badge}
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-[11px] text-[var(--text-secondary)] leading-snug mt-0.5">
+                        {desc}
+                      </p>
                     </div>
+
+                    {isSelected && (
+                      <Check size={15} weight="bold" className="text-[#D5AE57] shrink-0 self-center" />
+                    )}
                   </button>
                 );
               })}

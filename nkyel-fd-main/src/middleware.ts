@@ -1,17 +1,42 @@
 /* Ñkyel AI · middleware.ts · SmartANDJ AI Technologies
-   Direct pass-through middleware (Clerk temporairement désactivé pour accès direct)
+   Canonical Clerk Auth Middleware (Clerk v7 + Next.js App Router)
    Fondateur : Daniel Jonathan ANDJ */
 
-import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
+import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
 
-export default function middleware(req: NextRequest) {
-  return NextResponse.next();
-}
+const isPublicRoute = createRouteMatcher([
+  '/',
+  '/sign-in(.*)',
+  '/sign-up(.*)',
+  '/api/webhooks(.*)',
+  '/terms(.*)',
+  '/privacy(.*)',
+  '/security(.*)',
+  '/cookies(.*)',
+  '/acceptable-use(.*)',
+  '/legal(.*)',
+  '/docs(.*)',
+  '/welcome(.*)',
+  '/manifest.webmanifest',
+  '/manifest.json',
+  '/favicon.ico',
+  '/favicon.png',
+  '/brand(.*)',
+  '/icons(.*)',
+]);
+
+export default clerkMiddleware(async (auth, req) => {
+  if (!isPublicRoute(req)) {
+    await auth.protect();
+  }
+});
 
 export const config = {
   matcher: [
+    // Skip Next.js internals and all static files, unless found in search params
     '/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)',
+    // Always run for API routes
     '/(api|trpc)(.*)',
   ],
 };
+

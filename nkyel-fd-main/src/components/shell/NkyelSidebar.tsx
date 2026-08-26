@@ -64,10 +64,11 @@ import {
   Copy,
 } from '@phosphor-icons/react';
 import { useSidebar } from '@/hooks/useSidebar';
-import { useSafeUser as useUser } from '@/lib/auth-client';
+import { useSafeUser as useUser, useSafeClerk as useClerk } from '@/lib/auth-client';
 import { useLanguageStore } from '@/stores/language.store';
 import { useChatStore } from '@/stores/chat.store';
 import { IbogaNavigationTrigger } from '@/components/brand';
+import { PantherMissionGlyph, NkyelAgentIcon } from '@/components/icons';
 
 /* ═══════════════════════════════════════════════════════
    NAV CONFIGURATION — P0 Canonical Order
@@ -117,6 +118,7 @@ export default function NkyelSidebar() {
   const pathname = usePathname();
   const router = useRouter();
   const { user } = useUser();
+  const { signOut } = useClerk();
   const { isCollapsed, toggleSidebar, isMobile, isOpen, closeMobileSidebar } = useSidebar();
   const { t } = useLanguageStore();
 
@@ -137,7 +139,7 @@ export default function NkyelSidebar() {
   const userInitials = (displayName.slice(0, 2) || 'CP').toUpperCase();
 
   const navItems: NavItem[] = [
-    { id: 'agent',        label: t('nav.agent'),        href: '/agent',      icon: Robot },
+    { id: 'agent',        label: t('nav.agent'),        href: '/agent',      icon: NkyelAgentIcon },
     { id: 'connections',  label: t('nav.connections'),  href: '/connectors', icon: PlugsConnected },
     { id: 'automations',  label: t('nav.automations'),  href: '/scheduled',  icon: CalendarCheck },
     { id: 'creations',    label: t('nav.creations'),    href: '/library',    icon: Books },
@@ -314,7 +316,7 @@ export default function NkyelSidebar() {
               e.currentTarget.style.background = 'var(--accent)';
             }}
           >
-            <PencilSimple size={16} weight="bold" className="shrink-0" />
+            <PantherMissionGlyph size={18} className="shrink-0" />
             {!isCollapsed && <span className="truncate">{t('nav.newMission')}</span>}
           </Link>
         </div>
@@ -886,9 +888,12 @@ export default function NkyelSidebar() {
               {/* Sign out */}
               <button
                 type="button"
-                onClick={() => {
+                onClick={async () => {
                   setProfileMenuOpen(false);
-                  if (typeof window !== 'undefined') window.location.href = '/sign-in';
+                  try {
+                    await signOut();
+                  } catch {}
+                  router.push('/sign-in');
                 }}
                 className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-left text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-colors touch-manipulation min-h-[34px]"
               >

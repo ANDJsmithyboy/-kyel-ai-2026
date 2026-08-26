@@ -2,12 +2,11 @@
  * Ñkyel AI — Adaptive Central Intelligence Workspace
  * SmartANDJ AI Technologies · Founder: Daniel Jonathan ANDJ
  *
- * Composition spatiale unifiée (Apple Liquid Glass × Geist × Luma AI) :
- * - Left Sidebar (Navigation, Projets & Sessions)
+ * Composition spatiale unifiée :
  * - Central Intelligence Workspace (Reading Column centré, Composer adaptatif)
- * - Top-Right Discreet Mission Toolbar (WorkGraph, VIE, Visual Flow, Contexte)
+ * - Single Canonical Intelligence Mode Selector (Auto / Rapide / Profond / Recherche)
+ * - Discreet Contextual Mission Trigger (Overview / WorkGraph / Studio VIE / Live Flow)
  * - Right Context Inspector (Run, Sources, Tools, Skills, MCP)
- * - Safe Areas, Contrast AA, Responsive Drawer & Subpixel Polish
  */
 
 'use client';
@@ -16,7 +15,6 @@ import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   GeistSidebar,
-  GeistSearch,
   GeistSparkle,
   GeistPlus,
   GeistArrowUp,
@@ -33,11 +31,32 @@ import {
   GeistCross,
   GeistSliders,
 } from '@/components/icons/GeistIcons';
+import { useRouter } from 'next/navigation';
+import {
+  CaretDown,
+  Check,
+  ArrowLeft,
+  FileText,
+  Globe,
+  PlugsConnected,
+  Eye,
+  Presentation,
+  Table,
+  Cpu,
+  X,
+  Paperclip,
+  Sparkle,
+} from '@phosphor-icons/react';
 import { useWorkspaceLayout } from '@/hooks/useWorkspaceLayout';
+import { useNkyelModel, getIntelligenceMode, type IntelligenceModeId } from '@/hooks/useNkyelModel';
+import { useLanguageStore } from '@/stores/language.store';
 import RightContextInspector from '@/components/inspector/RightContextInspector';
 import Surface from '@/components/ui/Surface';
-import TierPicker, { TierKey } from '@/components/chat/TierPicker';
-import MobileMissionModal from '@/components/chat/MobileMissionModal';
+import TierPicker from '@/components/chat/TierPicker';
+import VIECanvas from '@/components/vie/VIECanvas';
+import VIEComprehensionView from '@/components/vie/VIEComprehensionView';
+import LiveFlowTimelineView from '@/components/flow/LiveFlowTimelineView';
+import SimulationScenarioView from '@/components/vie/SimulationScenarioView';
 
 export interface ChatMessage {
   id: string;
@@ -60,54 +79,52 @@ const SAMPLE_INITIAL_MESSAGES: ChatMessage[] = [
   {
     id: 'msg-1',
     role: 'user',
-    content: 'Bonjour Ñkyel. Peux-tu analyser l\'architecture multimodale de Google Gemini et synthétiser les principes de design Apple Liquid Glass pour notre nouveau workspace ?',
+    content: 'Bonjour Ñkyel. Peux-tu analyser l\'architecture globale de notre mission et préparer le plan d\'exécution ?',
     timestamp: '14:20',
   },
   {
     id: 'msg-2',
     role: 'assistant',
-    content: `Bienvenue dans l'espace central de Ñkyel AI. Voici la synthèse exécutive de votre demande :
+    content: `Bienvenue dans l'espace de mission Ñkyel AI.
 
-### 1. Architecture Multimodale Google Gemini
-Google Gemini (notamment **Gemini 2.5 Flash** et **Gemini 3.1 Pro**) repose sur une fenêtre de contexte allant jusqu'à **2 millions de tokens**. Cela permet une ingestion native et sans perte de larges bases de code, documents volumineux, flux audio et vidéos brutes [1].
+Le routeur autonome d'inférence est actif. Toutes vos requêtes sont orchestrées avec vérification de sources en direct, traçabilité des preuves et génération d'artefacts souverains.
 
-### 2. Principes Apple Liquid Glass & Geist
-L'architecture visuelle moderne sépare strictement deux plans fondamentaux :
-* **Content Layer (Solide & Calme)** : Vos messages, documents et visualisations restent sur des surfaces à contraste élevé garantissant une lisibilité absolue (WCAG 2.2 AA) [2].
-* **Functional Layer (Verre Liquide Régulier)** : La barre de navigation, le composer adaptatif et l'inspecteur contextuel flottent subtilement au-dessus de la toile avec réfraction et ombres multi-couches [3].
-
-Comment souhaitez-vous structurer la prochaine étape de votre mission ?`,
+Que souhaitez-vous accomplir pour cette mission ?`,
     timestamp: '14:21',
-    toolActivity: { name: 'Wandana Web Radar & Gemini 3.1 Pro', status: 'completed', duration: '1.4s' },
-    sources: ['src-1', 'src-2', 'src-3'],
+    toolActivity: { name: 'Grounding multi-sources & Routeur autonome', status: 'completed', duration: '1.2s' },
+    sources: ['src-1', 'src-2'],
   },
 ];
 
 export default function AdaptiveChatWorkspace({
   initialMessages = SAMPLE_INITIAL_MESSAGES,
-  missionTitle = 'Synthèse Architecture Gemini & Design Apple',
+  missionTitle = 'Nouvelle mission',
   onSendMessage,
   onStopStreaming,
   isStreaming = false,
 }: AdaptiveChatWorkspaceProps) {
+  const router = useRouter();
   const [messages, setMessages] = useState<ChatMessage[]>(initialMessages);
   const [inputText, setInputText] = useState('');
   const [copiedMsgId, setCopiedMsgId] = useState<string | null>(null);
   const [plusMenuOpen, setPlusMenuOpen] = useState(false);
   const [autoScroll, setAutoScroll] = useState(true);
   const [tierPickerOpen, setTierPickerOpen] = useState(false);
-  const [selectedTier, setSelectedTier] = useState<TierKey>('NKYEL_CHUI');
-  const [activeSurface, setActiveSurface] = useState<'chat' | 'workgraph' | 'vie' | 'visual_flow'>('chat');
-  const [mobileMissionOpen, setMobileMissionOpen] = useState(false);
+  const [missionMenuOpen, setMissionMenuOpen] = useState(false);
+  const [activeSurface, setActiveSurface] = useState<'chat' | 'workgraph' | 'vie' | 'live_flow'>('chat');
+  const [attachedFiles, setAttachedFiles] = useState<{ id: string; name: string; size: string }[]>([]);
+
+  const { modeId, setModeId } = useNkyelModel();
+  const currentEngine = getIntelligenceMode(modeId);
+  const { t, uiLocale } = useLanguageStore();
+  const isFr = !uiLocale || uiLocale.startsWith('fr');
+  const activeModeLabel = isFr ? currentEngine.labelFr : currentEngine.labelEn;
 
   const {
     isLeftOpen,
     toggleLeft,
     isRightOpen,
     toggleRight,
-    rightTab,
-    setRightTab,
-    openSource,
     isFocusMode,
     toggleFocusMode,
     rightWidth,
@@ -115,6 +132,104 @@ export default function AdaptiveChatWorkspace({
 
   const chatContainerRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const missionMenuRef = useRef<HTMLDivElement>(null);
+  const plusMenuRef = useRef<HTMLDivElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Close plus menu on outside click or Escape
+  useEffect(() => {
+    if (!plusMenuOpen) return;
+    const handleClickOutside = (e: MouseEvent) => {
+      if (plusMenuRef.current && !plusMenuRef.current.contains(e.target as Node)) {
+        setPlusMenuOpen(false);
+      }
+    };
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setPlusMenuOpen(false);
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('keydown', handleKey);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('keydown', handleKey);
+    };
+  }, [plusMenuOpen]);
+
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+    const newFiles = Array.from(files).map((f) => ({
+      id: `file-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+      name: f.name,
+      size: `${(f.size / 1024).toFixed(0)} KB`,
+    }));
+    setAttachedFiles((prev) => [...prev, ...newFiles]);
+    setPlusMenuOpen(false);
+    if (fileInputRef.current) fileInputRef.current.value = '';
+  };
+
+  const handleRemoveFile = (id: string) => {
+    setAttachedFiles((prev) => prev.filter((f) => f.id !== id));
+  };
+
+  const handleActionSelect = (action: string) => {
+    setPlusMenuOpen(false);
+    switch (action) {
+      case 'upload':
+        fileInputRef.current?.click();
+        break;
+      case 'research':
+        setModeId('research');
+        if (textareaRef.current) textareaRef.current.focus();
+        break;
+      case 'connections':
+        router.push('/connectors');
+        break;
+      case 'image':
+        setInputText((prev) =>
+          prev
+            ? `${prev}\n\n${isFr ? 'Générer une image : ' : 'Generate an image: '}`
+            : isFr
+            ? 'Génère une maquette visuelle haute fidélité pour : '
+            : 'Generate a high-fidelity visual mock for: '
+        );
+        textareaRef.current?.focus();
+        break;
+      case 'document':
+        setInputText((prev) =>
+          prev
+            ? `${prev}\n\n${isFr ? 'Rédiger un document : ' : 'Write a document: '}`
+            : isFr
+            ? 'Rédige un document structuré et complet sur : '
+            : 'Write a comprehensive document about: '
+        );
+        textareaRef.current?.focus();
+        break;
+      case 'slides':
+        setInputText((prev) =>
+          prev
+            ? `${prev}\n\n${isFr ? 'Créer des diapositives : ' : 'Create slides: '}`
+            : isFr
+            ? 'Conçois une présentation de diapositives professionnelle pour : '
+            : 'Design a professional slide presentation for: '
+        );
+        textareaRef.current?.focus();
+        break;
+      case 'spreadsheet':
+        setInputText((prev) =>
+          prev
+            ? `${prev}\n\n${isFr ? 'Tableur & données : ' : 'Spreadsheet & data: '}`
+            : isFr
+            ? 'Analyse et modélise une feuille de calcul financière pour : '
+            : 'Analyze and model a financial spreadsheet for: '
+        );
+        textareaRef.current?.focus();
+        break;
+      case 'artifacts':
+        if (!isRightOpen) toggleRight();
+        break;
+    }
+  };
 
   // Sync internal messages if prop changes
   useEffect(() => {
@@ -122,6 +237,18 @@ export default function AdaptiveChatWorkspace({
       setMessages(initialMessages);
     }
   }, [initialMessages]);
+
+  // Close mission menu on click outside
+  useEffect(() => {
+    if (!missionMenuOpen) return;
+    const handler = (e: MouseEvent) => {
+      if (missionMenuRef.current && !missionMenuRef.current.contains(e.target as Node)) {
+        setMissionMenuOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, [missionMenuOpen]);
 
   // Auto-scroll on new messages if user is at bottom
   useEffect(() => {
@@ -142,7 +269,7 @@ export default function AdaptiveChatWorkspace({
   };
 
   const handleSend = async () => {
-    if (!inputText.trim()) return;
+    if (!inputText.trim() && attachedFiles.length === 0) return;
     const userMsg: ChatMessage = {
       id: `msg-${Date.now()}`,
       role: 'user',
@@ -160,6 +287,18 @@ export default function AdaptiveChatWorkspace({
 
     if (onSendMessage) {
       await onSendMessage(sentText);
+    } else {
+      setTimeout(() => {
+        const assistantMsg: ChatMessage = {
+          id: `msg-${Date.now() + 1}`,
+          role: 'assistant',
+          content: `Reçu. Analyse en cours en mode **${isFr ? getIntelligenceMode(modeId).labelFr : getIntelligenceMode(modeId).labelEn}** pour la consigne : « ${sentText} ».\n\nLes sources et artefacts générés sont disponibles dans l'Inspecteur de Contexte.`,
+          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          toolActivity: { name: 'Routeur Ñkyel & Exécution autonome', status: 'completed', duration: '0.8s' },
+          sources: ['src-live-1', 'src-live-2'],
+        };
+        setMessages((prev) => [...prev, assistantMsg]);
+      }, 500);
     }
   };
 
@@ -170,25 +309,14 @@ export default function AdaptiveChatWorkspace({
     }
   };
 
-  const handleTextareaInput = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setInputText(e.target.value);
-    e.target.style.height = 'auto';
-    e.target.style.height = `${Math.min(e.target.scrollHeight, 200)}px`;
-  };
-
-  const copyMessage = (id: string, text: string) => {
+  const handleCopy = (id: string, text: string) => {
     navigator.clipboard.writeText(text);
     setCopiedMsgId(id);
     setTimeout(() => setCopiedMsgId(null), 2000);
   };
 
-  const tierLabels: Record<TierKey, string> = {
-    NKYEL_CHUI: 'Rapide (Chui)',
-    NKYEL_TAI: 'Profond (Tai)',
-    RECHERCHE_WEB: 'Recherche Web',
-    NKYEL_RADI: 'Polyvalent (Radi)',
-    BLUE_PANTHER: 'Créateur',
-  };
+  const activeModeConfig = getIntelligenceMode(modeId);
+  const activeModeLabel = isFr ? activeModeConfig.labelFr : activeModeConfig.labelEn;
 
   return (
     <div className="flex h-full w-full overflow-hidden bg-[var(--material-canvas)] text-[var(--text-primary)]">
@@ -196,87 +324,67 @@ export default function AdaptiveChatWorkspace({
       <section className="flex flex-1 flex-col min-w-0 h-full relative overflow-hidden">
         {/* ── Top Bar Minimale (Apple × Geist) ── */}
         <header className="h-12 px-4 border-b border-[var(--border)] bg-[var(--material-glass-regular)] backdrop-blur-xl flex items-center justify-between shrink-0 z-30">
-          <div className="flex items-center gap-2.5 min-w-0">
-            <button
-              type="button"
-              onClick={toggleLeft}
-              className="w-8 h-8 rounded-lg flex items-center justify-center text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--hover)] transition-colors"
-              title={isLeftOpen ? 'Masquer la barre latérale' : 'Afficher la barre latérale'}
-              aria-label="Toggle Sidebar"
-            >
-              <GeistSidebar size={16} />
-            </button>
-
-            <span className="font-semibold text-xs text-[var(--text-primary)] truncate max-w-[220px] sm:max-w-xs md:max-w-sm">
+          <div className="flex items-center gap-2 min-w-0">
+            <span className="font-semibold text-xs text-[var(--text-primary)] truncate max-w-[220px] sm:max-w-xs md:max-w-sm font-sans">
               {missionTitle}
             </span>
           </div>
 
           {/* ── Discrete Contextual Mission Controls ── */}
-          <div className="flex items-center gap-1.5 shrink-0">
-            {/* View Switcher Pills */}
-            <div className="hidden md:flex items-center bg-[var(--surface-raised)] border border-[var(--border)] rounded-lg p-0.5 text-[11px]">
+          <div className="flex items-center gap-2 shrink-0">
+            {/* Contextual Mission Trigger Button */}
+            <div className="relative" ref={missionMenuRef}>
               <button
                 type="button"
-                onClick={() => setActiveSurface('chat')}
-                className={`px-2.5 py-1 rounded-md transition-colors ${
-                  activeSurface === 'chat'
-                    ? 'bg-[var(--surface)] text-[var(--text-primary)] font-medium shadow-xs'
-                    : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
+                onClick={() => setMissionMenuOpen(!missionMenuOpen)}
+                className={`h-7 px-2.5 rounded-lg border text-[11px] font-medium flex items-center gap-1.5 transition-colors ${
+                  activeSurface !== 'chat'
+                    ? 'bg-[#D5AE57]/15 border-[#D5AE57]/40 text-[#D5AE57]'
+                    : 'border-[var(--border)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--hover)]'
                 }`}
+                title={t('header.missionIntelligence')}
+                aria-label={t('header.missionIntelligence')}
               >
-                Chat
+                <span className="w-1.5 h-1.5 rounded-full bg-[#D5AE57]" />
+                <span className="capitalize">{activeSurface === 'chat' ? t('header.mission') : activeSurface.replace('_', ' ')}</span>
+                <CaretDown size={11} />
               </button>
-              <button
-                type="button"
-                onClick={() => setActiveSurface('workgraph')}
-                className={`px-2.5 py-1 rounded-md transition-colors flex items-center gap-1 ${
-                  activeSurface === 'workgraph'
-                    ? 'bg-[var(--surface)] text-[#D5AE57] font-medium shadow-xs'
-                    : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
-                }`}
-                title="Structure de la Mission (WorkGraph)"
-              >
-                <GeistCpu size={12} />
-                <span>WorkGraph</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => setActiveSurface('vie')}
-                className={`px-2.5 py-1 rounded-md transition-colors flex items-center gap-1 ${
-                  activeSurface === 'vie'
-                    ? 'bg-[var(--surface)] text-[#D5AE57] font-medium shadow-xs'
-                    : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
-                }`}
-                title="Validation & Décisions (VIE)"
-              >
-                <GeistSliders size={12} />
-                <span>VIE</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => setActiveSurface('visual_flow')}
-                className={`px-2.5 py-1 rounded-md transition-colors flex items-center gap-1 ${
-                  activeSurface === 'visual_flow'
-                    ? 'bg-[var(--surface)] text-[#D5AE57] font-medium shadow-xs'
-                    : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
-                }`}
-                title="Flux d'Exécution en Direct"
-              >
-                <GeistActivity size={12} />
-                <span>Visual Flow</span>
-              </button>
-            </div>
 
-            {/* Command Palette Trigger */}
-            <button
-              type="button"
-              onClick={() => window.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', metaKey: true, bubbles: true }))}
-              className="hidden sm:flex h-7 items-center gap-1.5 px-2.5 rounded-lg border border-[var(--border)] bg-[var(--surface-raised)] text-[11px] text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:border-[var(--border-strong)] transition-colors"
-            >
-              <GeistSearch size={13} className="text-[#D5AE57]" />
-              <span>⌘K</span>
-            </button>
+              {missionMenuOpen && (
+                <div className="absolute right-0 top-full mt-1.5 w-48 p-1 rounded-xl bg-[var(--bg-elevated)] border border-[var(--border)] shadow-xl z-50 animate-scale-in text-xs space-y-0.5">
+                  {[
+                    { id: 'chat', label: t('view.overview'), icon: GeistSparkle },
+                    { id: 'workgraph', label: t('view.workgraph'), icon: GeistCpu },
+                    { id: 'vie', label: t('view.vie'), icon: GeistSliders },
+                    { id: 'live_flow', label: t('view.liveFlow'), icon: GeistActivity },
+                  ].map((v) => {
+                    const Icon = v.icon;
+                    const isSelected = activeSurface === v.id;
+                    return (
+                      <button
+                        key={v.id}
+                        type="button"
+                        onClick={() => {
+                          setActiveSurface(v.id as any);
+                          setMissionMenuOpen(false);
+                        }}
+                        className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg text-left transition-colors ${
+                          isSelected
+                            ? 'bg-[var(--selected)] text-[var(--text-primary)] font-semibold'
+                            : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--hover)]'
+                        }`}
+                      >
+                        <div className="flex items-center gap-2">
+                          <Icon size={14} className={isSelected ? 'text-[#D5AE57]' : 'opacity-60'} />
+                          <span>{v.label}</span>
+                        </div>
+                        {isSelected && <Check size={12} weight="bold" className="text-[#D5AE57]" />}
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
 
             {/* Focus Mode Trigger */}
             <button
@@ -287,21 +395,10 @@ export default function AdaptiveChatWorkspace({
                   ? 'bg-[#D5AE57]/15 border-[#D5AE57]/40 text-[#D5AE57]'
                   : 'border-[var(--border)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--hover)]'
               }`}
-              title="Mode concentration (masque les panneaux latéraux)"
+              title="Mode concentration"
             >
               <GeistSparkle size={13} />
               <span>Focus</span>
-            </button>
-
-            {/* Mobile Mission Intelligence Trigger Button (Apple / Manus pattern) */}
-            <button
-              type="button"
-              onClick={() => setMobileMissionOpen(true)}
-              className="md:hidden h-7 px-2.5 rounded-lg border border-[#D5AE57]/40 bg-[#D5AE57]/15 text-[#D5AE57] text-[11px] font-semibold flex items-center gap-1.5 active:scale-95 transition-all"
-              title="Ouvrir l'intelligence de mission"
-            >
-              <span className="w-1.5 h-1.5 rounded-full bg-[#D5AE57] animate-pulse" />
-              <span>Mission</span>
             </button>
 
             {/* Right Inspector Trigger Button with Live Status Badge */}
@@ -313,7 +410,7 @@ export default function AdaptiveChatWorkspace({
                   ? 'bg-[var(--surface-raised)] border-[var(--border-strong)] text-[var(--text-primary)] shadow-sm'
                   : 'border-[var(--border)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--hover)]'
               }`}
-              title="Afficher l'inspecteur contextuel (Run, Sources, Tools)"
+              title="Inspecteur de Contexte (Sources, Outils, Activité)"
             >
               <GeistActivity size={14} className={isStreaming ? 'animate-spin text-[#D5AE57]' : 'text-[var(--text-tertiary)]'} />
               <span className="hidden sm:inline">Contexte</span>
@@ -345,11 +442,8 @@ export default function AdaptiveChatWorkspace({
                       {/* Assistant Identity Pill */}
                       {!isUser && (
                         <div className="flex items-center gap-2 mb-2 px-1">
-                          <div className="w-5 h-5 rounded-md bg-[#D5AE57] text-black flex items-center justify-center font-black text-[10px] shadow-sm">
-                            Ñ
-                          </div>
-                          <span className="text-[11px] font-semibold text-[var(--text-primary)]">Ñkyel</span>
-                          <span className="text-[10px] text-[var(--text-tertiary)] font-mono">· {msg.timestamp}</span>
+                          <span className="text-[13px] font-semibold text-[var(--text-primary)] tracking-tight">Ñkyel</span>
+                          <span className="text-[11px] text-[var(--text-tertiary)] font-mono">· {msg.timestamp}</span>
                         </div>
                       )}
 
@@ -361,49 +455,33 @@ export default function AdaptiveChatWorkspace({
                         </div>
                       ) : (
                         /* AI Message: Full Readable Prose Column */
-                        <div className="w-full space-y-3 text-[15.5px] leading-[1.64] text-[var(--text-primary)] font-sans">
-                          {/* Tool Execution Pill (Compact) */}
+                        <div className="w-full max-w-full space-y-3.5">
+                          {/* Live Tool Activity Header (if any) */}
                           {msg.toolActivity && (
-                            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-xl bg-[var(--surface)] border border-[var(--border)] text-[11px] text-[var(--text-secondary)] shadow-sm">
+                            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[var(--surface-raised)] border border-[var(--border)] text-[11px] text-[var(--text-secondary)]">
                               <GeistWrench size={13} className="text-[#D5AE57]" />
                               <span>{msg.toolActivity.name}</span>
-                              <span className="text-[10px] font-mono text-[var(--text-tertiary)]">({msg.toolActivity.duration})</span>
-                              <GeistCheck size={13} className="text-emerald-400" strokeWidth={2} />
+                              {msg.toolActivity.duration && (
+                                <span className="text-[var(--text-tertiary)] font-mono">({msg.toolActivity.duration})</span>
+                              )}
                             </div>
                           )}
 
-                          {/* AI Content */}
-                          <div className="prose-nkyel space-y-3">
+                          {/* Main Prose Text with Strict Typography */}
+                          <div className="text-[15px] leading-[1.65] text-[var(--text-primary)] space-y-3 prose dark:prose-invert max-w-none font-sans font-normal">
                             <p className="whitespace-pre-wrap">{msg.content}</p>
                           </div>
 
-                          {/* Citations Footer Pills */}
-                          {msg.sources && msg.sources.length > 0 && (
-                            <div className="flex flex-wrap items-center gap-1.5 pt-2">
-                              <span className="text-[11px] font-mono text-[var(--text-tertiary)] mr-1">Sources :</span>
-                              {msg.sources.map((srcId, sIdx) => (
-                                <button
-                                  key={srcId}
-                                  onClick={() => openSource(srcId)}
-                                  className="px-2 py-0.5 rounded-lg bg-[var(--surface)] hover:bg-[var(--surface-raised)] border border-[var(--border)] text-[11px] font-mono font-bold text-[#D5AE57] transition-colors flex items-center gap-1"
-                                  title="Inspecter la source dans le panneau latéral"
-                                >
-                                  <span>[{sIdx + 1}]</span>
-                                  <span className="font-sans font-normal text-[10px] text-[var(--text-secondary)]">DeepMind / Apple</span>
-                                </button>
-                              ))}
-                            </div>
-                          )}
-
-                          {/* Message Action Footer (Copy / Share) */}
-                          <div className="flex items-center gap-2 pt-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                          {/* Discrete Bottom Action Bar */}
+                          <div className="flex items-center gap-2 pt-1">
                             <button
-                              onClick={() => copyMessage(msg.id, msg.content)}
-                              className="p-1 rounded-md text-[var(--text-tertiary)] hover:text-[var(--text-primary)] hover:bg-[var(--hover)] transition-colors text-xs flex items-center gap-1"
+                              type="button"
+                              onClick={() => handleCopy(msg.id, msg.content)}
+                              className="h-7 px-2 rounded-lg bg-transparent hover:bg-[var(--hover)] text-[var(--text-tertiary)] hover:text-[var(--text-primary)] text-[11px] flex items-center gap-1 transition-colors"
                               title="Copier la réponse"
                             >
                               {copiedMsgId === msg.id ? <GeistCheck size={13} className="text-emerald-400" /> : <GeistCopy size={13} />}
-                              <span>{copiedMsgId === msg.id ? 'Copié' : 'Copier'}</span>
+                              <span>{copiedMsgId === msg.id ? (isFr ? 'Copié' : 'Copied') : (isFr ? 'Copier' : 'Copy')}</span>
                             </button>
                           </div>
                         </div>
@@ -414,102 +492,189 @@ export default function AdaptiveChatWorkspace({
               </div>
             </div>
 
-            {/* ── Scroll to Latest Floating Action ── */}
-            {!autoScroll && (
-              <button
-                onClick={() => {
-                  setAutoScroll(true);
-                  chatContainerRef.current?.scrollTo({
-                    top: chatContainerRef.current.scrollHeight,
-                    behavior: 'smooth',
-                  });
-                }}
-                className="absolute bottom-28 left-1/2 -translate-x-1/2 px-3 py-1.5 rounded-full bg-[var(--material-glass-floating)] border border-[var(--border-strong)] text-xs text-[var(--text-primary)] shadow-[var(--shadow-floating)] backdrop-blur-xl flex items-center gap-1.5 z-20 animate-in fade-in zoom-in-95 duration-150"
-              >
-                <span>↓ Derniers messages</span>
-              </button>
-            )}
-
-            {/* ── Floating Adaptive Composer (Center Pane Only) ── */}
-            <div
-              className="absolute bottom-0 left-0 right-0 px-4 sm:px-8 pt-2 z-30 pointer-events-none"
-              style={{ paddingBottom: 'calc(1rem + env(safe-area-inset-bottom, 0px))' }}
-            >
-              <div className="max-w-[780px] mx-auto w-full pointer-events-auto">
+            {/* ── Fixed Bottom Adaptive Composer ── */}
+            <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-6 bg-gradient-to-t from-[var(--material-canvas)] via-[var(--material-canvas)]/80 to-transparent pointer-events-none flex justify-center z-20">
+              <div className="max-w-[780px] w-full pointer-events-auto">
                 <Surface
-                  material="glass-floating"
-                  className="p-2 sm:p-2.5 rounded-3xl backdrop-blur-3xl transition-all shadow-[var(--shadow-floating)] flex flex-col gap-2 border border-[var(--border-strong)]"
+                  layer="glass-regular"
+                  elevation="modal"
+                  className="rounded-3xl p-3 sm:p-3.5 transition-all shadow-[var(--shadow-floating)] border border-[var(--border-strong)] flex flex-col gap-2 backdrop-blur-2xl"
                 >
+                  {/* Hidden File Input for Real Attachments */}
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    multiple
+                    className="hidden"
+                    onChange={handleFileUpload}
+                  />
+
+                  {/* Attached Files Chips (if any) */}
+                  {attachedFiles.length > 0 && (
+                    <div className="flex flex-wrap gap-1.5 px-1 pt-0.5">
+                      {attachedFiles.map((file) => (
+                        <div
+                          key={file.id}
+                          className="flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-[var(--surface-raised)] border border-[var(--border)] text-xs text-[var(--text-primary)] shadow-xs animate-scale-in"
+                        >
+                          <Paperclip size={13} className="text-[#D5AE57] shrink-0" />
+                          <span className="truncate max-w-[150px] font-medium">{file.name}</span>
+                          <span className="text-[10px] text-[var(--text-tertiary)] font-mono">({file.size})</span>
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveFile(file.id)}
+                            className="ml-0.5 p-0.5 rounded-full hover:bg-[var(--hover)] text-[var(--text-tertiary)] hover:text-red-400 transition-colors"
+                            title={isFr ? "Supprimer le fichier" : "Remove file"}
+                          >
+                            <X size={11} weight="bold" />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
                   {/* Textarea Input Area */}
-                  <div className="flex items-center gap-2 px-2">
+                  <div className="relative flex items-center">
                     <textarea
                       ref={textareaRef}
                       value={inputText}
-                      onChange={handleTextareaInput}
+                      onChange={(e) => {
+                        setInputText(e.target.value);
+                        e.target.style.height = 'auto';
+                        e.target.style.height = `${Math.min(e.target.scrollHeight, 180)}px`;
+                      }}
                       onKeyDown={handleKeyDown}
-                      placeholder="Demandez n'importe quoi à Ñkyel (Recherche approfondie, Analyse, Code)..."
+                      placeholder={isFr ? "Demandez quelque chose à Ñkyel..." : "Ask Ñkyel anything..."}
                       rows={1}
-                      className="w-full bg-transparent text-[15px] leading-relaxed text-[var(--text-primary)] placeholder-[var(--text-secondary)] placeholder:opacity-60 focus:outline-none resize-none font-sans max-h-48 py-1.5"
+                      className="w-full bg-transparent border-0 focus:ring-0 focus:outline-none resize-none text-[15px] placeholder:text-[var(--text-tertiary)] text-[var(--text-primary)] max-h-44 px-1 py-1 font-sans"
                     />
                   </div>
 
                   {/* Toolbar Actions Bar */}
                   <div className="flex items-center justify-between border-t border-[var(--border-subtle)] pt-1.5 px-1">
-                    {/* Left Cluster: Plus Button + Model Picker */}
-                    <div className="flex items-center gap-1.5 relative">
+                    {/* Left Cluster: Plus Button + Mobile-Only Mode Selector */}
+                    <div className="flex items-center gap-1.5 relative" ref={plusMenuRef}>
                       <button
                         type="button"
                         onClick={() => setPlusMenuOpen(!plusMenuOpen)}
-                        className="w-8 h-8 rounded-xl bg-[var(--surface)] hover:bg-[var(--surface-raised)] border border-[var(--border)] flex items-center justify-center text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
-                        title="Ajouter des fichiers ou du contexte (+)"
+                        aria-expanded={plusMenuOpen}
+                        className="w-8 h-8 rounded-xl bg-[var(--surface)] hover:bg-[var(--surface-raised)] border border-[var(--border)] flex items-center justify-center text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors shadow-xs"
+                        title={isFr ? "Actions et capacités (+)" : "Actions & capabilities (+)"}
                       >
                         <GeistPlus size={15} strokeWidth={2} />
                       </button>
 
-                      {/* Tier / Intelligence Selector Pill */}
+                      {/* Mobile-Only Mode Selector Pill (Never rendered on Desktop where TopBar is canonical) */}
                       <button
                         type="button"
                         onClick={() => setTierPickerOpen(true)}
-                        className="h-8 px-2.5 rounded-xl bg-[var(--surface)] hover:bg-[var(--surface-raised)] border border-[var(--border)] flex items-center gap-1.5 text-xs text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
-                        title="Changer de profil d'intelligence"
+                        className="flex md:hidden h-8 min-h-[36px] px-2.5 rounded-xl bg-[var(--surface)] hover:bg-[var(--surface-raised)] border border-[var(--border)] items-center gap-1.5 text-xs text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors active:scale-95 touch-manipulation shadow-xs select-none"
+                        title={isFr ? "Changer de mode d'intelligence" : "Change intelligence mode"}
+                        aria-label={isFr ? "Changer de mode d'intelligence" : "Change intelligence mode"}
                       >
-                        <span className="w-2 h-2 rounded-full bg-[#D5AE57]" />
-                        <span className="font-medium">{tierLabels[selectedTier] || 'Rapide'}</span>
+                        <span className="w-1.5 h-1.5 rounded-full bg-[#D5AE57] shrink-0" />
+                        <span className="font-semibold text-xs text-[var(--text-primary)] max-w-[105px] truncate">{activeModeLabel}</span>
+                        <CaretDown size={11} weight="bold" className="opacity-60 shrink-0 text-[var(--text-tertiary)]" />
                       </button>
 
-                      {/* Plus Dropdown Menu */}
+                      {/* Functional Action Launcher Popover */}
                       {plusMenuOpen && (
-                        <div className="absolute bottom-full left-0 mb-2 w-52 p-1 rounded-2xl bg-[var(--material-glass-elevated)] border border-[var(--border-strong)] shadow-[var(--shadow-modal)] backdrop-blur-2xl text-xs space-y-0.5 z-50 animate-in fade-in zoom-in-95 duration-150">
+                        <div className="absolute bottom-full left-0 mb-2 w-64 p-1.5 rounded-2xl bg-[var(--bg-elevated)] border border-[var(--border-strong)] shadow-2xl text-xs space-y-0.5 z-50 animate-scale-in">
+                          <div className="px-2.5 py-1 text-[10px] font-mono uppercase tracking-wider text-[var(--text-tertiary)] border-b border-[var(--border-subtle)] mb-1">
+                            {isFr ? "Actions & Capacités" : "Actions & Capabilities"}
+                          </div>
+
                           <button
-                            onClick={() => setPlusMenuOpen(false)}
+                            type="button"
+                            onClick={() => handleActionSelect('upload')}
                             className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl hover:bg-[var(--hover)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] text-left transition-colors"
                           >
-                            <GeistFile size={15} className="text-[#D5AE57]" />
-                            <span>Téléverser Document</span>
+                            <FileText size={16} className="text-[#D5AE57] shrink-0" />
+                            <div className="flex-1 min-w-0">
+                              <p className="font-medium text-xs text-[var(--text-primary)]">{isFr ? 'Téléverser un document' : 'Upload file'}</p>
+                              <p className="text-[10px] text-[var(--text-tertiary)] truncate">{isFr ? 'PDF, texte, données ou code' : 'PDF, text, data or code'}</p>
+                            </div>
                           </button>
+
                           <button
-                            onClick={() => setPlusMenuOpen(false)}
+                            type="button"
+                            onClick={() => handleActionSelect('research')}
                             className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl hover:bg-[var(--hover)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] text-left transition-colors"
                           >
-                            <GeistGlobe size={15} className="text-emerald-400" />
-                            <span>Recherche Web Stratégique</span>
+                            <Globe size={16} className="text-emerald-400 shrink-0" />
+                            <div className="flex-1 min-w-0">
+                              <p className="font-medium text-xs text-[var(--text-primary)]">{isFr ? 'Recherche approfondie' : 'Deep Research'}</p>
+                              <p className="text-[10px] text-[var(--text-tertiary)] truncate">{isFr ? 'Veille et sources en direct' : 'Live web grounding & citations'}</p>
+                            </div>
                           </button>
+
                           <button
-                            onClick={() => setPlusMenuOpen(false)}
+                            type="button"
+                            onClick={() => handleActionSelect('connections')}
                             className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl hover:bg-[var(--hover)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] text-left transition-colors"
                           >
-                            <GeistPlugs size={15} className="text-amber-300" />
-                            <span>Connecteur MCP</span>
+                            <PlugsConnected size={16} className="text-amber-400 shrink-0" />
+                            <div className="flex-1 min-w-0">
+                              <p className="font-medium text-xs text-[var(--text-primary)]">{isFr ? 'Connecteurs & MCP' : 'Connectors & MCP'}</p>
+                              <p className="text-[10px] text-[var(--text-tertiary)] truncate">{isFr ? 'Google Workspace, GitHub, Slack' : 'Google Workspace, GitHub, Slack'}</p>
+                            </div>
+                          </button>
+
+                          <div className="h-px bg-[var(--border-subtle)] my-1" />
+
+                          <button
+                            type="button"
+                            onClick={() => handleActionSelect('image')}
+                            className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl hover:bg-[var(--hover)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] text-left transition-colors"
+                          >
+                            <Eye size={16} className="text-purple-400 shrink-0" />
+                            <span className="font-medium text-xs text-[var(--text-primary)]">{isFr ? 'Générer une image' : 'Generate image'}</span>
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={() => handleActionSelect('document')}
+                            className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl hover:bg-[var(--hover)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] text-left transition-colors"
+                          >
+                            <FileText size={16} className="text-blue-400 shrink-0" />
+                            <span className="font-medium text-xs text-[var(--text-primary)]">{isFr ? 'Rédiger un document' : 'Write document'}</span>
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={() => handleActionSelect('slides')}
+                            className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl hover:bg-[var(--hover)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] text-left transition-colors"
+                          >
+                            <Presentation size={16} className="text-amber-300 shrink-0" />
+                            <span className="font-medium text-xs text-[var(--text-primary)]">{isFr ? 'Créer des diapositives' : 'Create slides'}</span>
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={() => handleActionSelect('spreadsheet')}
+                            className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl hover:bg-[var(--hover)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] text-left transition-colors"
+                          >
+                            <Table size={16} className="text-emerald-400 shrink-0" />
+                            <span className="font-medium text-xs text-[var(--text-primary)]">{isFr ? 'Tableur & analyse de données' : 'Data & spreadsheet'}</span>
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={() => handleActionSelect('artifacts')}
+                            className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl hover:bg-[var(--hover)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] text-left transition-colors"
+                          >
+                            <Cpu size={16} className="text-cyan-400 shrink-0" />
+                            <span className="font-medium text-xs text-[var(--text-primary)]">{isFr ? "Ouvrir l'inspecteur d'artefacts" : 'Open artifact inspector'}</span>
                           </button>
                         </div>
                       )}
 
-                      {/* Tier Picker Modal / Popover */}
+                      {/* Mobile-Only Mode Picker Modal */}
                       <TierPicker
                         isOpen={tierPickerOpen}
                         onClose={() => setTierPickerOpen(false)}
-                        selectedTier={selectedTier}
-                        onSelect={(t) => setSelectedTier(t)}
+                        selectedMode={modeId}
+                        onSelect={(m) => setModeId(m)}
                       />
                     </div>
 
@@ -518,7 +683,7 @@ export default function AdaptiveChatWorkspace({
                       <button
                         type="button"
                         className="w-8 h-8 rounded-xl hover:bg-[var(--hover)] text-[var(--text-tertiary)] hover:text-[var(--text-primary)] flex items-center justify-center transition-colors"
-                        title="Dictée vocale"
+                        title={isFr ? "Dictée vocale" : "Voice dictation"}
                       >
                         <GeistMic size={16} />
                       </button>
@@ -528,7 +693,7 @@ export default function AdaptiveChatWorkspace({
                           type="button"
                           onClick={onStopStreaming}
                           className="w-8 h-8 rounded-xl bg-red-500/20 hover:bg-red-500/30 text-red-400 flex items-center justify-center transition-colors border border-red-500/30"
-                          title="Arrêter l'exécution de la mission"
+                          title={isFr ? "Arrêter l'exécution de la mission" : "Stop mission execution"}
                         >
                           <GeistCross size={13} strokeWidth={2} />
                         </button>
@@ -536,13 +701,13 @@ export default function AdaptiveChatWorkspace({
                         <button
                           type="button"
                           onClick={handleSend}
-                          disabled={!inputText.trim()}
+                          disabled={!inputText.trim() && attachedFiles.length === 0}
                           className={`w-8 h-8 rounded-xl flex items-center justify-center transition-all ${
-                            inputText.trim()
+                            inputText.trim() || attachedFiles.length > 0
                               ? 'bg-[#D5AE57] text-black font-bold shadow-md active:scale-95'
                               : 'bg-[var(--surface)] text-[var(--text-tertiary)] cursor-not-allowed opacity-50'
                           }`}
-                          title="Envoyer la consigne"
+                          title={isFr ? "Envoyer la mission" : "Send mission"}
                         >
                           <GeistArrowUp size={16} strokeWidth={2} />
                         </button>
@@ -553,70 +718,44 @@ export default function AdaptiveChatWorkspace({
               </div>
             </div>
           </>
-        ) : (
-          /* ── Alternative Active Surface Panels ── */
-          <div className="flex-1 overflow-auto p-6 flex flex-col items-center justify-center text-center">
-            <div className="max-w-md p-6 rounded-2xl bg-[var(--surface)] border border-[var(--border)] space-y-3">
-              <div className="w-10 h-10 rounded-xl bg-[#D5AE57]/10 text-[#D5AE57] mx-auto flex items-center justify-center">
-                {activeSurface === 'workgraph' && <GeistCpu size={20} />}
-                {activeSurface === 'vie' && <GeistSliders size={20} />}
-                {activeSurface === 'visual_flow' && <GeistActivity size={20} />}
-              </div>
-              <h3 className="font-semibold text-sm capitalize">{activeSurface.replace('_', ' ')}</h3>
-              <p className="text-xs text-[var(--text-secondary)]">
-                {activeSurface === 'workgraph' && 'Vue structurelle du graphe de mission (Agents, Tâches, Artefacts, Sources).'}
-                {activeSurface === 'vie' && 'Environnement de contrôle et de validation humaine (VIE).'}
-                {activeSurface === 'visual_flow' && 'Pipeline d\'exécution dynamique et transitions d\'états des agents en direct.'}
-              </p>
+        ) : activeSurface === 'workgraph' ? (
+          <div className="flex-1 relative overflow-hidden flex flex-col">
+            <div className="absolute top-3 left-3 z-30">
               <button
                 type="button"
                 onClick={() => setActiveSurface('chat')}
-                className="px-4 py-2 rounded-xl bg-[var(--surface-raised)] hover:bg-[var(--hover)] border border-[var(--border)] text-xs font-medium text-[var(--text-primary)] transition-colors"
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[var(--surface-raised)] hover:bg-[var(--active)] border border-[var(--border)] text-xs text-[var(--text-primary)] shadow-md transition-colors"
               >
-                Retour à la conversation
+                <ArrowLeft size={13} weight="bold" />
+                <span>{isFr ? 'Retour à la conversation' : 'Back to Chat'}</span>
               </button>
             </div>
+            <VIECanvas />
           </div>
+        ) : activeSurface === 'vie' ? (
+          <VIEComprehensionView
+            onBackToChat={() => setActiveSurface('chat')}
+            missionTitle={missionTitle}
+          />
+        ) : activeSurface === 'live_flow' ? (
+          <LiveFlowTimelineView
+            onBackToChat={() => setActiveSurface('chat')}
+            missionTitle={missionTitle}
+          />
+        ) : (
+          <SimulationScenarioView
+            onAcceptAndRun={() => {
+              setActiveSurface('chat');
+              handleSend();
+            }}
+            onBackToChat={() => setActiveSurface('chat')}
+            missionPrompt={inputText || missionTitle}
+          />
         )}
       </section>
 
-      {/* ─── DROITE : RIGHT CONTEXT INSPECTOR (320-380px) ─── */}
-      <AnimatePresence>
-        {isRightOpen && (
-          <motion.div
-            initial={{ width: 0, opacity: 0 }}
-            animate={{ width: rightWidth, opacity: 1 }}
-            exit={{ width: 0, opacity: 0 }}
-            transition={{ duration: 0.18, ease: [0.16, 1, 0.3, 1] }}
-            className="hidden lg:block shrink-0 h-full overflow-hidden border-l border-[var(--border)]"
-          >
-            <RightContextInspector
-              isStreaming={isStreaming}
-              missionTitle={missionTitle}
-            />
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* ─── Mobile / Tablet Context Sheet Overlay ─── */}
-      {isRightOpen && (
-        <div className="fixed inset-0 z-50 flex justify-end lg:hidden bg-black/60 backdrop-blur-sm animate-in fade-in duration-150">
-          <div className="w-full max-w-sm sm:max-w-md h-full bg-[var(--material-canvas)] border-l border-[var(--border)] shadow-2xl">
-            <RightContextInspector
-              isStreaming={isStreaming}
-              missionTitle={missionTitle}
-            />
-          </div>
-        </div>
-      )}
-
-      {/* ─── Mobile Full-Screen Mission Sheet (Overview, WorkGraph, VIE, Flow) ─── */}
-      <MobileMissionModal
-        isOpen={mobileMissionOpen}
-        onClose={() => setMobileMissionOpen(false)}
-        missionTitle={missionTitle}
-        isStreaming={isStreaming}
-      />
+      {/* ─── DROITE : INSPECTEUR CONTEXTUEL (DÉDIÉ & RÉTRACTABLE) ─── */}
+      <RightContextInspector isStreaming={isStreaming} />
     </div>
   );
 }

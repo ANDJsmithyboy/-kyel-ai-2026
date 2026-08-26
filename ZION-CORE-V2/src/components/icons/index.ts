@@ -23,5 +23,7 @@ export {
   OnyxGrisIcon,
   NkyelAgentIcon,
 } from './NkyelIcons';
+export { PantherMissionGlyph } from './PantherMissionGlyph';
 /* Re-export nkyel/ sub-icons used by sidebar & input */
 export { PawNewIcon, PawHistoryIcon, ProjetsIcon, TropheeIcon, RadarWandanaIcon, WandanaIcon, OmbreIcon } from './nkyel';
+export * from './connectors/ConnectorIcons';

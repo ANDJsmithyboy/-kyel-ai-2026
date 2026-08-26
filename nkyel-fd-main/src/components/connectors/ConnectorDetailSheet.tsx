@@ -30,6 +30,7 @@ import {
   Sparkle,
 } from '@phosphor-icons/react';
 import type { ConnectorItem } from '@/stores/connectors.store';
+import { getConnectorIcon } from '@/components/icons';
 
 interface ConnectorDetailSheetProps {
   connector: ConnectorItem | null;
@@ -38,19 +39,6 @@ interface ConnectorDetailSheetProps {
   onConnect: (id: string) => void;
   onDisconnect: (id: string) => void;
 }
-
-const ICON_MAP: Record<string, React.ComponentType<any>> = {
-  GoogleLogo: HardDrives,
-  HardDrives,
-  FileText,
-  Table,
-  EnvelopeSimple,
-  CalendarBlank,
-  GitBranch,
-  Notebook,
-  Chats,
-  Database,
-};
 
 export default function ConnectorDetailSheet({
   connector,
@@ -61,7 +49,7 @@ export default function ConnectorDetailSheet({
 }: ConnectorDetailSheetProps) {
   if (!isOpen || !connector) return null;
 
-  const Icon = ICON_MAP[connector.icon] || PlugsConnected;
+  const Icon = getConnectorIcon(connector.slug || connector.id);
   const isConnected = connector.status === 'CONNECTED';
 
   return (
@@ -86,14 +74,9 @@ export default function ConnectorDetailSheet({
         >
           <div className="flex items-center gap-3">
             <div
-              className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
-              style={{
-                background: isConnected ? 'var(--accent-subtle)' : 'var(--surface)',
-                color: isConnected ? 'var(--accent)' : 'var(--text-secondary)',
-                border: '1px solid var(--border-subtle)',
-              }}
+              className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 bg-[var(--surface)] border border-[var(--border-subtle)] shadow-xs"
             >
-              <Icon size={20} weight={isConnected ? 'fill' : 'regular'} />
+              <Icon size={22} />
             </div>
             <div>
               <h2 className="text-base font-bold" style={{ color: 'var(--text-primary)' }}>

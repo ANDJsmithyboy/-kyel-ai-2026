@@ -14,7 +14,6 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import {
-  Robot,
   Sparkle,
   PaperPlaneRight,
   Microphone,
@@ -30,7 +29,9 @@ import {
   ArrowRight,
   ShieldCheck,
   HardDrives,
+  Cpu,
 } from '@phosphor-icons/react';
+import { NkyelAgentIcon } from '@/components/icons';
 
 interface ActiveMissionState {
   isActive: boolean;
@@ -53,15 +54,15 @@ export default function NkyelAgentView() {
   const [agentLanguage, setAgentLanguage] = useState<'fr' | 'en' | 'fang'>('fr');
   const [memoryEnabled, setMemoryEnabled] = useState(true);
 
-  // Live mission simulation state
+  // Live mission state (driven by real agent missions)
   const [missionState, setMissionState] = useState<ActiveMissionState>({
-    isActive: true,
-    objective: 'Analyse d’Opportunités & Transition Énergétique au Gabon 2026',
-    currentTask: 'Synthèse des données macro-économiques et modélisation DCF...',
-    activeAgentsCount: 3,
-    sourcesCount: 14,
-    evidenceCount: 9,
-    artifactsCount: 3,
+    isActive: false,
+    objective: '',
+    currentTask: '',
+    activeAgentsCount: 0,
+    sourcesCount: 0,
+    evidenceCount: 0,
+    artifactsCount: 0,
   });
 
   const handleLaunchMission = (e: React.FormEvent) => {
@@ -87,7 +88,7 @@ export default function NkyelAgentView() {
                 border: '1px solid var(--accent-muted)',
               }}
             >
-              <Robot size={22} weight="fill" />
+              <NkyelAgentIcon className="w-5 h-5 text-[var(--accent)]" />
             </div>
             <div>
               <div className="flex items-center gap-2">

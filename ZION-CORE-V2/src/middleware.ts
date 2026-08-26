@@ -1,10 +1,6 @@
-/**
- * Ñkyel AI — Next.js Route Protection & Clerk Middleware · SmartANDJ AI Technologies
- * Protège les routes souveraines du workspace (/chat, /workspace, /settings, /admin)
- * tout en maintenant accessibles les routes publiques d'accueil, d'authentification et de partage.
- *
- * Fondateur : Daniel Jonathan ANDJ
- */
+/* Ñkyel AI · middleware.ts · SmartANDJ AI Technologies
+   Canonical Clerk Auth Middleware (Clerk v7 + Next.js App Router)
+   Fondateur : Daniel Jonathan ANDJ */
 
 import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
 
@@ -12,16 +8,21 @@ const isPublicRoute = createRouteMatcher([
   '/',
   '/sign-in(.*)',
   '/sign-up(.*)',
-  '/legal(.*)',
-  '/privacy(.*)',
+  '/api/webhooks(.*)',
   '/terms(.*)',
-  '/cookies(.*)',
+  '/privacy(.*)',
   '/security(.*)',
+  '/cookies(.*)',
   '/acceptable-use(.*)',
-  '/share(.*)',
-  '/api/health',
-  '/api/readiness',
-  '/api/public(.*)',
+  '/legal(.*)',
+  '/docs(.*)',
+  '/welcome(.*)',
+  '/manifest.webmanifest',
+  '/manifest.json',
+  '/favicon.ico',
+  '/favicon.png',
+  '/brand(.*)',
+  '/icons(.*)',
 ]);
 
 export default clerkMiddleware(async (auth, req) => {
@@ -32,7 +33,9 @@ export default clerkMiddleware(async (auth, req) => {
 
 export const config = {
   matcher: [
+    // Skip Next.js internals and all static files, unless found in search params
     '/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)',
+    // Always run for API routes
     '/(api|trpc)(.*)',
   ],
 };

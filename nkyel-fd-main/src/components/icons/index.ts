@@ -23,3 +23,5 @@ export {
   OnyxGrisIcon,
   NkyelAgentIcon,
 } from './NkyelIcons';
+export { PantherMissionGlyph } from './PantherMissionGlyph';
+export * from './connectors/ConnectorIcons';

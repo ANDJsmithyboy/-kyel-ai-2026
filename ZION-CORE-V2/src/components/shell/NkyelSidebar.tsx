@@ -63,7 +63,8 @@ import {
   Copy,
 } from '@phosphor-icons/react';
 import { useSidebar } from '@/hooks/useSidebar';
-import { useSafeUser as useUser } from '@/lib/auth-client';
+import { useSafeUser as useUser, useSafeClerk as useClerk } from '@/lib/auth-client';
+import { PantherMissionGlyph } from '@/components/icons';
 
 /* ═══════════════════════════════════════════════════════
    NAV CONFIGURATION — P0 Canonical Order
@@ -307,7 +308,7 @@ export default function NkyelSidebar() {
               e.currentTarget.style.background = 'var(--accent)';
             }}
           >
-            <Plus size={16} weight="bold" className="shrink-0" />
+            <PantherMissionGlyph size={18} className="shrink-0" />
             {!isCollapsed && <span className="truncate">Nouvelle mission</span>}
           </Link>
         </div>

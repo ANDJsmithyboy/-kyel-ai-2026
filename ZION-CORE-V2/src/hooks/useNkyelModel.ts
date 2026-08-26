@@ -1,31 +1,116 @@
+/**
+ * Ñkyel AI · Intelligence Mode State & Engine Definition
+ * SmartANDJ AI Technologies · Founder: Daniel Jonathan ANDJ
+ *
+ * Canonical source of truth for intelligence modes:
+ * - Auto (FR: Auto / EN: Auto) -> Intelligent autonomous routing
+ * - Fast (FR: Rapide / EN: Fast) -> Ultra-fast, concise & responsive
+ * - Deep (FR: Profond / EN: Deep) -> Deep reasoning & complex code
+ * - Research (FR: Recherche / EN: Research) -> Live web search & deep grounding
+ */
+
 'use client';
 
 import { create } from 'zustand';
 
-export type NkyelEngineId = 'auto' | 'chui' | 'radi' | 'research';
+export type IntelligenceModeId = 'auto' | 'fast' | 'deep' | 'research';
+export type NkyelEngineId = IntelligenceModeId | 'chui' | 'radi' | 'tai';
 
-export interface NkyelEngine {
-  id: NkyelEngineId;
-  label: string;
+export interface IntelligenceMode {
+  id: IntelligenceModeId;
+  name: string;
+  labelFr: string;
+  labelEn: string;
+  descFr: string;
+  descEn: string;
+  badge?: string;
   apiModel: string;
 }
 
-const ENGINES: Record<NkyelEngineId, NkyelEngine> = {
-  auto: { id: 'auto', label: 'Ñkyel', apiModel: 'auto' },
-  chui: { id: 'chui', label: 'Chui', apiModel: 'chui' },
-  radi: { id: 'radi', label: 'Radi', apiModel: 'radi' },
-  research: { id: 'research', label: 'Research', apiModel: 'research' },
+export type NkyelEngine = IntelligenceMode;
+
+export const INTELLIGENCE_MODES: Record<IntelligenceModeId, IntelligenceMode> = {
+  auto: {
+    id: 'auto',
+    name: 'Ñkyel',
+    labelFr: 'Ñkyel',
+    labelEn: 'Ñkyel',
+    descFr: 'Routage intelligent autonome',
+    descEn: 'Intelligent autonomous routing',
+    apiModel: 'auto',
+  },
+  fast: {
+    id: 'fast',
+    name: 'Ñkyel Radi',
+    labelFr: 'Ñkyel Radi',
+    labelEn: 'Ñkyel Radi',
+    descFr: 'Ultra-rapide & concis',
+    descEn: 'Ultra-fast & concise',
+    apiModel: 'radi',
+  },
+  deep: {
+    id: 'deep',
+    name: 'Ñkyel Chui',
+    labelFr: 'Ñkyel Chui',
+    labelEn: 'Ñkyel Chui',
+    descFr: 'Raisonnement profond & code complexe',
+    descEn: 'Deep reasoning & complex code',
+    badge: 'Pro',
+    apiModel: 'chui',
+  },
+  research: {
+    id: 'research',
+    name: 'Ñkyel Research',
+    labelFr: 'Ñkyel Research',
+    labelEn: 'Ñkyel Research',
+    descFr: 'Recherche multi-sources & preuves',
+    descEn: 'Multi-source research & citations',
+    apiModel: 'research',
+  },
 };
 
-export const getNkyelEngine = (id: NkyelEngineId | string): NkyelEngine =>
-  ENGINES[id as NkyelEngineId] ?? ENGINES.auto;
+// Backward compatibility alias for ENGINES
+export const ENGINES: Record<string, IntelligenceMode> = {
+  ...INTELLIGENCE_MODES,
+  chui: INTELLIGENCE_MODES.deep,
+  radi: INTELLIGENCE_MODES.fast,
+  tai: INTELLIGENCE_MODES.deep,
+};
+
+export const getIntelligenceMode = (id: string): IntelligenceMode => {
+  if (id === 'chui' || id === 'deep') return INTELLIGENCE_MODES.deep;
+  if (id === 'radi' || id === 'fast') return INTELLIGENCE_MODES.fast;
+  if (id === 'research') return INTELLIGENCE_MODES.research;
+  return INTELLIGENCE_MODES.auto;
+};
+
+export const getNkyelEngine = getIntelligenceMode;
 
 interface NkyelModelState {
-  engineId: NkyelEngineId;
-  setEngineId: (engineId: NkyelEngineId) => void;
+  engineId: IntelligenceModeId;
+  modeId: IntelligenceModeId;
+  selectedIntelligenceMode: IntelligenceModeId;
+  setEngineId: (engineId: IntelligenceModeId | string) => void;
+  setModeId: (modeId: IntelligenceModeId | string) => void;
 }
+
+const normalizeMode = (id: string): IntelligenceModeId => {
+  if (id === 'chui' || id === 'deep') return 'deep';
+  if (id === 'radi' || id === 'fast') return 'fast';
+  if (id === 'research') return 'research';
+  return 'auto';
+};
 
 export const useNkyelModel = create<NkyelModelState>((set) => ({
   engineId: 'auto',
-  setEngineId: (engineId) => set({ engineId }),
+  modeId: 'auto',
+  selectedIntelligenceMode: 'auto',
+  setEngineId: (id) => {
+    const normalized = normalizeMode(id);
+    set({ engineId: normalized, modeId: normalized, selectedIntelligenceMode: normalized });
+  },
+  setModeId: (id) => {
+    const normalized = normalizeMode(id);
+    set({ engineId: normalized, modeId: normalized, selectedIntelligenceMode: normalized });
+  },
 }));

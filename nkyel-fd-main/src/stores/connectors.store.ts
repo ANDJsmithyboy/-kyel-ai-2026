@@ -111,11 +111,9 @@ const INITIAL_CONNECTORS: ConnectorItem[] = [
     name: 'Google Workspace',
     description: 'Suite bureautique complète : Drive, Docs, Sheets, Gmail et Calendar unifiés.',
     category: 'Google',
-    icon: 'GoogleLogo',
-    status: 'CONNECTED',
+    icon: 'google-workspace',
+    status: 'AVAILABLE',
     isGoogle: true,
-    connectedAccount: 'daniel@smartandj.com',
-    lastUsedAt: 'Il y a 12 minutes',
     capabilities: ['Recherche Drive', 'Édition Docs', 'Analyse Sheets', 'Lecture/Envoi Gmail', 'Gestion Agenda'],
     permissions: [
       { id: 'p1', scope: 'drive.readonly', humanLabel: 'Lire et indexer vos fichiers Google Drive', requiresApproval: false },

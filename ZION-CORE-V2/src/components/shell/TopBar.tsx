@@ -15,21 +15,12 @@ import {
 import { useSidebar } from '@/hooks/useSidebar';
 import { useTerrainPanel } from '@/hooks/useTerrainPanel';
 import { useIsMobile } from '@/hooks/useIsMobile';
-import { getNkyelEngine, useNkyelModel } from '@/hooks/useNkyelModel';
+import { INTELLIGENCE_MODES, getIntelligenceMode, useNkyelModel, type IntelligenceModeId } from '@/hooks/useNkyelModel';
 import UpgradeModal from '@/components/subscription/UpgradeModal';
 
 interface TopBarProps {
   onOpenCapabilities?: () => void;
 }
-
-type EngineId = 'auto' | 'chui' | 'radi' | 'research';
-
-const engines: Array<{ id: EngineId; name: string; desc: string; badge?: string }> = [
-  { id: 'auto', name: 'Ñkyel', desc: 'Routage intelligent autonome' },
-  { id: 'chui', name: 'Ñkyel Chui', desc: 'Raisonnement profond et code complexe', badge: 'Pro' },
-  { id: 'radi', name: 'Ñkyel Radi', desc: 'Ultra-rapide et concis' },
-  { id: 'research', name: 'Ñkyel Research', desc: 'Recherche web et veille en direct' },
-];
 
 export default function TopBar({ onOpenCapabilities }: TopBarProps) {
   const { open } = useSidebar();
@@ -40,7 +31,8 @@ export default function TopBar({ onOpenCapabilities }: TopBarProps) {
   const setEngineId = useNkyelModel((state) => state.setEngineId);
   const [modelDropdown, setModelDropdown] = useState(false);
   const [isUpgradeOpen, setIsUpgradeOpen] = useState(false);
-  const activeEngine = engineId === 'auto' ? 'Ñkyel' : getNkyelEngine(engineId).label;
+  const currentEngine = getIntelligenceMode(engineId);
+  const modesList = Object.values(INTELLIGENCE_MODES);
 
   return (
     <>
@@ -52,31 +44,37 @@ export default function TopBar({ onOpenCapabilities }: TopBarProps) {
               <SidebarSimple size={18} />
             </button>
           )}
-          <div className="relative">
+          <div className="relative hidden md:block">
             <button
               type="button"
               onClick={() => setModelDropdown((open) => !open)}
               aria-expanded={modelDropdown}
-              aria-label="Choisir le moteur Ñkyel"
+              aria-label="Choisir le mode d'intelligence"
               className="flex h-9 min-w-[146px] items-center justify-between gap-3 rounded-[var(--radius-md)] border border-[var(--border-strong)] bg-[var(--surface-raised)] px-3 text-[var(--text-md)] font-medium tracking-[-0.025em] text-[var(--text-primary)] shadow-[var(--shadow-xs)] transition-colors hover:border-[var(--accent-muted)] hover:bg-[var(--active)]"
             >
-              <span>{activeEngine}</span>
+              <div className="flex items-center gap-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#D5AE57]" />
+                <span>{currentEngine.labelFr}</span>
+              </div>
               <CaretDown size={15} weight="bold" className="text-[var(--text-secondary)]" />
             </button>
             {modelDropdown && (
               <div className="absolute left-0 top-full z-[var(--z-dropdown)] mt-2 w-72 space-y-1 rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] p-2 shadow-[var(--shadow-xl)] animate-scale-in">
-                {engines.map((engine) => (
+                <div className="px-2.5 py-1 text-[10px] font-mono uppercase tracking-wider text-[var(--text-tertiary)] border-b border-[var(--border-subtle)] mb-1">
+                  Mode d&apos;intelligence
+                </div>
+                {modesList.map((mode) => (
                   <button
-                    key={engine.id}
+                    key={mode.id}
                     type="button"
-                    onClick={() => { setEngineId(engine.id); setModelDropdown(false); }}
-                    className={`flex w-full flex-col items-start rounded-lg px-3 py-2 text-left transition-colors ${engine.id === engineId ? 'bg-[var(--selected)]' : 'hover:bg-[var(--hover)]'}`}
+                    onClick={() => { setEngineId(mode.id); setModelDropdown(false); }}
+                    className={`flex w-full flex-col items-start rounded-lg px-3 py-2 text-left transition-colors ${mode.id === engineId ? 'bg-[var(--selected)]' : 'hover:bg-[var(--hover)]'}`}
                   >
                     <span className="flex w-full items-center justify-between text-[13px] font-semibold text-[var(--text-primary)]">
-                      {engine.name}
-                      {engine.badge && <span className="rounded-full bg-[var(--accent-subtle)] px-1.5 py-0.5 text-[10px] text-[var(--text-secondary)]">{engine.badge}</span>}
+                      {mode.labelFr}
+                      {mode.badge && <span className="rounded-full bg-[var(--accent-subtle)] px-1.5 py-0.5 text-[10px] text-[var(--text-secondary)]">{mode.badge}</span>}
                     </span>
-                    <span className="mt-0.5 text-[11px] text-[var(--text-tertiary)]">{engine.desc}</span>
+                    <span className="mt-0.5 text-[11px] text-[var(--text-tertiary)]">{mode.descFr}</span>
                   </button>
                 ))}
               </div>

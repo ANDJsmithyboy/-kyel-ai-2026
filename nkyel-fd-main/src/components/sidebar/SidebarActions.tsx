@@ -8,7 +8,6 @@
 
 import { usePathname, useRouter } from 'next/navigation';
 import {
-  NotePencil,
   ChatCircleDots,
   Graph,
   SquaresFour,
@@ -16,6 +15,7 @@ import {
   Books,
   Robot,
 } from '@phosphor-icons/react';
+import { PantherMissionGlyph } from '@/components/icons';
 import styles from './sidebar.module.css';
 
 interface SidebarActionsProps {
@@ -89,7 +89,7 @@ export default function SidebarActions({ isCollapsed }: SidebarActionsProps) {
           title="Nouvelle mission"
           className="w-10 h-10 mx-auto rounded-xl bg-[#6757E8]/15 hover:bg-[#6757E8]/25 border border-[#6757E8]/30 text-[#D5AE57] flex items-center justify-center transition-all mb-2"
         >
-          <NotePencil size={18} weight="bold" />
+          <PantherMissionGlyph size={18} />
         </button>
       ) : (
         <button
@@ -97,7 +97,7 @@ export default function SidebarActions({ isCollapsed }: SidebarActionsProps) {
           onClick={() => router.push('/')}
           className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl bg-gradient-to-r from-[#6757E8]/20 to-[#D5AE57]/10 hover:from-[#6757E8]/30 hover:to-[#D5AE57]/20 border border-[#D5AE57]/25 text-white font-medium text-[13px] shadow-[0_0_15px_rgba(103,87,232,0.15)] transition-all mb-2 active:scale-[0.98]"
         >
-          <NotePencil size={18} weight="bold" className="text-[#D5AE57] shrink-0" />
+          <PantherMissionGlyph size={18} className="text-[#D5AE57] shrink-0" />
           <span className="font-semibold tracking-wide">Nouvelle mission</span>
         </button>
       )}

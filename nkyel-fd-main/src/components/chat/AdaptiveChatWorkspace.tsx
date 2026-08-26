@@ -31,13 +31,32 @@ import {
   GeistCross,
   GeistSliders,
 } from '@/components/icons/GeistIcons';
-import { CaretDown, Check, ArrowLeft } from '@phosphor-icons/react';
+import { useRouter } from 'next/navigation';
+import {
+  CaretDown,
+  Check,
+  ArrowLeft,
+  FileText,
+  Globe,
+  PlugsConnected,
+  Eye,
+  Presentation,
+  Table,
+  Cpu,
+  X,
+  Paperclip,
+  Sparkle,
+} from '@phosphor-icons/react';
 import { useWorkspaceLayout } from '@/hooks/useWorkspaceLayout';
 import { useNkyelModel, getIntelligenceMode, type IntelligenceModeId } from '@/hooks/useNkyelModel';
 import { useLanguageStore } from '@/stores/language.store';
 import RightContextInspector from '@/components/inspector/RightContextInspector';
 import Surface from '@/components/ui/Surface';
 import TierPicker from '@/components/chat/TierPicker';
+import VIECanvas from '@/components/vie/VIECanvas';
+import VIEComprehensionView from '@/components/vie/VIEComprehensionView';
+import LiveFlowTimelineView from '@/components/flow/LiveFlowTimelineView';
+import SimulationScenarioView from '@/components/vie/SimulationScenarioView';
 
 export interface ChatMessage {
   id: string;
@@ -84,6 +103,7 @@ export default function AdaptiveChatWorkspace({
   onStopStreaming,
   isStreaming = false,
 }: AdaptiveChatWorkspaceProps) {
+  const router = useRouter();
   const [messages, setMessages] = useState<ChatMessage[]>(initialMessages);
   const [inputText, setInputText] = useState('');
   const [copiedMsgId, setCopiedMsgId] = useState<string | null>(null);
@@ -92,10 +112,13 @@ export default function AdaptiveChatWorkspace({
   const [tierPickerOpen, setTierPickerOpen] = useState(false);
   const [missionMenuOpen, setMissionMenuOpen] = useState(false);
   const [activeSurface, setActiveSurface] = useState<'chat' | 'workgraph' | 'vie' | 'live_flow'>('chat');
+  const [attachedFiles, setAttachedFiles] = useState<{ id: string; name: string; size: string }[]>([]);
 
   const { modeId, setModeId } = useNkyelModel();
+  const currentEngine = getIntelligenceMode(modeId);
   const { t, uiLocale } = useLanguageStore();
   const isFr = !uiLocale || uiLocale.startsWith('fr');
+  const activeModeLabel = isFr ? currentEngine.labelFr : currentEngine.labelEn;
 
   const {
     isLeftOpen,
@@ -110,6 +133,103 @@ export default function AdaptiveChatWorkspace({
   const chatContainerRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const missionMenuRef = useRef<HTMLDivElement>(null);
+  const plusMenuRef = useRef<HTMLDivElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Close plus menu on outside click or Escape
+  useEffect(() => {
+    if (!plusMenuOpen) return;
+    const handleClickOutside = (e: MouseEvent) => {
+      if (plusMenuRef.current && !plusMenuRef.current.contains(e.target as Node)) {
+        setPlusMenuOpen(false);
+      }
+    };
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setPlusMenuOpen(false);
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('keydown', handleKey);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('keydown', handleKey);
+    };
+  }, [plusMenuOpen]);
+
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+    const newFiles = Array.from(files).map((f) => ({
+      id: `file-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+      name: f.name,
+      size: `${(f.size / 1024).toFixed(0)} KB`,
+    }));
+    setAttachedFiles((prev) => [...prev, ...newFiles]);
+    setPlusMenuOpen(false);
+    if (fileInputRef.current) fileInputRef.current.value = '';
+  };
+
+  const handleRemoveFile = (id: string) => {
+    setAttachedFiles((prev) => prev.filter((f) => f.id !== id));
+  };
+
+  const handleActionSelect = (action: string) => {
+    setPlusMenuOpen(false);
+    switch (action) {
+      case 'upload':
+        fileInputRef.current?.click();
+        break;
+      case 'research':
+        setModeId('research');
+        if (textareaRef.current) textareaRef.current.focus();
+        break;
+      case 'connections':
+        router.push('/connectors');
+        break;
+      case 'image':
+        setInputText((prev) =>
+          prev
+            ? `${prev}\n\n${isFr ? 'Générer une image : ' : 'Generate an image: '}`
+            : isFr
+            ? 'Génère une maquette visuelle haute fidélité pour : '
+            : 'Generate a high-fidelity visual mock for: '
+        );
+        textareaRef.current?.focus();
+        break;
+      case 'document':
+        setInputText((prev) =>
+          prev
+            ? `${prev}\n\n${isFr ? 'Rédiger un document : ' : 'Write a document: '}`
+            : isFr
+            ? 'Rédige un document structuré et complet sur : '
+            : 'Write a comprehensive document about: '
+        );
+        textareaRef.current?.focus();
+        break;
+      case 'slides':
+        setInputText((prev) =>
+          prev
+            ? `${prev}\n\n${isFr ? 'Créer des diapositives : ' : 'Create slides: '}`
+            : isFr
+            ? 'Conçois une présentation de diapositives professionnelle pour : '
+            : 'Design a professional slide presentation for: '
+        );
+        textareaRef.current?.focus();
+        break;
+      case 'spreadsheet':
+        setInputText((prev) =>
+          prev
+            ? `${prev}\n\n${isFr ? 'Tableur & données : ' : 'Spreadsheet & data: '}`
+            : isFr
+            ? 'Analyse et modélise une feuille de calcul financière pour : '
+            : 'Analyze and model a financial spreadsheet for: '
+        );
+        textareaRef.current?.focus();
+        break;
+      case 'artifacts':
+        if (!isRightOpen) toggleRight();
+        break;
+    }
+  };
 
   // Sync internal messages if prop changes
   useEffect(() => {
@@ -378,8 +498,41 @@ export default function AdaptiveChatWorkspace({
                 <Surface
                   layer="glass-regular"
                   elevation="modal"
-                  className="rounded-3xl p-3 sm:p-3.5 transition-all shadow-[var(--shadow-floating)] border border-[var(--border-strong)] flex flex-col gap-2.5 backdrop-blur-2xl"
+                  className="rounded-3xl p-3 sm:p-3.5 transition-all shadow-[var(--shadow-floating)] border border-[var(--border-strong)] flex flex-col gap-2 backdrop-blur-2xl"
                 >
+                  {/* Hidden File Input for Real Attachments */}
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    multiple
+                    className="hidden"
+                    onChange={handleFileUpload}
+                  />
+
+                  {/* Attached Files Chips (if any) */}
+                  {attachedFiles.length > 0 && (
+                    <div className="flex flex-wrap gap-1.5 px-1 pt-0.5">
+                      {attachedFiles.map((file) => (
+                        <div
+                          key={file.id}
+                          className="flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-[var(--surface-raised)] border border-[var(--border)] text-xs text-[var(--text-primary)] shadow-xs animate-scale-in"
+                        >
+                          <Paperclip size={13} className="text-[#D5AE57] shrink-0" />
+                          <span className="truncate max-w-[150px] font-medium">{file.name}</span>
+                          <span className="text-[10px] text-[var(--text-tertiary)] font-mono">({file.size})</span>
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveFile(file.id)}
+                            className="ml-0.5 p-0.5 rounded-full hover:bg-[var(--hover)] text-[var(--text-tertiary)] hover:text-red-400 transition-colors"
+                            title={isFr ? "Supprimer le fichier" : "Remove file"}
+                          >
+                            <X size={11} weight="bold" />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
                   {/* Textarea Input Area */}
                   <div className="relative flex items-center">
                     <textarea
@@ -399,57 +552,124 @@ export default function AdaptiveChatWorkspace({
 
                   {/* Toolbar Actions Bar */}
                   <div className="flex items-center justify-between border-t border-[var(--border-subtle)] pt-1.5 px-1">
-                    {/* Left Cluster: Plus Button + Single Canonical Mode Picker */}
-                    <div className="flex items-center gap-1.5 relative">
+                    {/* Left Cluster: Plus Button + Mobile-Only Mode Selector */}
+                    <div className="flex items-center gap-1.5 relative" ref={plusMenuRef}>
                       <button
                         type="button"
                         onClick={() => setPlusMenuOpen(!plusMenuOpen)}
-                        className="w-8 h-8 rounded-xl bg-[var(--surface)] hover:bg-[var(--surface-raised)] border border-[var(--border)] flex items-center justify-center text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
-                        title={isFr ? "Ajouter des fichiers ou du contexte (+)" : "Add files or context (+)"}
+                        aria-expanded={plusMenuOpen}
+                        className="w-8 h-8 rounded-xl bg-[var(--surface)] hover:bg-[var(--surface-raised)] border border-[var(--border)] flex items-center justify-center text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors shadow-xs"
+                        title={isFr ? "Actions et capacités (+)" : "Actions & capabilities (+)"}
                       >
                         <GeistPlus size={15} strokeWidth={2} />
                       </button>
 
-                      {/* Single Canonical Mode Selector Pill */}
+                      {/* Mobile-Only Mode Selector Pill (Never rendered on Desktop where TopBar is canonical) */}
                       <button
                         type="button"
                         onClick={() => setTierPickerOpen(true)}
-                        className="h-8 px-2.5 rounded-xl bg-[var(--surface)] hover:bg-[var(--surface-raised)] border border-[var(--border)] flex items-center gap-1.5 text-xs text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
+                        className="flex md:hidden h-8 min-h-[36px] px-2.5 rounded-xl bg-[var(--surface)] hover:bg-[var(--surface-raised)] border border-[var(--border)] items-center gap-1.5 text-xs text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors active:scale-95 touch-manipulation shadow-xs select-none"
                         title={isFr ? "Changer de mode d'intelligence" : "Change intelligence mode"}
+                        aria-label={isFr ? "Changer de mode d'intelligence" : "Change intelligence mode"}
                       >
-                        <span className="w-2 h-2 rounded-full bg-[#D5AE57]" />
-                        <span className="font-medium">{activeModeLabel}</span>
-                        <CaretDown size={11} className="opacity-60" />
+                        <span className="w-1.5 h-1.5 rounded-full bg-[#D5AE57] shrink-0" />
+                        <span className="font-semibold text-xs text-[var(--text-primary)] max-w-[105px] truncate">{activeModeLabel}</span>
+                        <CaretDown size={11} weight="bold" className="opacity-60 shrink-0 text-[var(--text-tertiary)]" />
                       </button>
 
-                      {/* Plus Dropdown Menu */}
+                      {/* Functional Action Launcher Popover */}
                       {plusMenuOpen && (
-                        <div className="absolute bottom-full left-0 mb-2 w-52 p-1 rounded-2xl bg-[var(--bg-elevated)] border border-[var(--border)] shadow-xl text-xs space-y-0.5 z-50 animate-scale-in">
+                        <div className="absolute bottom-full left-0 mb-2 w-64 p-1.5 rounded-2xl bg-[var(--bg-elevated)] border border-[var(--border-strong)] shadow-2xl text-xs space-y-0.5 z-50 animate-scale-in">
+                          <div className="px-2.5 py-1 text-[10px] font-mono uppercase tracking-wider text-[var(--text-tertiary)] border-b border-[var(--border-subtle)] mb-1">
+                            {isFr ? "Actions & Capacités" : "Actions & Capabilities"}
+                          </div>
+
                           <button
-                            onClick={() => setPlusMenuOpen(false)}
+                            type="button"
+                            onClick={() => handleActionSelect('upload')}
                             className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl hover:bg-[var(--hover)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] text-left transition-colors"
                           >
-                            <GeistFile size={15} className="text-[#D5AE57]" />
-                            <span>{isFr ? 'Téléverser Document' : 'Upload Document'}</span>
+                            <FileText size={16} className="text-[#D5AE57] shrink-0" />
+                            <div className="flex-1 min-w-0">
+                              <p className="font-medium text-xs text-[var(--text-primary)]">{isFr ? 'Téléverser un document' : 'Upload file'}</p>
+                              <p className="text-[10px] text-[var(--text-tertiary)] truncate">{isFr ? 'PDF, texte, données ou code' : 'PDF, text, data or code'}</p>
+                            </div>
                           </button>
+
                           <button
-                            onClick={() => setPlusMenuOpen(false)}
+                            type="button"
+                            onClick={() => handleActionSelect('research')}
                             className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl hover:bg-[var(--hover)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] text-left transition-colors"
                           >
-                            <GeistGlobe size={15} className="text-emerald-400" />
-                            <span>{isFr ? 'Recherche Multi-Sources' : 'Multi-Source Search'}</span>
+                            <Globe size={16} className="text-emerald-400 shrink-0" />
+                            <div className="flex-1 min-w-0">
+                              <p className="font-medium text-xs text-[var(--text-primary)]">{isFr ? 'Recherche approfondie' : 'Deep Research'}</p>
+                              <p className="text-[10px] text-[var(--text-tertiary)] truncate">{isFr ? 'Veille et sources en direct' : 'Live web grounding & citations'}</p>
+                            </div>
                           </button>
+
                           <button
-                            onClick={() => setPlusMenuOpen(false)}
+                            type="button"
+                            onClick={() => handleActionSelect('connections')}
                             className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl hover:bg-[var(--hover)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] text-left transition-colors"
                           >
-                            <GeistPlugs size={15} className="text-amber-300" />
-                            <span>{isFr ? 'Connecteur' : 'Connector'}</span>
+                            <PlugsConnected size={16} className="text-amber-400 shrink-0" />
+                            <div className="flex-1 min-w-0">
+                              <p className="font-medium text-xs text-[var(--text-primary)]">{isFr ? 'Connecteurs & MCP' : 'Connectors & MCP'}</p>
+                              <p className="text-[10px] text-[var(--text-tertiary)] truncate">{isFr ? 'Google Workspace, GitHub, Slack' : 'Google Workspace, GitHub, Slack'}</p>
+                            </div>
+                          </button>
+
+                          <div className="h-px bg-[var(--border-subtle)] my-1" />
+
+                          <button
+                            type="button"
+                            onClick={() => handleActionSelect('image')}
+                            className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl hover:bg-[var(--hover)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] text-left transition-colors"
+                          >
+                            <Eye size={16} className="text-purple-400 shrink-0" />
+                            <span className="font-medium text-xs text-[var(--text-primary)]">{isFr ? 'Générer une image' : 'Generate image'}</span>
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={() => handleActionSelect('document')}
+                            className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl hover:bg-[var(--hover)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] text-left transition-colors"
+                          >
+                            <FileText size={16} className="text-blue-400 shrink-0" />
+                            <span className="font-medium text-xs text-[var(--text-primary)]">{isFr ? 'Rédiger un document' : 'Write document'}</span>
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={() => handleActionSelect('slides')}
+                            className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl hover:bg-[var(--hover)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] text-left transition-colors"
+                          >
+                            <Presentation size={16} className="text-amber-300 shrink-0" />
+                            <span className="font-medium text-xs text-[var(--text-primary)]">{isFr ? 'Créer des diapositives' : 'Create slides'}</span>
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={() => handleActionSelect('spreadsheet')}
+                            className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl hover:bg-[var(--hover)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] text-left transition-colors"
+                          >
+                            <Table size={16} className="text-emerald-400 shrink-0" />
+                            <span className="font-medium text-xs text-[var(--text-primary)]">{isFr ? 'Tableur & analyse de données' : 'Data & spreadsheet'}</span>
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={() => handleActionSelect('artifacts')}
+                            className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl hover:bg-[var(--hover)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] text-left transition-colors"
+                          >
+                            <Cpu size={16} className="text-cyan-400 shrink-0" />
+                            <span className="font-medium text-xs text-[var(--text-primary)]">{isFr ? "Ouvrir l'inspecteur d'artefacts" : 'Open artifact inspector'}</span>
                           </button>
                         </div>
                       )}
 
-                      {/* Single Mode Picker Modal / Popover */}
+                      {/* Mobile-Only Mode Picker Modal */}
                       <TierPicker
                         isOpen={tierPickerOpen}
                         onClose={() => setTierPickerOpen(false)}
@@ -481,9 +701,9 @@ export default function AdaptiveChatWorkspace({
                         <button
                           type="button"
                           onClick={handleSend}
-                          disabled={!inputText.trim()}
+                          disabled={!inputText.trim() && attachedFiles.length === 0}
                           className={`w-8 h-8 rounded-xl flex items-center justify-center transition-all ${
-                            inputText.trim()
+                            inputText.trim() || attachedFiles.length > 0
                               ? 'bg-[#D5AE57] text-black font-bold shadow-md active:scale-95'
                               : 'bg-[var(--surface)] text-[var(--text-tertiary)] cursor-not-allowed opacity-50'
                           }`}
@@ -498,37 +718,39 @@ export default function AdaptiveChatWorkspace({
               </div>
             </div>
           </>
-        ) : (
-          /* ── Contextual Mission Workbench Surface (WorkGraph / Studio VIE / Live Flow) ── */
-          <div className="flex-1 overflow-auto p-6 flex flex-col items-center justify-center text-center">
-            <div className="max-w-md p-6 rounded-2xl bg-[var(--surface)] border border-[var(--border)] space-y-4">
-              <div className="w-12 h-12 rounded-2xl bg-[#D5AE57]/10 text-[#D5AE57] mx-auto flex items-center justify-center">
-                {activeSurface === 'workgraph' && <GeistCpu size={24} />}
-                {activeSurface === 'vie' && <GeistSliders size={24} />}
-                {activeSurface === 'live_flow' && <GeistActivity size={24} />}
-              </div>
-              <div>
-                <h3 className="font-semibold text-base capitalize">
-                  {activeSurface === 'workgraph' && t('view.workgraph')}
-                  {activeSurface === 'vie' && t('view.vie')}
-                  {activeSurface === 'live_flow' && t('view.liveFlow')}
-                </h3>
-                <p className="text-xs text-[var(--text-secondary)] mt-1.5 leading-relaxed">
-                  {activeSurface === 'workgraph' && (isFr ? 'Arborescence des agents, tâches, preuves et artefacts générés au fil de la mission.' : 'Hierarchy of agents, tasks, evidence, and artifacts generated during the mission.')}
-                  {activeSurface === 'vie' && (isFr ? 'Studio de validation, de contrôle et d\'édition humaine directe des artefacts.' : 'Verification, control, and user editing environment for artifacts.')}
-                  {activeSurface === 'live_flow' && (isFr ? 'Flux d\'exécution en direct et transitions d\'états des agents autonomes.' : 'Live execution flow and state transitions of autonomous agents.')}
-                </p>
-              </div>
+        ) : activeSurface === 'workgraph' ? (
+          <div className="flex-1 relative overflow-hidden flex flex-col">
+            <div className="absolute top-3 left-3 z-30">
               <button
                 type="button"
                 onClick={() => setActiveSurface('chat')}
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#D5AE57] text-black font-semibold text-xs shadow-sm hover:bg-[#C59E47] transition-colors"
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[var(--surface-raised)] hover:bg-[var(--active)] border border-[var(--border)] text-xs text-[var(--text-primary)] shadow-md transition-colors"
               >
-                <ArrowLeft size={14} weight="bold" />
+                <ArrowLeft size={13} weight="bold" />
                 <span>{isFr ? 'Retour à la conversation' : 'Back to Chat'}</span>
               </button>
             </div>
+            <VIECanvas />
           </div>
+        ) : activeSurface === 'vie' ? (
+          <VIEComprehensionView
+            onBackToChat={() => setActiveSurface('chat')}
+            missionTitle={missionTitle}
+          />
+        ) : activeSurface === 'live_flow' ? (
+          <LiveFlowTimelineView
+            onBackToChat={() => setActiveSurface('chat')}
+            missionTitle={missionTitle}
+          />
+        ) : (
+          <SimulationScenarioView
+            onAcceptAndRun={() => {
+              setActiveSurface('chat');
+              handleSend();
+            }}
+            onBackToChat={() => setActiveSurface('chat')}
+            missionPrompt={inputText || missionTitle}
+          />
         )}
       </section>
 

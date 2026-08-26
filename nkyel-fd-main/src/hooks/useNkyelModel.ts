@@ -1,101 +1,116 @@
+/**
+ * Ñkyel AI · Intelligence Mode State & Engine Definition
+ * SmartANDJ AI Technologies · Founder: Daniel Jonathan ANDJ
+ *
+ * Canonical source of truth for intelligence modes:
+ * - Auto (FR: Auto / EN: Auto) -> Intelligent autonomous routing
+ * - Fast (FR: Rapide / EN: Fast) -> Ultra-fast, concise & responsive
+ * - Deep (FR: Profond / EN: Deep) -> Deep reasoning & complex code
+ * - Research (FR: Recherche / EN: Research) -> Live web search & deep grounding
+ */
+
 'use client';
 
 import { create } from 'zustand';
 
-export type NkyelEngineId = 'auto' | 'chui' | 'radi' | 'research' | 'tai';
-export type IntelligenceModeId = NkyelEngineId;
+export type IntelligenceModeId = 'auto' | 'fast' | 'deep' | 'research';
+export type NkyelEngineId = IntelligenceModeId | 'chui' | 'radi' | 'tai';
 
-export interface NkyelEngine {
-  id: NkyelEngineId;
+export interface IntelligenceMode {
+  id: IntelligenceModeId;
   name: string;
-  label: string;
   labelFr: string;
   labelEn: string;
-  desc: string;
   descFr: string;
   descEn: string;
   badge?: string;
   apiModel: string;
 }
 
-export const ENGINES: Record<NkyelEngineId, NkyelEngine> = {
+export type NkyelEngine = IntelligenceMode;
+
+export const INTELLIGENCE_MODES: Record<IntelligenceModeId, IntelligenceMode> = {
   auto: {
     id: 'auto',
     name: 'Ñkyel',
-    label: 'Ñkyel',
     labelFr: 'Ñkyel',
     labelEn: 'Ñkyel',
-    desc: 'Routage intelligent autonome',
     descFr: 'Routage intelligent autonome',
     descEn: 'Intelligent autonomous routing',
     apiModel: 'auto',
   },
-  chui: {
-    id: 'chui',
+  fast: {
+    id: 'fast',
+    name: 'Ñkyel Radi',
+    labelFr: 'Ñkyel Radi',
+    labelEn: 'Ñkyel Radi',
+    descFr: 'Ultra-rapide & concis',
+    descEn: 'Ultra-fast & concise',
+    apiModel: 'radi',
+  },
+  deep: {
+    id: 'deep',
     name: 'Ñkyel Chui',
-    label: 'Ñkyel Chui',
     labelFr: 'Ñkyel Chui',
     labelEn: 'Ñkyel Chui',
-    desc: 'Raisonnement profond et code complexe',
-    descFr: 'Raisonnement profond et code complexe',
+    descFr: 'Raisonnement profond & code complexe',
     descEn: 'Deep reasoning & complex code',
     badge: 'Pro',
     apiModel: 'chui',
   },
-  radi: {
-    id: 'radi',
-    name: 'Ñkyel Radi',
-    label: 'Ñkyel Radi',
-    labelFr: 'Ñkyel Radi',
-    labelEn: 'Ñkyel Radi',
-    desc: 'Ultra-rapide, concis et langues locales',
-    descFr: 'Ultra-rapide, concis et langues locales',
-    descEn: 'Ultra-fast, concise & local languages',
-    apiModel: 'radi',
-  },
   research: {
     id: 'research',
     name: 'Ñkyel Research',
-    label: 'Ñkyel Research',
     labelFr: 'Ñkyel Research',
     labelEn: 'Ñkyel Research',
-    desc: 'Recherche web et veille en direct',
-    descFr: 'Recherche web et veille en direct',
-    descEn: 'Live web search & deep grounding',
+    descFr: 'Recherche multi-sources & preuves',
+    descEn: 'Multi-source research & citations',
     apiModel: 'research',
   },
-  tai: {
-    id: 'tai',
-    name: 'Ñkyel Tai',
-    label: 'Ñkyel Tai',
-    labelFr: 'Ñkyel Tai',
-    labelEn: 'Ñkyel Tai',
-    desc: 'Raisonnement multimodal & créativité',
-    descFr: 'Raisonnement multimodal & créativité',
-    descEn: 'Multimodal reasoning & creativity',
-    badge: 'Plus',
-    apiModel: 'tai',
-  },
 };
 
-export const getNkyelEngine = (id: string): NkyelEngine => {
-  if (id === 'fast') return ENGINES.radi;
-  if (id === 'deep') return ENGINES.chui;
-  return ENGINES[id as NkyelEngineId] ?? ENGINES.auto;
+// Backward compatibility alias for ENGINES
+export const ENGINES: Record<string, IntelligenceMode> = {
+  ...INTELLIGENCE_MODES,
+  chui: INTELLIGENCE_MODES.deep,
+  radi: INTELLIGENCE_MODES.fast,
+  tai: INTELLIGENCE_MODES.deep,
 };
 
-export const getIntelligenceMode = getNkyelEngine;
+export const getIntelligenceMode = (id: string): IntelligenceMode => {
+  if (id === 'chui' || id === 'deep') return INTELLIGENCE_MODES.deep;
+  if (id === 'radi' || id === 'fast') return INTELLIGENCE_MODES.fast;
+  if (id === 'research') return INTELLIGENCE_MODES.research;
+  return INTELLIGENCE_MODES.auto;
+};
+
+export const getNkyelEngine = getIntelligenceMode;
 
 interface NkyelModelState {
-  engineId: NkyelEngineId;
-  modeId: NkyelEngineId;
-  setEngineId: (engineId: NkyelEngineId) => void;
-  setModeId: (modeId: NkyelEngineId) => void;
+  engineId: IntelligenceModeId;
+  modeId: IntelligenceModeId;
+  selectedIntelligenceMode: IntelligenceModeId;
+  setEngineId: (engineId: IntelligenceModeId | string) => void;
+  setModeId: (modeId: IntelligenceModeId | string) => void;
 }
+
+const normalizeMode = (id: string): IntelligenceModeId => {
+  if (id === 'chui' || id === 'deep') return 'deep';
+  if (id === 'radi' || id === 'fast') return 'fast';
+  if (id === 'research') return 'research';
+  return 'auto';
+};
 
 export const useNkyelModel = create<NkyelModelState>((set) => ({
   engineId: 'auto',
   modeId: 'auto',
-  setEngineId: (engineId) => set({ engineId, modeId: engineId }),
-  setModeId: (modeId) => set({ engineId: modeId, modeId }),
+  selectedIntelligenceMode: 'auto',
+  setEngineId: (id) => {
+    const normalized = normalizeMode(id);
+    set({ engineId: normalized, modeId: normalized, selectedIntelligenceMode: normalized });
+  },
+  setModeId: (id) => {
+    const normalized = normalizeMode(id);
+    set({ engineId: normalized, modeId: normalized, selectedIntelligenceMode: normalized });
+  },
 }));
