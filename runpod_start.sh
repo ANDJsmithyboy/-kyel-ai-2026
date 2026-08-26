@@ -24,8 +24,8 @@ echo "⚡ [4/4] Démarrage du serveur Ñkyel Backend sur le port 8080 (Port Publ
 export PYTHONPATH="/workspace/-kyel-ai-2026/backend:$PYTHONPATH"
 cd /workspace/-kyel-ai-2026/backend
 
-# Lancement en arrière-plan
-nohup $PYTHON_CMD main_dev.py > /workspace/backend.log 2>&1 &
+# Lancement en arrière-plan — Production entry point (main:app)
+nohup $PYTHON_CMD -m uvicorn main:app --host 0.0.0.0 --port 8080 --workers 1 > /workspace/backend.log 2>&1 &
 
 echo "⏳ Attente du démarrage..."
 sleep 3
@@ -40,3 +40,4 @@ else
     echo "⚠️ Le serveur n'a pas répondu immédiatement. Affichage des 20 dernières lignes de log :"
     tail -n 20 /workspace/backend.log
 fi
+
