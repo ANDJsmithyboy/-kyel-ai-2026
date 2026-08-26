@@ -79,151 +79,15 @@ interface RightContextInspectorProps {
   elapsedSeconds?: number;
 }
 
-const DEFAULT_SOURCES: SourceItem[] = [
-  {
-    id: 'src-1',
-    title: 'Google Gemini 2.5 Flash & 3.1 Pro Architecture Overview',
-    url: 'https://deepmind.google/technologies/gemini/',
-    domain: 'deepmind.google',
-    snippet: 'Gemini models feature native multimodal reasoning across audio, video, text, and code with 2M token context window.',
-    relevance: 98,
-    usedByAgent: 'Ñkyel Pro',
-    publishedDate: '2026-08',
-  },
-  {
-    id: 'src-2',
-    title: 'Apple Human Interface Guidelines — Liquid Glass & Spatial Layouts',
-    url: 'https://developer.apple.com/design/human-interface-guidelines/',
-    domain: 'developer.apple.com',
-    snippet: 'Separation of functional translucent layer from stable high-contrast content layer with nested concentric radii.',
-    relevance: 95,
-    usedByAgent: 'Design Architect',
-    publishedDate: '2026-06',
-  },
-  {
-    id: 'src-3',
-    title: 'Vercel Geist Design System & High-Contrast Typography Standards',
-    url: 'https://vercel.com/font',
-    domain: 'vercel.com',
-    snippet: 'Geist Sans and Geist Mono typography scale designed for precision, clarity, zero layout shift, and legibility.',
-    relevance: 92,
-    usedByAgent: 'Geist Engine',
-    publishedDate: '2026-05',
-  },
-];
-
-const DEFAULT_TOOLS: ToolItem[] = [
-  {
-    id: 'tool-web-search',
-    name: 'Wandana Web Radar',
-    description: 'Recherche web profonde temps réel et extraction sémantique',
-    status: 'active',
-    latencyMs: 142,
-    lastRun: 'À l\'instant',
-    category: 'search',
-  },
-  {
-    id: 'tool-python-sandbox',
-    name: 'Python E2B Sandbox',
-    description: 'Exécution de code sécurisée et compilation de graphiques',
-    status: 'active',
-    latencyMs: 320,
-    lastRun: 'Il y a 2m',
-    category: 'code',
-  },
-  {
-    id: 'tool-gemini-vision',
-    name: 'Gemini Multimodal Vision',
-    description: 'Analyse d\'images haute résolution, diagrammes et vidéos',
-    status: 'available',
-    category: 'vision',
-  },
-  {
-    id: 'tool-secret-manager',
-    name: 'AES-256 Secret Manager',
-    description: 'Gestion souveraine et masquage strict des clés API',
-    status: 'active',
-    latencyMs: 12,
-    lastRun: 'Continu',
-    category: 'system',
-  },
-];
-
-const DEFAULT_SKILLS: SkillItem[] = [
-  {
-    id: 'skill-alphagenome',
-    name: 'AlphaGenome Variant Analyzer',
-    version: '2.4.0',
-    description: 'Analyse d\'impact génomique, transcription et mutations non-codantes',
-    status: 'loaded',
-    category: 'Génomique & Santé',
-  },
-  {
-    id: 'skill-chembl',
-    name: 'ChEMBL Bioactivity DB',
-    version: '33.1.0',
-    description: 'Interrogation de cibles thérapeutiques et molécules bioactives',
-    status: 'ready',
-    category: 'Chimie Médicale',
-  },
-  {
-    id: 'skill-clinicaltrials',
-    name: 'ClinicalTrials.gov Protocol',
-    version: '2.1.0',
-    description: 'Recherche d\'essais cliniques mondiaux et critères d\'éligibilité',
-    status: 'ready',
-    category: 'Recherche Clinique',
-  },
-  {
-    id: 'skill-workflow-creator',
-    name: 'Autonomous Workflow Synthesizer',
-    version: '3.0.0',
-    description: 'Distillation des interactions complexes en protocoles exécutables',
-    status: 'loaded',
-    category: 'Productivité',
-  },
-];
-
-const DEFAULT_MCP: McpConnectorItem[] = [
-  {
-    id: 'mcp-google-drive',
-    name: 'Google Drive & Docs Fabric',
-    status: 'connected',
-    toolsCount: 8,
-    uri: 'mcp://google.workspace/drive-v3',
-  },
-  {
-    id: 'mcp-postgres-neon',
-    name: 'Neon PostgreSQL Serverless',
-    status: 'connected',
-    toolsCount: 14,
-    uri: 'mcp://neon.tech/postgres-v16',
-  },
-  {
-    id: 'mcp-github',
-    name: 'GitHub Repository Connect',
-    status: 'connected',
-    toolsCount: 12,
-    uri: 'mcp://github.com/api/v3',
-  },
-  {
-    id: 'mcp-local-fs',
-    name: 'Sovereign Local Workspace',
-    status: 'connected',
-    toolsCount: 6,
-    uri: 'mcp://local/nkyel-workspace',
-  },
-];
-
 export default function RightContextInspector({
   isStreaming = false,
-  activePhase = 2,
-  sources = DEFAULT_SOURCES,
-  tools = DEFAULT_TOOLS,
-  skills = DEFAULT_SKILLS,
-  mcpConnectors = DEFAULT_MCP,
-  missionTitle = 'Mission en cours',
-  elapsedSeconds = 48,
+  activePhase = 0,
+  sources = [],
+  tools = [],
+  skills = [],
+  mcpConnectors = [],
+  missionTitle = '',
+  elapsedSeconds = 0,
 }: RightContextInspectorProps) {
   const { isRightOpen, toggleRight, rightTab, setRightTab, selectedSourceId, openSource } =
     useWorkspaceLayout();
@@ -335,7 +199,7 @@ export default function RightContextInspector({
                       key={idx}
                       className={`flex items-center justify-between p-2 rounded-xl border ${
                         isCurrent
-                          ? 'bg-[#D5AE57]/15 border-[#D5AE57]/40 text-[var(--text-primary)] font-semibold'
+                          ? 'bg-[var(--accent-subtle)] border-[var(--accent)]/40 text-[var(--text-primary)] font-semibold'
                           : isDone
                           ? 'bg-[var(--surface-raised)] border-transparent text-[var(--text-secondary)]'
                           : 'opacity-50 border-transparent text-[var(--text-tertiary)]'
@@ -345,7 +209,7 @@ export default function RightContextInspector({
                       {isDone ? (
                         <CheckCircle size={14} className="text-emerald-400" weight="fill" />
                       ) : isCurrent ? (
-                        <span className="w-1.5 h-1.5 rounded-full bg-[#D5AE57] animate-ping" />
+                        <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent)] animate-ping" />
                       ) : (
                         <span className="w-1.5 h-1.5 rounded-full bg-[var(--border)]" />
                       )}
@@ -376,12 +240,12 @@ export default function RightContextInspector({
                     key={src.id}
                     className={`p-3.5 rounded-2xl border transition-all space-y-2 ${
                       isSelected
-                        ? 'bg-[#D5AE57]/15 border-[#D5AE57]/50 text-[var(--text-primary)] shadow-md'
+                        ? 'bg-[var(--accent-subtle)] border-[var(--accent)]/50 text-[var(--text-primary)] shadow-md'
                         : 'bg-[var(--surface)] border-[var(--border)] text-[var(--text-secondary)] hover:border-[var(--border-strong)]'
                     }`}
                   >
                     <div className="flex items-start justify-between gap-2">
-                      <div className="flex items-center gap-1.5 text-[10px] font-mono text-[#D5AE57]">
+                      <div className="flex items-center gap-1.5 text-[10px] font-mono text-[var(--accent)]">
                         <Globe size={13} />
                         <span className="font-bold">{src.domain}</span>
                       </div>
@@ -469,7 +333,7 @@ export default function RightContextInspector({
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-1.5">
                     <span className="text-xs font-bold text-[var(--text-primary)]">{s.name}</span>
-                    <span className="text-[9px] font-mono px-1.5 py-0.2 rounded bg-white/5 text-[#D5AE57] font-bold">
+                    <span className="text-[9px] font-mono px-1.5 py-0.2 rounded bg-white/5 text-[var(--accent)] font-bold">
                       v{s.version}
                     </span>
                   </div>

@@ -75,29 +75,8 @@ interface AdaptiveChatWorkspaceProps {
   isStreaming?: boolean;
 }
 
-const SAMPLE_INITIAL_MESSAGES: ChatMessage[] = [
-  {
-    id: 'msg-1',
-    role: 'user',
-    content: 'Bonjour Ñkyel. Peux-tu analyser l\'architecture globale de notre mission et préparer le plan d\'exécution ?',
-    timestamp: '14:20',
-  },
-  {
-    id: 'msg-2',
-    role: 'assistant',
-    content: `Bienvenue dans l'espace de mission Ñkyel AI.
-
-Le routeur autonome d'inférence est actif. Toutes vos requêtes sont orchestrées avec vérification de sources en direct, traçabilité des preuves et génération d'artefacts souverains.
-
-Que souhaitez-vous accomplir pour cette mission ?`,
-    timestamp: '14:21',
-    toolActivity: { name: 'Grounding multi-sources & Routeur autonome', status: 'completed', duration: '1.2s' },
-    sources: ['src-1', 'src-2'],
-  },
-];
-
 export default function AdaptiveChatWorkspace({
-  initialMessages = SAMPLE_INITIAL_MESSAGES,
+  initialMessages = [],
   missionTitle = 'Nouvelle mission',
   onSendMessage,
   onStopStreaming,
@@ -113,6 +92,7 @@ export default function AdaptiveChatWorkspace({
   const [missionMenuOpen, setMissionMenuOpen] = useState(false);
   const [activeSurface, setActiveSurface] = useState<'chat' | 'workgraph' | 'vie' | 'live_flow'>('chat');
   const [attachedFiles, setAttachedFiles] = useState<{ id: string; name: string; size: string }[]>([]);
+  const [isSending, setIsSending] = useState(false);
 
   const { modeId, setModeId } = useNkyelModel();
   const currentEngine = getIntelligenceMode(modeId);
@@ -269,7 +249,8 @@ export default function AdaptiveChatWorkspace({
   };
 
   const handleSend = async () => {
-    if (!inputText.trim()) return;
+    if (!inputText.trim() || isSending) return;
+    setIsSending(true);
     const userMsg: ChatMessage = {
       id: `msg-${Date.now()}`,
       role: 'user',
@@ -285,20 +266,24 @@ export default function AdaptiveChatWorkspace({
       textareaRef.current.style.height = 'auto';
     }
 
-    if (onSendMessage) {
-      await onSendMessage(sentText);
-    } else {
-      setTimeout(() => {
-        const assistantMsg: ChatMessage = {
-          id: `msg-${Date.now() + 1}`,
-          role: 'assistant',
-          content: `Reçu. Analyse en cours en mode **${isFr ? getIntelligenceMode(modeId).labelFr : getIntelligenceMode(modeId).labelEn}** pour la consigne : « ${sentText} ».\n\nLes sources et artefacts générés sont disponibles dans l'Inspecteur de Contexte.`,
-          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-          toolActivity: { name: 'Routeur Ñkyel & Exécution autonome', status: 'completed', duration: '0.8s' },
-          sources: ['src-live-1', 'src-live-2'],
-        };
-        setMessages((prev) => [...prev, assistantMsg]);
-      }, 500);
+    try {
+      if (onSendMessage) {
+        await onSendMessage(sentText);
+      } else {
+        setTimeout(() => {
+          const assistantMsg: ChatMessage = {
+            id: `msg-${Date.now() + 1}`,
+            role: 'assistant',
+            content: `Reçu. Analyse en cours en mode **${isFr ? getIntelligenceMode(modeId).labelFr : getIntelligenceMode(modeId).labelEn}** pour la consigne : « ${sentText} ».\n\nLes sources et artefacts générés sont disponibles dans l'Inspecteur de Contexte.`,
+            timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+            toolActivity: { name: 'Routeur Ñkyel & Exécution autonome', status: 'completed', duration: '0.8s' },
+            sources: ['src-live-1', 'src-live-2'],
+          };
+          setMessages((prev) => [...prev, assistantMsg]);
+        }, 500);
+      }
+    } finally {
+      setIsSending(false);
     }
   };
 
@@ -315,8 +300,7 @@ export default function AdaptiveChatWorkspace({
     setTimeout(() => setCopiedMsgId(null), 2000);
   };
 
-  const activeModeConfig = getIntelligenceMode(modeId);
-  const activeModeLabel = isFr ? activeModeConfig.labelFr : activeModeConfig.labelEn;
+
 
   return (
     <div className="flex h-full w-full overflow-hidden bg-[var(--material-canvas)] text-[var(--text-primary)]">
@@ -339,13 +323,13 @@ export default function AdaptiveChatWorkspace({
                 onClick={() => setMissionMenuOpen(!missionMenuOpen)}
                 className={`h-7 px-2.5 rounded-lg border text-[11px] font-medium flex items-center gap-1.5 transition-colors ${
                   activeSurface !== 'chat'
-                    ? 'bg-[#D5AE57]/15 border-[#D5AE57]/40 text-[#D5AE57]'
+                    ? 'bg-[var(--accent-subtle)] border-[var(--accent)]/40 text-[var(--accent)]'
                     : 'border-[var(--border)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--hover)]'
                 }`}
                 title={t('header.missionIntelligence')}
                 aria-label={t('header.missionIntelligence')}
               >
-                <span className="w-1.5 h-1.5 rounded-full bg-[#D5AE57]" />
+                <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent)]" />
                 <span className="capitalize">{activeSurface === 'chat' ? t('header.mission') : activeSurface.replace('_', ' ')}</span>
                 <CaretDown size={11} />
               </button>
@@ -375,10 +359,10 @@ export default function AdaptiveChatWorkspace({
                         }`}
                       >
                         <div className="flex items-center gap-2">
-                          <Icon size={14} className={isSelected ? 'text-[#D5AE57]' : 'opacity-60'} />
+                          <Icon size={14} className={isSelected ? 'text-[var(--accent)]' : 'opacity-60'} />
                           <span>{v.label}</span>
                         </div>
-                        {isSelected && <Check size={12} weight="bold" className="text-[#D5AE57]" />}
+                        {isSelected && <Check size={12} weight="bold" className="text-[var(--accent)]" />}
                       </button>
                     );
                   })}
@@ -392,7 +376,7 @@ export default function AdaptiveChatWorkspace({
               onClick={toggleFocusMode}
               className={`h-7 px-2.5 rounded-lg border text-[11px] font-medium transition-colors hidden md:flex items-center gap-1.5 ${
                 isFocusMode
-                  ? 'bg-[#D5AE57]/15 border-[#D5AE57]/40 text-[#D5AE57]'
+                  ? 'bg-[var(--accent-subtle)] border-[var(--accent)]/40 text-[var(--accent)]'
                   : 'border-[var(--border)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--hover)]'
               }`}
               title="Mode concentration"
@@ -412,7 +396,7 @@ export default function AdaptiveChatWorkspace({
               }`}
               title="Inspecteur de Contexte (Sources, Outils, Activité)"
             >
-              <GeistActivity size={14} className={isStreaming ? 'animate-spin text-[#D5AE57]' : 'text-[var(--text-tertiary)]'} />
+              <GeistActivity size={14} className={isStreaming ? 'animate-spin text-[var(--accent)]' : 'text-[var(--text-tertiary)]'} />
               <span className="hidden sm:inline">Contexte</span>
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
             </button>
@@ -427,6 +411,7 @@ export default function AdaptiveChatWorkspace({
               ref={chatContainerRef}
               onScroll={handleScroll}
               className="flex-1 overflow-y-auto px-4 sm:px-8 py-6 scrollbar-thin space-y-6"
+              aria-live="polite"
             >
               {/* Centered Reading Column Container */}
               <div className="max-w-[780px] mx-auto w-full space-y-7 pb-36">
@@ -459,7 +444,7 @@ export default function AdaptiveChatWorkspace({
                           {/* Live Tool Activity Header (if any) */}
                           {msg.toolActivity && (
                             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[var(--surface-raised)] border border-[var(--border)] text-[11px] text-[var(--text-secondary)]">
-                              <GeistWrench size={13} className="text-[#D5AE57]" />
+                              <GeistWrench size={13} className="text-[var(--accent)]" />
                               <span>{msg.toolActivity.name}</span>
                               {msg.toolActivity.duration && (
                                 <span className="text-[var(--text-tertiary)] font-mono">({msg.toolActivity.duration})</span>
@@ -496,8 +481,7 @@ export default function AdaptiveChatWorkspace({
             <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-6 bg-gradient-to-t from-[var(--material-canvas)] via-[var(--material-canvas)]/80 to-transparent pointer-events-none flex justify-center z-20">
               <div className="max-w-[780px] w-full pointer-events-auto">
                 <Surface
-                  layer="glass-regular"
-                  elevation="modal"
+                  material="glass-floating"
                   className="rounded-3xl p-3 sm:p-3.5 transition-all shadow-[var(--shadow-floating)] border border-[var(--border-strong)] flex flex-col gap-2 backdrop-blur-2xl"
                 >
                   {/* Hidden File Input for Real Attachments */}
@@ -517,7 +501,7 @@ export default function AdaptiveChatWorkspace({
                           key={file.id}
                           className="flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-[var(--surface-raised)] border border-[var(--border)] text-xs text-[var(--text-primary)] shadow-xs animate-scale-in"
                         >
-                          <Paperclip size={13} className="text-[#D5AE57] shrink-0" />
+                          <Paperclip size={13} className="text-[var(--accent)] shrink-0" />
                           <span className="truncate max-w-[150px] font-medium">{file.name}</span>
                           <span className="text-[10px] text-[var(--text-tertiary)] font-mono">({file.size})</span>
                           <button
@@ -546,7 +530,7 @@ export default function AdaptiveChatWorkspace({
                       onKeyDown={handleKeyDown}
                       placeholder={isFr ? "Demandez quelque chose à Ñkyel..." : "Ask Ñkyel anything..."}
                       rows={1}
-                      className="w-full bg-transparent border-0 focus:ring-0 focus:outline-none resize-none text-[15px] placeholder:text-[var(--text-tertiary)] text-[var(--text-primary)] max-h-44 px-1 py-1 font-sans"
+                      className="w-full bg-transparent border-0 focus:ring-0 focus:outline-none resize-none text-base placeholder:text-[var(--text-tertiary)] text-[var(--text-primary)] max-h-44 px-1 py-1 font-sans"
                     />
                   </div>
 
@@ -572,7 +556,7 @@ export default function AdaptiveChatWorkspace({
                         title={isFr ? "Changer de mode d'intelligence" : "Change intelligence mode"}
                         aria-label={isFr ? "Changer de mode d'intelligence" : "Change intelligence mode"}
                       >
-                        <span className="w-1.5 h-1.5 rounded-full bg-[#D5AE57] shrink-0" />
+                        <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent)] shrink-0" />
                         <span className="font-semibold text-xs text-[var(--text-primary)] max-w-[105px] truncate">{activeModeLabel}</span>
                         <CaretDown size={11} weight="bold" className="opacity-60 shrink-0 text-[var(--text-tertiary)]" />
                       </button>
@@ -589,7 +573,7 @@ export default function AdaptiveChatWorkspace({
                             onClick={() => handleActionSelect('upload')}
                             className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl hover:bg-[var(--hover)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] text-left transition-colors"
                           >
-                            <FileText size={16} className="text-[#D5AE57] shrink-0" />
+                            <FileText size={16} className="text-[var(--accent)] shrink-0" />
                             <div className="flex-1 min-w-0">
                               <p className="font-medium text-xs text-[var(--text-primary)]">{isFr ? 'Téléverser un document' : 'Upload file'}</p>
                               <p className="text-[10px] text-[var(--text-tertiary)] truncate">{isFr ? 'PDF, texte, données ou code' : 'PDF, text, data or code'}</p>
@@ -704,7 +688,7 @@ export default function AdaptiveChatWorkspace({
                           disabled={!inputText.trim() && attachedFiles.length === 0}
                           className={`w-8 h-8 rounded-xl flex items-center justify-center transition-all ${
                             inputText.trim() || attachedFiles.length > 0
-                              ? 'bg-[#D5AE57] text-black font-bold shadow-md active:scale-95'
+                              ? 'bg-[var(--accent)] text-[var(--accent-fg)] font-bold shadow-md active:scale-95'
                               : 'bg-[var(--surface)] text-[var(--text-tertiary)] cursor-not-allowed opacity-50'
                           }`}
                           title={isFr ? "Envoyer la mission" : "Send mission"}

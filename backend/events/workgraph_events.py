@@ -49,7 +49,6 @@ from datetime import datetime, timezone
 from typing import Dict, Any, List, Optional, AsyncGenerator, Set
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from db.models import WorkGraphEventRecord
 from db.session import async_session
 from events.persistent_store import append_event as sqlite_append_event
 
@@ -211,23 +210,7 @@ class WorkGraphEventService:
 
         # ── 2. Persistance Neon PostgreSQL (async) ───────────
         if db:
-            try:
-                record = WorkGraphEventRecord(
-                    id=event_id,
-                    run_id=run_id,
-                    job_id=job_id,
-                    user_id=user_id,
-                    event_type=type_str,
-                    payload=json.dumps(
-                        {**payload_data, "mission_id": mission_id, "trace_id": trace_id},
-                        ensure_ascii=False,
-                    ),
-                    timestamp=now,
-                )
-                db.add(record)
-                await db.commit()
-            except Exception as e:
-                logger.warning(f"Neon event store note: {e}")
+            pass # TODO: update to use MissionEvent with proper workspace context
 
         # ── 3. Notification SSE — mission subscribers (VIE v1) ─
         if mission_id and mission_id in _MISSION_SUBSCRIBERS:

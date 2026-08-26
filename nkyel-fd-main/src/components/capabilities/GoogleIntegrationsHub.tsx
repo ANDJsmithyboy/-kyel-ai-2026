@@ -100,7 +100,7 @@ export default function GoogleIntegrationsHub() {
                     tool.status === 'Disponible'
                       ? 'bg-[#6F9485]/15 text-[#6F9485] border border-[#6F9485]/20'
                       : tool.status === 'Bêta'
-                      ? 'bg-[#C39A52]/15 text-[#C39A52] border border-[#C39A52]/20'
+                      ? 'bg-[var(--accent-subtle)] text-[var(--accent)] border border-[var(--accent)]/20'
                       : 'bg-white/[0.06] text-[#7E8795]'
                   }`}
                 >

@@ -12,7 +12,7 @@ import { ArrowLeft, Buildings, Scales, ShieldCheck, FileText, Globe } from '@pho
 
 export default function LegalPage() {
   return (
-    <div className="min-h-screen bg-[#08090D] text-[#EDEDEC] p-6 md:p-12 overflow-y-auto selection:bg-[#D5AE57]/30 selection:text-white" style={{ fontFamily: 'var(--font-sans, "Geist", system-ui, sans-serif)' }}>
+    <div className="min-h-screen bg-[#08090D] text-[#EDEDEC] p-6 md:p-12 overflow-y-auto selection:bg-[var(--accent-subtle)] selection:text-white" style={{ fontFamily: 'var(--font-sans, "Geist", system-ui, sans-serif)' }}>
       <div className="max-w-4xl mx-auto">
         <Link
           href="/"
@@ -23,7 +23,7 @@ export default function LegalPage() {
 
         <div className="mb-10 pb-6 border-b border-white/[0.08]">
           <div className="flex items-center gap-3">
-            <span className="w-12 h-12 rounded-2xl bg-[#D5AE57]/15 text-[#D5AE57] flex items-center justify-center border border-[#D5AE57]/30">
+            <span className="w-12 h-12 rounded-2xl bg-[var(--accent-subtle)] text-[var(--accent)] flex items-center justify-center border border-[var(--accent)]/30">
               <Buildings size={28} weight="bold" />
             </span>
             <div>
@@ -38,7 +38,7 @@ export default function LegalPage() {
         <div className="space-y-6 text-xs text-white/80 leading-relaxed">
           <section className="p-6 rounded-2xl bg-white/[0.02] border border-white/[0.06] space-y-3">
             <h2 className="text-sm font-bold text-white flex items-center gap-2">
-              <Buildings size={18} className="text-[#D5AE57]" />
+              <Buildings size={18} className="text-[var(--accent)]" />
               1. Éditeur de la Plateforme
             </h2>
             <p>
@@ -48,14 +48,14 @@ export default function LegalPage() {
               <p className="font-bold text-white">SmartANDJ AI Technologies</p>
               <p>Fondateur & Architecte en Chef : <strong>Daniel Jonathan ANDJ</strong></p>
               <p>Société Technologique d&apos;Intelligence Artificielle Mondiale</p>
-              <p>Email officiel : <a href="mailto:contact@smartandj.ai" className="text-[#D5AE57] hover:underline">contact@smartandj.ai</a> / <a href="mailto:jonathanakarentoutoume@gmail.com" className="text-[#D5AE57] hover:underline">jonathanakarentoutoume@gmail.com</a></p>
-              <p>Site web éditeur : <a href="https://smartandj.ai" target="_blank" rel="noopener noreferrer" className="text-[#D5AE57] hover:underline">smartandj.ai</a></p>
+              <p>Email officiel : <a href="mailto:contact@smartandj.ai" className="text-[var(--accent)] hover:underline">contact@smartandj.ai</a> / <a href="mailto:jonathanakarentoutoume@gmail.com" className="text-[var(--accent)] hover:underline">jonathanakarentoutoume@gmail.com</a></p>
+              <p>Site web éditeur : <a href="https://smartandj.ai" target="_blank" rel="noopener noreferrer" className="text-[var(--accent)] hover:underline">smartandj.ai</a></p>
             </div>
           </section>
 
           <section className="p-6 rounded-2xl bg-white/[0.02] border border-white/[0.06] space-y-3">
             <h2 className="text-sm font-bold text-white flex items-center gap-2">
-              <Globe size={18} className="text-[#D5AE57]" />
+              <Globe size={18} className="text-[var(--accent)]" />
               2. Hébergement & Infrastructure Souveraine
             </h2>
             <p>
@@ -72,7 +72,7 @@ export default function LegalPage() {
 
           <section className="p-6 rounded-2xl bg-white/[0.02] border border-white/[0.06] space-y-3">
             <h2 className="text-sm font-bold text-white flex items-center gap-2">
-              <Scales size={18} className="text-[#D5AE57]" />
+              <Scales size={18} className="text-[var(--accent)]" />
               3. Propriété Intellectuelle & Droits Réservés
             </h2>
             <p>
@@ -85,7 +85,7 @@ export default function LegalPage() {
 
           <section className="p-6 rounded-2xl bg-white/[0.02] border border-white/[0.06] space-y-3">
             <h2 className="text-sm font-bold text-white flex items-center gap-2">
-              <ShieldCheck size={18} className="text-[#D5AE57]" />
+              <ShieldCheck size={18} className="text-[var(--accent)]" />
               4. Droit Applicable & Juridiction Compétente
             </h2>
             <p>

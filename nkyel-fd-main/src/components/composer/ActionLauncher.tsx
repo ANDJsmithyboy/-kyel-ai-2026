@@ -45,6 +45,7 @@ import {
   ArrowSquareOut,
 } from '@phosphor-icons/react';
 import { useProtocolStore } from '@/stores/protocol.store';
+import { useFocusTrap } from '@/hooks/useFocusTrap';
 
 export type LauncherCategory = 'STUDIO' | 'BUILD' | 'DATA' | 'COGNITION' | 'PROTOCOLES';
 
@@ -386,32 +387,13 @@ export default function ActionLauncher({
   const [searchQuery, setSearchQuery] = useState('');
   const dialogRef = useRef<HTMLDivElement>(null);
 
+  useFocusTrap(dialogRef, isOpen);
+
   useEffect(() => {
     if (!isOpen) {
       setActiveSubmenu(null);
       setSearchQuery('');
-      return;
     }
-    const previousFocus = document.activeElement as HTMLElement | null;
-    const focusable = () => Array.from(dialogRef.current?.querySelectorAll<HTMLElement>('button, input, [href], [tabindex]:not([tabindex="-1"])') || []).filter((element) => !element.hasAttribute('disabled'));
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') { onClose(); return; }
-      if (event.key !== 'Tab') return;
-      const items = focusable();
-      if (!items.length) return;
-      const first = items[0];
-      const last = items[items.length - 1];
-      if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
-      else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
-    };
-    document.addEventListener('keydown', handleKeyDown);
-    requestAnimationFrame(() => focusable()[0]?.focus());
-    return () => {
-      document.removeEventListener('keydown', handleKeyDown);
-      requestAnimationFrame(() => {
-        if (!isOpen) previousFocus?.focus();
-      });
-    };
   }, [isOpen, onClose]);
 
   if (!isOpen) return null;

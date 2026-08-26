@@ -31,7 +31,7 @@ const SECTIONS = [
 
 export default function AcceptableUsePage() {
   return (
-    <div className="min-h-screen bg-[#08090D] text-[#EDEDEC] p-6 md:p-12 overflow-y-auto selection:bg-[#D5AE57]/30 selection:text-white" style={{ fontFamily: 'var(--font-sans, "Geist", system-ui, sans-serif)' }}>
+    <div className="min-h-screen bg-[#08090D] text-[#EDEDEC] p-6 md:p-12 overflow-y-auto selection:bg-[var(--accent-subtle)] selection:text-white" style={{ fontFamily: 'var(--font-sans, "Geist", system-ui, sans-serif)' }}>
       <div className="max-w-4xl mx-auto">
         <Link
           href="/"
@@ -58,7 +58,7 @@ export default function AcceptableUsePage() {
           {SECTIONS.map((s, idx) => (
             <section key={idx} className="p-6 rounded-2xl bg-white/[0.02] border border-white/[0.06] space-y-2">
               <h2 className="text-sm font-bold text-white flex items-center gap-2">
-                <CheckCircle size={18} className="text-[#D5AE57]" />
+                <CheckCircle size={18} className="text-[var(--accent)]" />
                 {s.title}
               </h2>
               <p className="text-white/70 whitespace-pre-line leading-relaxed">{s.content}</p>

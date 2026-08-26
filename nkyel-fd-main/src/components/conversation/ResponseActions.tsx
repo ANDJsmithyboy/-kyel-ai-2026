@@ -147,7 +147,7 @@ export default function ResponseActions({
           type="button"
           onClick={handleTTS}
           className={`p-1 rounded-lg hover:bg-white/[0.06] transition-colors ${
-            isPlayingAudio ? 'text-[#C39A52] animate-pulse' : 'hover:text-[#F1EEE7]'
+            isPlayingAudio ? 'text-[var(--accent)] animate-pulse' : 'hover:text-[#F1EEE7]'
           }`}
           title={isPlayingAudio ? 'Arrêter la lecture' : 'Lire à voix haute'}
         >
@@ -197,7 +197,7 @@ export default function ResponseActions({
           type="button"
           onClick={handleSaveMemory}
           className={`flex items-center gap-1 px-2 py-1 rounded-lg hover:bg-white/[0.06] transition-colors ${
-            isSavedMemory ? 'text-[#C39A52]' : 'hover:text-[#F1EEE7]'
+            isSavedMemory ? 'text-[var(--accent)]' : 'hover:text-[#F1EEE7]'
           }`}
           title="Conserver dans la Mémoire Ñkyel"
         >
@@ -224,7 +224,7 @@ export default function ResponseActions({
           <button
             type="button"
             onClick={() => open()}
-            className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-[#C39A52]/20 border border-[#C39A52]/40 text-[#C39A52] hover:bg-[#C39A52]/30 transition-colors text-[11px] font-medium"
+            className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-[var(--accent-subtle)] border border-[var(--accent)]/40 text-[var(--accent)] hover:bg-[var(--accent)]/30 transition-colors text-[11px] font-medium"
             title="Consulter le livrable dans Artifact Studio"
           >
             <ArrowsOutSimple size={13} />

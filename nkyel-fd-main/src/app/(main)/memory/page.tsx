@@ -86,7 +86,7 @@ export default function MemoryPage() {
         <div className="flex items-center justify-between pb-6 border-b border-white/[0.06] mb-6">
           <div>
             <h1 className="text-xl font-bold font-heading text-[#F1EEE7] flex items-center gap-2">
-              <Brain size={24} className="text-[#C39A52]" />
+              <Brain size={24} className="text-[var(--accent)]" />
               Mémoire Permanente & Profil (DeerMem sur Neon)
             </h1>
             <p className="text-xs text-[#7E8795] mt-1">
@@ -120,7 +120,7 @@ export default function MemoryPage() {
                 onClick={() => setSelectedNamespace(t.id)}
                 className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
                   selectedNamespace === t.id
-                    ? 'bg-[#C39A52]/20 text-[#C39A52] border border-[#C39A52]/40'
+                    ? 'bg-[var(--accent-subtle)] text-[var(--accent)] border border-[var(--accent)]/40'
                     : 'text-[#7E8795] hover:text-white bg-[#0E121A]'
                 }`}
               >
@@ -138,7 +138,7 @@ export default function MemoryPage() {
               className="p-4 rounded-2xl bg-[#0E121A] border border-white/[0.06] hover:border-white/[0.12] transition-all flex items-start justify-between gap-4"
             >
               <div className="flex items-start gap-3 min-w-0">
-                <span className="w-8 h-8 rounded-xl bg-white/[0.04] border border-white/[0.06] flex items-center justify-center text-[#C39A52] shrink-0 mt-0.5">
+                <span className="w-8 h-8 rounded-xl bg-white/[0.04] border border-white/[0.06] flex items-center justify-center text-[var(--accent)] shrink-0 mt-0.5">
                   <Brain size={16} />
                 </span>
                 <div className="min-w-0">

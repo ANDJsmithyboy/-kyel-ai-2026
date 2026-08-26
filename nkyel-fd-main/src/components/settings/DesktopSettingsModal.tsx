@@ -27,6 +27,7 @@ import {
   Robot,
 } from '@phosphor-icons/react';
 import { useSettingsModal } from '@/hooks/useSettingsModal';
+import { useFocusTrap } from '@/hooks/useFocusTrap';
 import { useLanguageStore, type SupportedLocale } from '@/stores/language.store';
 import {
   ACCENTS,
@@ -193,6 +194,9 @@ export default function DesktopSettingsModal() {
     hydrateSettings();
   }, [hydrateSettings]);
 
+  // Focus trap & body scroll lock
+  useFocusTrap(dialogRef, isOpen);
+
   // Close language dropdown on outside click
   useEffect(() => {
     if (!languageDropdownOpen) return;
@@ -276,7 +280,7 @@ export default function DesktopSettingsModal() {
 
             {/* Section: Apparence */}
             <div className="space-y-6">
-              <h2 className="text-sm font-semibold text-[var(--text-primary)] uppercase tracking-wider text-[#D5AE57]">
+              <h2 className="text-sm font-semibold uppercase tracking-wider text-[var(--accent)]">
                 Apparence
               </h2>
 
@@ -358,7 +362,7 @@ export default function DesktopSettingsModal() {
 
             {/* Section: Préférences de communication matching Screenshot 1 */}
             <div className="space-y-6 pt-6 border-t border-[var(--border)]">
-              <h2 className="text-sm font-semibold text-[var(--text-primary)] uppercase tracking-wider text-[#D5AE57]">
+              <h2 className="text-sm font-semibold uppercase tracking-wider text-[var(--accent)]">
                 Préférences de communication
               </h2>
 
@@ -447,7 +451,7 @@ export default function DesktopSettingsModal() {
             <div className="grid grid-cols-3 gap-4">
               <div className="p-4 rounded-2xl bg-[var(--surface-raised)] border border-[var(--border)] space-y-1">
                 <span className="text-xs text-[var(--text-tertiary)]">Crédits restants</span>
-                <p className="text-2xl font-bold font-mono text-[#D5AE57]">300</p>
+                <p className="text-2xl font-bold font-mono text-[var(--accent)]">300</p>
               </div>
               <div className="p-4 rounded-2xl bg-[var(--surface-raised)] border border-[var(--border)] space-y-1">
                 <span className="text-xs text-[var(--text-tertiary)]">Missions exécutées</span>
@@ -466,7 +470,7 @@ export default function DesktopSettingsModal() {
               </p>
               <button
                 type="button"
-                className="px-4 py-2 rounded-xl bg-[#D5AE57] text-black font-semibold text-xs shadow-sm hover:bg-[#C59E47] transition-colors"
+                className="px-4 py-2 rounded-xl bg-[var(--accent)] text-[var(--accent-fg)] font-semibold text-xs shadow-sm hover:bg-[var(--accent-hover)] transition-colors"
               >
                 Mettre à niveau mon forfait
               </button>
@@ -640,7 +644,7 @@ export default function DesktopSettingsModal() {
           <div className="space-y-6 animate-in fade-in duration-150">
             <h1 className="text-2xl font-bold text-[var(--text-primary)]">Mail Ñkyel</h1>
             <p className="text-xs text-[var(--text-secondary)] leading-relaxed">
-              Votre adresse d'agent dédiée pour recevoir et traiter des synthèses directes : <span className="font-mono text-[#D5AE57]">agent@nkyel.ai</span>
+              Votre adresse d'agent dédiée pour recevoir et traiter des synthèses directes : <span className="font-mono text-[var(--accent)]">agent@nkyel.ai</span>
             </p>
             <div className="p-4 rounded-2xl bg-[var(--surface-raised)] border border-[var(--border)] space-y-3">
               <h4 className="text-xs font-bold text-[var(--text-primary)]">Traitement automatique des pièces jointes</h4>

@@ -486,9 +486,9 @@ export default function CommandPalette() {
             initial={{ opacity: 0, y: -20, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -20, scale: 0.95 }}
-            className="fixed top-5 right-5 z-[100] px-4 py-2.5 rounded-2xl bg-[var(--material-content-raised)] border border-[#D5AE57]/50 text-xs text-[var(--text-primary)] shadow-[var(--shadow-floating)] flex items-center gap-2"
+            className="fixed top-5 right-5 z-[100] px-4 py-2.5 rounded-2xl bg-[var(--material-content-raised)] border border-[var(--accent)]/50 text-xs text-[var(--text-primary)] shadow-[var(--shadow-floating)] flex items-center gap-2"
           >
-            <CheckCircle size={16} weight="fill" className="text-[#D5AE57]" />
+            <CheckCircle size={16} weight="fill" className="text-[var(--accent)]" />
             <span className="font-medium">{toastMessage}</span>
           </motion.div>
         )}
@@ -507,7 +507,7 @@ export default function CommandPalette() {
             >
               {/* Search Bar Header */}
               <div className="p-3.5 sm:p-4 border-b border-[var(--border)] flex items-center gap-3 bg-[var(--surface)]">
-                <MagnifyingGlass size={18} className="text-[#D5AE57] shrink-0" />
+                <MagnifyingGlass size={18} className="text-[var(--accent)] shrink-0" />
                 <input
                   ref={inputRef}
                   type="text"
@@ -542,7 +542,7 @@ export default function CommandPalette() {
                         onMouseEnter={() => setSelectedIndex(idx)}
                         className={`w-full flex items-center justify-between p-2.5 rounded-2xl text-left transition-all ${
                           isSelected
-                            ? 'bg-[#D5AE57]/15 border border-[#D5AE57]/40 text-[var(--text-primary)] shadow-sm'
+                            ? 'bg-[var(--accent-subtle)] border border-[var(--accent)]/40 text-[var(--text-primary)] shadow-sm'
                             : 'hover:bg-[var(--hover)] border border-transparent text-[var(--text-secondary)]'
                         }`}
                       >
@@ -550,7 +550,7 @@ export default function CommandPalette() {
                           <div
                             className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 ${
                               isSelected
-                                ? 'bg-[#D5AE57] text-black shadow-md'
+                                ? 'bg-[var(--accent)] text-[var(--accent-fg)] shadow-md'
                                 : 'bg-[var(--surface-raised)] text-[var(--text-secondary)]'
                             }`}
                           >
@@ -590,7 +590,7 @@ export default function CommandPalette() {
                     <span>Exécuter</span>
                   </span>
                 </div>
-                <span className="font-mono text-[10px] text-[#D5AE57]">Ñkyel Universal Action Layer</span>
+                <span className="font-mono text-[10px] text-[var(--accent)]">Ñkyel Universal Action Layer</span>
               </div>
             </motion.div>
           </div>

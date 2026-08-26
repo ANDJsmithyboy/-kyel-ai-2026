@@ -197,7 +197,7 @@ export default function LibraryPage() {
   const getFormatBadge = (type: ArtifactType) => {
     switch (type) {
       case 'slide':
-        return { label: 'PPTX / SLIDES', color: '#D5AE57', icon: Presentation };
+        return { label: 'PPTX / SLIDES', color: 'var(--accent)', icon: Presentation };
       case 'document':
         return { label: 'PDF / DOC', color: '#6F9485', icon: FileText };
       case 'spreadsheet':

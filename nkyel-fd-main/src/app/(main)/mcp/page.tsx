@@ -22,7 +22,7 @@ export default function MCPHubPage() {
         <div className="flex items-center justify-between pb-6 border-b border-[var(--border-subtle)] mb-6">
           <div>
             <h1 className="text-xl font-bold font-heading text-[var(--text-primary)] flex items-center gap-2">
-              <PlugsConnected size={24} className="text-[#D5AE57]" />
+              <PlugsConnected size={24} className="text-[var(--accent)]" />
               MCP Hub — Serveurs & Outils Connectés
             </h1>
             <p className="text-xs text-[var(--text-secondary)] mt-1">
@@ -77,7 +77,7 @@ export default function MCPHubPage() {
 
                 <div className="flex items-center justify-between pt-3 border-t border-[var(--border-subtle)] text-[10px] text-[var(--text-tertiary)]">
                   <div className="flex items-center gap-1.5">
-                    <Lightning size={13} className="text-[#D5AE57]" />
+                    <Lightning size={13} className="text-[var(--accent)]" />
                     <span>Latence : {server.latencyMs} ms</span>
                   </div>
                   <span>{server.provenance}</span>

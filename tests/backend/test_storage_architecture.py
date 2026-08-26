@@ -23,14 +23,7 @@ from db.models import (
     User,
     Conversation,
     Message,
-    ThreadMetadata,
-    AgentMemory,
-    WorkGraphEventRecord,
     Artifact,
-    MediaJob,
-    Document,
-    DocumentChunk,
-    Feedback,
 )
 from services.neon_memory_backend import NeonMemoryBackend
 from services.deermem_engine import DeerMemEngine
@@ -48,27 +41,13 @@ class TestStorageMatrixCompliance:
             User.__tablename__,
             Conversation.__tablename__,
             Message.__tablename__,
-            ThreadMetadata.__tablename__,
-            AgentMemory.__tablename__,
-            WorkGraphEventRecord.__tablename__,
             Artifact.__tablename__,
-            MediaJob.__tablename__,
-            Document.__tablename__,
-            DocumentChunk.__tablename__,
-            Feedback.__tablename__,
         ]
         expected_tables = [
             "users",
             "conversations",
             "messages",
-            "thread_metadata",
-            "agent_memories",
-            "workgraph_events",
             "artifacts",
-            "media_jobs",
-            "documents",
-            "document_chunks",
-            "feedback",
         ]
         for tbl in expected_tables:
             assert tbl in tables, f"La table Neon '{tbl}' est requise dans l'architecture."

@@ -9,8 +9,12 @@ from sqlalchemy import text
 from sqlalchemy.ext.asyncio import create_async_engine
 from sqlalchemy.pool import NullPool
 from httpx import AsyncClient, ASGITransport
+import json
+import os
+from svix.webhooks import Webhook
 
 from main import app
+from core.config import settings
 from db.session import db_url
 
 
@@ -48,16 +52,32 @@ class TestClerkNeonRLSCompliance:
             }
         }
 
+        payload_str = json.dumps(payload)
+        webhook_secret = getattr(settings, "clerk_webhook_secret", None) or "whsec_test_secret_nkyel"
+        
+        # S'assurer que le backend lit le secret pendant le test
+        os.environ["CLERK_WEBHOOK_SECRET"] = webhook_secret
+        
+        try:
+            wh = Webhook(webhook_secret)
+            headers = wh.sign(payload_str)
+        except Exception:
+            headers = {
+                "svix-id": event_id,
+                "svix-timestamp": "1234567890",
+                "svix-signature": "v1,dummy"
+            }
+
         transport = ASGITransport(app=app)
         async with AsyncClient(transport=transport, base_url="http://test") as ac:
             # 1. Premier appel du webhook
-            res1 = await ac.post("/api/webhooks/clerk", json=payload, headers={"svix-id": event_id})
+            res1 = await ac.post("/api/webhooks/clerk", content=payload_str, headers=headers)
             assert res1.status_code == 200
             data1 = res1.json()
             assert data1["status"] == "success"
 
             # 2. Deuxième appel du même webhook (test d'idempotence)
-            res2 = await ac.post("/api/webhooks/clerk", json=payload, headers={"svix-id": event_id})
+            res2 = await ac.post("/api/webhooks/clerk", content=payload_str, headers=headers)
             assert res2.status_code == 200
             data2 = res2.json()
             assert data2["status"] == "already_processed"

@@ -11,7 +11,7 @@
 
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   GeistCross,
@@ -24,6 +24,7 @@ import {
   GeistSparkle,
 } from '@/components/icons/GeistIcons';
 import { CheckCircle, Clock, ShieldCheck, ArrowSquareOut } from '@phosphor-icons/react';
+import { useFocusTrap } from '@/hooks/useFocusTrap';
 
 export type MobileMissionTab = 'overview' | 'workgraph' | 'vie' | 'flow';
 
@@ -49,12 +50,16 @@ export default function MobileMissionModal({
   artifactsCount = 3,
 }: MobileMissionModalProps) {
   const [activeTab, setActiveTab] = useState<MobileMissionTab>('overview');
+  const modalRef = useRef<HTMLDivElement>(null);
+
+  useFocusTrap(modalRef, isOpen);
 
   if (!isOpen) return null;
 
   return (
     <AnimatePresence>
       <div
+        ref={modalRef}
         className="fixed inset-0 z-50 flex flex-col bg-[var(--material-canvas)] text-[var(--text-primary)] animate-in fade-in duration-200"
         style={{
           paddingTop: 'env(safe-area-inset-top, 0px)',
@@ -135,7 +140,7 @@ export default function MobileMissionModal({
                     <div className="text-[10px] text-[var(--text-tertiary)]">Preuves</div>
                   </div>
                   <div className="p-2.5 rounded-xl bg-[var(--surface)] border border-[var(--border-subtle)]">
-                    <div className="text-sm font-bold text-[#D5AE57]">{artifactsCount}</div>
+                    <div className="text-sm font-bold text-[var(--accent)]">{artifactsCount}</div>
                     <div className="text-[10px] text-[var(--text-tertiary)]">Artefacts</div>
                   </div>
                 </div>
@@ -147,7 +152,7 @@ export default function MobileMissionModal({
                 <div className="space-y-2 text-xs">
                   <div className="flex items-center justify-between p-2.5 rounded-xl bg-[var(--surface)] border border-[var(--border-subtle)]">
                     <div className="flex items-center gap-2">
-                      <span className="w-2 h-2 rounded-full bg-[#D5AE57]" />
+                      <span className="w-2 h-2 rounded-full bg-[var(--accent)]" />
                       <span className="font-medium">Research Agent</span>
                     </div>
                     <span className="text-[10px] font-mono text-emerald-400 font-bold">TERMINÉ</span>
@@ -185,7 +190,7 @@ export default function MobileMissionModal({
                     key={idx}
                     className={`p-3 rounded-2xl border transition-all ${
                       step.status === 'active'
-                        ? 'bg-[#D5AE57]/15 border-[#D5AE57]/50 text-[var(--text-primary)]'
+                        ? 'bg-[var(--accent-subtle)] border-[var(--accent)]/50 text-[var(--text-primary)]'
                         : step.status === 'done'
                         ? 'bg-[var(--surface-raised)] border-[var(--border)] text-[var(--text-secondary)]'
                         : 'opacity-50 bg-[var(--surface)] border-transparent text-[var(--text-tertiary)]'
@@ -194,7 +199,7 @@ export default function MobileMissionModal({
                     <div className="flex items-center justify-between text-xs font-bold">
                       <span>{step.title}</span>
                       {step.status === 'done' && <CheckCircle size={14} className="text-emerald-400" weight="fill" />}
-                      {step.status === 'active' && <span className="w-2 h-2 rounded-full bg-[#D5AE57] animate-ping" />}
+                      {step.status === 'active' && <span className="w-2 h-2 rounded-full bg-[var(--accent)] animate-ping" />}
                     </div>
                     <p className="text-[11px] text-[var(--text-secondary)] mt-1">{step.desc}</p>
                   </div>
@@ -219,7 +224,7 @@ export default function MobileMissionModal({
                   <span>Niveau de Confiance Établi</span>
                 </div>
                 <div className="w-full bg-[var(--surface-raised)] h-2 rounded-full overflow-hidden">
-                  <div className="bg-[#D5AE57] h-full rounded-full" style={{ width: '94%' }} />
+                  <div className="bg-[var(--accent)] h-full rounded-full" style={{ width: '94%' }} />
                 </div>
                 <div className="flex justify-between text-[10px] text-[var(--text-tertiary)] font-mono">
                   <span>Rigueur Scientifique : 94%</span>
@@ -251,7 +256,7 @@ export default function MobileMissionModal({
                         item.status === 'done'
                           ? 'bg-emerald-500 text-black'
                           : item.status === 'active'
-                          ? 'bg-[#D5AE57] text-black animate-pulse'
+                          ? 'bg-[var(--accent)] text-[var(--accent-fg)] animate-pulse'
                           : 'bg-[var(--surface-raised)] text-[var(--text-tertiary)] border border-[var(--border)]'
                       }`}
                     >

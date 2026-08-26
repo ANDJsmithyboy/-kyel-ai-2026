@@ -52,11 +52,11 @@ import type { NkyelRendu, RenduType } from '@/lib/models';
 import { useRouter } from 'next/navigation';
 
 const TYPE_ICONS: Record<RenduType, React.ReactNode> = {
-  markdown: <FileText size={18} className="text-[#C39A52]" />,
-  document: <FileText size={18} className="text-[#C39A52]" />,
+  markdown: <FileText size={18} className="text-[var(--accent)]" />,
+  document: <FileText size={18} className="text-[var(--accent)]" />,
   report: <FileText size={18} className="text-[#6F9485]" />,
   pdf: <FileText size={18} className="text-[#BE6254]" />,
-  presentation: <Presentation size={18} className="text-[#C39A52]" />,
+  presentation: <Presentation size={18} className="text-[var(--accent)]" />,
   spreadsheet: <Table size={18} className="text-[#6F9485]" />,
   excel: <Table size={18} className="text-[#6F9485]" />,
   word: <FileText size={18} className="text-[#315A70]" />,
@@ -71,7 +71,7 @@ const TYPE_ICONS: Record<RenduType, React.ReactNode> = {
   audio: <SpeakerHigh size={18} className="text-[#AAA2C8]" />,
   a2ui_card: <SlidersHorizontal size={18} className="text-[#765E78]" />,
   mcp_app: <Globe size={18} className="text-[#5BA3B5]" />,
-  simulation: <Graph size={18} className="text-[#C39A52]" />,
+  simulation: <Graph size={18} className="text-[var(--accent)]" />,
   workgraph_result: <Graph size={18} className="text-[#665F9E]" />,
 };
 
@@ -356,7 +356,7 @@ export default function ArtifactStudio() {
           <button
             onClick={togglePin}
             className={`w-8 h-8 rounded-lg flex items-center justify-center transition-colors ${
-              isPinned ? 'text-[#C39A52] bg-[#C39A52]/15' : 'text-[#7E8795] hover:text-white hover:bg-white/[0.06]'
+              isPinned ? 'text-[var(--accent)] bg-[var(--accent-subtle)]' : 'text-[#7E8795] hover:text-white hover:bg-white/[0.06]'
             }`}
             title={isPinned ? 'Détacher' : 'Épingler'}
           >
@@ -502,7 +502,7 @@ export default function ArtifactStudio() {
                       className="px-2.5 py-1 rounded-lg bg-white/[0.06] hover:bg-white/[0.1] text-[11px] text-[#F1EEE7] flex items-center gap-1 transition-colors"
                       title="Créer une variation"
                     >
-                      <Sparkle size={12} className="text-[#C39A52]" />
+                      <Sparkle size={12} className="text-[var(--accent)]" />
                       <span>Variation</span>
                     </button>
                     <button
@@ -548,7 +548,7 @@ export default function ArtifactStudio() {
                 {/* Social Kit Viewer if generated */}
                 {socialKitData && (
                   <div className="p-3.5 rounded-xl bg-[#0E121A] border border-white/[0.06] space-y-3">
-                    <h4 className="text-[12px] font-semibold text-[#C39A52] flex items-center gap-1.5">
+                    <h4 className="text-[12px] font-semibold text-[var(--accent)] flex items-center gap-1.5">
                       <FileText size={14} />
                       <span>Kit de Communication LinkedIn & Facebook</span>
                     </h4>
@@ -742,7 +742,7 @@ export default function ArtifactStudio() {
                   >
                     <div>
                       <div className="flex items-center gap-2">
-                        <span className="text-[12px] font-mono font-bold text-[#C39A52]">v{ver.version}.0</span>
+                        <span className="text-[12px] font-mono font-bold text-[var(--accent)]">v{ver.version}.0</span>
                         <span className="text-[11px] text-[#7E8795]">par {ver.author}</span>
                       </div>
                       <p className="text-[11px] text-[#B8C0CC] mt-0.5">{ver.changeSummary || 'Version générée'}</p>
@@ -834,7 +834,7 @@ export default function ArtifactStudio() {
               </div>
               <div className="flex justify-between text-[#7E8795]">
                 <span>Skill employé :</span>
-                <span className="font-mono text-[#C39A52]">{activeArtifact.provenance?.skillUsed || 'financial-research'}</span>
+                <span className="font-mono text-[var(--accent)]">{activeArtifact.provenance?.skillUsed || 'financial-research'}</span>
               </div>
               <div className="flex justify-between text-[#7E8795]">
                 <span>Outil MCP appelé :</span>

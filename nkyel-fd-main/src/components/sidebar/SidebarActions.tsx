@@ -87,7 +87,7 @@ export default function SidebarActions({ isCollapsed }: SidebarActionsProps) {
           type="button"
           onClick={() => router.push('/')}
           title="Nouvelle mission"
-          className="w-10 h-10 mx-auto rounded-xl bg-[#6757E8]/15 hover:bg-[#6757E8]/25 border border-[#6757E8]/30 text-[#D5AE57] flex items-center justify-center transition-all mb-2"
+          className="w-10 h-10 mx-auto rounded-xl bg-[var(--accent-subtle)] hover:bg-[var(--accent-muted)] border border-[var(--accent-muted)] text-[var(--accent)] flex items-center justify-center transition-all mb-2"
         >
           <PantherMissionGlyph size={18} />
         </button>
@@ -95,9 +95,9 @@ export default function SidebarActions({ isCollapsed }: SidebarActionsProps) {
         <button
           type="button"
           onClick={() => router.push('/')}
-          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl bg-gradient-to-r from-[#6757E8]/20 to-[#D5AE57]/10 hover:from-[#6757E8]/30 hover:to-[#D5AE57]/20 border border-[#D5AE57]/25 text-white font-medium text-[13px] shadow-[0_0_15px_rgba(103,87,232,0.15)] transition-all mb-2 active:scale-[0.98]"
+          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl bg-[var(--accent)] hover:bg-[var(--accent-hover)] border border-[var(--accent-muted)] text-[var(--accent-fg)] font-medium text-[13px] shadow-sm transition-all mb-2 active:scale-[0.98]"
         >
-          <PantherMissionGlyph size={18} className="text-[#D5AE57] shrink-0" />
+          <PantherMissionGlyph size={18} className="shrink-0" />
           <span className="font-semibold tracking-wide">Nouvelle mission</span>
         </button>
       )}
@@ -116,8 +116,8 @@ export default function SidebarActions({ isCollapsed }: SidebarActionsProps) {
               title={item.label}
               className={`w-10 h-10 mx-auto rounded-xl flex items-center justify-center transition-colors ${
                 active
-                  ? 'bg-white/10 text-[#D5AE57] font-semibold border border-white/10'
-                  : 'text-[#9199A8] hover:text-white hover:bg-white/5'
+                  ? 'bg-[var(--active)] text-[var(--accent)] font-semibold border border-[var(--border)]'
+                  : 'text-[var(--text-tertiary)] hover:text-[var(--text-primary)] hover:bg-[var(--hover)]'
               }`}
             >
               <Icon size={18} weight={active ? 'fill' : 'regular'} />
@@ -132,20 +132,20 @@ export default function SidebarActions({ isCollapsed }: SidebarActionsProps) {
             onClick={() => router.push(item.route)}
             className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-[13px] font-medium transition-all ${
               active
-                ? 'bg-white/[0.08] text-white border border-white/[0.08] shadow-sm font-semibold'
-                : 'text-[#9199A8] hover:text-white hover:bg-white/[0.04]'
+                ? 'bg-[var(--active)] text-[var(--text-primary)] border border-[var(--border)] shadow-sm font-semibold'
+                : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--hover)]'
             }`}
           >
             <div className="flex items-center gap-3 min-w-0">
               <Icon
                 size={18}
                 weight={active ? 'fill' : 'regular'}
-                className={active ? 'text-[#D5AE57]' : 'text-[#9199A8]'}
+                className={active ? 'text-[var(--accent)]' : 'text-[var(--text-tertiary)]'}
               />
               <span className="truncate">{item.label}</span>
             </div>
             {item.badge && (
-              <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-[#6757E8]/20 border border-[#6757E8]/30 text-[#6757E8] font-semibold uppercase">
+              <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-[var(--info-subtle)] border border-[var(--info)]/30 text-[var(--info)] font-semibold uppercase">
                 {item.badge}
               </span>
             )}

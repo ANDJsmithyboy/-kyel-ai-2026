@@ -83,7 +83,7 @@ export default function UpgradeModal({ isOpen, onClose }: UpgradeModalProps) {
           {/* Header */}
           <div className="flex items-center justify-between px-6 py-4 border-b border-[var(--border)] bg-[var(--material-glass-regular)]">
             <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-xl bg-[#D5AE57] flex items-center justify-center text-black font-bold">
+              <div className="w-8 h-8 rounded-xl bg-[var(--accent)] flex items-center justify-center text-[var(--accent-fg)] font-bold">
                 <Sparkle size={18} weight="fill" />
               </div>
               <div>
@@ -108,8 +108,8 @@ export default function UpgradeModal({ isOpen, onClose }: UpgradeModalProps) {
           {/* Body */}
           <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-5 scrollbar-thin">
             {/* Promo Banner */}
-            <div className="p-4 rounded-2xl bg-[#D5AE57]/10 border border-[#D5AE57]/30 flex items-center gap-3">
-              <Lightning size={24} weight="fill" className="text-[#D5AE57] shrink-0" />
+            <div className="p-4 rounded-2xl bg-[var(--accent-subtle)] border border-[var(--accent)]/30 flex items-center gap-3">
+              <Lightning size={24} weight="fill" className="text-[var(--accent)] shrink-0" />
               <div className="text-xs">
                 <span className="font-bold text-[var(--text-primary)]">Offre Fondateur 2026 : </span>
                 <span className="text-[var(--text-secondary)]">Profitez d&apos;un accès sans limites et de la rotation multi-modèles intelligente !</span>
@@ -123,13 +123,13 @@ export default function UpgradeModal({ isOpen, onClose }: UpgradeModalProps) {
                   key={p.id}
                   className={`p-4 rounded-2xl border flex flex-col justify-between text-left transition-all ${
                     p.popular
-                      ? 'bg-[var(--surface-raised)] border-[#D5AE57]/50 shadow-md'
+                      ? 'bg-[var(--surface-raised)] border-[var(--accent)]/50 shadow-md'
                       : 'bg-[var(--surface)] border-[var(--border)]'
                   }`}
                 >
                   <div className="space-y-3">
                     <div className="flex items-center justify-between">
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-[#D5AE57] bg-[#D5AE57]/10 px-2 py-0.5 rounded-full border border-[#D5AE57]/20">
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-[var(--accent)] bg-[var(--accent-subtle)] px-2 py-0.5 rounded-full border border-[var(--accent)]/20">
                         {p.badge}
                       </span>
                     </div>
@@ -147,7 +147,7 @@ export default function UpgradeModal({ isOpen, onClose }: UpgradeModalProps) {
                     <ul className="space-y-2 pt-2 border-t border-[var(--border-subtle)] text-xs text-[var(--text-secondary)]">
                       {p.features.map((f, i) => (
                         <li key={i} className="flex items-start gap-2">
-                          <Check size={14} weight="bold" className="text-[#D5AE57] shrink-0 mt-0.5" />
+                          <Check size={14} weight="bold" className="text-[var(--accent)] shrink-0 mt-0.5" />
                           <span>{f}</span>
                         </li>
                       ))}
@@ -162,7 +162,7 @@ export default function UpgradeModal({ isOpen, onClose }: UpgradeModalProps) {
                     }}
                     className={`mt-5 w-full py-2.5 rounded-xl font-bold text-xs transition-all ${
                       p.popular
-                        ? 'bg-[#D5AE57] hover:bg-[#C59E47] text-black shadow-md'
+                        ? 'bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-[var(--accent-fg)] shadow-md'
                         : 'bg-[var(--surface-raised)] hover:bg-[var(--hover)] text-[var(--text-primary)] border border-[var(--border)]'
                     }`}
                   >

@@ -13,7 +13,9 @@ from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, Field
 
 from core.security import get_current_user
-from core.database import save_message, deduct_credits, get_conversation, save_conversation
+from db.models import Conversation, Message
+from db.session import async_session
+from sqlalchemy import select
 from services.groq_service import stream_groq
 from services.qdrant_service import query_qdrant, format_loxo_context
 
@@ -38,31 +40,49 @@ async def stream_chat_response(
     req: ChatCompletionRequest,
     user: dict,
 ) -> AsyncGenerator[str, None]:
-    """Gère le flux SSE, la recherche LOXO, et sauvegarde en DB."""
+    """Gère le flux SSE, la recherche LOXO, et sauvegarde en DB Neon."""
 
-    conversation_id = req.conversation_id
+    conversation_id_str = req.conversation_id
     user_id = user["id"]
 
     # 1. Gérer la conversation
-    if not conversation_id:
-        # Créer une nouvelle conversation
-        title = req.message[:50] + "..." if len(req.message) > 50 else req.message
-        conversation_id = await save_conversation(user_id, title, req.model, "chat")
-    else:
-        # Vérifier que la conversation appartient à l'utilisateur
-        conv = await get_conversation(conversation_id, user_id)
+    if not conversation_id_str:
+        yield f"data: {json.dumps({'error': 'conversation_id requis via la nouvelle API'})}\n\n"
+        yield "data: [DONE]\n\n"
+        return
+
+    import uuid
+    try:
+        conv_uuid = uuid.UUID(conversation_id_str)
+    except:
+        yield f"data: {json.dumps({'error': 'conversation_id invalide'})}\n\n"
+        yield "data: [DONE]\n\n"
+        return
+
+    async with async_session() as session:
+        # Vérifier que la conversation existe
+        stmt = select(Conversation).where(Conversation.id == conv_uuid)
+        result = await session.execute(stmt)
+        conv = result.scalar_one_or_none()
+
         if not conv:
             yield f"data: {json.dumps({'error': 'Conversation non trouvée'})}\n\n"
             yield "data: [DONE]\n\n"
             return
-
-    # 2. Sauvegarder le message de l'utilisateur
-    await save_message(
-        conversation_id=conversation_id,
-        user_id=user_id,
-        role="user",
-        content=req.message,
-    )
+            
+        # Get next sequence for user message
+        seq_stmt = select(Message.sequence).where(Message.conversation_id == conv_uuid).order_by(Message.sequence.desc()).limit(1)
+        seq_res = await session.execute(seq_stmt)
+        last_seq = seq_res.scalar_one_or_none() or 0
+        
+        user_msg = Message(
+            conversation_id=conv_uuid,
+            role="user",
+            content_text=req.message,
+            sequence=last_seq + 1
+        )
+        session.add(user_msg)
+        await session.commit()
 
     # 3. Radar LOXO (Recherche RAG)
     loxo_context = None
@@ -103,22 +123,33 @@ async def stream_chat_response(
 
     # 6. Fin du stream : Sauvegarder la réponse de l'assistant
     if full_content:
-        await save_message(
-            conversation_id=conversation_id,
-            user_id=user_id,
-            role="assistant",
-            content=full_content,
-            model=req.model,
-            tokens_in=tokens_in,
-            tokens_out=tokens_out,
-            sources=sources,
-        )
-
-        # Déduire les crédits (ex: 1 crédit par message, ou basé sur tokens)
-        await deduct_credits(user_id, 1, req.model, "chat")
+        async with async_session() as session:
+            seq_stmt = select(Message.sequence).where(Message.conversation_id == conv_uuid).order_by(Message.sequence.desc()).limit(1)
+            seq_res = await session.execute(seq_stmt)
+            last_seq = seq_res.scalar_one_or_none() or 0
+            
+            asst_msg = Message(
+                conversation_id=conv_uuid,
+                role="assistant",
+                content_text=full_content,
+                model_profile=req.model,
+                sequence=last_seq + 1,
+                content_json={"sources": sources} if sources else None
+            )
+            session.add(asst_msg)
+            
+            # Update conversation last_message_at
+            from datetime import datetime, timezone
+            conv_stmt = select(Conversation).where(Conversation.id == conv_uuid)
+            conv_res = await session.execute(conv_stmt)
+            conv_obj = conv_res.scalar_one_or_none()
+            if conv_obj:
+                conv_obj.last_message_at = datetime.now(timezone.utc)
+                
+            await session.commit()
 
     # Clôture SSE incluant le conversation_id généré si nouveau
-    yield f"data: {json.dumps({'type': 'done', 'conversation_id': conversation_id})}\n\n"
+    yield f"data: {json.dumps({'type': 'done', 'conversation_id': conversation_id_str})}\n\n"
     yield "data: [DONE]\n\n"
 
 

@@ -13,10 +13,13 @@
 import React, { useState, useCallback } from 'react';
 import { useChat } from '@/hooks/useChat';
 import { getNkyelEngine, useNkyelModel } from '@/hooks/useNkyelModel';
+import { useConversations } from '@/hooks/useConversations';
 import AdaptiveChatWorkspace, { ChatMessage } from '@/components/chat/AdaptiveChatWorkspace';
 
 export default function ChatPage() {
   const [conversationId, setConversationId] = useState<string | null>(null);
+  
+  const { createConversation } = useConversations();
 
   const engineId = useNkyelModel((state) => state.engineId);
   const activeEngine = getNkyelEngine(engineId);
@@ -33,15 +36,10 @@ export default function ChatPage() {
       // Créer une conversation persistée si nouveau thread
       if (!conversationId) {
         try {
-          const res = await fetch('/api/conversations', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ title: content.slice(0, 60), model: engineId }),
-          });
-          if (res.ok) {
-            const data = (await res.json()) as { id: string };
-            setConversationId(data.id);
-            window.history.replaceState(null, '', `/chat/${data.id}`);
+          const conv = await createConversation(content.slice(0, 60), 'CHAT', engineId);
+          if (conv) {
+            setConversationId(conv.id);
+            window.history.replaceState(null, '', `/chat/${conv.id}`);
           }
         } catch {
           // Poursuite gracieuse
@@ -50,7 +48,7 @@ export default function ChatPage() {
 
       chat.sendMessage(content);
     },
-    [conversationId, chat, engineId]
+    [conversationId, chat, engineId, createConversation]
   );
 
   const messages: ChatMessage[] = chat.messages.map((m) => ({

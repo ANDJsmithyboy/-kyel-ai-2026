@@ -27,6 +27,7 @@ import ActionLauncher from './ActionLauncher';
 import { type AgenticFeaturesState } from './AgenticToggles';
 import { getNkyelEngine, useNkyelModel } from '@/hooks/useNkyelModel';
 import { useAudioSTT } from '@/hooks/useAudioSTT';
+import { useLanguageStore } from '@/stores/language.store';
 
 interface MissionComposerProps {
   onSend: (message: string, engineId: string, features: AgenticFeaturesState) => void;
@@ -43,6 +44,7 @@ export default function MissionComposer({
   initialPrompt = '',
   isHeroMode = false,
 }: MissionComposerProps) {
+  const { t } = useLanguageStore();
   const [input, setInput] = useState(initialPrompt);
   const [isLauncherOpen, setIsLauncherOpen] = useState(false);
   const selectedEngine = useNkyelModel((state) => state.engineId);
@@ -99,11 +101,11 @@ export default function MissionComposer({
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder="Décrivez votre objectif à Ñkyel…"
+            placeholder={t('composer.placeholder') || 'Décrivez votre objectif à Ñkyel…'}
             minRows={2}
             maxRows={8}
             className="nkyel-composer-textarea w-full min-h-[50px] resize-none bg-transparent text-[15px] leading-[24px] text-[var(--text-primary)] placeholder-[var(--text-tertiary)] focus:outline-none scrollbar-none"
-            aria-label="Décrivez votre objectif à Ñkyel"
+            aria-label={t('composer.placeholder') || 'Décrivez votre objectif à Ñkyel'}
           />
         </div>
 

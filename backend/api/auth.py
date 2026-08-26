@@ -25,7 +25,7 @@ from core.security import (
     get_current_user_id,
     SUPERADMIN_EMAILS,
 )
-from db.models import User, UserRole, Language, UserPreference, QuotaUsage, BetaAccess, BetaStatus
+from db.models import User, Workspace, WorkspaceMember
 from db.session import get_db
 from services.quota_service import QuotaService
 
@@ -67,66 +67,57 @@ async def sync_clerk_user(
     email_lower = body.email.lower()
     is_super = email_lower in SUPERADMIN_EMAILS
 
-    # 1. Vérifier si l'utilisateur existe déjà par clerk_sub ou email
-    stmt = select(User).where((User.clerk_sub == body.clerk_id) | (User.email == body.email))
+    # 1. Vérifier si l'utilisateur existe déjà par clerk_user_id ou email
+    stmt = select(User).where((User.clerk_user_id == body.clerk_id) | (User.email == body.email))
     result = await db.execute(stmt)
     user = result.scalar_one_or_none()
 
     if not user:
         # Création du nouvel utilisateur
         user = User(
-            clerk_sub=body.clerk_id,
+            clerk_user_id=body.clerk_id,
             email=body.email,
             name=body.name or "Pionnier Ñkyel",
-            role=UserRole.admin if is_super else UserRole.pro,
-            preferred_language=Language.fr,
+            system_role="admin" if is_super else "user",
+            preferences={
+                "theme": "black-panther",
+                "ui_locale": "fr-FR",
+                "agent_language": "auto"
+            }
         )
         db.add(user)
         await db.flush()
 
-        # Initialisation des préférences
-        pref = UserPreference(
-            user_id=user.id,
-            theme="black-panther",
-            ui_locale="fr-FR",
-            agent_language="auto",
+        # Création du workspace par défaut
+        workspace = Workspace(
+            owner_user_id=user.id,
+            name=f"Espace de {user.name}",
+            tier="free"
         )
-        db.add(pref)
+        db.add(workspace)
+        await db.flush()
 
-        # Initialisation du suivi de quota
-        q_usage = QuotaUsage(
+        member = WorkspaceMember(
+            workspace_id=workspace.id,
             user_id=user.id,
-            images_used=0,
-            max_images=3,
-            videos_used=0,
-            max_videos=1,
-            missions_today=0,
-            max_missions_day=15,
+            role="owner"
         )
-        db.add(q_usage)
-
-        # Éligibilité Beta
-        b_access = BetaAccess(
-            user_id=user.id,
-            status=BetaStatus.ACTIVE,
-            tier="BETA_PIONEER",
-        )
-        db.add(b_access)
+        db.add(member)
         await db.flush()
     else:
         # Mise à jour idempotente des champs manquants
-        if not user.clerk_sub:
-            user.clerk_sub = body.clerk_id
-        if is_super and user.role != UserRole.admin:
-            user.role = UserRole.admin
+        if not user.clerk_user_id:
+            user.clerk_user_id = body.clerk_id
+        if is_super and user.system_role != "admin":
+            user.system_role = "admin"
         await db.flush()
 
     return {
         "status": "synchronized",
         "user_id": str(user.id),
-        "clerk_id": user.clerk_sub,
+        "clerk_id": user.clerk_user_id,
         "email": user.email,
-        "role": user.role.value,
+        "role": user.system_role,
         "is_admin": is_super,
     }
 
@@ -140,18 +131,11 @@ async def get_user_preferences(
     user_id = current_user.get("id")
     try:
         u_uuid = uuid.UUID(str(user_id))
-        stmt = select(UserPreference).where(UserPreference.user_id == u_uuid)
+        stmt = select(User).where(User.id == u_uuid)
         result = await db.execute(stmt)
-        pref = result.scalar_one_or_none()
-        if pref:
-            return {
-                "theme": pref.theme,
-                "ui_locale": pref.ui_locale,
-                "agent_language": pref.agent_language,
-                "density": pref.density,
-                "timezone": pref.timezone,
-                "reduced_motion": pref.reduced_motion,
-            }
+        user = result.scalar_one_or_none()
+        if user and user.preferences:
+            return user.preferences
     except Exception:
         pass
 
@@ -176,29 +160,28 @@ async def update_user_preferences(
     user_id = current_user.get("id")
     try:
         u_uuid = uuid.UUID(str(user_id))
-        stmt = select(UserPreference).where(UserPreference.user_id == u_uuid)
+        stmt = select(User).where(User.id == u_uuid)
         result = await db.execute(stmt)
-        pref = result.scalar_one_or_none()
+        user = result.scalar_one_or_none()
 
-        if not pref:
-            pref = UserPreference(user_id=u_uuid)
-            db.add(pref)
-
-        if body.theme is not None:
-            pref.theme = body.theme
-        if body.ui_locale is not None:
-            pref.ui_locale = body.ui_locale
-        if body.agent_language is not None:
-            pref.agent_language = body.agent_language
-        if body.density is not None:
-            pref.density = body.density
-        if body.timezone is not None:
-            pref.timezone = body.timezone
-        if body.reduced_motion is not None:
-            pref.reduced_motion = body.reduced_motion
-
-        await db.flush()
-        return {"status": "updated", "theme": pref.theme, "ui_locale": pref.ui_locale}
+        if user:
+            prefs = user.preferences or {}
+            if body.theme is not None:
+                prefs["theme"] = body.theme
+            if body.ui_locale is not None:
+                prefs["ui_locale"] = body.ui_locale
+            if body.agent_language is not None:
+                prefs["agent_language"] = body.agent_language
+            if body.density is not None:
+                prefs["density"] = body.density
+            if body.timezone is not None:
+                prefs["timezone"] = body.timezone
+            if body.reduced_motion is not None:
+                prefs["reduced_motion"] = body.reduced_motion
+            
+            user.preferences = prefs
+            await db.flush()
+            return {"status": "updated", **prefs}
     except Exception as e:
         return {"status": "saved_locally", "theme": body.theme or "black-panther"}
 

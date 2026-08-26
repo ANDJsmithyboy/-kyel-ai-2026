@@ -171,7 +171,7 @@ export default function CapabilitiesDrawer({
           {/* Header */}
           <div className="flex items-center justify-between px-6 py-4 border-b border-white/10 bg-[#10141F]">
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-xl bg-[#D5AE57]/15 border border-[#D5AE57]/30 flex items-center justify-center text-[#D5AE57]">
+              <div className="w-8 h-8 rounded-xl bg-[var(--accent-subtle)] border border-[var(--accent)]/30 flex items-center justify-center text-[var(--accent)]">
                 <Sparkle size={18} weight="fill" />
               </div>
               <div>
@@ -205,11 +205,11 @@ export default function CapabilitiesDrawer({
                     onSelectCapability(cap.prompt);
                     onClose();
                   }}
-                  className="p-4 rounded-2xl bg-[#10141F] hover:bg-[#171B27] border border-white/[0.08] hover:border-[#D5AE57]/40 shadow-sm hover:shadow-xl transition-all cursor-pointer group flex flex-col justify-between text-left"
+                  className="p-4 rounded-2xl bg-[#10141F] hover:bg-[#171B27] border border-white/[0.08] hover:border-[var(--accent)]/40 shadow-sm hover:shadow-xl transition-all cursor-pointer group flex flex-col justify-between text-left"
                 >
                   <div className="space-y-2">
                     <div className="flex items-center justify-between">
-                      <div className="w-9 h-9 rounded-xl bg-white/[0.04] border border-white/[0.08] flex items-center justify-center text-[#D5AE57] group-hover:scale-105 transition-transform">
+                      <div className="w-9 h-9 rounded-xl bg-white/[0.04] border border-white/[0.08] flex items-center justify-center text-[var(--accent)] group-hover:scale-105 transition-transform">
                         <Icon size={20} />
                       </div>
                       <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-white/[0.06] text-[#9199A8] group-hover:text-white">
@@ -218,7 +218,7 @@ export default function CapabilitiesDrawer({
                     </div>
 
                     <div>
-                      <h3 className="text-[14px] font-bold text-white group-hover:text-[#D5AE57] transition-colors flex items-center gap-1">
+                      <h3 className="text-[14px] font-bold text-white group-hover:text-[var(--accent)] transition-colors flex items-center gap-1">
                         <span>{cap.title}</span>
                         <ArrowUpRight size={14} className="opacity-0 group-hover:opacity-100 transition-opacity" />
                       </h3>

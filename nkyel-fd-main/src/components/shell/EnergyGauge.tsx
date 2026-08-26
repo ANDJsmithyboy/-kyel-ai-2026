@@ -15,12 +15,12 @@ interface EnergyGaugeProps {
 export default function EnergyGauge({ used, total }: EnergyGaugeProps) {
   const remaining = Math.max(0, total - used);
   const pct = total > 0 ? (remaining / total) * 100 : 0;
-  const fillColor = pct > 50 ? '#C5A059' : pct > 20 ? '#FF8C00' : '#C0392D';
+  const fillColor = pct > 50 ? 'var(--accent)' : pct > 20 ? 'var(--warning)' : 'var(--error)';
 
   return (
     <div className="px-4 py-3">
       <div className="flex items-center gap-2 mb-2">
-        <span className="text-[10px] font-semibold uppercase tracking-widest" style={{ color: '#8A8A92' }}>
+        <span className="text-[10px] font-semibold uppercase tracking-widest" style={{ color: 'var(--text-tertiary)' }}>
           ⚡ Énergie Quotidienne
         </span>
       </div>
@@ -28,7 +28,7 @@ export default function EnergyGauge({ used, total }: EnergyGaugeProps) {
       {/* Barre */}
       <div
         className="relative h-2 rounded-full overflow-hidden"
-        style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.08)' }}
+        style={{ background: 'var(--control-bg)', border: '1px solid var(--border)' }}
       >
         <motion.div
           className="absolute inset-y-0 left-0 rounded-full"
@@ -39,7 +39,7 @@ export default function EnergyGauge({ used, total }: EnergyGaugeProps) {
         />
       </div>
 
-      <p className="mt-1.5 text-[11px]" style={{ color: '#525258', fontFamily: 'var(--font-body)' }}>
+      <p className="mt-1.5 text-[11px]" style={{ color: 'var(--text-tertiary)', fontFamily: 'var(--font-sans)' }}>
         {remaining} / {total} crédits
       </p>
     </div>

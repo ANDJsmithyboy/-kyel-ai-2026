@@ -14,6 +14,11 @@ Gère la synchronisation Clerk -> Neon PostgreSQL :
 import hashlib
 import json
 import logging
+import os
+from typing import Dict, Any
+from fastapi import APIRouter, Request, HTTPException, status
+from sqlalchemy import text
+from svix.webhooks import Webhook, WebhookVerificationError
 from typing import Dict, Any
 from fastapi import APIRouter, Request, HTTPException, status
 from sqlalchemy import text
@@ -38,6 +43,25 @@ async def handle_clerk_webhook(request: Request):
     svix_id = headers.get("svix-id")
     svix_timestamp = headers.get("svix-timestamp")
     svix_signature = headers.get("svix-signature")
+
+    if not svix_id or not svix_timestamp or not svix_signature:
+        raise HTTPException(status_code=400, detail="Missing svix headers")
+
+    webhook_secret = getattr(settings, "clerk_webhook_secret", None) or os.getenv("CLERK_WEBHOOK_SECRET")
+    if not webhook_secret:
+        logger.error("CLERK_WEBHOOK_SECRET non configuré sur le backend.")
+        raise HTTPException(status_code=500, detail="Webhook secret not configured")
+
+    try:
+        wh = Webhook(webhook_secret)
+        wh.verify(payload_str, {
+            "svix-id": svix_id,
+            "svix-timestamp": svix_timestamp,
+            "svix-signature": svix_signature,
+        })
+    except WebhookVerificationError:
+        logger.warning(f"Signature de webhook invalide pour l'événement {svix_id}")
+        raise HTTPException(status_code=401, detail="Invalid signature")
 
     try:
         data = json.loads(payload_str)

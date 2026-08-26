@@ -68,7 +68,7 @@ export default function AgentsMeshPage() {
 
               <div className="flex items-center justify-between pt-3 border-t border-white/[0.04] text-[10px] text-[#7E8795]">
                 <div className="flex items-center gap-2">
-                  <Lightning size={13} className="text-[#C39A52]" />
+                  <Lightning size={13} className="text-[var(--accent)]" />
                   <span>Latence : {agent.latencyMs} ms</span>
                 </div>
                 <span>Fournisseur : {agent.provider}</span>

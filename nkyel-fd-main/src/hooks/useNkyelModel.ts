@@ -35,8 +35,8 @@ export const INTELLIGENCE_MODES: Record<IntelligenceModeId, IntelligenceMode> = 
     name: 'Ñkyel',
     labelFr: 'Ñkyel',
     labelEn: 'Ñkyel',
-    descFr: 'Routage intelligent autonome',
-    descEn: 'Intelligent autonomous routing',
+    descFr: 'Intelligence autonome générale',
+    descEn: 'General autonomous intelligence',
     apiModel: 'auto',
   },
   fast: {
@@ -44,8 +44,8 @@ export const INTELLIGENCE_MODES: Record<IntelligenceModeId, IntelligenceMode> = 
     name: 'Ñkyel Radi',
     labelFr: 'Ñkyel Radi',
     labelEn: 'Ñkyel Radi',
-    descFr: 'Ultra-rapide & concis',
-    descEn: 'Ultra-fast & concise',
+    descFr: 'Rapide & concis',
+    descEn: 'Fast & concise',
     apiModel: 'radi',
   },
   deep: {
@@ -63,8 +63,8 @@ export const INTELLIGENCE_MODES: Record<IntelligenceModeId, IntelligenceMode> = 
     name: 'Ñkyel Research',
     labelFr: 'Ñkyel Research',
     labelEn: 'Ñkyel Research',
-    descFr: 'Recherche multi-sources & preuves',
-    descEn: 'Multi-source research & citations',
+    descFr: 'Recherche approfondie & preuves',
+    descEn: 'Deep research & evidence',
     apiModel: 'research',
   },
 };

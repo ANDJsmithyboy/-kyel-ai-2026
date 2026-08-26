@@ -209,7 +209,7 @@ export default function ProtocolsPage() {
                 estimatedCostUsd: 0.02,
               });
             }}
-            className="px-3 py-1.5 rounded-xl bg-[#C39A52]/15 hover:bg-[#C39A52]/25 border border-[#C39A52]/30 text-[#C39A52] text-[12px] font-semibold transition-colors flex items-center gap-1.5"
+            className="px-3 py-1.5 rounded-xl bg-[var(--accent-subtle)] hover:bg-[var(--accent)]/25 border border-[var(--accent)]/30 text-[var(--accent)] text-[12px] font-semibold transition-colors flex items-center gap-1.5"
           >
             <WarningCircle size={14} weight="fill" />
             <span>Simuler Approbation AG-UI</span>
@@ -538,7 +538,7 @@ export default function ProtocolsPage() {
                 <h3 className="text-sm font-semibold text-[#F1EEE7]">Registre de Skills</h3>
                 <button
                   onClick={() => setIsCreateSkillOpen(true)}
-                  className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-[#C39A52]/20 hover:bg-[#C39A52]/30 text-[#C39A52] text-[11px] font-semibold transition-colors"
+                  className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-[var(--accent-subtle)] hover:bg-[var(--accent)]/30 text-[var(--accent)] text-[11px] font-semibold transition-colors"
                 >
                   <Plus size={13} />
                   <span>Nouveau SKILL.md</span>
@@ -552,7 +552,7 @@ export default function ProtocolsPage() {
                     onClick={() => setSelectedSkillId(sk.id)}
                     className={`p-3.5 rounded-2xl border cursor-pointer transition-all ${
                       selectedSkill?.id === sk.id
-                        ? 'bg-[#151922] border-[#C39A52] shadow-lg'
+                        ? 'bg-[#151922] border-[var(--accent)] shadow-lg'
                         : 'bg-[#0E121A] border-white/[0.06] hover:border-white/[0.12]'
                     }`}
                   >
@@ -569,7 +569,7 @@ export default function ProtocolsPage() {
                     <p className="text-[11px] text-[#7E8795] line-clamp-2">{sk.description}</p>
                     <div className="flex items-center justify-between mt-2 pt-2 border-t border-white/[0.04] text-[10px] text-[#7E8795]">
                       <span>{sk.author}</span>
-                      <span className="text-[#C39A52] font-mono">v{sk.version}</span>
+                      <span className="text-[var(--accent)] font-mono">v{sk.version}</span>
                     </div>
                   </div>
                 ))}
@@ -586,7 +586,7 @@ export default function ProtocolsPage() {
                       <div className="flex items-center gap-2">
                         <span className="text-xl">🧩</span>
                         <h2 className="text-lg font-bold text-[#F1EEE7]">{selectedSkill.name}</h2>
-                        <span className="text-[11px] font-mono px-2 py-0.5 rounded bg-[#C39A52]/20 text-[#C39A52]">
+                        <span className="text-[11px] font-mono px-2 py-0.5 rounded bg-[var(--accent-subtle)] text-[var(--accent)]">
                           v{selectedSkill.version}
                         </span>
                       </div>
@@ -641,7 +641,7 @@ export default function ProtocolsPage() {
                   {/* SKILL.md Instructions View */}
                   <div className="p-4 rounded-xl bg-[#08090D] border border-white/[0.04]">
                     <div className="flex items-center justify-between mb-2">
-                      <span className="text-[12px] font-semibold text-[#C39A52] font-mono">SKILL.md Instructions</span>
+                      <span className="text-[12px] font-semibold text-[var(--accent)] font-mono">SKILL.md Instructions</span>
                     </div>
                     <pre className="text-[12px] text-[#F1EEE7] whitespace-pre-wrap font-mono leading-relaxed bg-[#151922] p-3 rounded-lg border border-white/[0.04]">
                       {selectedSkill.instructionsMarkdown}
@@ -657,14 +657,14 @@ export default function ProtocolsPage() {
                         value={skillTestInput}
                         onChange={(e) => setSkillTestInput(e.target.value)}
                         placeholder="Entrez un prompt de test pour ce Skill..."
-                        className="flex-1 px-3.5 py-2 rounded-xl text-[13px] text-[#F1EEE7] bg-[#08090D] border border-white/[0.08] focus:border-[#C39A52] focus:outline-none"
+                        className="flex-1 px-3.5 py-2 rounded-xl text-[13px] text-[#F1EEE7] bg-[#08090D] border border-white/[0.08] focus:border-[var(--accent)] focus:outline-none"
                       />
                       <button
                         onClick={async () => {
                           const res = await testSkillLive(selectedSkill.id, skillTestInput);
                           setSkillTestResult(res.output);
                         }}
-                        className="px-4 py-2 rounded-xl bg-[#C39A52] hover:bg-[#C39A52]/90 text-black font-semibold text-[13px] flex items-center gap-1.5 transition-colors shrink-0"
+                        className="px-4 py-2 rounded-xl bg-[var(--accent)] hover:opacity-90 text-[var(--accent-fg)] font-semibold text-[13px] flex items-center gap-1.5 transition-colors shrink-0"
                       >
                         <Play size={14} weight="fill" />
                         <span>Tester le Skill</span>
@@ -672,7 +672,7 @@ export default function ProtocolsPage() {
                     </div>
 
                     {skillTestResult && (
-                      <div className="p-3.5 rounded-xl bg-[#08090D] border border-[#C39A52]/30 text-[12px] font-mono text-[#F1EEE7] whitespace-pre-wrap">
+                      <div className="p-3.5 rounded-xl bg-[#08090D] border border-[var(--accent)]/30 text-[12px] font-mono text-[#F1EEE7] whitespace-pre-wrap">
                         {skillTestResult}
                       </div>
                     )}
@@ -1158,7 +1158,7 @@ export default function ProtocolsPage() {
                   });
                   setIsCreateSkillOpen(false);
                 }}
-                className="px-4 py-2 rounded-xl bg-[#C39A52] hover:bg-[#C39A52]/90 text-black font-semibold text-[13px]"
+                className="px-4 py-2 rounded-xl bg-[var(--accent)] hover:opacity-90 text-[var(--accent-fg)] font-semibold text-[13px]"
               >
                 Enregistrer le Skill
               </button>

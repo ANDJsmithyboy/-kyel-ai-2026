@@ -269,7 +269,7 @@ export default function A2UIRenderer({
                             {String(rawVal)}
                           </span>
                         ) : col.type === 'currency' ? (
-                          <span className="font-mono font-medium text-[#C39A52]">
+                          <span className="font-mono font-medium text-[var(--accent)]">
                             {typeof rawVal === 'number'
                               ? new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(rawVal)
                               : String(rawVal)}
@@ -390,7 +390,7 @@ export default function A2UIRenderer({
                     <span
                       className={`text-[10px] px-2 py-0.5 rounded-full font-semibold ${
                         item.isRecommended
-                          ? 'bg-[#C39A52]/20 text-[#C39A52] border border-[#C39A52]/30'
+                          ? 'bg-[var(--accent-subtle)] text-[var(--accent)] border border-[var(--accent)]/30'
                           : 'bg-white/[0.08] text-[#B8C0CC]'
                       }`}
                     >
@@ -472,7 +472,7 @@ export default function A2UIRenderer({
       {/* ── 6. VALIDATION CONTROLS (HUMAN IN THE LOOP) ── */}
       {spec.validationControls && (
         <div className="mt-4 pt-3 border-t border-white/[0.06] space-y-2">
-          <div className="text-[12px] font-semibold text-[#C39A52] uppercase tracking-wider">
+          <div className="text-[12px] font-semibold text-[var(--accent)] uppercase tracking-wider">
             Points de vérification humaine requis
           </div>
           {spec.validationControls.checklist.map((item) => (

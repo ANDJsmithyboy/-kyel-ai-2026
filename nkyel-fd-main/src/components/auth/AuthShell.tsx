@@ -56,7 +56,7 @@ export default function AuthShell({ mode, children }: AuthShellProps) {
           className="inline-flex items-center gap-2 group transition-opacity hover:opacity-90 rounded-full px-3 py-1.5 bg-black/40 backdrop-blur-md border border-white/15 text-white shadow-lg"
           aria-label="Ñkyel AI Home"
         >
-          <div className="w-6 h-6 rounded-full bg-[#D5AE57] text-black flex items-center justify-center font-black text-xs shadow-sm">
+          <div className="w-6 h-6 rounded-full bg-[var(--accent)] text-[var(--accent-fg)] flex items-center justify-center font-black text-xs shadow-sm">
             Ñ
           </div>
           <span className="font-semibold text-sm tracking-tight text-white">
@@ -71,7 +71,7 @@ export default function AuthShell({ mode, children }: AuthShellProps) {
           className="h-8 px-3 rounded-full bg-black/40 backdrop-blur-md border border-white/15 hover:border-white/30 text-xs font-mono text-white/80 hover:text-white flex items-center gap-1.5 transition-all shadow-lg active:scale-95"
           title={isEn ? 'Basculer en Français' : 'Switch to English'}
         >
-          <Globe size={13} className="text-[#D5AE57]" />
+          <Globe size={13} className="text-[var(--accent)]" />
           <span className="font-semibold">{isEn ? 'EN' : 'FR'}</span>
         </button>
       </header>

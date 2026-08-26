@@ -79,9 +79,9 @@ export default function ConnectorCard({ connector, onSelect, onConnect }: Connec
             <span
               className="flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-full shrink-0"
               style={{
-                background: 'rgba(34, 197, 94, 0.12)',
-                color: 'var(--success, #22c55e)',
-                border: '1px solid rgba(34, 197, 94, 0.25)',
+                background: 'var(--success-subtle)',
+                color: 'var(--success)',
+                border: '1px solid color-mix(in srgb, var(--success) 25%, transparent)',
               }}
             >
               <CheckCircle size={11} weight="fill" />
@@ -91,7 +91,7 @@ export default function ConnectorCard({ connector, onSelect, onConnect }: Connec
 
           {isAuthRequired && (
             <span
-              className="flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-full shrink-0 bg-amber-500/10 text-amber-400 border border-amber-500/20"
+              className="flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-full shrink-0 bg-[var(--warning-subtle)] text-[var(--warning)] border border-[color-mix(in_srgb,var(--warning)_25%,transparent)]"
             >
               <Lock size={11} />
               <span>Reconnexion</span>
@@ -100,7 +100,7 @@ export default function ConnectorCard({ connector, onSelect, onConnect }: Connec
 
           {isError && (
             <span
-              className="flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-full shrink-0 bg-red-500/10 text-red-400 border border-red-500/20"
+              className="flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-full shrink-0 bg-[var(--error-subtle)] text-[var(--error)] border border-[color-mix(in_srgb,var(--error)_25%,transparent)]"
             >
               <WarningCircle size={11} />
               <span>Erreur</span>

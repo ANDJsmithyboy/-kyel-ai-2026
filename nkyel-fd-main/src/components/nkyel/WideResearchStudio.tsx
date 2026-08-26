@@ -281,7 +281,7 @@ export default function WideResearchStudio() {
                   onClick={() => handleControlAction(isPaused ? 'resume' : 'pause')}
                   className="px-3 py-1 rounded-lg bg-white/[0.04] hover:bg-white/[0.08] text-[11px] flex items-center gap-1.5"
                 >
-                  {isPaused ? <Play size={13} className="text-[#6F9485]" /> : <Pause size={13} className="text-[#C39A52]" />}
+                  {isPaused ? <Play size={13} className="text-[#6F9485]" /> : <Pause size={13} className="text-[var(--accent)]" />}
                   {isPaused ? 'Reprendre' : 'Pause'}
                 </button>
                 <button
@@ -302,7 +302,7 @@ export default function WideResearchStudio() {
         {/* COLONNE 1 : Plan & Requêtes générées */}
         <div className="bg-[#0E121A] border border-white/[0.06] rounded-2xl p-4 flex flex-col min-h-[300px]">
           <h3 className="text-xs font-semibold text-[#B8C0CC] uppercase tracking-wider mb-3 flex items-center gap-2">
-            <Clock size={15} className="text-[#C39A52]" />
+            <Clock size={15} className="text-[var(--accent)]" />
             1. Plan & Requêtes Tavily
           </h3>
           <div className="space-y-2 overflow-y-auto flex-1 text-xs">
@@ -311,7 +311,7 @@ export default function WideResearchStudio() {
             ) : (
               queries.map((q, idx) => (
                 <div key={idx} className="p-2.5 rounded-xl bg-white/[0.03] border border-white/[0.04] flex items-start gap-2">
-                  <span className="w-4 h-4 rounded-full bg-[#C39A52]/20 text-[#C39A52] flex items-center justify-center text-[10px] shrink-0 mt-0.5">
+                  <span className="w-4 h-4 rounded-full bg-[var(--accent-subtle)] text-[var(--accent)] flex items-center justify-center text-[10px] shrink-0 mt-0.5">
                     {idx + 1}
                   </span>
                   <span className="text-[#F1EEE7] font-mono text-[11px] leading-relaxed">{q}</span>

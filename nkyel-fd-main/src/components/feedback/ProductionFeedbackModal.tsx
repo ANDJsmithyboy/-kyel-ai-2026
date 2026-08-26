@@ -175,7 +175,7 @@ export default function ProductionFeedbackModal({
         {/* Header */}
         <div className="flex items-center justify-between pb-3 border-b border-white/10">
           <div className="flex items-center gap-2">
-            <Sparkle size={18} className="text-[#D5AE57]" />
+            <Sparkle size={18} className="text-[var(--accent)]" />
             <h3 className="text-base font-semibold tracking-tight text-white">
               Transmettre un retour
             </h3>
@@ -215,7 +215,7 @@ export default function ProductionFeedbackModal({
                       onClick={() => setCategory(cat.id)}
                       className={`inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all ${
                         isSelected
-                          ? 'bg-[var(--accent,rgba(213,174,87,0.2))] text-[var(--accent,#D5AE57)] border border-[var(--accent,#D5AE57)]/40 shadow-sm'
+                          ? 'bg-[var(--accent-subtle)] text-[var(--accent)] border border-[var(--accent)]/40 shadow-sm'
                           : 'bg-white/[0.04] text-[#9199A8] hover:bg-white/[0.08] hover:text-white border border-transparent'
                       }`}
                     >
@@ -237,7 +237,7 @@ export default function ProductionFeedbackModal({
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder="Ex. Erreur d’affichage sur le canvas, suggestion..."
-                className="w-full px-3 py-2 text-sm rounded-xl bg-white/[0.04] border border-white/10 text-white placeholder:text-white/30 outline-none focus:border-[var(--accent,#D5AE57)] transition-colors"
+                className="w-full px-3 py-2 text-sm rounded-xl bg-white/[0.04] border border-white/10 text-white placeholder:text-white/30 outline-none focus:border-[var(--accent)] transition-colors"
               />
             </div>
 
@@ -251,7 +251,7 @@ export default function ProductionFeedbackModal({
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 placeholder="Décrivez votre expérience, le comportement attendu et ce qui s'est produit..."
-                className="w-full px-3 py-2 text-sm rounded-xl bg-white/[0.04] border border-white/10 text-white placeholder:text-white/30 outline-none focus:border-[var(--accent,#D5AE57)] transition-colors resize-none"
+                className="w-full px-3 py-2 text-sm rounded-xl bg-white/[0.04] border border-white/10 text-white placeholder:text-white/30 outline-none focus:border-[var(--accent)] transition-colors resize-none"
                 required
               />
             </div>
@@ -314,7 +314,7 @@ export default function ProductionFeedbackModal({
               <button
                 type="submit"
                 disabled={loading}
-                className="flex-1 py-2.5 rounded-xl text-xs font-semibold bg-[var(--accent,#D5AE57)] text-black hover:opacity-90 transition-all flex items-center justify-center gap-1.5 disabled:opacity-50"
+                className="flex-1 py-2.5 rounded-xl text-xs font-semibold bg-[var(--accent)] text-[var(--accent-fg)] hover:opacity-90 transition-all flex items-center justify-center gap-1.5 disabled:opacity-50"
               >
                 <PaperPlaneTilt size={15} weight="bold" />
                 <span>{loading ? 'Envoi...' : 'Envoyer'}</span>

@@ -18,27 +18,23 @@ from core.telemetry import configure_structured_logging, telemetry_registry
 from core.cancellation import cancellation_manager
 from db.session import init_db, close_db
 
-# Imports des routeurs v1
+# Imports des routeurs v1 — PRODUCTION
+from api.v1.workspaces import router as workspaces_router
+from api.v1.missions import router as missions_router
+from api.v1.workgraph import router as workgraph_router
+from api.v1.conversations import router as conversations_router
+from api.v1.events import router as events_router
+from api.v1.user_settings import router as settings_router
+from api.v1.artifacts_v2 import router as artifacts_v2_router
+from api.auth import router as auth_router
+from api.v1.clerk_webhook import router as clerk_webhook_router
+
+# Routeurs existants réactivés
 from api.v1.chat import router as chat_router
 from api.v1.agent import router as agent_router
-from api.v1.rag import router as rag_router
-from api.v1.admin import router as admin_router
-from api.v1.users import router as users_router
 from api.v1.feedback import router as feedback_router
-from api.v1.nkyel_agent import router as nkyel_router
-from api.v1.media import router as media_router
-from api.v1.wide_research import router as wide_research_router
-from api.v1.workgraph_intervention import router as workgraph_router
-from api.v1.clerk_webhook import router as clerk_webhook_router
-from api.v1.beta import router as beta_router
-from api.v1.google_demo import router as google_demo_router
-from api.v1.visual_agent import router as visual_agent_router
-from api.v1.memory import router as memory_router
-from api.v1.world_model import router as world_model_router
-from api.v1.vision_engine import router as vision_engine_router
-from api.v1.providers import router as providers_router
+# from api.v1.media import router as media_router
 from api.v1.artifacts import router as artifacts_router
-from api.auth import router as auth_router
 from services.language_registry_service import language_service
 
 logger = logging.getLogger(__name__)
@@ -162,27 +158,22 @@ async def global_exception_handler(request, exc):
 
 
 # ── Montage des routeurs ─────────────────────────────────────
-app.include_router(chat_router)
-app.include_router(agent_router)
-app.include_router(rag_router)
-app.include_router(admin_router)
-app.include_router(admin_router, prefix="/api")
-app.include_router(users_router)
-app.include_router(feedback_router)
-app.include_router(nkyel_router)
-app.include_router(media_router)
-app.include_router(wide_research_router, prefix="/api/v1")
-app.include_router(workgraph_router)
-app.include_router(clerk_webhook_router)
-app.include_router(beta_router)
-app.include_router(google_demo_router)
-app.include_router(visual_agent_router)
-app.include_router(memory_router)
-app.include_router(world_model_router)
-app.include_router(vision_engine_router)
-app.include_router(providers_router)
-app.include_router(artifacts_router)
 app.include_router(auth_router)
+app.include_router(workspaces_router, prefix="/api/v1")
+app.include_router(missions_router, prefix="/api/v1")
+app.include_router(workgraph_router, prefix="/api/v1")
+app.include_router(conversations_router, prefix="/api/v1")
+app.include_router(events_router, prefix="/api/v1")
+app.include_router(settings_router, prefix="/api/v1")
+app.include_router(artifacts_v2_router, prefix="/api/v1")
+app.include_router(clerk_webhook_router)
+
+# Routeurs existants réactivés
+app.include_router(chat_router, prefix="/api/v1")
+app.include_router(agent_router, prefix="/api/v1")
+app.include_router(feedback_router, prefix="/api/v1")
+# app.include_router(media_router, prefix="/api/v1")
+app.include_router(artifacts_router, prefix="/api/v1")
 
 
 

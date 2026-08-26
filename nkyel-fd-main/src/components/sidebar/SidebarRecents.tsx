@@ -145,7 +145,7 @@ export default function SidebarRecents({ isCollapsed }: SidebarRecentsProps) {
                 }`}
               >
                 <div className="flex items-center gap-2 min-w-0">
-                  <Icon size={14} className="shrink-0 text-[#C39A52]" />
+                  <Icon size={14} className="shrink-0 text-[var(--accent)]" />
                   <span className="truncate text-[12px]">{item.title}</span>
                 </div>
                 <button

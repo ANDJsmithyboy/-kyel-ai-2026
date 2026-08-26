@@ -37,6 +37,8 @@ export type CanonicalProtocolEventType =
   | 'a2a.artifact.received'
   | 'agui.state.updated'
   | 'agui.approval.required'
+  | 'agui.approval.granted'
+  | 'agui.approval.rejected'
   | 'a2ui.surface.created'
   | 'a2ui.surface.updated'
   | 'ap2.mandate.requested'

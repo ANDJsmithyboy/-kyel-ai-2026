@@ -66,7 +66,7 @@ const SAMPLE_MISSIONS = [
 const APPLE_CORE_PILLARS = [
   {
     icon: Brain,
-    color: '#D5AE57',
+    color: 'var(--accent)',
     title: "1. Puissance Multimodale Google Gemini",
     desc: "Fenêtre de contexte jusqu'à 2 millions de tokens. Ingestion fluide de documents massifs, de vidéos brutes, d'audios et de codebases complètes en une seule requête.",
     tag: "Gemini 3.1 / 2.5 Pro",
@@ -132,12 +132,12 @@ export default function ManusLandingPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#05060A] text-[#EDEDEC] selection:bg-[#D5AE57]/30 selection:text-white relative overflow-x-hidden" style={{ fontFamily: 'var(--font-sans, "Geist", system-ui, -apple-system, sans-serif)' }}>
+    <div className="min-h-screen bg-[#05060A] text-[#EDEDEC] selection:bg-[var(--accent-subtle)] selection:text-white relative overflow-x-hidden" style={{ fontFamily: 'var(--font-sans, "Geist", system-ui, -apple-system, sans-serif)' }}>
       {/* ── Apple-Grade Ambient Aurora Mesh ── */}
       <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
-        <div className="absolute -top-32 left-1/2 -translate-x-1/2 w-[1000px] h-[600px] bg-gradient-to-b from-[#D5AE57]/20 via-[#6F9485]/10 to-transparent blur-[140px] rounded-full" />
+        <div className="absolute -top-32 left-1/2 -translate-x-1/2 w-[1000px] h-[600px] bg-gradient-to-b from-[var(--accent-subtle)] via-[#6F9485]/10 to-transparent blur-[140px] rounded-full" />
         <div className="absolute top-[25%] -left-48 w-[650px] h-[650px] bg-[#3B82F6]/10 blur-[160px] rounded-full" />
-        <div className="absolute top-[55%] -right-48 w-[650px] h-[650px] bg-[#D5AE57]/15 blur-[160px] rounded-full" />
+        <div className="absolute top-[55%] -right-48 w-[650px] h-[650px] bg-[var(--accent-subtle)] blur-[160px] rounded-full" />
         <div className="absolute inset-0 bg-[radial-gradient(#ffffff08_1px,transparent_1px)] [background-size:28px_28px] opacity-30" />
       </div>
 
@@ -145,11 +145,11 @@ export default function ManusLandingPage() {
       <header className="sticky top-0 z-50 border-b border-white/[0.06] bg-[#05060A]/85 backdrop-blur-2xl transition-all">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2.5 group">
-            <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-[#D5AE57] to-amber-200 text-black flex items-center justify-center font-black text-sm shadow-[0_0_25px_rgba(213,174,87,0.4)] group-hover:scale-105 transition-transform">
+            <div className="w-8 h-8 rounded-xl bg-[var(--accent)] text-[var(--accent-fg)] flex items-center justify-center font-black text-sm shadow-[var(--shadow-accent)] group-hover:scale-105 transition-transform">
               Ñ
             </div>
             <span className="font-bold text-base tracking-tight text-white flex items-center gap-1.5">
-              Ñkyel <span className="text-[#D5AE57] text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-[#D5AE57]/10 border border-[#D5AE57]/30 tracking-wider">GEMINI CORE</span>
+              Ñkyel <span className="text-[var(--accent)] text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-[var(--accent-subtle)] border border-[var(--accent)]/30 tracking-wider">GEMINI CORE</span>
             </span>
           </Link>
 
@@ -167,7 +167,7 @@ export default function ManusLandingPage() {
               <div className="flex items-center gap-3">
                 <Link
                   href="/chat"
-                  className="flex items-center gap-1.5 px-4 py-1.5 rounded-xl bg-gradient-to-r from-[#D5AE57] to-amber-300 hover:opacity-95 text-black font-extrabold text-xs shadow-[0_0_20px_rgba(213,174,87,0.35)] transition-transform active:scale-95"
+                  className="flex items-center gap-1.5 px-4 py-1.5 rounded-xl bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-[var(--accent-fg)] font-extrabold text-xs shadow-[var(--shadow-accent)] transition-transform active:scale-95"
                 >
                   <Lightning size={14} weight="fill" />
                   <span>Ouvrir l&apos;Agent</span>
@@ -183,7 +183,7 @@ export default function ManusLandingPage() {
                 </SignInButton>
 
                 <SignUpButton mode="modal">
-                  <button className="flex items-center gap-1.5 px-4 py-1.5 rounded-xl bg-gradient-to-r from-[#D5AE57] to-amber-300 hover:opacity-95 text-black font-extrabold text-xs shadow-[0_0_20px_rgba(213,174,87,0.4)] transition-transform active:scale-95">
+                  <button className="flex items-center gap-1.5 px-4 py-1.5 rounded-xl bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-[var(--accent-fg)] font-extrabold text-xs shadow-[var(--shadow-accent)] transition-transform active:scale-95">
                     <span>Créer un compte</span>
                     <ArrowRight size={13} weight="bold" />
                   </button>
@@ -203,7 +203,7 @@ export default function ManusLandingPage() {
             animate={{ opacity: 1, y: 0 }}
             className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/[0.04] border border-white/10 text-[11px] font-medium text-white/90 shadow-[0_0_30px_rgba(213,174,87,0.15)] backdrop-blur-md"
           >
-            <Sparkle size={14} weight="fill" className="text-[#D5AE57] animate-pulse" />
+            <Sparkle size={14} weight="fill" className="text-[var(--accent)] animate-pulse" />
             <span>Propulsé par Google Gemini Ecosystem & l&apos;Orchestrateur Souverain Ñkyel</span>
           </motion.div>
 
@@ -215,7 +215,7 @@ export default function ManusLandingPage() {
             className="text-4xl sm:text-6xl md:text-7xl font-extrabold tracking-tight text-white leading-[1.08]"
           >
             L&apos;Agent IA Généraliste <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#D5AE57] via-amber-100 to-[#6F9485]">
+            <span className="text-[var(--accent)]">
               Universel & Multimodal
             </span>
           </motion.h1>
@@ -271,7 +271,7 @@ export default function ManusLandingPage() {
                       onClick={() => setSelectedCapability(cap.id)}
                       className={`px-3 py-1.5 rounded-xl text-[11px] font-bold transition-all whitespace-nowrap ${
                         isSel
-                          ? 'bg-[#D5AE57]/20 border border-[#D5AE57]/60 text-[#D5AE57] shadow-sm'
+                          ? 'bg-[var(--accent-subtle)] border border-[var(--accent)]/60 text-[var(--accent)] shadow-sm'
                           : 'bg-black/40 border border-white/5 text-white/60 hover:text-white'
                       }`}
                     >
@@ -283,7 +283,7 @@ export default function ManusLandingPage() {
 
               <button
                 onClick={handleLaunch}
-                className="flex items-center justify-center gap-2 px-6 py-2.5 rounded-2xl bg-gradient-to-r from-[#D5AE57] to-amber-300 hover:opacity-95 text-black font-black text-xs transition-transform active:scale-95 shadow-[0_0_25px_rgba(213,174,87,0.4)] shrink-0"
+                className="flex items-center justify-center gap-2 px-6 py-2.5 rounded-2xl bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-[var(--accent-fg)] font-black text-xs transition-transform active:scale-95 shadow-[var(--shadow-accent)] shrink-0"
               >
                 <span>Lancer la Mission</span>
                 <ArrowRight size={14} weight="bold" />
@@ -296,7 +296,7 @@ export default function ManusLandingPage() {
         <section id="workgraph" className="p-6 sm:p-10 rounded-3xl border border-white/10 bg-white/[0.015] backdrop-blur-xl space-y-7 shadow-2xl">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/[0.06] pb-6">
             <div>
-              <div className="flex items-center gap-2 text-xs font-mono text-[#D5AE57]">
+              <div className="flex items-center gap-2 text-xs font-mono text-[var(--accent)]">
                 <TreeStructure size={16} />
                 <span>WORKGRAPH AGENT ENGINE 2.0 · GOOGLE GEMINI BACKBONE</span>
               </div>
@@ -322,12 +322,12 @@ export default function ManusLandingPage() {
                 key={i}
                 className={`p-5 rounded-2xl border transition-all ${
                   simulatedStep === i
-                    ? 'bg-[#D5AE57]/10 border-[#D5AE57] text-white shadow-[0_0_20px_rgba(213,174,87,0.2)]'
+                    ? 'bg-[var(--accent-subtle)] border-[var(--accent)] text-white shadow-[var(--shadow-accent)]'
                     : 'bg-black/35 border-white/5 text-white/70'
                 }`}
               >
                 <div className="flex items-center justify-between mb-2.5">
-                  <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-white/5 text-[#D5AE57]">
+                  <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-white/5 text-[var(--accent)]">
                     {node.engine}
                   </span>
                   <CheckCircle size={17} className={simulatedStep >= i ? 'text-emerald-400' : 'text-white/20'} weight="fill" />
@@ -377,8 +377,8 @@ export default function ManusLandingPage() {
         </section>
 
         {/* ── Sovereign Manifesto (Apple Vibe) ── */}
-        <section id="sovereignty" className="p-8 sm:p-14 rounded-3xl border border-[#D5AE57]/30 bg-gradient-to-b from-[#D5AE57]/10 via-transparent to-transparent text-center space-y-5 max-w-4xl mx-auto shadow-2xl">
-          <div className="w-12 h-12 rounded-2xl bg-[#D5AE57] text-black font-black text-xl mx-auto flex items-center justify-center shadow-[0_0_30px_rgba(213,174,87,0.4)]">
+        <section id="sovereignty" className="p-8 sm:p-14 rounded-3xl border border-[var(--accent)]/30 bg-gradient-to-b from-[var(--accent-subtle)] via-transparent to-transparent text-center space-y-5 max-w-4xl mx-auto shadow-2xl">
+          <div className="w-12 h-12 rounded-2xl bg-[var(--accent)] text-[var(--accent-fg)] font-black text-xl mx-auto flex items-center justify-center shadow-[var(--shadow-accent)]">
             Ñ
           </div>
           <blockquote className="text-lg sm:text-2xl font-bold text-white tracking-tight leading-snug max-w-3xl mx-auto">
@@ -395,7 +395,7 @@ export default function ManusLandingPage() {
         <div className="max-w-7xl mx-auto grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-8 text-xs">
           <div className="col-span-2 space-y-3.5">
             <div className="flex items-center gap-2">
-              <div className="w-7 h-7 rounded-xl bg-[#D5AE57] text-black flex items-center justify-center font-black text-xs">
+              <div className="w-7 h-7 rounded-xl bg-[var(--accent)] text-[var(--accent-fg)] flex items-center justify-center font-black text-xs">
                 Ñ
               </div>
               <span className="font-bold text-sm text-white">Ñkyel AI</span>
@@ -409,7 +409,7 @@ export default function ManusLandingPage() {
           </div>
 
           <div className="space-y-2.5">
-            <span className="font-bold text-white text-[11px] uppercase tracking-wider text-[#D5AE57]">Produit</span>
+            <span className="font-bold text-white text-[11px] uppercase tracking-wider text-[var(--accent)]">Produit</span>
             <ul className="space-y-1.5 text-white/60">
               <li><Link href="/chat" className="hover:text-white transition-colors">Conversation & Chat</Link></li>
               <li><Link href="/workspace" className="hover:text-white transition-colors">WorkGraph Studio</Link></li>
@@ -419,7 +419,7 @@ export default function ManusLandingPage() {
           </div>
 
           <div className="space-y-2.5">
-            <span className="font-bold text-white text-[11px] uppercase tracking-wider text-[#D5AE57]">Cœur IA</span>
+            <span className="font-bold text-white text-[11px] uppercase tracking-wider text-[var(--accent)]">Cœur IA</span>
             <ul className="space-y-1.5 text-white/60">
               <li><span className="text-white/40">Google Gemini 3.1 Pro</span></li>
               <li><span className="text-white/40">Google Gemini 2.5 Flash</span></li>
@@ -430,7 +430,7 @@ export default function ManusLandingPage() {
           </div>
 
           <div className="space-y-2.5">
-            <span className="font-bold text-white text-[11px] uppercase tracking-wider text-[#D5AE57]">Politiques & Légal</span>
+            <span className="font-bold text-white text-[11px] uppercase tracking-wider text-[var(--accent)]">Politiques & Légal</span>
             <ul className="space-y-1.5 text-white/60">
               <li><Link href="/terms" className="hover:text-white transition-colors">Conditions Générales (CGU)</Link></li>
               <li><Link href="/privacy" className="hover:text-white transition-colors">Confidentialité & RGPD</Link></li>

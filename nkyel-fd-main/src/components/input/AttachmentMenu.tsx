@@ -98,7 +98,7 @@ export default function AttachmentMenu({
               <button
                 type="button"
                 onClick={() => setActiveSubmenu(null)}
-                className="flex items-center gap-1.5 text-xs text-[#D5AE57] font-semibold"
+                className="flex items-center gap-1.5 text-xs text-[var(--accent)] font-semibold"
               >
                 <CaretLeft size={16} />
                 <span>Retour</span>
@@ -130,7 +130,7 @@ export default function AttachmentMenu({
                     onClick={() => { onSelectOption(cap.label); onClose(); }}
                     className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-white hover:bg-white/10 text-left text-sm"
                   >
-                    <Icon size={18} className="text-[#D5AE57] shrink-0" />
+                    <Icon size={18} className="text-[var(--accent)] shrink-0" />
                     <span className="truncate">{cap.label}</span>
                   </button>
                 );
@@ -154,7 +154,7 @@ export default function AttachmentMenu({
                 onClick={() => { onSelectOption('Mémoire Ñkyel'); onClose(); }}
                 className="w-full flex items-center gap-3 px-3 py-3 rounded-xl text-white hover:bg-white/10 text-left text-sm"
               >
-                <Books size={20} className="text-[#D5AE57]" />
+                <Books size={20} className="text-[var(--accent)]" />
                 <span>Mémoire Ñkyel</span>
               </button>
             </div>
@@ -169,7 +169,7 @@ export default function AttachmentMenu({
                 className="w-full flex items-center justify-between px-3 py-3 rounded-xl text-white hover:bg-white/10 text-left text-sm"
               >
                 <div className="flex items-center gap-3">
-                  <Robot size={18} className="text-[#D5AE57]" />
+                  <Robot size={18} className="text-[var(--accent)]" />
                   <span>Utiliser des capacités</span>
                 </div>
                 <CaretRight size={16} className="text-[#9199A8]" />
@@ -258,7 +258,7 @@ export default function AttachmentMenu({
                 onClick={() => { onSelectOption('Mémoire Ñkyel'); onClose(); }}
                 className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-[#EDEAE3] hover:bg-white/[0.06] text-left"
               >
-                <Books size={16} className="text-[#D5AE57]" />
+                <Books size={16} className="text-[var(--accent)]" />
                 <span>Mémoire Ñkyel</span>
               </button>
             </div>
@@ -299,7 +299,7 @@ export default function AttachmentMenu({
             className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-[#EDEAE3] hover:text-white hover:bg-white/[0.06] transition-colors text-left"
           >
             <div className="flex items-center gap-2.5">
-              <Robot size={16} className="text-[#D5AE57]" />
+              <Robot size={16} className="text-[var(--accent)]" />
               <span>Utiliser des capacités</span>
             </div>
             <CaretRight size={13} className="text-[#9199A8]" />
@@ -319,7 +319,7 @@ export default function AttachmentMenu({
                     onClick={() => { onSelectOption(cap.label); onClose(); }}
                     className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-[#EDEAE3] hover:bg-white/[0.06] text-left transition-colors"
                   >
-                    <Icon size={16} className="text-[#D5AE57] shrink-0" />
+                    <Icon size={16} className="text-[var(--accent)] shrink-0" />
                     <span className="truncate">{cap.label}</span>
                   </button>
                 );
@@ -335,7 +335,7 @@ export default function AttachmentMenu({
           className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-[#EDEAE3] hover:text-white hover:bg-white/[0.06] transition-colors text-left"
         >
           <div className="flex items-center gap-2.5">
-            <Books size={16} className="text-[#D5AE57]" />
+            <Books size={16} className="text-[var(--accent)]" />
             <span>Mémoire Ñkyel</span>
           </div>
         </button>

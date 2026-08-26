@@ -56,7 +56,7 @@ export default function SimulationScenarioView({
                 {isFr ? 'Projection & Prédiction Pré-Exécution' : 'Pre-Execution Projection'}
               </span>
             </div>
-            <h2 className="text-lg font-bold text-[var(--text-primary)] mt-1 font-serif">
+            <h2 className="text-lg font-bold text-[var(--text-primary)] mt-1">
               {missionPrompt}
             </h2>
           </div>
@@ -80,17 +80,17 @@ export default function SimulationScenarioView({
             </div>
             <div>
               <p className="text-[11px] text-[var(--text-tertiary)]">{isFr ? 'Durée estimée' : 'Estimated duration'}</p>
-              <p className="text-sm font-bold text-[var(--text-primary)] font-mono">3–5 minutes</p>
+              <p className="text-sm font-bold text-[var(--text-primary)]">3–5 minutes</p>
             </div>
           </div>
 
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-[#D5AE57]/15 text-[#D5AE57] flex items-center justify-center shrink-0">
+            <div className="w-10 h-10 rounded-xl bg-[var(--accent-subtle)] text-[var(--accent)] flex items-center justify-center shrink-0">
               <CurrencyDollar size={20} weight="bold" />
             </div>
             <div>
               <p className="text-[11px] text-[var(--text-tertiary)]">{isFr ? 'Coût estimé' : 'Estimated tokens/cost'}</p>
-              <p className="text-sm font-bold text-[var(--text-primary)] font-mono">~45k tok (~$0.01)</p>
+              <p className="text-sm font-bold text-[var(--text-primary)]">~45k tok (~$0.01)</p>
             </div>
           </div>
 
@@ -107,13 +107,13 @@ export default function SimulationScenarioView({
 
         {/* Projected Workflow Pipeline */}
         <div className="p-5 rounded-2xl bg-[var(--bg-elevated)] border border-[var(--border)] space-y-4">
-          <h3 className="text-xs font-bold uppercase tracking-wider text-[var(--text-tertiary)] font-mono">
+          <h3 className="text-xs font-bold uppercase tracking-wider text-[var(--text-tertiary)]">
             {isFr ? 'Scénario d’exécution projeté' : 'Projected Execution Scenario'}
           </h3>
 
           <div className="space-y-2.5">
             <div className="flex items-start gap-3 p-3 rounded-xl bg-[var(--surface)] border border-[var(--border)] text-xs">
-              <span className="font-mono text-[10px] px-2 py-0.5 rounded-md bg-[#D5AE57]/20 text-[#D5AE57] font-semibold">1</span>
+              <span className="text-[10px] px-2 py-0.5 rounded-md bg-[var(--accent-subtle)] text-[var(--accent)] font-semibold">1</span>
               <div className="flex-1">
                 <p className="font-semibold text-[var(--text-primary)]">Research Agent (Wandana + Google Grounding)</p>
                 <p className="text-[11px] text-[var(--text-secondary)] mt-0.5">Extraction de 12 à 20 sources primaires sur le marché photovoltaïque gabonais.</p>
@@ -121,7 +121,7 @@ export default function SimulationScenarioView({
             </div>
 
             <div className="flex items-start gap-3 p-3 rounded-xl bg-[var(--surface)] border border-[var(--border)] text-xs">
-              <span className="font-mono text-[10px] px-2 py-0.5 rounded-md bg-[#D5AE57]/20 text-[#D5AE57] font-semibold">2</span>
+              <span className="text-[10px] px-2 py-0.5 rounded-md bg-[var(--accent-subtle)] text-[var(--accent)] font-semibold">2</span>
               <div className="flex-1">
                 <p className="font-semibold text-[var(--text-primary)]">Financial & Strategic Analysis Agent</p>
                 <p className="text-[11px] text-[var(--text-secondary)] mt-0.5">Modélisation DCF 3 scénarios (conservateur, réaliste, agressif) dans la sandbox Python.</p>
@@ -129,7 +129,7 @@ export default function SimulationScenarioView({
             </div>
 
             <div className="flex items-start gap-3 p-3 rounded-xl bg-[var(--surface)] border border-[var(--border)] text-xs">
-              <span className="font-mono text-[10px] px-2 py-0.5 rounded-md bg-[#D5AE57]/20 text-[#D5AE57] font-semibold">3</span>
+              <span className="text-[10px] px-2 py-0.5 rounded-md bg-[var(--accent-subtle)] text-[var(--accent)] font-semibold">3</span>
               <div className="flex-1">
                 <p className="font-semibold text-[var(--text-primary)]">Universal Artifacts Exporter</p>
                 <p className="text-[11px] text-[var(--text-secondary)] mt-0.5">Génération du Rapport PDF, Classeur XLSX, Pitch Deck PPTX et Sandbox Web.</p>
@@ -146,7 +146,7 @@ export default function SimulationScenarioView({
             <button
               type="button"
               onClick={onAcceptAndRun}
-              className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[#D5AE57] hover:bg-[#C59E47] text-black font-semibold text-xs shadow-md transition-colors active:scale-95"
+              className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-[var(--accent-fg)] font-semibold text-xs shadow-md transition-colors active:scale-95"
             >
               <Play size={14} weight="fill" />
               <span>{isFr ? 'Valider et lancer l’exécution' : 'Accept & Start Execution'}</span>

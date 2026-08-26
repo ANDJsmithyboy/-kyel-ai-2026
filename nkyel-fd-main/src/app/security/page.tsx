@@ -37,7 +37,7 @@ export default function SecurityPage() {
         <div className="space-y-8 text-xs text-[#B8C0CC] leading-relaxed">
           <section className="p-6 rounded-2xl bg-[#0E121A] border border-white/[0.06]">
             <h2 className="text-sm font-bold text-[#F1EEE7] mb-3 flex items-center gap-2">
-              <LockKey size={18} className="text-[#C39A52]" />
+              <LockKey size={18} className="text-[var(--accent)]" />
               1. Chiffrement de Bout en Bout & Authentification
             </h2>
             <p>

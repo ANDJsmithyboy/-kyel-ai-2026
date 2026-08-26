@@ -145,7 +145,7 @@ export default function ChatHero({ onSelectAction, onOpenMore }: ChatHeroProps) 
               onClick={() => onSelectAction(pill.prompt)}
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#10141F] hover:bg-[#171B27] border border-white/[0.08] hover:border-white/[0.15] text-[#EDEAE3] hover:text-white text-xs font-medium transition-all shadow-sm active:scale-95"
             >
-              <Icon size={14} className="text-[#D5AE57]" />
+              <Icon size={14} className="text-[var(--accent)]" />
               <span>{pill.label}</span>
             </button>
           );
@@ -172,16 +172,16 @@ export default function ChatHero({ onSelectAction, onOpenMore }: ChatHeroProps) 
             exit={{ opacity: 0, scale: 0.98 }}
             transition={{ duration: 0.25 }}
             onClick={() => onSelectAction(currentCard.actionPrompt)}
-            className="w-full p-3.5 sm:p-4 rounded-2xl bg-gradient-to-br from-[#10141F] to-[#171B27] border border-white/[0.08] hover:border-[#D5AE57]/30 shadow-lg cursor-pointer text-left transition-all group relative overflow-hidden"
+            className="w-full p-3.5 sm:p-4 rounded-2xl bg-gradient-to-br from-[#10141F] to-[#171B27] border border-white/[0.08] hover:border-[var(--accent)]/30 shadow-lg cursor-pointer text-left transition-all group relative overflow-hidden"
           >
             <div className="flex items-start justify-between gap-3">
               <div className="space-y-1 flex-1 min-w-0">
                 <div className="flex items-center gap-2">
-                  <span className="text-[9px] sm:text-[10px] uppercase tracking-wider font-bold text-[#D5AE57] bg-[#D5AE57]/10 px-1.5 py-0.2 rounded-full border border-[#D5AE57]/20">
+                  <span className="text-[9px] sm:text-[10px] uppercase tracking-wider font-bold text-[var(--accent)] bg-[var(--accent-subtle)] px-1.5 py-0.2 rounded-full border border-[var(--accent)]/20">
                     {currentCard.tag}
                   </span>
                 </div>
-                <h3 className="text-xs sm:text-sm font-bold text-white group-hover:text-[#D5AE57] transition-colors truncate">
+                <h3 className="text-xs sm:text-sm font-bold text-white group-hover:text-[var(--accent)] transition-colors truncate">
                   {currentCard.title}
                 </h3>
                 <p className="text-[11px] text-[#9199A8] leading-relaxed line-clamp-2">
@@ -189,7 +189,7 @@ export default function ChatHero({ onSelectAction, onOpenMore }: ChatHeroProps) 
                 </p>
               </div>
 
-              <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-gradient-to-tr from-[#6757E8]/20 to-[#D5AE57]/20 border border-white/10 flex items-center justify-center text-[#D5AE57] shrink-0 group-hover:scale-105 transition-transform">
+              <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-gradient-to-tr from-[#6757E8]/20 to-[var(--accent-subtle)] border border-white/10 flex items-center justify-center text-[var(--accent)] shrink-0 group-hover:scale-105 transition-transform">
                 <CardIcon size={20} weight="duotone" />
               </div>
             </div>
@@ -206,7 +206,7 @@ export default function ChatHero({ onSelectAction, onOpenMore }: ChatHeroProps) 
               aria-label={`Slide ${i + 1}`}
               className={`h-1 rounded-full transition-all ${
                 activeSlide === i
-                  ? 'w-5 bg-[#D5AE57] shadow-[0_0_6px_#D5AE57]'
+                  ? 'w-5 bg-[var(--accent)] shadow-[var(--shadow-accent)]'
                   : 'w-1 bg-white/20 hover:bg-white/40'
               }`}
             />

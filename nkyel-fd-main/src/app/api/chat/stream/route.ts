@@ -6,6 +6,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { cacheSet, cacheGet } from '@/lib/redis';
+import { auth } from '@clerk/nextjs/server';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -62,18 +63,21 @@ export async function POST(req: NextRequest) {
     const trimmedMessage = message.trim();
     const runpodUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
-    // 1. Tenter le backend FastAPI avec un court timeout (1.2s max pour ne jamais bloquer le client)
+    // 1. Tenter le backend FastAPI
     if (runpodUrl && !runpodUrl.includes('placeholder')) {
       try {
+        const { getToken } = auth();
+        const token = await getToken();
+        
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 1200);
+        const timeoutId = setTimeout(() => controller.abort(), 8000); // Increased timeout for real streaming
 
-        const fastApiRes = await fetch(`${runpodUrl}/v1/chat/completions`, {
+        const fastApiRes = await fetch(`${runpodUrl}/api/v1/chat/completions`, { // Added /api prefix
           method: 'POST',
           signal: controller.signal,
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': 'Bearer demo-token-nkyel',
+            ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
           },
           body: JSON.stringify({
             message: trimmedMessage,

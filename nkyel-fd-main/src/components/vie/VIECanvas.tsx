@@ -80,7 +80,7 @@ function CustomWorkNode({ data }: { data: WorkNode }) {
     <div
       className={`p-3 rounded-2xl border bg-[var(--bg-elevated)] text-[var(--text-primary)] min-w-[220px] max-w-[280px] shadow-xl backdrop-blur-md transition-all ${
         isActive
-          ? 'border-[var(--accent)] shadow-[0_0_20px_rgba(195,154,82,0.25)] ring-1 ring-[var(--accent)]'
+          ? 'border-[var(--accent)] shadow-[var(--shadow-accent)] ring-1 ring-[var(--accent)]'
           : 'border-[var(--border)] hover:border-[var(--border-strong)]'
       }`}
     >

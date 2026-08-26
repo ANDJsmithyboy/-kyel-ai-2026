@@ -47,7 +47,7 @@ export default function AgenticToggles({ state, onChange }: AgenticTogglesProps)
         onClick={() => toggle('skillsEnabled')}
         className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-medium transition-colors border ${
           state.skillsEnabled
-            ? 'bg-[#C39A52]/15 border-[#C39A52]/40 text-[#C39A52]'
+            ? 'bg-[var(--accent-subtle)] border-[var(--accent)]/40 text-[var(--accent)]'
             : 'bg-white/[0.02] border-white/[0.06] text-[#7E8795] hover:text-[#B8C0CC]'
         }`}
         title="Activer le chargement dynamique des Skills (SKILL.md)"

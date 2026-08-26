@@ -256,7 +256,7 @@ function SettingsContent() {
                     <span className="truncate">{tab.label}</span>
                   </div>
                   {tab.badge && (
-                    <span className="text-[9px] font-mono px-1.5 py-0.2 rounded-full bg-[#D5AE57]/15 text-[#D5AE57] border border-[#D5AE57]/30 font-bold">
+                    <span className="text-[9px] font-mono px-1.5 py-0.2 rounded-full bg-[var(--accent-subtle)] text-[var(--accent)] border border-[var(--accent)]/30 font-bold">
                       {tab.badge}
                     </span>
                   )}
@@ -325,7 +325,7 @@ function SettingsContent() {
                     label="Avatar & Initiales"
                     description="Utilisé dans les conversations et les sessions collaboratives."
                     control={
-                      <div className="w-9 h-9 rounded-full bg-[#D5AE57] text-black font-extrabold flex items-center justify-center text-xs shadow-sm">
+                      <div className="w-9 h-9 rounded-full bg-[var(--accent)] text-[var(--accent-fg)] font-extrabold flex items-center justify-center text-xs shadow-sm">
                         {initials}
                       </div>
                     }
@@ -542,7 +542,7 @@ function SettingsContent() {
                           updatePreferences({ memoryEnabled: e.target.checked });
                           showToast(e.target.checked ? 'Mémoire activée' : 'Mémoire désactivée');
                         }}
-                        className="w-4 h-4 rounded accent-[#D5AE57]"
+                        className="w-4 h-4 rounded accent-[var(--accent)]"
                       />
                     }
                   />
@@ -558,9 +558,9 @@ function SettingsContent() {
                   <p className="text-xs text-[var(--text-secondary)]">Accès prioritaire à Google Gemini 3.1 Pro et Gemini 2.5 Flash.</p>
                 </div>
 
-                <div className="p-4 rounded-2xl bg-[#D5AE57]/10 border border-[#D5AE57]/30 flex items-center justify-between">
+                <div className="p-4 rounded-2xl bg-[var(--accent-subtle)] border border-[var(--accent)]/30 flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <Crown size={24} weight="fill" className="text-[#D5AE57]" />
+                    <Crown size={24} weight="fill" className="text-[var(--accent)]" />
                     <div>
                       <div className="text-sm font-bold text-[var(--text-primary)]">Ñkyel Pro Illimité</div>
                       <div className="text-xs text-[var(--text-secondary)]">Inférence souveraine et fenêtres 2M tokens actives.</div>
@@ -589,7 +589,7 @@ function SettingsContent() {
                     className="w-full flex items-center justify-between p-4 rounded-2xl bg-[var(--surface)] border border-[var(--border)] text-left active:bg-[var(--surface-raised)] transition-colors"
                   >
                     <div className="flex items-center gap-3">
-                      <Icon size={18} className="text-[#D5AE57]" />
+                      <Icon size={18} className="text-[var(--accent)]" />
                       <span className="text-sm font-medium text-[var(--text-primary)]">{tab.label}</span>
                     </div>
                     <CaretRight size={16} className="text-[var(--text-tertiary)]" />
@@ -602,7 +602,7 @@ function SettingsContent() {
             <div className="p-4 rounded-2xl bg-[var(--surface)] border border-[var(--border)] space-y-4">
               <button
                 onClick={() => setMobileDrilldown(null)}
-                className="flex items-center gap-1.5 text-xs text-[#D5AE57] font-semibold mb-2"
+                className="flex items-center gap-1.5 text-xs text-[var(--accent)] font-semibold mb-2"
               >
                 <ArrowLeft size={14} />
                 <span>Toutes les catégories</span>
@@ -623,7 +623,7 @@ function SettingsContent() {
                         onClick={() => setTheme(t.key as any)}
                         className={`py-2 rounded-xl border text-center font-semibold ${
                           theme === t.key || (t.key === 'neo-blanc' && theme === 'light')
-                            ? 'bg-[#D5AE57] text-black border-transparent'
+                            ? 'bg-[var(--accent)] text-[var(--accent-fg)] border-transparent'
                             : 'bg-[var(--surface-raised)] border-[var(--border)] text-[var(--text-primary)]'
                         }`}
                       >

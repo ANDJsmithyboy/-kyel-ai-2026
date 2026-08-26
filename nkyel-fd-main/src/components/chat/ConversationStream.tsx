@@ -69,9 +69,9 @@ export default function ConversationStream({
               className="flex justify-start"
             >
               <div className="flex items-center gap-2 px-4 py-2 rounded-2xl bg-[#10141F] border border-white/10 w-max">
-                <div className="w-2 h-2 rounded-full bg-[#D5AE57] animate-pulse" style={{ animationDelay: '0ms' }} />
-                <div className="w-2 h-2 rounded-full bg-[#D5AE57] animate-pulse" style={{ animationDelay: '200ms' }} />
-                <div className="w-2 h-2 rounded-full bg-[#D5AE57] animate-pulse" style={{ animationDelay: '400ms' }} />
+                <div className="w-2 h-2 rounded-full bg-[var(--accent)] animate-pulse" style={{ animationDelay: '0ms' }} />
+                <div className="w-2 h-2 rounded-full bg-[var(--accent)] animate-pulse" style={{ animationDelay: '200ms' }} />
+                <div className="w-2 h-2 rounded-full bg-[var(--accent)] animate-pulse" style={{ animationDelay: '400ms' }} />
                 <span className="text-[11px] text-[#9199A8] font-medium ml-1">Ñkyel réfléchit…</span>
               </div>
             </motion.div>

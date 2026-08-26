@@ -112,7 +112,7 @@ export default function InputBar({
     <div className="w-full max-w-3xl mx-auto px-3 sm:px-4 pb-3 sm:pb-6 pt-1 relative z-30">
       {/* Outer Composer Container */}
       <div
-        className="relative rounded-2xl sm:rounded-3xl bg-[#10141F] border border-white/[0.08] hover:border-white/[0.15] shadow-2xl transition-all flex flex-col p-2.5 sm:p-3.5 focus-within:border-[#D5AE57]/40 focus-within:shadow-[0_0_30px_rgba(213,174,87,0.15)]"
+        className="relative rounded-2xl sm:rounded-3xl bg-[#10141F] border border-white/[0.08] hover:border-white/[0.15] shadow-2xl transition-all flex flex-col p-2.5 sm:p-3.5 focus-within:border-[var(--accent)]/40 focus-within:shadow-[var(--shadow-accent)]"
         style={{
           boxShadow: '0 15px 40px rgba(0,0,0,0.6)',
         }}
@@ -149,7 +149,7 @@ export default function InputBar({
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               className={`w-7 h-7 sm:w-8 sm:h-8 rounded-lg sm:rounded-xl flex items-center justify-center transition-colors ${
                 isMenuOpen
-                  ? 'bg-[#D5AE57]/20 text-[#D5AE57]'
+                  ? 'bg-[var(--accent-subtle)] text-[var(--accent)]'
                   : 'text-[#9199A8] hover:text-white hover:bg-white/[0.06]'
               }`}
               title="Ajouter des fichiers ou capacités"

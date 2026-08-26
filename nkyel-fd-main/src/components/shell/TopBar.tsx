@@ -82,7 +82,7 @@ export default function TopBar({ onOpenCapabilities }: TopBarProps) {
           </div>
 
           {/* Product Wordmark */}
-          <div className="text-[15px] font-semibold tracking-[-0.02em] text-[var(--text-primary)] font-serif">
+          <div className="text-[15px] font-semibold tracking-[-0.02em] text-[var(--text-primary)]">
             Ñkyel
           </div>
 
@@ -95,7 +95,7 @@ export default function TopBar({ onOpenCapabilities }: TopBarProps) {
               aria-label={isFr ? "Choisir le mode d'intelligence" : "Select intelligence mode"}
               className="flex h-8 items-center gap-1.5 sm:gap-2 rounded-xl border border-[var(--border)] bg-[var(--surface-raised)] px-2 sm:px-2.5 text-xs font-semibold text-[var(--text-primary)] shadow-xs transition-colors hover:border-[var(--accent-muted)] hover:bg-[var(--active)]"
             >
-              <span className="w-1.5 h-1.5 rounded-full bg-[#D5AE57]" />
+              <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent)]" />
               <span className="truncate max-w-[90px] sm:max-w-none">
                 {isFr ? currentEngine.labelFr : currentEngine.labelEn}
               </span>
@@ -104,7 +104,7 @@ export default function TopBar({ onOpenCapabilities }: TopBarProps) {
 
             {modelDropdown && (
               <div className="absolute left-0 top-full mt-1.5 w-72 space-y-1 rounded-2xl border border-[var(--border-strong)] bg-[var(--bg-elevated)] p-1.5 shadow-2xl z-50 animate-scale-in">
-                <div className="px-2.5 py-1 text-[10px] font-mono uppercase tracking-wider text-[var(--text-tertiary)] border-b border-[var(--border-subtle)] mb-1">
+                <div className="px-2.5 py-1 text-[10px] uppercase tracking-wider text-[var(--text-tertiary)] border-b border-[var(--border-subtle)] mb-1">
                   {isFr ? "Mode d'intelligence" : "Intelligence Mode"}
                 </div>
                 {modesList.map((mode) => {
@@ -121,7 +121,7 @@ export default function TopBar({ onOpenCapabilities }: TopBarProps) {
                       }}
                       className={`flex w-full items-start justify-between rounded-xl px-2.5 py-2 text-left transition-colors ${
                         isSelected
-                          ? 'bg-[var(--surface-raised)] border border-[#D5AE57]/30 text-[var(--text-primary)]'
+                          ? 'bg-[var(--surface-raised)] border border-[var(--accent-muted)] text-[var(--text-primary)]'
                           : 'hover:bg-[var(--hover)] text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
                       }`}
                     >
@@ -129,7 +129,7 @@ export default function TopBar({ onOpenCapabilities }: TopBarProps) {
                         <div className="flex items-center gap-1.5 text-xs font-semibold">
                           <span>{modeLabel}</span>
                           {mode.badge && (
-                            <span className="rounded-full bg-[#D5AE57]/15 px-1.5 py-0.2 text-[9px] font-semibold text-[#D5AE57]">
+                            <span className="rounded-full bg-[var(--accent-subtle)] px-1.5 py-0.2 text-[9px] font-semibold text-[var(--accent)]">
                               {mode.badge}
                             </span>
                           )}
@@ -139,7 +139,7 @@ export default function TopBar({ onOpenCapabilities }: TopBarProps) {
                         </p>
                       </div>
                       {isSelected && (
-                        <Check size={14} weight="bold" className="text-[#D5AE57] shrink-0 self-center" />
+                        <Check size={14} weight="bold" className="text-[var(--accent)] shrink-0 self-center" />
                       )}
                     </button>
                   );
@@ -159,7 +159,7 @@ export default function TopBar({ onOpenCapabilities }: TopBarProps) {
             title="Commandes (⌘K / Ctrl+K)"
             aria-label="Recherche"
           >
-            <MagnifyingGlass size={14} className="text-[#D5AE57]" />
+            <MagnifyingGlass size={14} className="text-[var(--accent)]" />
             <span className="hidden sm:inline text-[11px] font-medium">Commandes</span>
             <kbd className="hidden sm:inline-block px-1.5 py-0.5 rounded bg-white/10 text-[9px] font-mono text-[var(--text-tertiary)]">
               ⌘K
@@ -172,7 +172,7 @@ export default function TopBar({ onOpenCapabilities }: TopBarProps) {
             onClick={() => setIsUpgradeOpen(true)}
             className="hidden sm:flex h-8 items-center gap-1.5 rounded-xl bg-[var(--hover)] hover:bg-[var(--active)] px-3 text-xs font-semibold text-[var(--text-primary)] transition-colors border border-[var(--border-subtle)]"
           >
-            <Sparkle size={14} weight="fill" className="text-[#D5AE57]" />
+            <Sparkle size={14} weight="fill" className="text-[var(--accent)]" />
             <span>Mise à niveau</span>
           </button>
 

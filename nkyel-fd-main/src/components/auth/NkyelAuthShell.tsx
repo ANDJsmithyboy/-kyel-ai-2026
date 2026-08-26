@@ -41,7 +41,7 @@ const NKYEL_PILLARS = [
     icon: TreeStructure,
     title: 'WorkGraph & Agents Autonomes',
     desc: 'Exécution DAG en streaming SSE avec inspection continue du raisonnement.',
-    color: '#D5AE57',
+    color: 'var(--accent)',
   },
   {
     icon: Brain,
@@ -66,11 +66,11 @@ export default function NkyelAuthShell({
   const pathname = usePathname();
 
   return (
-    <div className="min-h-screen w-full bg-[var(--material-canvas)] text-[var(--text-primary)] flex flex-col lg:flex-row relative overflow-x-hidden font-sans selection:bg-[#D5AE57]/20 selection:text-[#D5AE57]">
+    <div className="min-h-screen w-full bg-[var(--material-canvas)] text-[var(--text-primary)] flex flex-col lg:flex-row relative overflow-x-hidden font-sans selection:bg-[var(--accent-subtle)] selection:text-[var(--accent)]">
       
       {/* ── Background Ambient Glow ────────────────── */}
-      <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-gradient-to-br from-[#D5AE57]/8 via-[#6757E8]/5 to-transparent rounded-full blur-[140px] pointer-events-none -z-10" />
-      <div className="absolute bottom-0 right-10 w-[500px] h-[500px] bg-gradient-to-tl from-[#10B981]/5 via-[#D5AE57]/5 to-transparent rounded-full blur-[120px] pointer-events-none -z-10" />
+      <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-gradient-to-br from-[var(--accent-subtle)] via-[#6757E8]/5 to-transparent rounded-full blur-[140px] pointer-events-none -z-10" />
+      <div className="absolute bottom-0 right-10 w-[500px] h-[500px] bg-gradient-to-tl from-[#10B981]/5 via-[var(--accent-subtle)] to-transparent rounded-full blur-[120px] pointer-events-none -z-10" />
 
       {/* ══════════════════════════════════════════════════════════════
           GAUCHE : Vitrine Souveraine Ñkyel AI (Desktop)
@@ -80,7 +80,7 @@ export default function NkyelAuthShell({
         {/* Top: Brand Header */}
         <div className="space-y-6">
           <Link href="/" className="inline-flex items-center gap-3 group">
-            <div className="w-11 h-11 rounded-2xl overflow-hidden shadow-md shadow-[#D5AE57]/10 border border-[#D5AE57]/40 relative flex-shrink-0 group-hover:scale-105 transition-transform">
+            <div className="w-11 h-11 rounded-2xl overflow-hidden shadow-md shadow-[var(--shadow-accent)] border border-[var(--accent)]/40 relative flex-shrink-0 group-hover:scale-105 transition-transform">
               <Image
                 src="/Nkyel AI-logo.jpeg"
                 alt="Ñkyel AI"
@@ -92,7 +92,7 @@ export default function NkyelAuthShell({
             <div>
               <div className="flex items-center gap-2">
                 <span className="font-bold text-lg text-[var(--text-primary)] tracking-tight">Ñkyel AI</span>
-                <span className="text-[10px] font-mono uppercase px-2 py-0.5 rounded-full bg-[#D5AE57]/15 text-[#D5AE57] font-semibold border border-[#D5AE57]/30">
+                <span className="text-[10px] font-mono uppercase px-2 py-0.5 rounded-full bg-[var(--accent-subtle)] text-[var(--accent)] font-semibold border border-[var(--accent)]/30">
                   PRO
                 </span>
               </div>
@@ -103,13 +103,13 @@ export default function NkyelAuthShell({
           {/* Badge & Headline */}
           <div className="pt-8 space-y-4">
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[var(--surface-raised)] border border-[var(--border-subtle)] text-xs text-[var(--text-secondary)] shadow-sm">
-              <Sparkle size={14} className="text-[#D5AE57] animate-pulse" />
+              <Sparkle size={14} className="text-[var(--accent)] animate-pulse" />
               <span>Plateforme Agentique Souveraine Haute Précision</span>
             </div>
 
             <h1 className="text-3xl xl:text-4xl font-extrabold text-[var(--text-primary)] tracking-tight leading-[1.15]">
               L'intelligence collective pour vos missions{' '}
-              <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#D5AE57] via-[#E6C678] to-[#B8922A]">
+              <span className="text-[var(--accent)]">
                 autonomes complexes.
               </span>
             </h1>
@@ -153,7 +153,7 @@ export default function NkyelAuthShell({
               <span>Système Opérationnel</span>
             </div>
             <div className="flex items-center gap-1.5">
-              <LockKey size={12} className="text-[#D5AE57]" />
+              <LockKey size={12} className="text-[var(--accent)]" />
               <span>Chiffrement Zero-Knowledge</span>
             </div>
           </div>
@@ -208,7 +208,7 @@ export default function NkyelAuthShell({
           
           {/* Mobile-only logo */}
           <div className="lg:hidden flex flex-col items-center text-center space-y-3 mb-6">
-            <div className="w-12 h-12 rounded-2xl overflow-hidden shadow-lg border border-[#D5AE57]/40 relative">
+            <div className="w-12 h-12 rounded-2xl overflow-hidden shadow-lg border border-[var(--accent)]/40 relative">
               <Image
                 src="/Nkyel AI-logo.jpeg"
                 alt="Ñkyel AI"
@@ -245,7 +245,7 @@ export default function NkyelAuthShell({
                 Vous n'avez pas encore de compte ?{' '}
                 <Link
                   href="/sign-up"
-                  className="text-[#D5AE57] hover:underline font-semibold"
+                  className="text-[var(--accent)] hover:underline font-semibold"
                 >
                   Créer un compte souverain
                 </Link>
@@ -255,7 +255,7 @@ export default function NkyelAuthShell({
                 Vous possédez déjà un compte ?{' '}
                 <Link
                   href="/sign-in"
-                  className="text-[#D5AE57] hover:underline font-semibold"
+                  className="text-[var(--accent)] hover:underline font-semibold"
                 >
                   Se connecter
                 </Link>

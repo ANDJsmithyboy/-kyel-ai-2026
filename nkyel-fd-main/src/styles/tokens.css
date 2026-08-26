@@ -126,6 +126,55 @@
   --accent-subtle:     rgba(213, 174, 87, 0.12);
   --accent-muted:      rgba(213, 174, 87, 0.22);
   --focus-ring:        var(--accent);
+  --accent-brand:      var(--accent);
+
+  /* ═══════════════════════════════════════════════════════
+     MISSING TOKEN ALIASES (referenced by globals.css & components)
+     ═══════════════════════════════════════════════════════ */
+
+  /* Typography aliases */
+  --text-xs:           calc(12px * var(--app-text-scale, 1));
+  --text-md:           calc(15px * var(--app-text-scale, 1));
+
+  /* Spacing aliases */
+  --space-0-5:         2px;
+  --space-1-5:         6px;
+  --space-2-5:         10px;
+  --space-3-5:         14px;
+
+  /* Radius aliases (concentric scale mapping) */
+  --radius-sm:         var(--radius-control-sm);
+  --radius-md:         var(--radius-control);
+  --radius-lg:         var(--radius-panel);
+  --radius-xl:         var(--radius-floating);
+  --radius-2xl:        var(--radius-modal);
+
+  /* Shadow scale */
+  --shadow-xs:         0 1px 2px rgba(0, 0, 0, 0.15);
+  --shadow-sm:         var(--shadow-key);
+  --shadow-md:         0 4px 12px rgba(0, 0, 0, 0.30);
+  --shadow-lg:         var(--shadow-ambient);
+  --shadow-xl:         var(--shadow-floating);
+  --shadow-2xl:        var(--shadow-modal);
+  --shadow-composer:   0 4px 16px rgba(0, 0, 0, 0.35);
+  --shadow-accent:     0 2px 12px rgba(213, 174, 87, 0.25);
+
+  /* Transition aliases */
+  --transition-base:   var(--transition-standard);
+  --transition-panel:  var(--motion-context) var(--ease-apple);
+  --transition-slow:   400ms var(--ease-apple);
+
+  /* Layout — Sidebar */
+  --sidebar-item-height: 38px;
+  --sidebar-hover:     var(--hover);
+  --sidebar-active:    var(--active);
+
+  /* Layout — Header */
+  --header-height-mobile: 44px;
+
+  /* Layout — Messages */
+  --user-msg-max-width:     85%;
+  --assistant-msg-max-width: 100%;
 }
 
 /* ═══════════════════════════════════════════════════════
@@ -236,6 +285,24 @@ html.dark {
   --graph-edge-active:       var(--accent);
   --graph-label:             #FFFFFF;
   --graph-label-muted:       #8A94A6;
+
+  /* Agent / VIE Semantic States */
+  --agent-planning:          #8B5CF6;
+  --agent-running:           #3B82F6;
+  --agent-complete:          #22C55E;
+  --agent-blocked:           #EF4444;
+
+  /* Status Subtle Backgrounds */
+  --success-subtle:          rgba(34, 197, 94, 0.12);
+  --warning-subtle:          rgba(245, 158, 11, 0.12);
+  --error-subtle:            rgba(239, 68, 68, 0.12);
+  --info-subtle:             rgba(59, 130, 246, 0.12);
+
+  /* Settings */
+  --settings-border:         var(--border);
+
+  /* Glass alias for legacy */
+  --bg-glass:                var(--material-glass-regular);
 }
 
 /* ═══════════════════════════════════════════════════════
@@ -339,6 +406,24 @@ html.light {
   --graph-edge-active:       var(--accent);
   --graph-label:             #090A0E;
   --graph-label-muted:       #6E7687;
+
+  /* Agent / VIE Semantic States */
+  --agent-planning:          #7C3AED;
+  --agent-running:           #1D4ED8;
+  --agent-complete:          #15803D;
+  --agent-blocked:           #DC2626;
+
+  /* Status Subtle Backgrounds */
+  --success-subtle:          rgba(21, 128, 61, 0.10);
+  --warning-subtle:          rgba(180, 83, 9, 0.10);
+  --error-subtle:            rgba(220, 38, 38, 0.10);
+  --info-subtle:             rgba(29, 78, 216, 0.10);
+
+  /* Settings */
+  --settings-border:         var(--border);
+
+  /* Glass alias for legacy */
+  --bg-glass:                var(--material-glass-regular);
 }
 
 /* ═══════════════════════════════════════════════════════

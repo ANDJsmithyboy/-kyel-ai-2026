@@ -37,7 +37,7 @@ export default function ProjectDetailPage() {
         <div className="flex items-center justify-between pb-6 border-b border-white/[0.06] mb-8">
           <div>
             <div className="flex items-center gap-3">
-              <span className="w-10 h-10 rounded-2xl bg-[#C39A52]/20 border border-[#C39A52]/40 flex items-center justify-center text-[#C39A52]">
+              <span className="w-10 h-10 rounded-2xl bg-[var(--accent-subtle)] border border-[var(--accent)]/40 flex items-center justify-center text-[var(--accent)]">
                 <Folder size={22} />
               </span>
               <div>

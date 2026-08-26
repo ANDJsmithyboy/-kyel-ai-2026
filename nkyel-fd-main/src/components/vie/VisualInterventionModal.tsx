@@ -98,7 +98,7 @@ export default function VisualInterventionModal({
         {/* Header */}
         <div className="px-6 py-5 border-b border-white/[0.06] flex items-center justify-between shrink-0 bg-[#121620]">
           <div className="flex items-center gap-3">
-            <span className="w-10 h-10 rounded-2xl bg-[#C39A52]/20 text-[#C39A52] flex items-center justify-center border border-[#C39A52]/30">
+            <span className="w-10 h-10 rounded-2xl bg-[var(--accent-subtle)] text-[var(--accent)] flex items-center justify-center border border-[var(--accent)]/30">
               <PencilSimple size={20} weight="bold" />
             </span>
             <div>
@@ -126,7 +126,7 @@ export default function VisualInterventionModal({
             <select
               value={interventionType}
               onChange={(e) => setInterventionType(e.target.value)}
-              className="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-xs text-[#F1EEE7] outline-none focus:border-[#C39A52]"
+              className="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-xs text-[#F1EEE7] outline-none focus:border-[var(--accent)]"
             >
               <option value="constraint_updated">Modifier une contrainte d'exécution</option>
               <option value="hypothesis_rejected">Rejeter cette hypothèse & explorer une alternative</option>
@@ -147,7 +147,7 @@ export default function VisualInterventionModal({
                 onChange={(e) => setConstraintText(e.target.value)}
                 placeholder="Ex : Exiger au minimum 3 sources primaires gouvernementales avec dates 2026..."
                 rows={3}
-                className="w-full px-3.5 py-2 rounded-xl bg-white/[0.03] border border-white/[0.08] text-xs text-[#F1EEE7] outline-none focus:border-[#C39A52]"
+                className="w-full px-3.5 py-2 rounded-xl bg-white/[0.03] border border-white/[0.08] text-xs text-[#F1EEE7] outline-none focus:border-[var(--accent)]"
               />
             </div>
           )}
@@ -158,7 +158,7 @@ export default function VisualInterventionModal({
               <select
                 value={targetAgent}
                 onChange={(e) => setTargetAgent(e.target.value)}
-                className="w-full px-3.5 py-2 rounded-xl bg-white/[0.03] border border-white/[0.08] text-xs text-[#F1EEE7] outline-none focus:border-[#C39A52]"
+                className="w-full px-3.5 py-2 rounded-xl bg-white/[0.03] border border-white/[0.08] text-xs text-[#F1EEE7] outline-none focus:border-[var(--accent)]"
               >
                 <option value="visual-director">Visual Director & Media</option>
                 <option value="researcher">Researcher & Tavily Synthesizer</option>
@@ -175,7 +175,7 @@ export default function VisualInterventionModal({
               value={reason}
               onChange={(e) => setReason(e.target.value)}
               placeholder="Ex : Données antérieures à 2026 obsolètes"
-              className="w-full px-3.5 py-2 rounded-xl bg-white/[0.03] border border-white/[0.08] text-xs text-[#F1EEE7] outline-none focus:border-[#C39A52]"
+              className="w-full px-3.5 py-2 rounded-xl bg-white/[0.03] border border-white/[0.08] text-xs text-[#F1EEE7] outline-none focus:border-[var(--accent)]"
             />
           </div>
 
@@ -198,7 +198,7 @@ export default function VisualInterventionModal({
             <button
               type="submit"
               disabled={isSubmitting}
-              className="px-5 py-2 rounded-xl bg-[#C39A52] hover:bg-[#C39A52]/80 text-[#08090D] text-xs font-bold shadow-lg transition-all flex items-center gap-2 disabled:opacity-50"
+              className="px-5 py-2 rounded-xl bg-[var(--accent)] hover:opacity-90 text-[var(--accent-fg)] text-xs font-bold shadow-lg transition-all flex items-center gap-2 disabled:opacity-50"
             >
               {isSubmitting ? (
                 <>

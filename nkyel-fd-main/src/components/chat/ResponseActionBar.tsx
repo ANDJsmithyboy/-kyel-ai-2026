@@ -136,7 +136,7 @@ export default function ResponseActionBar({
       <button
         onClick={handleTTS}
         className={`flex items-center gap-1 px-2 py-1 rounded-lg transition-colors ${
-          isPlayingAudio ? 'text-[#C39A52] bg-[#C39A52]/15 font-semibold' : 'hover:text-white hover:bg-white/[0.06]'
+          isPlayingAudio ? 'text-[var(--accent)] bg-[var(--accent-subtle)] font-semibold' : 'hover:text-white hover:bg-white/[0.06]'
         }`}
         title="Lire à voix haute (Gemini TTS)"
       >
@@ -160,7 +160,7 @@ export default function ResponseActionBar({
       <button
         onClick={handleSaveMemory}
         className={`w-7 h-7 rounded-lg flex items-center justify-center transition-colors ${
-          isSavedMemory ? 'text-[#C39A52] bg-[#C39A52]/15' : 'hover:text-white hover:bg-white/[0.06]'
+          isSavedMemory ? 'text-[var(--accent)] bg-[var(--accent-subtle)]' : 'hover:text-white hover:bg-white/[0.06]'
         }`}
         title="Enregistrer dans la Mémoire Ñkyel"
       >
@@ -181,7 +181,7 @@ export default function ResponseActionBar({
       {hasArtifact && (
         <button
           onClick={() => open()}
-          className="flex items-center gap-1 px-2 py-1 rounded-lg text-[#C39A52] hover:text-[#D5AE57] hover:bg-[#C39A52]/10 transition-colors font-medium"
+          className="flex items-center gap-1 px-2 py-1 rounded-lg text-[var(--accent)] hover:text-[var(--accent-hover)] hover:bg-[var(--accent-subtle)] transition-colors font-medium"
           title="Ouvrir dans Artifact Studio"
         >
           <ArrowsOutSimple size={13} weight="bold" />

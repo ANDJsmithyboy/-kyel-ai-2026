@@ -218,7 +218,7 @@ export default function AntreModal({ isOpen, onClose, initialTab = 'general' }: 
           <aside className="w-full md:w-64 border-b md:border-b-0 md:border-r flex flex-col shrink-0 bg-black/20" style={{ borderColor: 'var(--border-subtle, rgba(255,255,255,0.06))' }}>
             <div className="p-4 flex items-center justify-between border-b" style={{ borderColor: 'var(--border-subtle, rgba(255,255,255,0.06))' }}>
               <div className="flex items-center gap-2">
-                <div className="w-7 h-7 rounded-lg flex items-center justify-center font-bold text-xs bg-[#D5AE57] text-black">
+                <div className="w-7 h-7 rounded-lg flex items-center justify-center font-bold text-xs bg-[var(--accent)] text-[var(--accent-fg)]">
                   Ñ
                 </div>
                 <span className="font-semibold text-sm tracking-tight text-white">Paramètres Ñkyel</span>
@@ -245,7 +245,7 @@ export default function AntreModal({ isOpen, onClose, initialTab = 'general' }: 
                         : 'text-white/60 hover:text-white hover:bg-white/5'
                     }`}
                   >
-                    <Icon size={16} weight={isActive ? 'fill' : 'regular'} className={isActive ? 'text-[#D5AE57]' : ''} />
+                    <Icon size={16} weight={isActive ? 'fill' : 'regular'} className={isActive ? 'text-[var(--accent)]' : ''} />
                     <span className="truncate">{tab.label}</span>
                     {tab.adminOnly && (
                       <span className="ml-auto text-[9px] px-1.5 py-0.2 rounded bg-amber-500/20 text-amber-300 font-mono">
@@ -276,7 +276,7 @@ export default function AntreModal({ isOpen, onClose, initialTab = 'general' }: 
                     await settings.saveToServer();
                     toast.success('Paramètres enregistrés et synchronisés sur Neon');
                   }}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#D5AE57] hover:bg-[#C5A059] text-black font-bold text-xs transition-transform active:scale-95 shadow"
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-[var(--accent-fg)] font-bold text-xs transition-transform active:scale-95 shadow"
                 >
                   <FloppyDisk size={14} weight="bold" />
                   <span>Enregistrer</span>
@@ -296,7 +296,7 @@ export default function AntreModal({ isOpen, onClose, initialTab = 'general' }: 
               {activeTab === 'general' && (
                 <div className="space-y-5">
                   <div className="p-4 rounded-xl border bg-white/[0.02] space-y-4" style={{ borderColor: 'var(--border-subtle, rgba(255,255,255,0.08))' }}>
-                    <h3 className="text-xs font-semibold uppercase tracking-wider text-[#D5AE57]">Région & Formats Internationaux</h3>
+                    <h3 className="text-xs font-semibold uppercase tracking-wider text-[var(--accent)]">Région & Formats Internationaux</h3>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
@@ -304,7 +304,7 @@ export default function AntreModal({ isOpen, onClose, initialTab = 'general' }: 
                         <select
                           value={settings.timezone}
                           onChange={(e) => settings.updatePreferences({ timezone: e.target.value })}
-                          className="w-full px-3 py-2 rounded-xl bg-black/40 border border-white/10 text-xs text-white focus:outline-none focus:border-[#D5AE57]"
+                          className="w-full px-3 py-2 rounded-xl bg-black/40 border border-white/10 text-xs text-white focus:outline-none focus:border-[var(--accent)]"
                         >
                           <option value="Africa/Libreville">Africa/Libreville (UTC+1 — Gabon / Franceville / Port-Gentil)</option>
                           <option value="Europe/Paris">Europe/Paris (UTC+1 / UTC+2 — France / Europe)</option>
@@ -320,7 +320,7 @@ export default function AntreModal({ isOpen, onClose, initialTab = 'general' }: 
                         <select
                           value={settings.dateFormat}
                           onChange={(e) => settings.setDateFormat(e.target.value as any)}
-                          className="w-full px-3 py-2 rounded-xl bg-black/40 border border-white/10 text-xs text-white focus:outline-none focus:border-[#D5AE57]"
+                          className="w-full px-3 py-2 rounded-xl bg-black/40 border border-white/10 text-xs text-white focus:outline-none focus:border-[var(--accent)]"
                         >
                           <option value="DD/MM/YYYY">DD/MM/YYYY — Standard Français/Gabon (ex: {formatDate(new Date(), { dateFormat: 'DD/MM/YYYY' })})</option>
                           <option value="MM/DD/YYYY">MM/DD/YYYY — Standard US (ex: {formatDate(new Date(), { dateFormat: 'MM/DD/YYYY' })})</option>
@@ -333,7 +333,7 @@ export default function AntreModal({ isOpen, onClose, initialTab = 'general' }: 
                         <select
                           value={settings.timeFormat}
                           onChange={(e) => settings.setTimeFormat(e.target.value as any)}
-                          className="w-full px-3 py-2 rounded-xl bg-black/40 border border-white/10 text-xs text-white focus:outline-none focus:border-[#D5AE57]"
+                          className="w-full px-3 py-2 rounded-xl bg-black/40 border border-white/10 text-xs text-white focus:outline-none focus:border-[var(--accent)]"
                         >
                           <option value="24h">24 heures (ex: {formatTime(new Date(), { timeFormat: '24h' })})</option>
                           <option value="12h">12 heures AM/PM (ex: {formatTime(new Date(), { timeFormat: '12h' })})</option>
@@ -345,7 +345,7 @@ export default function AntreModal({ isOpen, onClose, initialTab = 'general' }: 
                         <select
                           value={settings.currencyDisplay}
                           onChange={(e) => settings.setCurrencyDisplay(e.target.value as any)}
-                          className="w-full px-3 py-2 rounded-xl bg-black/40 border border-white/10 text-xs text-white focus:outline-none focus:border-[#D5AE57]"
+                          className="w-full px-3 py-2 rounded-xl bg-black/40 border border-white/10 text-xs text-white focus:outline-none focus:border-[var(--accent)]"
                         >
                           <option value="XAF">Franc CFA (XAF) — {formatCurrency(50000, { currency: 'XAF' })}</option>
                           <option value="EUR">Euro (€) — {formatCurrency(75, { currency: 'EUR' })}</option>
@@ -364,14 +364,14 @@ export default function AntreModal({ isOpen, onClose, initialTab = 'general' }: 
                 <div className="space-y-4">
                   <div className="p-4 rounded-xl border bg-white/[0.02] space-y-3" style={{ borderColor: 'var(--border-subtle, rgba(255,255,255,0.08))' }}>
                     <div className="flex items-center gap-3">
-                      <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-[#D5AE57] to-amber-200 text-black flex items-center justify-center font-bold text-lg">
+                      <div className="w-12 h-12 rounded-2xl bg-[var(--accent)] text-[var(--accent-fg)] flex items-center justify-center font-bold text-lg">
                         DA
                       </div>
                       <div>
                         <h4 className="text-sm font-bold text-white">Akare Ntoutoume Daniel Jonathan</h4>
                         <p className="text-xs text-white/50">daniel.andj@smartandj.com · Fondateur Ñkyel AI</p>
                       </div>
-                      <span className="ml-auto px-2.5 py-1 rounded-full bg-[#D5AE57]/20 border border-[#D5AE57]/40 text-[#D5AE57] text-[10px] font-bold">
+                      <span className="ml-auto px-2.5 py-1 rounded-full bg-[var(--accent-subtle)] border border-[var(--accent)]/40 text-[var(--accent)] text-[10px] font-bold">
                         SOUVERAIN PRO
                       </span>
                     </div>
@@ -394,7 +394,7 @@ export default function AntreModal({ isOpen, onClose, initialTab = 'general' }: 
                             placeholder="Rechercher une langue mondiale ou africaine..."
                             value={langSearch}
                             onChange={(e) => setLangSearch(e.target.value)}
-                            className="w-full pl-9 pr-3 py-2 rounded-xl bg-black/40 border border-white/10 text-xs text-white focus:outline-none focus:border-[#D5AE57]"
+                            className="w-full pl-9 pr-3 py-2 rounded-xl bg-black/40 border border-white/10 text-xs text-white focus:outline-none focus:border-[var(--accent)]"
                           />
                         </div>
                       </div>
@@ -405,7 +405,7 @@ export default function AntreModal({ isOpen, onClose, initialTab = 'general' }: 
                         <select
                           value={settings.agentLanguage}
                           onChange={(e) => settings.setAgentLanguage(e.target.value)}
-                          className="w-full px-3 py-2 rounded-xl bg-black/40 border border-white/10 text-xs text-white focus:outline-none focus:border-[#D5AE57]"
+                          className="w-full px-3 py-2 rounded-xl bg-black/40 border border-white/10 text-xs text-white focus:outline-none focus:border-[var(--accent)]"
                         >
                           <option value="auto">Automatique (Détection selon la question)</option>
                           <option value="fr">Français (France & Gabon)</option>
@@ -434,13 +434,13 @@ export default function AntreModal({ isOpen, onClose, initialTab = 'general' }: 
                             }}
                             className={`p-2.5 rounded-xl border text-left flex flex-col justify-between transition-all ${
                               isSelected
-                                ? 'bg-[#D5AE57]/15 border-[#D5AE57] text-white shadow-sm'
+                                ? 'bg-[var(--accent-subtle)] border-[var(--accent)] text-white shadow-sm'
                                 : 'bg-black/20 border-white/5 hover:border-white/20 text-white/80'
                             }`}
                           >
                             <div className="flex items-center justify-between w-full">
                               <span className="font-bold text-xs">{lang.nativeName}</span>
-                              {isSelected && <Check size={14} weight="bold" className="text-[#D5AE57]" />}
+                              {isSelected && <Check size={14} weight="bold" className="text-[var(--accent)]" />}
                             </div>
                             <div className="flex items-center gap-1.5 mt-1 text-[10px] text-white/50">
                               <span>{lang.name}</span>
@@ -463,7 +463,7 @@ export default function AntreModal({ isOpen, onClose, initialTab = 'general' }: 
               {activeTab === 'appearance' && (
                 <div className="space-y-4">
                   <div className="p-4 rounded-xl border bg-white/[0.02] space-y-3" style={{ borderColor: 'var(--border-subtle, rgba(255,255,255,0.08))' }}>
-                    <h3 className="text-xs font-semibold uppercase tracking-wider text-[#D5AE57]">Thèmes Souverains Ñkyel (6 Palettes)</h3>
+                    <h3 className="text-xs font-semibold uppercase tracking-wider text-[var(--accent)]">Thèmes Souverains Ñkyel (6 Palettes)</h3>
                     <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
                       {THEMES.map((t) => {
                         const isSelected = settings.theme === t.key;
@@ -473,13 +473,13 @@ export default function AntreModal({ isOpen, onClose, initialTab = 'general' }: 
                             onClick={() => settings.setTheme(t.key)}
                             className={`p-3 rounded-xl border text-left flex flex-col justify-between transition-all ${
                               isSelected
-                                ? 'bg-white/10 border-[#D5AE57] text-white shadow'
+                                ? 'bg-white/10 border-[var(--accent)] text-white shadow'
                                 : 'bg-black/30 border-white/10 hover:border-white/20 text-white/70'
                             }`}
                           >
                             <div className="flex items-center justify-between mb-2">
                               <div className="w-4 h-4 rounded-full border border-white/20" style={{ background: t.dot }} />
-                              {isSelected && <Check size={14} weight="bold" className="text-[#D5AE57]" />}
+                              {isSelected && <Check size={14} weight="bold" className="text-[var(--accent)]" />}
                             </div>
                             <span className="font-bold text-xs text-white">{t.label}</span>
                             <span className="text-[10px] text-white/40">{t.desc}</span>
@@ -495,7 +495,7 @@ export default function AntreModal({ isOpen, onClose, initialTab = 'general' }: 
               {activeTab === 'agent' && (
                 <div className="space-y-4">
                   <div className="p-4 rounded-xl border bg-white/[0.02] space-y-4" style={{ borderColor: 'var(--border-subtle, rgba(255,255,255,0.08))' }}>
-                    <h3 className="text-xs font-semibold uppercase tracking-wider text-[#D5AE57]">Comportement & Intelligence de l&apos;Agent</h3>
+                    <h3 className="text-xs font-semibold uppercase tracking-wider text-[var(--accent)]">Comportement & Intelligence de l&apos;Agent</h3>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
@@ -503,7 +503,7 @@ export default function AntreModal({ isOpen, onClose, initialTab = 'general' }: 
                         <select
                           value={settings.responseDepth}
                           onChange={(e) => settings.setResponseDepth(e.target.value as any)}
-                          className="w-full px-3 py-2 rounded-xl bg-black/40 border border-white/10 text-xs text-white focus:outline-none focus:border-[#D5AE57]"
+                          className="w-full px-3 py-2 rounded-xl bg-black/40 border border-white/10 text-xs text-white focus:outline-none focus:border-[var(--accent)]"
                         >
                           <option value="fast">Fast — Réponses directes & concises (&lt;500ms)</option>
                           <option value="balanced">Balanced — Analyse équilibrée & structurée</option>
@@ -517,7 +517,7 @@ export default function AntreModal({ isOpen, onClose, initialTab = 'general' }: 
                         <select
                           value={settings.autonomyLevel}
                           onChange={(e) => settings.updatePreferences({ autonomyLevel: e.target.value as any })}
-                          className="w-full px-3 py-2 rounded-xl bg-black/40 border border-white/10 text-xs text-white focus:outline-none focus:border-[#D5AE57]"
+                          className="w-full px-3 py-2 rounded-xl bg-black/40 border border-white/10 text-xs text-white focus:outline-none focus:border-[var(--accent)]"
                         >
                           <option value="guided">Guidé (Demande confirmation avant chaque étape)</option>
                           <option value="semi_autonomous">Semi-autonome (Exécute et prévient)</option>
@@ -535,7 +535,7 @@ export default function AntreModal({ isOpen, onClose, initialTab = 'general' }: 
                         type="checkbox"
                         checked={settings.askBeforeSensitiveActions}
                         onChange={(e) => settings.updatePreferences({ askBeforeSensitiveActions: e.target.checked })}
-                        className="w-4 h-4 accent-[#D5AE57] rounded cursor-pointer"
+                        className="w-4 h-4 accent-[var(--accent)] rounded cursor-pointer"
                       />
                     </div>
                   </div>
@@ -548,14 +548,14 @@ export default function AntreModal({ isOpen, onClose, initialTab = 'general' }: 
                   <div className="p-4 rounded-xl border bg-white/[0.02] space-y-4" style={{ borderColor: 'var(--border-subtle, rgba(255,255,255,0.08))' }}>
                     <div className="flex items-center justify-between">
                       <div>
-                        <h3 className="text-xs font-semibold uppercase tracking-wider text-[#D5AE57]">Ñkyel Memory Studio (DeerMem)</h3>
+                        <h3 className="text-xs font-semibold uppercase tracking-wider text-[var(--accent)]">Ñkyel Memory Studio (DeerMem)</h3>
                         <p className="text-[11px] text-white/50">Vous gardez le contrôle souverain de ce dont Ñkyel se souvient.</p>
                       </div>
                       <input
                         type="checkbox"
                         checked={settings.memoryEnabled}
                         onChange={(e) => settings.updatePreferences({ memoryEnabled: e.target.checked })}
-                        className="w-4 h-4 accent-[#D5AE57] rounded cursor-pointer"
+                        className="w-4 h-4 accent-[var(--accent)] rounded cursor-pointer"
                       />
                     </div>
 
@@ -593,11 +593,11 @@ export default function AntreModal({ isOpen, onClose, initialTab = 'general' }: 
               {activeTab === 'privacy' && (
                 <div className="space-y-4">
                   <div className="p-4 rounded-xl border bg-white/[0.02] space-y-3" style={{ borderColor: 'var(--border-subtle, rgba(255,255,255,0.08))' }}>
-                    <h3 className="text-xs font-semibold uppercase tracking-wider text-[#D5AE57]">Politique de Résidence des Données</h3>
+                    <h3 className="text-xs font-semibold uppercase tracking-wider text-[var(--accent)]">Politique de Résidence des Données</h3>
                     <select
                       value={settings.dataResidency}
                       onChange={(e) => settings.setDataResidency(e.target.value as any)}
-                      className="w-full px-3 py-2 rounded-xl bg-black/40 border border-white/10 text-xs text-white focus:outline-none focus:border-[#D5AE57]"
+                      className="w-full px-3 py-2 rounded-xl bg-black/40 border border-white/10 text-xs text-white focus:outline-none focus:border-[var(--accent)]"
                     >
                       <option value="GLOBAL">GLOBAL — Meilleur modèle disponible mondialement</option>
                       <option value="EU">EU ONLY — Fournisseurs et inférences en Union Européenne (Mistral, Scaleway...)</option>
@@ -614,7 +614,7 @@ export default function AntreModal({ isOpen, onClose, initialTab = 'general' }: 
                   <div className="p-4 rounded-xl border bg-white/[0.02] space-y-3" style={{ borderColor: 'var(--border-subtle, rgba(255,255,255,0.08))' }}>
                     <div className="flex items-center justify-between">
                       <div>
-                        <h3 className="text-xs font-semibold uppercase tracking-wider text-[#D5AE57]">Registre Mondial des Fournisseurs d&apos;IA</h3>
+                        <h3 className="text-xs font-semibold uppercase tracking-wider text-[var(--accent)]">Registre Mondial des Fournisseurs d&apos;IA</h3>
                         <p className="text-[11px] text-white/50">Contrôle direct des endpoints d&apos;inférence. Zéro clé API exposée.</p>
                       </div>
                       <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300">
@@ -663,7 +663,7 @@ export default function AntreModal({ isOpen, onClose, initialTab = 'general' }: 
               {/* Remaining tabs (connectors, notifications, accessibility, developer) standard clean layout */}
               {['connectors', 'notifications', 'accessibility', 'developer', 'customization'].includes(activeTab) && (
                 <div className="p-4 rounded-xl border bg-white/[0.02] space-y-3" style={{ borderColor: 'var(--border-subtle, rgba(255,255,255,0.08))' }}>
-                  <h3 className="text-xs font-semibold uppercase tracking-wider text-[#D5AE57]">Section {TABS.find((t) => t.id === activeTab)?.label}</h3>
+                  <h3 className="text-xs font-semibold uppercase tracking-wider text-[var(--accent)]">Section {TABS.find((t) => t.id === activeTab)?.label}</h3>
                   <p className="text-xs text-white/70">Toutes les options sont actives et synchronisées en temps réel avec le backend.</p>
                   <div className="pt-2">
                     <button

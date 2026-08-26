@@ -18,7 +18,7 @@ const THINKING_STATES: Record<ThinkingMode, {
   default: {
     icon: '🌿',
     label: 'Google Gemini & Ñkyel AI en réflexion',
-    auraColors: ['#D5AE57', '#38BDF8', '#6F9485'],
+    auraColors: ['var(--accent, #D5AE57)', '#38BDF8', '#6F9485'],
     phrases: [
       'Google Gemini 3.1 Pro analyse le contexte 2M...',
       'Raisonnement arborescent et orchestration du WorkGraph...',

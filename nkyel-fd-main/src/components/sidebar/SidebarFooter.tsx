@@ -67,7 +67,7 @@ export default function SidebarFooter({ isCollapsed }: SidebarFooterProps) {
           <button
             type="button"
             onClick={() => setShowDropdown(!showDropdown)}
-            className="w-8 h-8 rounded-full bg-[#D5AE57]/15 border border-[#D5AE57]/30 text-[#D5AE57] flex items-center justify-center text-[12px] font-bold shadow-sm"
+            className="w-8 h-8 rounded-full bg-[var(--accent-subtle)] border border-[var(--accent-muted)] text-[var(--accent)] flex items-center justify-center text-[12px] font-bold shadow-sm"
           >
             {initials}
           </button>
@@ -92,7 +92,7 @@ export default function SidebarFooter({ isCollapsed }: SidebarFooterProps) {
             onClick={() => setShowDropdown(!showDropdown)}
             className="flex items-center gap-2.5 min-w-0 flex-1 text-left"
           >
-            <div className="w-7 h-7 rounded-full bg-[#D5AE57] text-black flex items-center justify-center text-[11px] font-extrabold shadow-sm shrink-0">
+            <div className="w-7 h-7 rounded-full bg-[var(--accent)] text-[var(--accent-fg)] flex items-center justify-center text-[11px] font-extrabold shadow-sm shrink-0">
               {initials}
             </div>
             <div className="flex flex-col min-w-0">
@@ -104,7 +104,7 @@ export default function SidebarFooter({ isCollapsed }: SidebarFooterProps) {
                   e.stopPropagation();
                   setIsUpgradeOpen(true);
                 }}
-                className="text-[10px] text-[#D5AE57] font-medium flex items-center gap-1 hover:underline cursor-pointer"
+                className="text-[10px] text-[var(--accent)] font-medium flex items-center gap-1 hover:underline cursor-pointer"
               >
                 <Sparkle size={10} weight="fill" /> Ñkyel Pro
               </span>
@@ -138,7 +138,7 @@ export default function SidebarFooter({ isCollapsed }: SidebarFooterProps) {
                 setShowDropdown(false);
                 setIsUpgradeOpen(true);
               }}
-              className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-[#D5AE57] hover:bg-[#D5AE57]/10 transition-colors text-left font-semibold"
+              className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-[var(--accent)] hover:bg-[var(--accent-subtle)] transition-colors text-left font-semibold"
             >
               <Crown size={15} weight="fill" />
               <span>S&apos;abonner à Ñkyel Pro</span>

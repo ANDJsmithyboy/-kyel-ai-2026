@@ -163,7 +163,7 @@ export default function MCPAppRunner({ app, onClose }: MCPAppRunnerProps) {
               </div>
               <div className="p-3.5 rounded-xl bg-[#151922] border border-white/[0.04]">
                 <span className="text-[11px] text-[#7E8795] uppercase tracking-wider block">Marge EBITDA</span>
-                <span className="text-xl font-bold font-mono text-[#C39A52] mt-1 block">34.8 %</span>
+                <span className="text-xl font-bold font-mono text-[var(--accent)] mt-1 block">34.8 %</span>
                 <span className="text-[11px] text-[#7E8795] mt-1 block">Benchmark sectoriel : 28.5%</span>
               </div>
               <div className="p-3.5 rounded-xl bg-[#151922] border border-white/[0.04]">

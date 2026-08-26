@@ -53,6 +53,8 @@ interface WorkGraphState {
   replayStep: () => void;
   /** Reset store */
   reset: () => void;
+  /** Fetch WorkGraph from FastAPI Backend */
+  fetchWorkGraph: (workspaceId: string, missionId?: string) => Promise<void>;
 }
 
 // --- ID Generator ---------------------------------------
@@ -63,6 +65,16 @@ function generateId(prefix: string): string {
 }
 
 // --- Store ----------------------------------------------
+
+const getApiUrl = () => process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1';
+
+const getHeaders = () => {
+  const token = typeof window !== 'undefined' ? localStorage.getItem('token') || localStorage.getItem('nkyel_access_token') : null;
+  return {
+    'Content-Type': 'application/json',
+    ...(token ? { Authorization: `Bearer ${token}` } : {}),
+  };
+};
 
 export const useWorkGraphStore = create<WorkGraphState>((set, get) => {
   // Subscribe to all events from the event store
@@ -287,6 +299,56 @@ export const useWorkGraphStore = create<WorkGraphState>((set, get) => {
         replayPosition: 0,
         selectedNodeId: null,
       });
+    },
+
+    fetchWorkGraph: async (workspaceId: string, missionId?: string) => {
+      try {
+        let url = `${getApiUrl()}/workgraph/nodes?workspace_id=${workspaceId}`;
+        if (missionId) {
+          url += `&mission_id=${missionId}`;
+        }
+        
+        const [nodesRes, edgesRes] = await Promise.all([
+          fetch(url, { headers: getHeaders() }),
+          fetch(`${getApiUrl()}/workgraph/edges?workspace_id=${workspaceId}`, { headers: getHeaders() })
+        ]);
+
+        if (!nodesRes.ok || !edgesRes.ok) throw new Error('Failed to fetch WorkGraph from backend');
+
+        const nodesData = await nodesRes.json();
+        const edgesData = await edgesRes.json();
+
+        const nodesMap = new Map<string, WorkNode>();
+        const edgesMap = new Map<string, WorkEdge>();
+
+        nodesData.forEach((n: any) => {
+          nodesMap.set(n.id, {
+            id: n.id,
+            type: n.node_type as any,
+            version: '1.0.0',
+            title: n.label,
+            status: 'active',
+            provenance: 'retrieved',
+            createdAt: n.created_at,
+            updatedAt: n.updated_at,
+            ...(n.payload || {})
+          });
+        });
+
+        edgesData.forEach((e: any) => {
+          edgesMap.set(e.id, {
+            id: e.id,
+            type: e.relation_type as any,
+            sourceId: e.source_node_id,
+            targetId: e.target_node_id,
+            createdAt: e.created_at,
+          });
+        });
+
+        set({ nodes: nodesMap, edges: edgesMap });
+      } catch (err) {
+        console.error('[WorkGraph Store] fetchWorkGraph error:', err);
+      }
     },
   };
 });

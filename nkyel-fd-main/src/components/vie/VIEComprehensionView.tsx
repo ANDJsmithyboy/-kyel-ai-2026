@@ -57,21 +57,21 @@ export default function VIEComprehensionView({
   } | null>(null);
 
   // Derive world model summary from graph nodes
-  const goals = nodes.filter((n) => n.type === 'goal');
-  const facts = nodes.filter((n) => n.type === 'evidence' || n.type === 'source');
-  const artifacts = nodes.filter((n) => n.type === 'artifact');
-  const activeAgent = nodes.find((n) => n.status === 'active' && (n.type === 'agent' || n.type === 'task'));
+  const goals = nodes.filter((n: any) => n.type === 'goal');
+  const facts = nodes.filter((n: any) => n.type === 'evidence' || n.type === 'source');
+  const artifacts = nodes.filter((n: any) => n.type === 'artifact');
+  const activeAgent = nodes.find((n: any) => n.status === 'active' && (n.type === 'agent' || n.type === 'task'));
 
   const handleApprove = () => {
     if (pendingApproval) {
-      protocolEventBus.emit('approval.granted', 'agui', { id: pendingApproval.id });
+      protocolEventBus.emit('agui.approval.granted', 'agui', `Approval granted for ${pendingApproval.id}`, { id: pendingApproval.id });
       setPendingApproval(null);
     }
   };
 
   const handleReject = () => {
     if (pendingApproval) {
-      protocolEventBus.emit('approval.rejected', 'agui', { id: pendingApproval.id });
+      protocolEventBus.emit('agui.approval.rejected', 'agui', `Approval rejected for ${pendingApproval.id}`, { id: pendingApproval.id });
       setPendingApproval(null);
     }
   };
@@ -83,14 +83,14 @@ export default function VIEComprehensionView({
         <div className="flex items-center justify-between border-b border-[var(--border-subtle)] pb-4">
           <div>
             <div className="flex items-center gap-2">
-              <span className="text-xs font-mono px-2 py-0.5 rounded-full bg-[#D5AE57]/15 text-[#D5AE57] font-semibold border border-[#D5AE57]/30">
+              <span className="text-xs px-2 py-0.5 rounded-full bg-[var(--accent-subtle)] text-[var(--accent)] font-semibold border border-[var(--accent-muted)]">
                 ÑKYEL VIE v1
               </span>
               <span className="text-xs text-[var(--text-tertiary)]">
                 {isFr ? 'Compréhension & Contrôle Humain' : 'Human Comprehension & Control'}
               </span>
             </div>
-            <h2 className="text-lg font-bold text-[var(--text-primary)] mt-1 font-serif">
+            <h2 className="text-lg font-bold text-[var(--text-primary)] mt-1">
               {missionTitle}
             </h2>
           </div>
@@ -170,7 +170,7 @@ export default function VIEComprehensionView({
           <div className="p-4 rounded-2xl bg-[var(--bg-elevated)] border border-[var(--border)] space-y-3">
             <div className="flex items-center justify-between border-b border-[var(--border-subtle)] pb-2">
               <div className="flex items-center gap-2 text-xs font-semibold text-[var(--text-primary)]">
-                <Brain size={16} className="text-[#D5AE57]" />
+                <Brain size={16} className="text-[var(--accent)]" />
                 <span>{isFr ? 'Ce que fait Ñkyel' : 'Current Action'}</span>
               </div>
               <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
@@ -188,7 +188,7 @@ export default function VIEComprehensionView({
 
               <div className="text-[11px] text-[var(--text-tertiary)] flex items-center justify-between pt-1">
                 <span>{isFr ? 'Phase actuelle :' : 'Current phase:'}</span>
-                <span className="font-mono text-[#D5AE57]">2 / 4 (Analyse)</span>
+                <span className="font-mono text-[var(--accent)]">2 / 4 (Analyse)</span>
               </div>
             </div>
           </div>

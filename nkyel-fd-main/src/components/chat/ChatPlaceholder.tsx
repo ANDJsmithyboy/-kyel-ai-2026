@@ -38,15 +38,15 @@ export default function ChatPlaceholder({ userName }: ChatPlaceholderProps) {
     <div className="flex flex-col items-center justify-center h-full px-4 py-8 max-w-2xl mx-auto text-center">
       {/* Apple-Grade Luminous Logo */}
       <div className="mb-6 relative group">
-        <div className="absolute -inset-2 bg-gradient-to-r from-[#D5AE57] to-[#6F9485] rounded-3xl blur-xl opacity-30 group-hover:opacity-60 transition duration-500" />
-        <div className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-gradient-to-tr from-[#D5AE57] to-amber-200 text-black flex items-center justify-center font-black text-2xl sm:text-3xl shadow-[0_0_35px_rgba(213,174,87,0.4)] border border-amber-300/40">
+        <div className="absolute -inset-2 bg-gradient-to-r from-[var(--accent-subtle)] to-[#6F9485] rounded-3xl blur-xl opacity-30 group-hover:opacity-60 transition duration-500" />
+        <div className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-[var(--accent)] text-[var(--accent-fg)] flex items-center justify-center font-black text-2xl sm:text-3xl shadow-[var(--shadow-accent)]">
           Ñ
         </div>
       </div>
 
       {/* Greeting */}
       <div className="mb-8 space-y-2">
-        <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white/[0.04] border border-white/10 text-[11px] font-mono text-[#D5AE57] mb-2">
+        <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white/[0.04] border border-white/10 text-[11px] font-mono text-[var(--accent)] mb-2">
           <Sparkle size={13} weight="fill" />
           <span>Propulsé par Google Gemini Ecosystem</span>
         </div>
@@ -75,7 +75,7 @@ export default function ChatPlaceholder({ userName }: ChatPlaceholderProps) {
               }}
               className="p-3.5 rounded-2xl border border-white/[0.08] bg-white/[0.02] hover:bg-white/[0.06] hover:border-white/[0.18] transition-all flex items-center gap-3 text-xs text-white/80 hover:text-white group active:scale-[0.99]"
             >
-              <div className="w-8 h-8 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-[#D5AE57] group-hover:scale-110 transition-transform">
+              <div className="w-8 h-8 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-[var(--accent)] group-hover:scale-110 transition-transform">
                 <Icon size={16} weight="bold" />
               </div>
               <span className="leading-snug">{item.label}</span>

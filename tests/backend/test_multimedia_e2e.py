@@ -25,7 +25,7 @@ from unittest.mock import patch, MagicMock
 # S'assurer que le backend est accessible
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "..", "backend"))
 
-from db.models import MediaJob, MediaJobStatus, MediaJobType, User, AgentMemory
+from db.models import User
 from services.media_provider_router import MediaProviderRouter
 from services.media_queue_service import MediaQueueService, QUOTA_LIMITS_48H
 from services.moderation_service import ModerationService

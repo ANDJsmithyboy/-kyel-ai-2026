@@ -83,7 +83,7 @@ interface TabConfig {
 }
 
 const TABS: TabConfig[] = [
-  { id: 'validation', label: 'Cockpit 40h & Tests', icon: Clock, badge: '40h Live', badgeColor: 'bg-[#D5AE57]/20 text-[#D5AE57]' },
+  { id: 'validation', label: 'Cockpit 40h & Tests', icon: Clock, badge: '40h Live', badgeColor: 'bg-[var(--accent-subtle)] text-[var(--accent)]' },
   { id: 'overview', label: "Vue d'Ensemble & Santé", icon: ChartLineUp },
   { id: 'missions', label: 'Missions & Timeline', icon: TerminalWindow },
   { id: 'artifacts', label: 'Artefacts & R2 Storage', icon: HardDrives },
@@ -345,7 +345,7 @@ export default function AdminCommandCenter() {
   }, [providersData, searchQuery]);
 
   return (
-    <div className="min-h-screen bg-[#05060A] text-[#EDEDEC] font-sans antialiased pb-20 selection:bg-[#D5AE57]/30 selection:text-white">
+    <div className="min-h-screen bg-[#05060A] text-[#EDEDEC] font-sans antialiased pb-20 selection:bg-[var(--accent-subtle)] selection:text-white">
       {/* ── Toast Notification ── */}
       <AnimatePresence>
         {notification && (
@@ -353,9 +353,9 @@ export default function AdminCommandCenter() {
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            className="fixed top-6 right-6 z-50 px-4 py-2.5 rounded-2xl bg-[#0C0E14] border border-[#D5AE57]/40 text-xs text-white shadow-2xl flex items-center gap-2"
+            className="fixed top-6 right-6 z-50 px-4 py-2.5 rounded-2xl bg-[#0C0E14] border border-[var(--accent)]/40 text-xs text-white shadow-2xl flex items-center gap-2"
           >
-            <CheckCircle size={16} weight="fill" className="text-[#D5AE57]" />
+            <CheckCircle size={16} weight="fill" className="text-[var(--accent)]" />
             <span>{notification}</span>
           </motion.div>
         )}
@@ -364,13 +364,13 @@ export default function AdminCommandCenter() {
       {/* ── Header Top Bar ── */}
       <header className="sticky top-0 z-40 border-b border-white/[0.06] bg-[#05060A]/90 backdrop-blur-xl px-4 sm:px-8 py-3 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-[#D5AE57] to-amber-200 text-black flex items-center justify-center font-black text-sm shadow-md">
+          <div className="w-8 h-8 rounded-xl bg-[var(--accent)] text-[var(--accent-fg)] flex items-center justify-center font-black text-sm shadow-md">
             Ñ
           </div>
           <div>
             <h1 className="font-bold text-sm text-white flex items-center gap-2">
               Ñkyel Command Center
-              <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#D5AE57]/15 border border-[#D5AE57]/30 text-[#D5AE57] uppercase tracking-wider font-bold">
+              <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[var(--accent-subtle)] border border-[var(--accent)]/30 text-[var(--accent)] uppercase tracking-wider font-bold">
                 BETA CANDIDATE · RBAC
               </span>
             </h1>
@@ -397,7 +397,7 @@ export default function AdminCommandCenter() {
             className="p-2 rounded-xl bg-white/[0.04] border border-white/10 hover:bg-white/[0.08] text-white/80 hover:text-white transition-all disabled:opacity-50"
             title="Rafraîchir les métriques"
           >
-            <ArrowsClockwise size={15} className={refreshing ? 'animate-spin text-[#D5AE57]' : ''} />
+            <ArrowsClockwise size={15} className={refreshing ? 'animate-spin text-[var(--accent)]' : ''} />
           </button>
         </div>
       </header>
@@ -414,7 +414,7 @@ export default function AdminCommandCenter() {
                 onClick={() => setActiveTab(tab.id)}
                 className={`flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-medium transition-all whitespace-nowrap ${
                   isSel
-                    ? 'bg-[#D5AE57]/15 text-[#D5AE57] border border-[#D5AE57]/40 shadow-sm'
+                    ? 'bg-[var(--accent-subtle)] text-[var(--accent)] border border-[var(--accent)]/40 shadow-sm'
                     : 'text-white/60 hover:text-white hover:bg-white/[0.03]'
                 }`}
               >
@@ -437,10 +437,10 @@ export default function AdminCommandCenter() {
         {activeTab === 'validation' && (
           <div className="space-y-6 animate-fade-in">
             {/* Release Version Banner */}
-            <div className="p-4 rounded-2xl border border-[#D5AE57]/30 bg-gradient-to-r from-[#D5AE57]/10 via-transparent to-black flex flex-wrap items-center justify-between gap-4">
+            <div className="p-4 rounded-2xl border border-[var(--accent)]/30 bg-gradient-to-r from-[var(--accent-subtle)] via-transparent to-black flex flex-wrap items-center justify-between gap-4">
               <div>
                 <div className="flex items-center gap-2">
-                  <span className="text-xs font-bold text-[#D5AE57] uppercase tracking-wider font-mono">
+                  <span className="text-xs font-bold text-[var(--accent)] uppercase tracking-wider font-mono">
                     Release Version : {validationData?.release_identification?.release_version || '1.0.0-rc1'}
                   </span>
                   <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
@@ -460,20 +460,20 @@ export default function AdminCommandCenter() {
             <div className="p-5 rounded-2xl border border-white/[0.08] bg-[#0C0E14] space-y-3">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <Clock size={18} className="text-[#D5AE57]" />
+                  <Clock size={18} className="text-[var(--accent)]" />
                   <h3 className="text-sm font-semibold text-white">
                     Fenêtre de validation opérationnelle (40 Heures)
                   </h3>
                 </div>
                 <div className="text-xs font-mono text-white/70">
-                  <strong className="text-[#D5AE57]">{validationData?.validation_window?.elapsed_hours || '2.25'}h</strong> / 40.0h ({validationData?.validation_window?.progress_pct || '5.6'}%)
+                  <strong className="text-[var(--accent)]">{validationData?.validation_window?.elapsed_hours || '2.25'}h</strong> / 40.0h ({validationData?.validation_window?.progress_pct || '5.6'}%)
                 </div>
               </div>
 
               {/* Progress Bar */}
               <div className="w-full h-3 rounded-full bg-white/[0.05] overflow-hidden border border-white/10">
                 <div
-                  className="h-full bg-gradient-to-r from-[#D5AE57] to-amber-300 rounded-full transition-all duration-500"
+                  className="h-full bg-[var(--accent)] rounded-full transition-all duration-500"
                   style={{ width: `${Math.max(5, validationData?.validation_window?.progress_pct || 5.6)}%` }}
                 />
               </div>
@@ -501,7 +501,7 @@ export default function AdminCommandCenter() {
 
               <div className="p-4 rounded-2xl border border-white/[0.08] bg-[#0C0E14] space-y-1">
                 <span className="text-[11px] text-white/50 uppercase font-mono">Artefacts Persistés R2</span>
-                <div className="text-xl font-bold text-[#D5AE57] font-mono">
+                <div className="text-xl font-bold text-[var(--accent)] font-mono">
                   {validationData?.metrics?.artifacts_persisted_r2 || 482}
                 </div>
                 <p className="text-[10px] text-emerald-400 font-mono">0 échecs de persistance</p>
@@ -525,7 +525,7 @@ export default function AdminCommandCenter() {
             {/* Go / No-Go Checklist */}
             <div className="p-5 rounded-2xl border border-white/[0.08] bg-[#0C0E14] space-y-4">
               <h3 className="text-xs font-mono font-bold text-white/80 uppercase tracking-wider flex items-center gap-2">
-                <CheckSquare size={16} className="text-[#D5AE57]" />
+                <CheckSquare size={16} className="text-[var(--accent)]" />
                 Checklist d’Éligibilité Go / No-Go (Déploiement VPS 32-vCPU)
               </h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
@@ -590,12 +590,12 @@ export default function AdminCommandCenter() {
                         onClick={() => handleSelectMission(m)}
                         className={`w-full text-left p-3.5 rounded-xl border transition-all ${
                           isSelected
-                            ? 'bg-[#D5AE57]/15 border-[#D5AE57]/50 text-white'
+                            ? 'bg-[var(--accent-subtle)] border-[var(--accent)]/50 text-white'
                             : 'bg-[#0C0E14] border-white/[0.06] text-white/70 hover:border-white/20 hover:text-white'
                         }`}
                       >
                         <div className="flex items-center justify-between mb-1">
-                          <span className="text-[10px] font-mono text-[#D5AE57] font-bold">{m.mission_id}</span>
+                          <span className="text-[10px] font-mono text-[var(--accent)] font-bold">{m.mission_id}</span>
                           <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-white/10 text-white/80 uppercase">
                             {m.status}
                           </span>
@@ -619,7 +619,7 @@ export default function AdminCommandCenter() {
                     <div className="flex items-center justify-between pb-3 border-b border-white/10">
                       <div>
                         <h3 className="text-sm font-bold text-white">{selectedMission.objective}</h3>
-                        <p className="text-xs text-[#D5AE57] font-mono">
+                        <p className="text-xs text-[var(--accent)] font-mono">
                           ID: {selectedMission.mission_id} · Run: {selectedMission.run_id}
                         </p>
                       </div>
@@ -636,7 +636,7 @@ export default function AdminCommandCenter() {
                       <div className="space-y-2">
                         {runTimeline.map((evt, idx) => (
                           <div key={idx} className="flex items-start gap-3 p-2.5 rounded-xl bg-black/40 border border-white/[0.04]">
-                            <div className="w-2 h-2 rounded-full bg-[#D5AE57] mt-1.5 shrink-0" />
+                            <div className="w-2 h-2 rounded-full bg-[var(--accent)] mt-1.5 shrink-0" />
                             <div className="flex-1 min-w-0">
                               <div className="flex items-center justify-between">
                                 <span className="text-xs font-mono font-bold text-white">{evt.event}</span>
@@ -666,7 +666,7 @@ export default function AdminCommandCenter() {
           <div className="space-y-6 animate-fade-in">
             <div className="p-5 rounded-2xl border border-white/[0.08] bg-[#0C0E14] space-y-4">
               <h3 className="text-xs font-mono font-bold text-white/80 uppercase tracking-wider flex items-center gap-2">
-                <HardDrives size={16} className="text-[#D5AE57]" />
+                <HardDrives size={16} className="text-[var(--accent)]" />
                 Artefacts Universels Persistés dans Cloudflare R2 ({artifactsData.length})
               </h3>
               <div className="overflow-x-auto">
@@ -685,7 +685,7 @@ export default function AdminCommandCenter() {
                     {artifactsData.length > 0 ? (
                       artifactsData.map((art) => (
                         <tr key={art.id} className="text-white/80 hover:bg-white/[0.02]">
-                          <td className="py-2.5 text-[#D5AE57]">{art.id}</td>
+                          <td className="py-2.5 text-[var(--accent)]">{art.id}</td>
                           <td className="text-white font-sans font-medium">{art.title}</td>
                           <td><span className="px-2 py-0.5 rounded bg-white/10 text-[10px]">{art.type}</span></td>
                           <td className="text-white/60">{art.size_bytes ? `${(art.size_bytes / 1024).toFixed(1)} KB` : '12 KB'}</td>
@@ -719,7 +719,7 @@ export default function AdminCommandCenter() {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Filtrer parmi les 38 fournisseurs d'IA souverains..."
-                  className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-[#0C0E14] border border-white/[0.08] text-xs text-white placeholder:text-white/30 focus:border-[#D5AE57] outline-none transition-colors"
+                  className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-[#0C0E14] border border-white/[0.08] text-xs text-white placeholder:text-white/30 focus:border-[var(--accent)] outline-none transition-colors"
                 />
               </div>
             </div>
@@ -758,7 +758,7 @@ export default function AdminCommandCenter() {
                     </div>
                     <button
                       onClick={() => { setEditingProvider(p); setNewApiKey(''); }}
-                      className="text-[10px] text-[#D5AE57] hover:underline"
+                      className="text-[10px] text-[var(--accent)] hover:underline"
                     >
                       Modifier
                     </button>
@@ -768,7 +768,7 @@ export default function AdminCommandCenter() {
                   {p.budget && (
                     <div className="p-2 rounded-xl bg-white/[0.02] border border-white/[0.04] text-[11px] font-mono text-white/60 flex items-center justify-between">
                       <span>Budget: {p.budget.type}</span>
-                      <span className="text-[#D5AE57]">
+                      <span className="text-[var(--accent)]">
                         {p.budget.budget_usd ? `$${p.budget.consumed_usd} / $${p.budget.budget_usd}` : p.budget.credits_total ? `${p.budget.credits_consumed} / ${p.budget.credits_total} credits` : 'Illimité'}
                       </span>
                     </div>
@@ -785,7 +785,7 @@ export default function AdminCommandCenter() {
             <div className="p-5 rounded-2xl border border-white/[0.08] bg-[#0C0E14] space-y-4">
               <div className="flex items-center justify-between">
                 <h3 className="text-xs font-mono font-bold text-white/80 uppercase tracking-wider flex items-center gap-2">
-                  <ChatCircleDots size={16} className="text-[#D5AE57]" />
+                  <ChatCircleDots size={16} className="text-[var(--accent)]" />
                   Inbox de Triage des Retours Utilisateurs ({feedbackData.length})
                 </h3>
               </div>
@@ -835,7 +835,7 @@ export default function AdminCommandCenter() {
                         </td>
                         <td>
                           {fb.screenshot_url ? (
-                            <a href={fb.screenshot_url} target="_blank" rel="noopener noreferrer" className="text-[#D5AE57] hover:underline flex items-center gap-1">
+                            <a href={fb.screenshot_url} target="_blank" rel="noopener noreferrer" className="text-[var(--accent)] hover:underline flex items-center gap-1">
                               <Camera size={14} /> Voir
                             </a>
                           ) : (
@@ -850,7 +850,7 @@ export default function AdminCommandCenter() {
                               setTriageSeverity(fb.severity_internal || 'P2');
                               setTriageNote(fb.resolution_note || '');
                             }}
-                            className="px-2.5 py-1 rounded-lg bg-white/[0.06] hover:bg-white/10 text-[#D5AE57] text-[11px]"
+                            className="px-2.5 py-1 rounded-lg bg-white/[0.06] hover:bg-white/10 text-[var(--accent)] text-[11px]"
                           >
                             Triager
                           </button>
@@ -923,7 +923,7 @@ export default function AdminCommandCenter() {
               {auditData.map((log) => (
                 <div key={log.id} className="p-3 rounded-xl bg-black/40 border border-white/[0.04] text-xs font-mono flex items-center justify-between">
                   <div>
-                    <span className="text-[#D5AE57] font-bold">{log.action}</span>
+                    <span className="text-[var(--accent)] font-bold">{log.action}</span>
                     <span className="text-white/40 ml-2">par {log.actor_email}</span>
                   </div>
                   <span className="text-white/40 text-[10px]">{log.timestamp}</span>
@@ -990,7 +990,7 @@ export default function AdminCommandCenter() {
               </button>
               <button
                 onClick={handleSaveTriage}
-                className="px-4 py-2 rounded-xl text-xs font-semibold bg-[#D5AE57] text-black hover:opacity-90"
+                className="px-4 py-2 rounded-xl text-xs font-semibold bg-[var(--accent)] text-[var(--accent-fg)] hover:opacity-90"
               >
                 Enregistrer
               </button>
@@ -1012,7 +1012,7 @@ export default function AdminCommandCenter() {
               value={newApiKey}
               onChange={(e) => setNewApiKey(e.target.value)}
               placeholder="Entrer la nouvelle clé API..."
-              className="w-full px-3 py-2 rounded-xl bg-black border border-white/10 text-xs text-white outline-none focus:border-[#D5AE57]"
+              className="w-full px-3 py-2 rounded-xl bg-black border border-white/10 text-xs text-white outline-none focus:border-[var(--accent)]"
             />
             <div className="flex items-center justify-end gap-2 pt-2">
               <button
@@ -1023,7 +1023,7 @@ export default function AdminCommandCenter() {
               </button>
               <button
                 onClick={handleSaveCredential}
-                className="px-4 py-2 rounded-xl text-xs font-semibold bg-[#D5AE57] text-black hover:opacity-90"
+                className="px-4 py-2 rounded-xl text-xs font-semibold bg-[var(--accent)] text-[var(--accent-fg)] hover:opacity-90"
               >
                 Sauvegarder
               </button>

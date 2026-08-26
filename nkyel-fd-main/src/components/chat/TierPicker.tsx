@@ -138,7 +138,7 @@ export default function TierPicker({
                     className={cn(
                       'w-full min-h-[48px] flex items-start gap-3 p-3 rounded-2xl text-left transition-colors touch-manipulation active:scale-[0.99]',
                       isSelected
-                        ? 'bg-[var(--surface-raised)] border border-[#D5AE57]/40 shadow-xs'
+                        ? 'bg-[var(--surface-raised)] border border-[var(--accent)]/40 shadow-xs'
                         : 'hover:bg-[var(--hover)] border border-transparent',
                     )}
                   >
@@ -146,7 +146,7 @@ export default function TierPicker({
                       className={cn(
                         'w-8 h-8 rounded-xl flex items-center justify-center shrink-0 mt-0.5',
                         isSelected
-                          ? 'bg-[#D5AE57] text-black font-bold'
+                          ? 'bg-[var(--accent)] text-[var(--accent-fg)] font-bold'
                           : 'bg-white/[0.06] text-[var(--text-secondary)]',
                       )}
                     >
@@ -159,7 +159,7 @@ export default function TierPicker({
                           {label}
                         </span>
                         {m.badge && (
-                          <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-[#D5AE57]/15 text-[#D5AE57] font-semibold">
+                          <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-[var(--accent-subtle)] text-[var(--accent)] font-semibold">
                             {m.badge}
                           </span>
                         )}
@@ -170,7 +170,7 @@ export default function TierPicker({
                     </div>
 
                     {isSelected && (
-                      <Check size={15} weight="bold" className="text-[#D5AE57] shrink-0 self-center" />
+                      <Check size={15} weight="bold" className="text-[var(--accent)] shrink-0 self-center" />
                     )}
                   </button>
                 );

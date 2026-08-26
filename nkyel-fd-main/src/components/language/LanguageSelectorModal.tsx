@@ -144,7 +144,7 @@ export default function LanguageSelectorModal() {
                 onClick={() => setActiveTab(tab.id as any)}
                 className={`flex items-center gap-2 py-3 px-3 text-xs font-semibold border-b-2 transition-all shrink-0 ${
                   isActive
-                    ? 'border-[#C39A52] text-[#C39A52]'
+                    ? 'border-[var(--accent)] text-[var(--accent)]'
                     : 'border-transparent text-[#7E8795] hover:text-[#B8C0CC]'
                 }`}
               >
@@ -197,12 +197,12 @@ export default function LanguageSelectorModal() {
               onClick={() => handleSelectLang('auto')}
               className={`p-3.5 rounded-2xl border transition-all cursor-pointer flex items-center justify-between ${
                 activeTag === 'auto'
-                  ? 'bg-[#C39A52]/15 border-[#C39A52]/50 text-[#F1EEE7]'
+                  ? 'bg-[var(--accent-subtle)] border-[var(--accent)]/50 text-[#F1EEE7]'
                   : 'bg-white/[0.02] border-white/[0.06] hover:bg-white/[0.04] text-[#B8C0CC]'
               }`}
             >
               <div className="flex items-center gap-3">
-                <span className="w-8 h-8 rounded-xl bg-[#C39A52]/20 text-[#C39A52] flex items-center justify-center font-bold text-xs">
+                <span className="w-8 h-8 rounded-xl bg-[var(--accent-subtle)] text-[var(--accent)] flex items-center justify-center font-bold text-xs">
                   ✨
                 </span>
                 <div>
@@ -212,7 +212,7 @@ export default function LanguageSelectorModal() {
                   </p>
                 </div>
               </div>
-              {activeTag === 'auto' && <Check size={18} className="text-[#C39A52]" weight="bold" />}
+              {activeTag === 'auto' && <Check size={18} className="text-[var(--accent)]" weight="bold" />}
             </div>
           )}
 
@@ -235,7 +235,7 @@ export default function LanguageSelectorModal() {
                   <div className="min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
                       <h4 className="text-xs font-semibold text-[#F1EEE7]">{lang.name}</h4>
-                      <span className="text-[11px] text-[#7E8795] font-serif italic">({lang.nativeName})</span>
+                      <span className="text-[11px] text-[var(--text-tertiary)] italic">({lang.nativeName})</span>
                       {lang.isAfricanPriority && (
                         <span className="px-2 py-0.2 rounded-full text-[9px] font-bold uppercase bg-[#6F9485]/20 text-[#6F9485] border border-[#6F9485]/30">
                           Afrique
@@ -255,7 +255,7 @@ export default function LanguageSelectorModal() {
                       lang.llmStatus === 'stable'
                         ? 'bg-[#6F9485]/20 text-[#6F9485]'
                         : lang.llmStatus === 'beta'
-                        ? 'bg-[#C39A52]/20 text-[#C39A52]'
+                        ? 'bg-[var(--accent-subtle)] text-[var(--accent)]'
                         : 'bg-white/[0.04] text-[#7E8795]'
                     }`}
                   >

@@ -23,6 +23,7 @@ import ProductionFeedbackModal, { FeedbackCategory } from '@/components/feedback
 import DesktopSettingsModal from '@/components/settings/DesktopSettingsModal';
 import { fetchBetaStatus, type BetaStatusResponse } from '@/lib/betaStateMachine';
 import { useSafeUser } from '@/lib/auth-client';
+import { useNeonSync } from '@/hooks/useNeonSync';
 
 interface NkyelAppShellProps {
   children?: React.ReactNode;
@@ -37,6 +38,9 @@ export default function NkyelAppShell({
 }: NkyelAppShellProps) {
   const router = useRouter();
   const { isSignedIn, isLoaded } = useSafeUser();
+
+  // PRODUCTION: Sync Clerk user → Neon on every login
+  useNeonSync();
 
   const [capabilitiesOpen, setCapabilitiesOpen] = useState(false);
   const [feedbackOpen, setFeedbackOpen] = useState(false);

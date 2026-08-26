@@ -121,7 +121,7 @@ export default function LiveFlowTimelineView({
                 {isFr ? 'Chronologie Temps Réel' : 'Real-Time Execution Flow'}
               </span>
             </div>
-            <h2 className="text-lg font-bold text-[var(--text-primary)] mt-1 font-serif">
+            <h2 className="text-lg font-bold text-[var(--text-primary)] mt-1">
               {missionTitle}
             </h2>
           </div>
@@ -148,7 +148,7 @@ export default function LiveFlowTimelineView({
                 key={step.id}
                 className={`relative p-3.5 rounded-2xl border transition-all ${
                   isRunning
-                    ? 'bg-[var(--bg-elevated)] border-[#D5AE57]/60 shadow-[0_0_20px_rgba(213,174,87,0.15)] ring-1 ring-[#D5AE57]/40'
+                    ? 'bg-[var(--bg-elevated)] border-[var(--accent)]/60 shadow-[var(--shadow-accent)] ring-1 ring-[var(--accent)]/40'
                     : isCompleted
                     ? 'bg-[var(--surface)] border-[var(--border)]'
                     : 'bg-[var(--surface-sunken)] border-[var(--border-subtle)] opacity-60'
@@ -160,7 +160,7 @@ export default function LiveFlowTimelineView({
                     isCompleted
                       ? 'border-emerald-400 text-emerald-400'
                       : isRunning
-                      ? 'border-[#D5AE57] text-[#D5AE57] animate-pulse'
+                      ? 'border-[var(--accent)] text-[var(--accent)] animate-pulse'
                       : 'border-[var(--border-strong)] text-[var(--text-tertiary)]'
                   }`}
                 >
@@ -195,7 +195,7 @@ export default function LiveFlowTimelineView({
                       {step.timestamp}
                     </span>
                     {step.durationMs && (
-                      <span className="text-[10px] font-mono text-[#D5AE57]">
+                      <span className="text-[10px] font-mono text-[var(--accent)]">
                         {step.durationMs}ms
                       </span>
                     )}
