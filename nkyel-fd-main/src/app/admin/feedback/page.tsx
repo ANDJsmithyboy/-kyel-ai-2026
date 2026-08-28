@@ -76,7 +76,7 @@ export default function FeedbackCenterPage() {
                   style={{ width: m.percentage }}
                 />
               </div>
-              <span className="text-xs text-gray-500 w-12 text-right">{m.count}</span>
+              <span className="text-xs text-gray-500 w-12 text-end">{m.count}</span>
               <span className={`text-[10px] ${m.trend === 'down' ? 'text-emerald-400' : m.trend === 'up' ? 'text-red-400' : 'text-gray-500'}`}>
                 {m.trend === 'down' ? '↓' : m.trend === 'up' ? '↑' : '—'}
               </span>

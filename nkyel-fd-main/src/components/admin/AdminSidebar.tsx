@@ -99,8 +99,8 @@ export default function AdminSidebar({
         variants={sidebarVariants}
         transition={{ type: 'spring', stiffness: 280, damping: 26 }}
         className={`
-          fixed left-0 top-0 z-50 h-[100dvh]
-          bg-glass border-r border-[var(--glass-border)]
+          fixed start-0 top-0 z-50 h-[100dvh]
+          bg-glass border-e border-[var(--glass-border)]
           flex flex-col shadow-2xl overflow-hidden
         `}
       >
@@ -171,7 +171,7 @@ export default function AdminSidebar({
                         {isActive && (
                           <motion.div 
                             layoutId="active-nav"
-                            className="absolute left-0 top-1.5 bottom-1.5 w-[3px] rounded-r-md bg-[var(--accent)]" 
+                            className="absolute start-0 top-1.5 bottom-1.5 w-[3px] rounded-e-md bg-[var(--accent)]" 
                           />
                         )}
                         

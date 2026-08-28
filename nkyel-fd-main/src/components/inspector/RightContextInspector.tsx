@@ -106,7 +106,7 @@ export default function RightContextInspector({
 
   return (
     <aside
-      className="h-full w-full flex flex-col shrink-0 select-none bg-[var(--material-glass-regular)] border-l border-[var(--border)] backdrop-blur-2xl transition-all z-20"
+      className="h-full w-full flex flex-col shrink-0 select-none bg-[var(--material-glass-regular)] border-s border-[var(--border)] backdrop-blur-2xl transition-all z-20"
       aria-label="Inspecteur de Contexte de la Mission"
     >
       {/* ─── Header: Titre & Bouton Fermer ─── */}

@@ -123,7 +123,7 @@ export default function ChatScreen() {
       {/* Sidebar */}
       <div
         className={cn(
-          'fixed inset-y-0 left-0 z-40 w-64 border-r border-[var(--border)] bg-[var(--zc-surface)] transition-transform duration-300 sm:relative sm:translate-x-0',
+          'fixed inset-y-0 start-0 z-40 w-64 border-e border-[var(--border)] bg-[var(--zc-surface)] transition-transform duration-300 sm:relative sm:translate-x-0',
           isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
         )}
       >

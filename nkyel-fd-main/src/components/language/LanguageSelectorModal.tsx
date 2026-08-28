@@ -158,13 +158,13 @@ export default function LanguageSelectorModal() {
         {/* Search & Category Filter */}
         <div className="p-4 px-6 border-b border-white/[0.04] flex flex-col sm:flex-row gap-3 items-center justify-between shrink-0 bg-[#0E121A]">
           <div className="relative w-full sm:w-72">
-            <MagnifyingGlass size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#7E8795]" />
+            <MagnifyingGlass size={15} className="absolute start-3 top-1/2 -translate-y-1/2 text-[#7E8795]" />
             <input
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Rechercher une langue..."
-              className="w-full pl-9 pr-3 py-1.5 rounded-xl bg-white/[0.03] border border-white/[0.08] text-xs text-[#F1EEE7] outline-none focus:border-[#665F9E]"
+              className="w-full ps-9 pe-3 py-1.5 rounded-xl bg-white/[0.03] border border-white/[0.08] text-xs text-[#F1EEE7] outline-none focus:border-[#665F9E]"
             />
           </div>
 

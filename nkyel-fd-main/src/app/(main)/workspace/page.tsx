@@ -242,7 +242,7 @@ export default function NkyelWorkspacePage() {
       </div>
 
       {/* Floating Sticky Composer */}
-      <div className="absolute bottom-3 left-0 right-0 z-30 pointer-events-none">
+      <div className="absolute bottom-3 start-0 end-0 z-30 pointer-events-none">
         <div className="pointer-events-auto">
           <MissionComposer
             onSend={handleLaunchMission}

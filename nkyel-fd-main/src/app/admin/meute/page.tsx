@@ -151,15 +151,15 @@ export default function MeutePage() {
               value={globalFilter ?? ''}
               onChange={e => setGlobalFilter(e.target.value)}
               placeholder="Rechercher un membre..."
-              className="w-full h-9 pl-9 pr-4 rounded-lg bg-[var(--bg-base)] border border-[var(--glass-border)] text-[13px] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:outline-none focus:border-[var(--accent)] transition-all shadow-sm antialiased"
+              className="w-full h-9 ps-9 pe-4 rounded-lg bg-[var(--bg-base)] border border-[var(--glass-border)] text-[13px] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:outline-none focus:border-[var(--accent)] transition-all shadow-sm antialiased"
             />
-            <MagnifyingGlass size={16} weight="thin" className="absolute left-3 top-2.5 text-[var(--text-muted)]" />
+            <MagnifyingGlass size={16} weight="thin" className="absolute start-3 top-2.5 text-[var(--text-muted)]" />
           </div>
         </div>
         
         {/* TanStack Table */}
         <div className="overflow-x-auto rounded-xl border border-[var(--glass-border)]">
-          <table className="w-full text-left border-collapse">
+          <table className="w-full text-start border-collapse">
             <thead>
               {table.getHeaderGroups().map(headerGroup => (
                 <tr key={headerGroup.id} className="bg-[var(--bg-base)]/50 border-b border-[var(--glass-border)]">

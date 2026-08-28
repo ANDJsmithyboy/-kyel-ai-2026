@@ -30,7 +30,7 @@ export default function BetaClosedScreen({
       <div className="max-w-xl w-full bg-[#0E121A] border border-white/[0.08] rounded-3xl p-8 sm:p-10 shadow-2xl relative overflow-hidden text-center flex flex-col items-center">
         {/* Halo décoratif Wada Sanzo */}
         <div
-          className="absolute -top-24 -left-24 w-64 h-64 rounded-full pointer-events-none opacity-20 blur-3xl"
+          className="absolute -top-24 -start-24 w-64 h-64 rounded-full pointer-events-none opacity-20 blur-3xl"
           style={{ background: 'radial-gradient(circle, #C59B27 0%, transparent 70%)' }}
         />
 

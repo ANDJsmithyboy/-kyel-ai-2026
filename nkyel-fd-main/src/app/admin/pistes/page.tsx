@@ -67,7 +67,7 @@ export default function ConversationsPage() {
       {/* Search + Filters */}
       <div className="flex flex-col md:flex-row items-center gap-4">
         <div className="relative flex-1 w-full max-w-md">
-          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+          <div className="absolute inset-y-0 start-0 ps-3 flex items-center pointer-events-none">
             <Search className="w-4 h-4 text-zinc-500" strokeWidth={1.5} />
           </div>
           <input
@@ -75,7 +75,7 @@ export default function ConversationsPage() {
             placeholder="Rechercher par mot-clé, ID..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full h-9 pl-9 pr-4 rounded-lg bg-zinc-900 border border-white/10 text-sm font-medium text-zinc-50 placeholder:text-zinc-500 focus:outline-none focus:border-white/20 focus:bg-zinc-800 transition-all shadow-sm antialiased"
+            className="w-full h-9 ps-9 pe-4 rounded-lg bg-zinc-900 border border-white/10 text-sm font-medium text-zinc-50 placeholder:text-zinc-500 focus:outline-none focus:border-white/20 focus:bg-zinc-800 transition-all shadow-sm antialiased"
           />
         </div>
         <FilterBar filters={[

@@ -124,7 +124,7 @@ export default function SettingsPage() {
               className="w-full max-w-md p-6 rounded-2xl relative flex flex-col gap-4 shadow-2xl"
               style={{ background: '#0B0D0F', border: '1px solid rgba(239,68,68,0.25)' }}
             >
-              <div className="absolute top-4 right-4 w-2 h-2 rounded-full" style={{ background: '#ef4444', boxShadow: '0 0 10px #ef4444' }} />
+              <div className="absolute top-4 end-4 w-2 h-2 rounded-full" style={{ background: '#ef4444', boxShadow: '0 0 10px #ef4444' }} />
               <h3 className="text-[16px] font-bold flex items-center gap-2" style={{ color: '#F0EDE6' }}>
                 <span>⚠️</span> Suppression Définitive
               </h3>
@@ -188,7 +188,7 @@ export default function SettingsPage() {
 
       <div className="flex flex-1 overflow-hidden">
         {/* Sidebar des onglets */}
-        <div className="w-48 shrink-0 border-r border-[var(--border)] py-2 overflow-y-auto hidden sm:block">
+        <div className="w-48 shrink-0 border-e border-[var(--border)] py-2 overflow-y-auto hidden sm:block">
           {TABS.map((tab) => (
             <button
               key={tab.key}
@@ -216,7 +216,7 @@ export default function SettingsPage() {
               </button>
               <button
                 onClick={() => setShowDeleteModal(true)}
-                className="flex-1 w-full px-4 py-2 rounded-xl text-left text-sm text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-colors"
+                className="flex-1 w-full px-4 py-2 rounded-xl text-start text-sm text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-colors"
               >
                 Supprimer le compte
               </button>
@@ -274,7 +274,7 @@ export default function SettingsPage() {
                             borderColor: theme === t.key ? 'var(--accent)' : 'var(--border)',
                           }}
                         />
-                        <div className="flex-1 text-left">
+                        <div className="flex-1 text-start">
                           <div className="text-sm font-medium text-[var(--text-primary)]">{t.name}</div>
                           <div className="text-xs text-[var(--text-tertiary)]">{t.description}</div>
                         </div>
@@ -319,7 +319,7 @@ export default function SettingsPage() {
                         )}>
                           {a.name}
                         </span>
-                        <span className="ml-auto font-mono text-[10px] text-[var(--text-tertiary)]">
+                        <span className="ms-auto font-mono text-[10px] text-[var(--text-tertiary)]">
                           {a.color}
                         </span>
                       </button>
@@ -407,7 +407,7 @@ export default function SettingsPage() {
                             : 'border-[var(--border)] hover:border-[var(--border-hover)]'
                         )}
                       >
-                        <div className="text-left">
+                        <div className="text-start">
                           <div className="text-sm font-medium text-[var(--text-primary)]">{g.label}</div>
                           <div className="text-xs text-[var(--text-tertiary)] italic">{g.example}</div>
                         </div>

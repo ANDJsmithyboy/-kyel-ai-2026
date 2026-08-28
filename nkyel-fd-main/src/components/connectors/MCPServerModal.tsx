@@ -210,7 +210,7 @@ export default function MCPServerModal({ isOpen, onClose, onSaveServer }: MCPSer
                       key={t.id}
                       type="button"
                       onClick={() => setTransport(t.id as MCPTransport)}
-                      className={`p-3 rounded-xl text-left border transition-all flex flex-col justify-between ${
+                      className={`p-3 rounded-xl text-start border transition-all flex flex-col justify-between ${
                         active
                           ? 'bg-[var(--accent-subtle)] border-[var(--accent)] text-[var(--text-primary)]'
                           : 'bg-[var(--surface)] border-[var(--border-subtle)] text-[var(--text-secondary)] hover:bg-[var(--hover)]'

@@ -303,7 +303,7 @@ export default function ArtifactStudio() {
 
   return (
     <aside
-      className={`nkyel-artifact-studio fixed right-0 inset-y-0 z-40 flex flex-col bg-[#08090D] border-l border-white/[0.06] shadow-2xl transition-all ${
+      className={`nkyel-artifact-studio fixed end-0 inset-y-0 z-40 flex flex-col bg-[#08090D] border-s border-white/[0.06] shadow-2xl transition-all ${
         isFullscreen ? 'w-full inset-0 z-50' : ''
       }`}
       style={{
@@ -315,7 +315,7 @@ export default function ArtifactStudio() {
       {!isFullscreen && (
         <div
           onMouseDown={() => setIsResizing(true)}
-          className="absolute left-0 inset-y-0 w-1.5 cursor-col-resize hover:bg-[#665F9E]/40 transition-colors z-50 group"
+          className="absolute start-0 inset-y-0 w-1.5 cursor-col-resize hover:bg-[#665F9E]/40 transition-colors z-50 group"
         >
           <div className="w-0.5 h-8 bg-white/20 rounded-full mx-auto my-auto group-hover:bg-[#665F9E]" />
         </div>

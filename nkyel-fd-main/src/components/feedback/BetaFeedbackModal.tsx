@@ -87,7 +87,7 @@ export default function BetaFeedbackModal({ isOpen, onClose, onSuccess }: BetaFe
         {/* Bouton Fermer */}
         <button
           onClick={onClose}
-          className="absolute top-5 right-5 p-2 rounded-full hover:bg-white/[0.08] text-[#F1EEE7]/60 hover:text-[#F1EEE7] transition"
+          className="absolute top-5 end-5 p-2 rounded-full hover:bg-white/[0.08] text-[#F1EEE7]/60 hover:text-[#F1EEE7] transition"
         >
           <X size={20} />
         </button>

@@ -5,12 +5,16 @@
 
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { UsersThree, ShieldCheck, CheckCircle, Clock, Lightning, Cpu, ArrowRight } from '@phosphor-icons/react';
 import { useProtocolStore } from '@/stores/protocol.store';
 
 export default function AgentsMeshPage() {
-  const { a2aAgents } = useProtocolStore();
+  const { a2aAgents, fetchA2AAgents } = useProtocolStore();
+
+  useEffect(() => {
+    fetchA2AAgents();
+  }, [fetchA2AAgents]);
 
   return (
     <div className="flex-1 bg-[#08090D] p-6 text-[#F1EEE7] overflow-y-auto">

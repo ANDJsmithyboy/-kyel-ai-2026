@@ -105,7 +105,7 @@ function LinkComponent({ href, children }: { href?: string; children?: React.Rea
       className="inline-flex items-center gap-0.5 text-[var(--accent)] hover:underline font-medium break-words transition-colors"
     >
       <span>{children}</span>
-      {isExternal && <ArrowSquareOut size={11} className="inline-block opacity-70 ml-0.5 shrink-0" />}
+      {isExternal && <ArrowSquareOut size={11} className="inline-block opacity-70 ms-0.5 shrink-0" />}
     </a>
   );
 }
@@ -148,20 +148,20 @@ export default function NkyelMarkdownRenderer({ content, onCitationClick }: Nkye
 
           // Lists
           ul: ({ children }) => (
-            <ul className="list-disc pl-5 my-3 space-y-1.5 text-[var(--text-primary)]">
+            <ul className="list-disc ps-5 my-3 space-y-1.5 text-[var(--text-primary)]">
               {children}
             </ul>
           ),
           ol: ({ children }) => (
-            <ol className="list-decimal pl-5 my-3 space-y-1.5 text-[var(--text-primary)]">
+            <ol className="list-decimal ps-5 my-3 space-y-1.5 text-[var(--text-primary)]">
               {children}
             </ol>
           ),
-          li: ({ children }) => <li className="pl-1">{children}</li>,
+          li: ({ children }) => <li className="ps-1">{children}</li>,
 
           // Blockquote
           blockquote: ({ children }) => (
-            <blockquote className="border-l-[3px] border-[var(--accent)] pl-4 py-1 my-3.5 italic text-[var(--text-secondary)] bg-[var(--surface-raised)]/40 rounded-r-xl">
+            <blockquote className="border-s-[3px] border-[var(--accent)] ps-4 py-1 my-3.5 italic text-[var(--text-secondary)] bg-[var(--surface-raised)]/40 rounded-e-xl">
               {children}
             </blockquote>
           ),
@@ -177,7 +177,7 @@ export default function NkyelMarkdownRenderer({ content, onCitationClick }: Nkye
           // Tables (with horizontal scrollable wrapper for mobile)
           table: ({ children }) => (
             <div className="my-4 w-full overflow-x-auto scrollbar-thin rounded-xl border border-[var(--border)] bg-[var(--surface-raised)]/30">
-              <table className="w-full border-collapse text-left text-sm">{children}</table>
+              <table className="w-full border-collapse text-start text-sm">{children}</table>
             </div>
           ),
           thead: ({ children }) => (

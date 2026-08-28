@@ -54,7 +54,7 @@ export default function ModeSelector() {
       {/* Dropdown */}
       {open && (
         <div
-          className="absolute bottom-[calc(100%+8px)] left-0 min-w-[240px] p-1.5 rounded-2xl border border-[var(--border)] bg-[var(--bg-elevated)]/90 backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.4)] z-[100]"
+          className="absolute bottom-[calc(100%+8px)] start-0 min-w-[240px] p-1.5 rounded-2xl border border-[var(--border)] bg-[var(--bg-elevated)]/90 backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.4)] z-[100]"
           role="listbox"
         >
           {MODES.map((mode) => {
@@ -64,7 +64,7 @@ export default function ModeSelector() {
               <button
                 key={mode}
                 type="button"
-                className={`flex items-center gap-3 w-full px-3 py-2.5 border-none rounded-xl bg-transparent text-[var(--text-secondary)] font-[Outfit,Sora,sans-serif] text-sm cursor-pointer transition-colors text-left hover:bg-[var(--accent-06)] ${isActive ? 'bg-[var(--accent-10)] !text-[var(--text-primary)]' : ''}`}
+                className={`flex items-center gap-3 w-full px-3 py-2.5 border-none rounded-xl bg-transparent text-[var(--text-secondary)] font-[Outfit,Sora,sans-serif] text-sm cursor-pointer transition-colors text-start hover:bg-[var(--accent-06)] ${isActive ? 'bg-[var(--accent-10)] !text-[var(--text-primary)]' : ''}`}
                 role="option"
                 aria-selected={isActive}
                 onClick={() => selectMode(mode)}
@@ -77,7 +77,7 @@ export default function ModeSelector() {
                   <span className="text-[11px] opacity-60 whitespace-nowrap overflow-hidden text-ellipsis">{config.description}</span>
                 </div>
                 {isActive && (
-                  <div className="w-1.5 h-1.5 rounded-full bg-blue-500 shadow-[0_0_8px_rgba(59,130,246,0.6)] ml-2" />
+                  <div className="w-1.5 h-1.5 rounded-full bg-blue-500 shadow-[0_0_8px_rgba(59,130,246,0.6)] ms-2" />
                 )}
               </button>
             );

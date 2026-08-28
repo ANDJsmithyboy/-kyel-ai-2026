@@ -50,7 +50,7 @@ export default function DesktopExecutionPane({
   const statusLabel = missionState === 'failed' ? 'Échec' : missionState === 'reconnecting' ? 'Reconnexion' : missionState === 'completed' ? 'Terminé' : isStreaming ? 'En cours' : 'Prêt';
 
   return (
-    <aside data-vie-state={missionState} className="nkyel-vie-pane hidden min-w-[420px] w-[55%] max-w-[720px] shrink-0 border-l border-white/[0.08] bg-[#151515] lg:flex lg:flex-col" aria-label="Terrain de la mission">
+    <aside data-vie-state={missionState} className="nkyel-vie-pane hidden min-w-[420px] w-[55%] max-w-[720px] shrink-0 border-s border-white/[0.08] bg-[#151515] lg:flex lg:flex-col" aria-label="Terrain de la mission">
       <header className="flex h-14 shrink-0 items-center justify-between border-b border-white/[0.07] px-5">
         <div className="flex items-center gap-2.5">
           <ActivityIcon size={17} className="text-[#D0D0D0]" />
@@ -170,7 +170,7 @@ export default function DesktopExecutionPane({
         <button type="button" className="rounded-md px-2 py-1.5 text-[#D0D0D0]">Flow</button>
         <button type="button" className="rounded-md px-2 py-1.5 hover:bg-white/[0.05]">VIE</button>
         <button type="button" className="rounded-md px-2 py-1.5 hover:bg-white/[0.05]">Sources</button>
-        <span className="ml-auto flex items-center gap-1.5"><Circle size={8} weight="fill" /> Connexion stable</span>
+        <span className="ms-auto flex items-center gap-1.5"><Circle size={8} weight="fill" /> Connexion stable</span>
       </footer>
     </aside>
   );

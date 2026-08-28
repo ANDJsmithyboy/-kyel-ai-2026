@@ -20,44 +20,45 @@
 
   /* Échelle typographique adaptative (contrôlée par data-text-size) */
   --app-text-scale: 1;
-  --text-micro:    calc(12px * var(--app-text-scale, 1));
-  --text-caption:  calc(13px * var(--app-text-scale, 1));
-  --text-sm:       calc(14px * var(--app-text-scale, 1));
-  --text-body:     calc(15px * var(--app-text-scale, 1));
-  --text-base:     calc(16px * var(--app-text-scale, 1));
-  --text-lg:       calc(18px * var(--app-text-scale, 1));
-  --text-xl:       calc(20px * var(--app-text-scale, 1));
-  --text-2xl:      calc(24px * var(--app-text-scale, 1));
-  --text-3xl:      calc(28px * var(--app-text-scale, 1));
-  --text-4xl:      calc(34px * var(--app-text-scale, 1));
-  --text-display:  calc(42px * var(--app-text-scale, 1));
+  --text-caption:  calc(12px * var(--app-text-scale, 1));
+  --text-meta:     calc(13px * var(--app-text-scale, 1));
+  --text-label-sm: calc(14px * var(--app-text-scale, 1));
+  --text-ui:       calc(15px * var(--app-text-scale, 1));
+  --text-body:     calc(16px * var(--app-text-scale, 1));
+  --text-body-lg:  calc(17px * var(--app-text-scale, 1));
+  --text-title-sm: calc(18px * var(--app-text-scale, 1));
+  --text-title-md: calc(20px * var(--app-text-scale, 1));
+  --text-title-lg: calc(24px * var(--app-text-scale, 1));
+  --text-page-title: calc(28px * var(--app-text-scale, 1));
+  --text-display:  calc(32px * var(--app-text-scale, 1));
+  --text-hero:     clamp(40px, 10vw, 52px);
 
-  --leading-tight:   1.2;
-  --leading-snug:    1.35;
-  --leading-normal:  1.5;
-  --leading-relaxed: 1.62;
+  --leading-tight:   1.0;
+  --leading-snug:    1.2;
+  --leading-normal:  1.4;
+  --leading-relaxed: 1.6;
 
-  --tracking-tight:  -0.025em;
-  --tracking-snug:   -0.012em;
+  --tracking-tight:  -0.02em;
+  --tracking-snug:   -0.01em;
   --tracking-normal: 0;
-  --tracking-wide:   0.015em;
+  --tracking-wide:   0.01em;
 
   /* ═══════════════════════════════════════════════════════
      SPATIAL GRID & CONCENTRIC RADII (Nested Radii)
      ═══════════════════════════════════════════════════════ */
   --space-0:   0;
-  --space-px:  1px;
-  --space-1:   4px;
-  --space-2:   8px;
-  --space-3:   12px;
-  --space-4:   16px;
-  --space-5:   20px;
-  --space-6:   24px;
-  --space-8:   32px;
-  --space-10:  40px;
-  --space-12:  48px;
-  --space-16:  64px;
-  --space-20:  80px;
+  --space-2:   2px;
+  --space-4:   4px;
+  --space-8:   8px;
+  --space-12:  12px;
+  --space-16:  16px;
+  --space-20:  20px;
+  --space-24:  24px;
+  --space-32:  32px;
+  --space-40:  40px;
+  --space-48:  48px;
+  --space-64:  64px;
+  --space-80:  80px;
 
   /* Densité spatiale (contrôlée par data-density) */
   --density-row: 44px;

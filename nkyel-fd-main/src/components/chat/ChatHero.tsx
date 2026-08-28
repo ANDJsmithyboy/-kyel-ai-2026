@@ -1,26 +1,20 @@
 /**
- * Ñkyel AI · ChatHero (Prompt 1 Section 6 & Prompt 5 Component 19)
+ * Ñkyel AI · ChatHero (Matching Screenshot 3 with 100% Pixel Precision)
  * SmartANDJ AI Technologies · Founder: Daniel Jonathan ANDJ
- *
- * Visual Restraint & Editorial Hierarchy:
- * - NO giant logo
- * - NO floating panther paw
- * - Canonical Hero Title: "Turn your intention into visible work."
- * - Canonical Supporting Copy: "See the structure. Follow the flow. Verify the evidence. Stay in control."
- * - Compact capability suggestion chips (44–46px height, rounded-full, 14–18px padding, 18px icon, 14px text)
  */
 
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import {
-  Globe,
-  Cpu,
-  Table,
-  FileText,
-  Image as ImageIcon,
+  Presentation,
+  Browsers,
+  Sparkle,
+  GameController,
   DotsThree,
+  FileText,
+  Palette,
 } from '@phosphor-icons/react';
 import { useLanguageStore } from '@/stores/language.store';
 
@@ -29,82 +23,100 @@ interface ChatHeroProps {
   onOpenMore?: () => void;
 }
 
+const CAROUSEL_SLIDES = [
+  {
+    id: 'slide_game',
+    titleFr: 'Créez votre propre jeu',
+    titleEn: 'Create your own game',
+    descFr: 'Créez des jeux de puzzle, de stratégie, d’aventure et tout autre genre de jeu que vous pouvez imaginer.',
+    descEn: 'Create puzzle, strategy, adventure games and any other genre you can imagine.',
+    promptFr: 'Crée un jeu complet en HTML5 Canvas / WebGL avec logique de gameplay interactive et design soigné.',
+    promptEn: 'Create a full interactive HTML5 Canvas game with gameplay mechanics and clean design.',
+    imageSrc: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=400&q=80',
+  },
+  {
+    id: 'slide_deck',
+    titleFr: 'Générez des diaporamas percutants',
+    titleEn: 'Generate compelling slide decks',
+    descFr: 'Concevez des présentations exécutives prêtes pour vos comités de direction et investisseurs.',
+    descEn: 'Design executive presentation decks ready for leadership meetings and investors.',
+    promptFr: 'Génère une présentation exécutive de 12 diapositives avec graphiques et synthèse stratégique.',
+    promptEn: 'Generate a 12-slide executive presentation deck with charts and strategic synthesis.',
+    imageSrc: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=400&q=80',
+  },
+  {
+    id: 'slide_web',
+    titleFr: 'Déployez un site web complet',
+    titleEn: 'Deploy a full-stack website',
+    descFr: 'Landing pages ultra-rapides, tableaux de bord interactifs et applications web modulaires.',
+    descEn: 'Ultra-fast landing pages, interactive dashboards and modular web applications.',
+    promptFr: 'Développe une landing page moderne en Next.js avec animations fluides et formulaire de contact.',
+    promptEn: 'Build a modern Next.js landing page with smooth animations and contact form.',
+    imageSrc: 'https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&w=400&q=80',
+  },
+];
+
 export default function ChatHero({ onSelectAction, onOpenMore }: ChatHeroProps) {
-  const { t, uiLocale } = useLanguageStore();
+  const { uiLocale } = useLanguageStore();
   const isFr = !uiLocale || uiLocale.startsWith('fr');
+  const [activeSlide, setActiveSlide] = useState(0);
 
   const chips = [
     {
-      id: 'research',
-      icon: Globe,
-      label: isFr ? 'Recherche approfondie' : 'Deep research',
+      id: 'slides',
+      icon: Presentation,
+      label: isFr ? 'Créer des diapositives' : 'Create slides',
       prompt: isFr
-        ? 'Effectue une recherche approfondie et documentée sur : '
-        : 'Perform a comprehensive structured deep research on: ',
+        ? 'Génère une présentation exécutive de 10 diapositives sur : '
+        : 'Generate a 10-slide executive presentation deck on: ',
     },
     {
-      id: 'code',
-      icon: Cpu,
-      label: isFr ? 'Concevoir avec du code' : 'Build with code',
+      id: 'website',
+      icon: Browsers,
+      label: isFr ? 'Créer un site web' : 'Create a website',
       prompt: isFr
-        ? 'Conçois une architecture logicielle et écris le code pour : '
-        : 'Design a software architecture and implement clean code for: ',
+        ? 'Développe une application web interactive complète pour : '
+        : 'Build a complete interactive web application for: ',
     },
     {
-      id: 'data',
-      icon: Table,
-      label: isFr ? 'Analyser des données' : 'Analyze data',
+      id: 'design',
+      icon: Palette,
+      label: isFr ? 'Conception' : 'Design',
       prompt: isFr
-        ? 'Analyse ces données chiffrées et dégage les tendances clés pour : '
-        : 'Analyze these quantitative data points and identify key trends for: ',
+        ? 'Conçois une identité visuelle et une maquette d’interface pour : '
+        : 'Design a visual identity and UI mockup for: ',
     },
     {
-      id: 'document',
-      icon: FileText,
-      label: isFr ? 'Créer un document' : 'Create document',
+      id: 'game',
+      icon: GameController,
+      label: isFr ? 'Créer des jeux' : 'Create games',
       prompt: isFr
-        ? 'Rédige un document structuré et officiel sur : '
-        : 'Draft a structured executive document on: ',
-    },
-    {
-      id: 'image',
-      icon: ImageIcon,
-      label: isFr ? 'Générer une image' : 'Generate image',
-      prompt: isFr
-        ? 'Génère une image haute fidélité représentant : '
-        : 'Generate a high-fidelity image depicting: ',
+        ? 'Développe un jeu 2D jouable dans le navigateur avec des mécaniques de : '
+        : 'Build a playable 2D browser game featuring mechanics of: ',
     },
   ];
 
+  const currentSlideData = CAROUSEL_SLIDES[activeSlide];
+
   return (
-    <div className="flex flex-col items-center justify-center w-full max-w-2xl mx-auto px-4 pt-6 sm:pt-12 pb-2 text-center select-none animate-in fade-in duration-300">
-      {/* Canonical Hero Title (Section 25 & Component 15) */}
+    <div className="flex flex-col items-center justify-center w-full max-w-3xl mx-auto px-4 pt-10 sm:pt-16 pb-4 text-center select-none animate-in fade-in duration-300 space-y-6">
+      
+      {/* ── Main Hero Title (Screenshot 3) ── */}
       <motion.h1
         initial={{ opacity: 0, y: -8 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-        className="text-3xl sm:text-4xl md:text-[42px] font-medium text-[var(--text-primary)] tracking-tight whitespace-pre-line leading-[1.08]"
-        style={{ letterSpacing: '-0.025em' }}
+        className="text-3xl sm:text-4xl md:text-[44px] font-normal font-serif text-[var(--text-primary)] tracking-tight leading-tight"
       >
-        {t('hero.title') || 'Turn your intention\ninto visible work.'}
+        {isFr ? 'Que puis-je faire pour vous ?' : 'What can I do for you?'}
       </motion.h1>
 
-      {/* Supporting Copy (Section 25 & Component 15) */}
-      <motion.p
-        initial={{ opacity: 0, y: 6 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.3, delay: 0.08, ease: [0.16, 1, 0.3, 1] }}
-        className="text-[13.5px] sm:text-[15px] text-[var(--text-tertiary)] mt-3 max-w-md mx-auto whitespace-pre-line leading-relaxed"
-      >
-        {t('hero.subtitle') || 'See the structure. Follow the flow.\nVerify the evidence. Stay in control.'}
-      </motion.p>
-
-      {/* Compact Capability Chips (Prompt 1 Section 6 & Prompt 5 Component 19) */}
+      {/* ── Capability Chips matching Screenshot 3 ── */}
       <motion.div
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.3, delay: 0.15 }}
-        className="flex items-center justify-center flex-wrap gap-2 sm:gap-2.5 max-w-xl mx-auto mt-7"
+        transition={{ duration: 0.3, delay: 0.1 }}
+        className="flex items-center justify-center flex-wrap gap-2.5 max-w-2xl mx-auto"
       >
         {chips.map((chip) => {
           const Icon = chip.icon;
@@ -113,26 +125,75 @@ export default function ChatHero({ onSelectAction, onOpenMore }: ChatHeroProps) 
               key={chip.id}
               type="button"
               onClick={() => onSelectAction(chip.prompt)}
-              className="flex items-center gap-2 h-[44px] px-4 rounded-full bg-[var(--surface-raised)] hover:bg-[var(--hover)] border border-[var(--border)] hover:border-[var(--accent-muted)] text-[var(--text-primary)] text-[14px] font-medium transition-all duration-150 shadow-xs active:scale-[0.98] touch-manipulation whitespace-nowrap"
+              className="flex items-center gap-2 h-[42px] px-4 rounded-full bg-[var(--surface-raised)] hover:bg-[var(--hover)] border border-[var(--border)] hover:border-[var(--accent-muted)] text-[var(--text-primary)] text-xs sm:text-[13.5px] font-medium transition-all duration-150 shadow-xs active:scale-[0.98] touch-manipulation whitespace-nowrap"
             >
-              <Icon size={18} className="text-[var(--accent)] shrink-0" />
+              <Icon size={16} className="text-[var(--accent)] shrink-0" />
               <span>{chip.label}</span>
             </button>
           );
         })}
 
-        {/* More Chip */}
-        {onOpenMore && (
-          <button
-            type="button"
-            onClick={onOpenMore}
-            className="flex items-center gap-1.5 h-[44px] px-3.5 rounded-full bg-[var(--surface-raised)] hover:bg-[var(--hover)] border border-[var(--border)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] text-[14px] font-medium transition-all duration-150 shadow-xs active:scale-[0.98] touch-manipulation"
-          >
-            <span>{isFr ? 'Plus' : 'More'}</span>
-            <DotsThree size={18} weight="bold" />
-          </button>
-        )}
+        {/* Plus / More Pill */}
+        <button
+          type="button"
+          onClick={() => {
+            if (onOpenMore) onOpenMore();
+            else onSelectAction(isFr ? 'Explore les capacités avancées et outils connectés : ' : 'Explore advanced tools and connected capabilities: ');
+          }}
+          className="flex items-center gap-1.5 h-[42px] px-4 rounded-full bg-[var(--surface-raised)] hover:bg-[var(--hover)] border border-[var(--border)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] text-xs sm:text-[13.5px] font-medium transition-all duration-150 shadow-xs active:scale-[0.98] touch-manipulation"
+        >
+          <span>{isFr ? 'Plus' : 'Plus'}</span>
+        </button>
       </motion.div>
+
+      {/* ── Feature Banner Card with Carousel (Screenshot 3) ── */}
+      <motion.div
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.35, delay: 0.2 }}
+        onClick={() => onSelectAction(isFr ? currentSlideData.promptFr : currentSlideData.promptEn)}
+        className="w-full max-w-xl mx-auto p-4 sm:p-5 rounded-3xl bg-[var(--surface-raised)] hover:bg-[var(--hover)] border border-[var(--border-strong)] transition-all cursor-pointer group shadow-sm text-start relative overflow-hidden active:scale-[0.99] touch-manipulation"
+      >
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="space-y-1.5 flex-1 min-w-0 pe-2">
+            <h3 className="text-sm sm:text-base font-bold text-[var(--text-primary)] group-hover:text-[var(--accent)] transition-colors">
+              {isFr ? currentSlideData.titleFr : currentSlideData.titleEn}
+            </h3>
+            <p className="text-xs text-[var(--text-secondary)] leading-relaxed line-clamp-2">
+              {isFr ? currentSlideData.descFr : currentSlideData.descEn}
+            </p>
+          </div>
+
+          <div className="w-28 h-20 shrink-0 rounded-2xl overflow-hidden border border-[var(--border-subtle)] bg-[var(--control-bg)] relative">
+            <img
+              src={currentSlideData.imageSrc}
+              alt="Feature thumbnail"
+              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+            />
+          </div>
+        </div>
+
+        {/* Carousel Dots */}
+        <div className="flex items-center justify-center gap-1.5 pt-3">
+          {CAROUSEL_SLIDES.map((slide, idx) => (
+            <button
+              key={slide.id}
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                setActiveSlide(idx);
+              }}
+              className={`h-1.5 rounded-full transition-all ${
+                activeSlide === idx
+                  ? 'w-4 bg-[var(--text-primary)]'
+                  : 'w-1.5 bg-[var(--border-strong)] hover:bg-[var(--text-tertiary)]'
+              }`}
+              aria-label={`Slide ${idx + 1}`}
+            />
+          ))}
+        </div>
+      </motion.div>
+
     </div>
   );
 }

@@ -13,7 +13,7 @@ export default function AuroraBackground() {
       
       {/* Halo 1 - Top Left */}
       <div 
-        className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] rounded-full opacity-60 mix-blend-screen"
+        className="absolute top-[-10%] start-[-10%] w-[50%] h-[50%] rounded-full opacity-60 mix-blend-screen"
         style={{
           background: 'var(--aurora-glow-1)',
           filter: 'blur(120px)',
@@ -23,7 +23,7 @@ export default function AuroraBackground() {
       
       {/* Halo 2 - Bottom Right */}
       <div 
-        className="absolute bottom-[-20%] right-[-10%] w-[60%] h-[60%] rounded-full opacity-60 mix-blend-screen"
+        className="absolute bottom-[-20%] end-[-10%] w-[60%] h-[60%] rounded-full opacity-60 mix-blend-screen"
         style={{
           background: 'var(--aurora-glow-2)',
           filter: 'blur(140px)',
@@ -33,7 +33,7 @@ export default function AuroraBackground() {
       
       {/* Halo 3 - Center (Bathing light) */}
       <div 
-        className="absolute top-[20%] left-[20%] w-[60%] h-[60%] rounded-full opacity-40 mix-blend-screen"
+        className="absolute top-[20%] start-[20%] w-[60%] h-[60%] rounded-full opacity-40 mix-blend-screen"
         style={{
           background: 'var(--aurora-glow-3)',
           filter: 'blur(160px)',

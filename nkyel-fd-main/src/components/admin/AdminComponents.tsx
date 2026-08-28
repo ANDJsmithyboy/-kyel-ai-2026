@@ -109,7 +109,7 @@ export function DataTable<T extends Record<string, unknown>>({
   return (
     <div className="bg-[var(--bg-card)] border border-[var(--glass-border)] rounded-2xl overflow-hidden shadow-sm">
       <div className="overflow-x-auto">
-        <table className="w-full text-left border-collapse">
+        <table className="w-full text-start border-collapse">
           <thead>
             <tr className="bg-[var(--bg-base)]/50 border-b border-[var(--glass-border)]">
               {columns.map((col) => (
@@ -201,14 +201,14 @@ const stepColors = {
 
 export function TraceTimeline({ steps }: TraceTimelineProps) {
   return (
-    <div className="relative pl-6 space-y-6">
+    <div className="relative ps-6 space-y-6">
       {/* Vertical line */}
-      <div className="absolute left-[11px] top-2 bottom-2 w-px bg-[var(--glass-border)]" />
+      <div className="absolute start-[11px] top-2 bottom-2 w-px bg-[var(--glass-border)]" />
 
       {steps.map((step, i) => (
         <div key={i} className="relative flex items-start gap-4">
           {/* Dot */}
-          <div className={`absolute left-[-19px] top-1.5 w-2.5 h-2.5 rounded-full border-[1.5px] border-[var(--bg-card)] ${stepColors[step.status]} shadow-[0_0_0_2px_var(--glass-border)]`} />
+          <div className={`absolute start-[-19px] top-1.5 w-2.5 h-2.5 rounded-full border-[1.5px] border-[var(--bg-card)] ${stepColors[step.status]} shadow-[0_0_0_2px_var(--glass-border)]`} />
 
           {/* Content */}
           <div className="flex-1 min-w-0 bg-[var(--glass)] border border-[var(--glass-border)] rounded-xl p-3 hover:bg-[var(--bg-card2)] transition-colors">
@@ -275,7 +275,7 @@ export function FilterBar({ filters }: FilterBarProps) {
           <select
             value={filter.value}
             onChange={(e) => filter.onChange(e.target.value)}
-            className="h-9 pl-3 pr-8 rounded-full bg-[var(--bg-card)] border border-[var(--glass-border)] text-xs font-semibold uppercase tracking-widest text-[var(--text-primary)] focus:outline-none focus:border-[var(--accent)] transition-all appearance-none cursor-pointer hover:bg-[var(--bg-card2)] shadow-sm antialiased"
+            className="h-9 ps-3 pe-8 rounded-full bg-[var(--bg-card)] border border-[var(--glass-border)] text-xs font-semibold uppercase tracking-widest text-[var(--text-primary)] focus:outline-none focus:border-[var(--accent)] transition-all appearance-none cursor-pointer hover:bg-[var(--bg-card2)] shadow-sm antialiased"
           >
             {filter.options.map((opt) => (
               <option key={opt.value} value={opt.value} className="bg-[var(--bg-base)]">
@@ -283,7 +283,7 @@ export function FilterBar({ filters }: FilterBarProps) {
               </option>
             ))}
           </select>
-          <div className="absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none text-[var(--text-muted)] group-hover:text-[var(--text-primary)] transition-colors">
+          <div className="absolute end-2.5 top-1/2 -translate-y-1/2 pointer-events-none text-[var(--text-muted)] group-hover:text-[var(--text-primary)] transition-colors">
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6"/></svg>
           </div>
         </div>

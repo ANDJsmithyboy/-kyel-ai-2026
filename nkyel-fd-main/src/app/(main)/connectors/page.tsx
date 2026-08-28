@@ -97,6 +97,7 @@ export default function ConnectorsPage() {
     setSelectedConnectorId,
     connectConnector,
     disconnectConnector,
+    fetchConnectors,
   } = useConnectorsStore();
 
   const [activeTab, setActiveTab] = useState<ConnectorsActiveTab>('apps');
@@ -109,6 +110,11 @@ export default function ConnectorsPage() {
   const [mcpServers, setMcpServers] = useState<MCPServerConfig[]>(INITIAL_MCP_SERVERS);
 
   const createMenuRef = useRef<HTMLDivElement>(null);
+
+  // Fetch real connectors / providers on mount
+  useEffect(() => {
+    fetchConnectors();
+  }, [fetchConnectors]);
 
   // Close create menu on click outside
   useEffect(() => {
@@ -294,14 +300,14 @@ export default function ConnectorsPage() {
         <div className="shrink-0 relative mb-4">
           <MagnifyingGlass
             size={19}
-            className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--text-tertiary)] pointer-events-none"
+            className="absolute start-3.5 top-1/2 -translate-y-1/2 text-[var(--text-tertiary)] pointer-events-none"
           />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder={t('connectors.searchPlaceholder') || 'Search connectors...'}
-            className="w-full h-12 pl-10 pr-4 rounded-[16px] border border-[var(--border)] bg-[var(--surface-raised)] text-sm text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] transition-all"
+            className="w-full h-12 ps-10 pe-4 rounded-[16px] border border-[var(--border)] bg-[var(--surface-raised)] text-sm text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] transition-all"
           />
         </div>
 
@@ -347,14 +353,14 @@ export default function ConnectorsPage() {
             </button>
 
             {createMenuOpen && (
-              <div className="absolute right-0 top-full mt-1.5 w-48 p-1.5 rounded-2xl bg-[var(--bg-elevated)] border border-[var(--border-strong)] shadow-[var(--shadow-modal)] text-xs z-50 animate-scale-in">
+              <div className="absolute end-0 top-full mt-1.5 w-48 p-1.5 rounded-2xl bg-[var(--bg-elevated)] border border-[var(--border-strong)] shadow-[var(--shadow-modal)] text-xs z-50 animate-scale-in">
                 <button
                   type="button"
                   onClick={() => {
                     setCreateMenuOpen(false);
                     setIsAddServerOpen(true);
                   }}
-                  className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-left hover:bg-[var(--hover)] text-[var(--text-primary)]"
+                  className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-start hover:bg-[var(--hover)] text-[var(--text-primary)]"
                 >
                   <Terminal size={15} className="text-[var(--accent)]" />
                   <span>MCP Server</span>
@@ -365,7 +371,7 @@ export default function ConnectorsPage() {
                     setCreateMenuOpen(false);
                     setIsSuggestModalOpen(true);
                   }}
-                  className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-left hover:bg-[var(--hover)] text-[var(--text-primary)]"
+                  className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-start hover:bg-[var(--hover)] text-[var(--text-primary)]"
                 >
                   <Globe size={15} className="text-emerald-400" />
                   <span>Custom API</span>

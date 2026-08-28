@@ -229,7 +229,7 @@ export default function A2UIRenderer({
       {/* ── 2. TABLE RENDERER ── */}
       {spec.componentType === 'table' && spec.tableColumns && (
         <div className="overflow-x-auto rounded-xl border border-white/[0.06]">
-          <table className="w-full text-left text-[13px] border-collapse">
+          <table className="w-full text-start text-[13px] border-collapse">
             <thead className="bg-[#0E121A] text-[#7E8795] font-medium border-b border-white/[0.06]">
               <tr>
                 {spec.tableColumns.map((col) => (
@@ -244,7 +244,7 @@ export default function A2UIRenderer({
                         }
                       }
                     }}
-                    className={`px-4 py-3 cursor-pointer select-none ${col.align === 'right' ? 'text-right' : col.align === 'center' ? 'text-center' : 'text-left'}`}
+                    className={`px-4 py-3 cursor-pointer select-none ${col.align === 'right' ? 'text-end' : col.align === 'center' ? 'text-center' : 'text-start'}`}
                   >
                     <div className={`inline-flex items-center gap-1.5 ${col.align === 'right' ? 'justify-end' : ''}`}>
                       <span>{col.label}</span>
@@ -262,7 +262,7 @@ export default function A2UIRenderer({
                     return (
                       <td
                         key={col.key}
-                        className={`px-4 py-2.5 ${col.align === 'right' ? 'text-right' : col.align === 'center' ? 'text-center' : 'text-left'}`}
+                        className={`px-4 py-2.5 ${col.align === 'right' ? 'text-end' : col.align === 'center' ? 'text-center' : 'text-start'}`}
                       >
                         {col.type === 'badge' ? (
                           <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-[#6F9485]/15 text-[#6F9485] border border-[#6F9485]/20">

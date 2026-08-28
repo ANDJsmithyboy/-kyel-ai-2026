@@ -249,14 +249,14 @@ export default function ResponseActions({
                 className="fixed inset-0 z-30"
                 onClick={() => setShowMoreMenu(false)}
               />
-              <div className="absolute right-0 bottom-full mb-1.5 w-52 rounded-xl bg-[#151922] border border-white/[0.1] shadow-2xl p-1 z-40 text-[12px] space-y-0.5">
+              <div className="absolute end-0 bottom-full mb-1.5 w-52 rounded-xl bg-[#151922] border border-white/[0.1] shadow-2xl p-1 z-40 text-[12px] space-y-0.5">
                 <button
                   type="button"
                   onClick={() => {
                     router.push('/spaces');
                     setShowMoreMenu(false);
                   }}
-                  className="w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg hover:bg-white/[0.06] text-[#B8C0CC] hover:text-[#F1EEE7] text-left"
+                  className="w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg hover:bg-white/[0.06] text-[#B8C0CC] hover:text-[#F1EEE7] text-start"
                 >
                   <FolderSimplePlus size={15} />
                   <span>Ajouter à un Espace</span>
@@ -267,7 +267,7 @@ export default function ResponseActions({
                     router.push('/workspace?tab=workgraph');
                     setShowMoreMenu(false);
                   }}
-                  className="w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg hover:bg-white/[0.06] text-[#B8C0CC] hover:text-[#F1EEE7] text-left"
+                  className="w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg hover:bg-white/[0.06] text-[#B8C0CC] hover:text-[#F1EEE7] text-start"
                 >
                   <Graph size={15} />
                   <span>Inspecter dans WorkGraph</span>
@@ -280,7 +280,7 @@ export default function ResponseActions({
                     }
                     setShowMoreMenu(false);
                   }}
-                  className="w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg hover:bg-white/[0.06] text-[#B8C0CC] hover:text-[#F1EEE7] text-left"
+                  className="w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg hover:bg-white/[0.06] text-[#B8C0CC] hover:text-[#F1EEE7] text-start"
                 >
                   <ShareNetwork size={15} />
                   <span>Partager la mission</span>

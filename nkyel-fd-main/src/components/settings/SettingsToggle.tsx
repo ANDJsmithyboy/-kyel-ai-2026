@@ -37,7 +37,7 @@ export default function SettingsToggle({ defaultChecked, onToggle }: SettingsTog
       }}
     >
       <span
-        className="absolute top-[2px] left-[2px] block rounded-full bg-white"
+        className="absolute top-[2px] start-[2px] block rounded-full bg-white"
         style={{
           width: 18,
           height: 18,

@@ -27,15 +27,15 @@ export default function DesktopPromoCarousel() {
           <p className="mb-1 text-[16px] font-semibold tracking-[-0.02em] text-[#F1EEE7]">{promo.title}</p>
           <p className="text-[13px] leading-5 text-[#8F8F8F]">{promo.description}</p>
         </div>
-        <div className="absolute right-5 top-1/2 flex -translate-y-1/2 items-center gap-2 opacity-90">
+        <div className="absolute end-5 top-1/2 flex -translate-y-1/2 items-center gap-2 opacity-90">
           {[0, 1, 2].map((index) => (
             <div key={index} className="flex h-12 w-12 items-center justify-center rounded-lg border border-white/[0.08] bg-[#303030]" style={{ transform: `translateY(${(index - 1) * 8}px)` }}>
               <Icon size={20 - index * 2} weight="duotone" style={{ color: index === 0 ? promo.accent : '#777A80' }} />
             </div>
           ))}
         </div>
-        <button type="button" onClick={() => setActive((active - 1 + PROMOS.length) % PROMOS.length)} aria-label="Carte précédente" className="absolute left-2 top-1/2 hidden -translate-y-1/2 rounded-full p-1 text-[#777A80] hover:bg-white/[0.06] hover:text-[#F1EEE7] lg:block"><CaretLeft size={15} /></button>
-        <button type="button" onClick={() => setActive((active + 1) % PROMOS.length)} aria-label="Carte suivante" className="absolute right-2 top-1/2 hidden -translate-y-1/2 rounded-full p-1 text-[#777A80] hover:bg-white/[0.06] hover:text-[#F1EEE7] lg:block"><CaretRight size={15} /></button>
+        <button type="button" onClick={() => setActive((active - 1 + PROMOS.length) % PROMOS.length)} aria-label="Carte précédente" className="absolute start-2 top-1/2 hidden -translate-y-1/2 rounded-full p-1 text-[#777A80] hover:bg-white/[0.06] hover:text-[#F1EEE7] lg:block"><CaretLeft size={15} /></button>
+        <button type="button" onClick={() => setActive((active + 1) % PROMOS.length)} aria-label="Carte suivante" className="absolute end-2 top-1/2 hidden -translate-y-1/2 rounded-full p-1 text-[#777A80] hover:bg-white/[0.06] hover:text-[#F1EEE7] lg:block"><CaretRight size={15} /></button>
       </div>
       <div className="mt-3 flex items-center justify-center gap-2" aria-label="Position dans le carrousel">
         {PROMOS.map((item, index) => <button key={item.title} type="button" onClick={() => setActive(index)} aria-label={`Afficher ${item.title}`} className={`h-1.5 rounded-full transition-all ${index === active ? 'w-5 bg-[#C9A24E]' : 'w-1.5 bg-white/[0.18]'}`} />)}

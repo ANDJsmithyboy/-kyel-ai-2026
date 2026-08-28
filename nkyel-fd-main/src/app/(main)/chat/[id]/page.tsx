@@ -76,7 +76,7 @@ export default function ChatIdPage() {
           ❌ {chat.error}
           <button
             onClick={chat.clearError}
-            className="ml-3 underline text-[12px]"
+            className="ms-3 underline text-[12px]"
             style={{ color: '#8A8A92', background: 'none', border: 'none', cursor: 'pointer' }}
           >
             Fermer

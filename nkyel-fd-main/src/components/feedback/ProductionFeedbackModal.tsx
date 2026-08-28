@@ -278,7 +278,7 @@ export default function ProductionFeedbackModal({
                   <button
                     type="button"
                     onClick={() => setScreenshotBase64(null)}
-                    className="absolute top-2 right-2 p-1.5 rounded-lg bg-black/70 text-red-400 hover:bg-black transition-colors"
+                    className="absolute top-2 end-2 p-1.5 rounded-lg bg-black/70 text-red-400 hover:bg-black transition-colors"
                   >
                     <Trash size={15} />
                   </button>

@@ -47,7 +47,11 @@ import {
   Paperclip,
   Sparkle,
   ArrowDown,
+  GithubLogo,
+  Monitor,
+  Terminal,
 } from '@phosphor-icons/react';
+import { Plus as PhosphorPlus } from '@phosphor-icons/react';
 import NkyelMessageItem from './NkyelMessageItem';
 import { useWorkspaceLayout } from '@/hooks/useWorkspaceLayout';
 import { useNkyelModel, getIntelligenceMode, type IntelligenceModeId } from '@/hooks/useNkyelModel';
@@ -55,6 +59,7 @@ import { useLanguageStore } from '@/stores/language.store';
 import { PantherMissionGlyph } from '@/components/icons';
 import RightContextInspector from '@/components/inspector/RightContextInspector';
 import Surface from '@/components/ui/Surface';
+import PlusLauncherMenu from '@/components/chat/PlusLauncherMenu';
 import TierPicker from '@/components/chat/TierPicker';
 import VIECanvas from '@/components/vie/VIECanvas';
 import VIEComprehensionView from '@/components/vie/VIEComprehensionView';
@@ -97,6 +102,7 @@ export default function AdaptiveChatWorkspace({
   const [activeSurface, setActiveSurface] = useState<'chat' | 'workgraph' | 'vie' | 'live_flow'>('chat');
   const [attachedFiles, setAttachedFiles] = useState<{ id: string; name: string; size: string }[]>([]);
   const [isSending, setIsSending] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
 
   const { modeId, setModeId } = useNkyelModel();
   const currentEngine = getIntelligenceMode(modeId);
@@ -119,6 +125,13 @@ export default function AdaptiveChatWorkspace({
   const missionMenuRef = useRef<HTMLDivElement>(null);
   const plusMenuRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 640);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   // Close plus menu on outside click or Escape
   useEffect(() => {
@@ -339,7 +352,7 @@ export default function AdaptiveChatWorkspace({
               </button>
 
               {missionMenuOpen && (
-                <div className="absolute right-0 top-full mt-1.5 w-48 p-1 rounded-xl bg-[var(--bg-elevated)] border border-[var(--border)] shadow-xl z-50 animate-scale-in text-xs space-y-0.5">
+                <div className="absolute end-0 top-full mt-1.5 w-48 p-1 rounded-xl bg-[var(--bg-elevated)] border border-[var(--border)] shadow-xl z-50 animate-scale-in text-xs space-y-0.5">
                   {[
                     { id: 'chat', label: t('view.overview'), icon: GeistSparkle },
                     { id: 'workgraph', label: t('view.workgraph'), icon: GeistCpu },
@@ -356,7 +369,7 @@ export default function AdaptiveChatWorkspace({
                           setActiveSurface(v.id as any);
                           setMissionMenuOpen(false);
                         }}
-                        className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg text-left transition-colors ${
+                        className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg text-start transition-colors ${
                           isSelected
                             ? 'bg-[var(--selected)] text-[var(--text-primary)] font-semibold'
                             : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--hover)]'
@@ -480,7 +493,7 @@ export default function AdaptiveChatWorkspace({
                       setAutoScroll(true);
                     }
                   }}
-                  className="fixed bottom-28 left-1/2 -translate-x-1/2 px-3.5 py-1.5 rounded-full bg-[var(--surface-raised)] hover:bg-[var(--hover)] border border-[var(--border-strong)] text-xs font-semibold text-[var(--text-primary)] shadow-lg flex items-center gap-1.5 transition-all active:scale-95 z-30 animate-in fade-in slide-in-from-bottom-2"
+                  className="fixed bottom-28 start-1/2 -translate-x-1/2 px-3.5 py-1.5 rounded-full bg-[var(--surface-raised)] hover:bg-[var(--hover)] border border-[var(--border-strong)] text-xs font-semibold text-[var(--text-primary)] shadow-lg flex items-center gap-1.5 transition-all active:scale-95 z-30 animate-in fade-in slide-in-from-bottom-2"
                 >
                   <ArrowDown size={13} weight="bold" className="text-[var(--accent)]" />
                   <span>{isFr ? 'Reprendre le défilement' : 'Jump to latest'}</span>
@@ -489,7 +502,7 @@ export default function AdaptiveChatWorkspace({
             </div>
 
             {/* ── Fixed Bottom Adaptive Composer ── */}
-            <div className="absolute bottom-0 left-0 right-0 p-3 sm:p-5 bg-gradient-to-t from-[var(--material-canvas)] via-[var(--material-canvas)]/80 to-transparent pointer-events-none flex flex-col items-center z-20">
+            <div className="absolute bottom-0 start-0 end-0 p-3 sm:p-5 bg-gradient-to-t from-[var(--material-canvas)] via-[var(--material-canvas)]/80 to-transparent pointer-events-none flex flex-col items-center z-20">
               <div className="max-w-[780px] w-full pointer-events-auto flex flex-col gap-1.5">
                 <Surface
                   material="glass-floating"
@@ -518,7 +531,7 @@ export default function AdaptiveChatWorkspace({
                           <button
                             type="button"
                             onClick={() => handleRemoveFile(file.id)}
-                            className="ml-0.5 p-0.5 rounded-full hover:bg-[var(--hover)] text-[var(--text-tertiary)] hover:text-red-400 transition-colors"
+                            className="ms-0.5 p-0.5 rounded-full hover:bg-[var(--hover)] text-[var(--text-tertiary)] hover:text-red-400 transition-colors"
                             title={isFr ? "Supprimer le fichier" : "Remove file"}
                           >
                             <X size={11} weight="bold" />
@@ -539,7 +552,7 @@ export default function AdaptiveChatWorkspace({
                         e.target.style.height = `${Math.min(e.target.scrollHeight, 180)}px`;
                       }}
                       onKeyDown={handleKeyDown}
-                      placeholder={t('composer.ask') || "Ask Ñkyel anything..."}
+                      placeholder={t('composer.ask') || (isFr ? "Assignez une tâche ou tapez / pour plus" : "Assign a task or type / for more")}
                       rows={1}
                       className="w-full bg-transparent border-0 focus:ring-0 focus:outline-none resize-none text-base placeholder:text-[var(--text-tertiary)] text-[var(--text-primary)] max-h-44 px-1 py-1 font-sans"
                     />
@@ -547,41 +560,66 @@ export default function AdaptiveChatWorkspace({
 
                   {/* Toolbar Actions Bar */}
                   <div className="flex items-center justify-between border-t border-[var(--border-subtle)] pt-1.5 px-1">
-                    {/* Left Cluster: Plus Button */}
+                    {/* Left Cluster: Plus Button + Github + Bureau */}
                     <div className="flex items-center gap-1.5 relative" ref={plusMenuRef}>
                       <button
                         type="button"
                         onClick={() => setPlusMenuOpen(!plusMenuOpen)}
                         aria-expanded={plusMenuOpen}
-                        className="w-8 h-8 rounded-xl bg-[var(--surface)] hover:bg-[var(--surface-raised)] border border-[var(--border)] flex items-center justify-center text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors shadow-xs"
-                        title={isFr ? "Actions et capacités (+)" : "Actions & capabilities (+)"}
+                        className={`flex items-center justify-center rounded-full transition-all duration-200 active:scale-[0.97]
+                          ${plusMenuOpen 
+                            ? 'bg-[var(--accent)] text-[var(--accent-fg)] shadow-sm' 
+                            : 'bg-[var(--surface-raised)] border border-[var(--border-strong)] text-[var(--text-primary)] hover:bg-[var(--hover)] hover:border-[var(--accent-muted)]'
+                          }`}
+                        style={{
+                          width: isMobile ? '52px' : '44px',
+                          height: isMobile ? '52px' : '44px',
+                          flexShrink: 0
+                        }}
                       >
-                        <GeistPlus size={15} strokeWidth={2} />
+                        <PhosphorPlus 
+                          weight="bold" 
+                          size={isMobile ? 24 : 22} 
+                          className={`transition-transform duration-200 ${plusMenuOpen ? 'rotate-45' : 'rotate-0'}`}
+                        />
                       </button>
 
-                      {/* Functional Action Launcher Popover */}
                       {plusMenuOpen && (
-                        <div className="absolute bottom-full left-0 mb-2 w-64 p-1.5 rounded-2xl bg-[var(--bg-elevated)] border border-[var(--border-strong)] shadow-2xl text-xs space-y-0.5 z-50 animate-scale-in">
-                          <div className="px-2.5 py-1 text-[10px] font-mono uppercase tracking-wider text-[var(--text-tertiary)] border-b border-[var(--border-subtle)] mb-1">
-                            {isFr ? "Actions & Capacités" : "Actions & Capabilities"}
-                          </div>
+                        <PlusLauncherMenu 
+                          isMobile={isMobile}
+                          onClose={() => setPlusMenuOpen(false)}
+                          onSelectAction={(actionId, payload) => {
+                            console.log('Action selected:', actionId, payload);
+                            setPlusMenuOpen(false);
+                            // Real implementation would link to backend logic
+                          }}
+                        />
+                      )}
 
-                          <button
-                            type="button"
-                            onClick={() => handleActionSelect('upload')}
-                            className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl hover:bg-[var(--hover)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] text-left transition-colors"
-                          >
-                            <FileText size={16} className="text-[var(--accent)] shrink-0" />
-                            <div className="flex-1 min-w-0">
-                              <p className="font-medium text-xs text-[var(--text-primary)]">{isFr ? 'Téléverser un document' : 'Upload file'}</p>
-                              <p className="text-[10px] text-[var(--text-tertiary)] truncate">{isFr ? 'PDF, texte, données ou code' : 'PDF, text, data or code'}</p>
-                            </div>
+                      <button
+                        type="button"
+                        onClick={() => handleActionSelect('connections')}
+                        className="w-8 h-8 rounded-xl bg-[var(--surface)] hover:bg-[var(--surface-raised)] border border-[var(--border)] flex items-center justify-center text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors shadow-xs"
+                        title="GitHub"
+                      >
+                        <GithubLogo size={15} />
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => handleActionSelect('artifacts')}
+                        className="hidden sm:flex items-center gap-1.5 h-8 px-2.5 rounded-xl bg-[var(--surface)] hover:bg-[var(--surface-raised)] border border-[var(--border)] text-xs text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors shadow-xs"
+                        title={isFr ? "Manus Bureau" : "Computer"}
+                      >
+                        <Monitor size={14} />
+                        <span className="font-medium text-[11px]">{isFr ? 'Bureau' : 'Computer'}</span>
+                      </button>
                           </button>
 
                           <button
                             type="button"
                             onClick={() => handleActionSelect('research')}
-                            className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl hover:bg-[var(--hover)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] text-left transition-colors"
+                            className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl hover:bg-[var(--hover)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] text-start transition-colors"
                           >
                             <Globe size={16} className="text-emerald-400 shrink-0" />
                             <div className="flex-1 min-w-0">
@@ -593,7 +631,7 @@ export default function AdaptiveChatWorkspace({
                           <button
                             type="button"
                             onClick={() => handleActionSelect('connections')}
-                            className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl hover:bg-[var(--hover)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] text-left transition-colors"
+                            className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl hover:bg-[var(--hover)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] text-start transition-colors"
                           >
                             <PlugsConnected size={16} className="text-amber-400 shrink-0" />
                             <div className="flex-1 min-w-0">
@@ -607,7 +645,7 @@ export default function AdaptiveChatWorkspace({
                           <button
                             type="button"
                             onClick={() => handleActionSelect('image')}
-                            className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl hover:bg-[var(--hover)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] text-left transition-colors"
+                            className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl hover:bg-[var(--hover)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] text-start transition-colors"
                           >
                             <Eye size={16} className="text-purple-400 shrink-0" />
                             <span className="font-medium text-xs text-[var(--text-primary)]">{isFr ? 'Générer une image' : 'Generate image'}</span>
@@ -616,7 +654,7 @@ export default function AdaptiveChatWorkspace({
                           <button
                             type="button"
                             onClick={() => handleActionSelect('document')}
-                            className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl hover:bg-[var(--hover)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] text-left transition-colors"
+                            className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl hover:bg-[var(--hover)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] text-start transition-colors"
                           >
                             <FileText size={16} className="text-blue-400 shrink-0" />
                             <span className="font-medium text-xs text-[var(--text-primary)]">{isFr ? 'Rédiger un document' : 'Write document'}</span>
@@ -625,7 +663,7 @@ export default function AdaptiveChatWorkspace({
                           <button
                             type="button"
                             onClick={() => handleActionSelect('slides')}
-                            className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl hover:bg-[var(--hover)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] text-left transition-colors"
+                            className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl hover:bg-[var(--hover)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] text-start transition-colors"
                           >
                             <Presentation size={16} className="text-amber-300 shrink-0" />
                             <span className="font-medium text-xs text-[var(--text-primary)]">{isFr ? 'Créer des diapositives' : 'Create slides'}</span>
@@ -634,7 +672,7 @@ export default function AdaptiveChatWorkspace({
                           <button
                             type="button"
                             onClick={() => handleActionSelect('spreadsheet')}
-                            className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl hover:bg-[var(--hover)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] text-left transition-colors"
+                            className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl hover:bg-[var(--hover)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] text-start transition-colors"
                           >
                             <Table size={16} className="text-emerald-400 shrink-0" />
                             <span className="font-medium text-xs text-[var(--text-primary)]">{isFr ? 'Tableur & analyse de données' : 'Data & spreadsheet'}</span>
@@ -643,7 +681,7 @@ export default function AdaptiveChatWorkspace({
                           <button
                             type="button"
                             onClick={() => handleActionSelect('artifacts')}
-                            className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl hover:bg-[var(--hover)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] text-left transition-colors"
+                            className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl hover:bg-[var(--hover)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] text-start transition-colors"
                           >
                             <Cpu size={16} className="text-cyan-400 shrink-0" />
                             <span className="font-medium text-xs text-[var(--text-primary)]">{isFr ? "Ouvrir l'inspecteur d'artefacts" : 'Open artifact inspector'}</span>
@@ -652,8 +690,20 @@ export default function AdaptiveChatWorkspace({
                       )}
                     </div>
 
-                    {/* Right Cluster: Mic / Send / Stop */}
+                    {/* Right Cluster: Commands / Mic / Send / Stop */}
                     <div className="flex items-center gap-1.5">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setInputText('/');
+                          textareaRef.current?.focus();
+                        }}
+                        className="w-8 h-8 rounded-xl hover:bg-[var(--hover)] text-[var(--text-tertiary)] hover:text-[var(--text-primary)] flex items-center justify-center transition-colors"
+                        title={isFr ? "Commandes rapides (/)" : "Slash commands (/)"}
+                      >
+                        <Terminal size={15} />
+                      </button>
+
                       <button
                         type="button"
                         className="w-8 h-8 rounded-xl hover:bg-[var(--hover)] text-[var(--text-tertiary)] hover:text-[var(--text-primary)] flex items-center justify-center transition-colors"
@@ -700,7 +750,7 @@ export default function AdaptiveChatWorkspace({
           </>
         ) : activeSurface === 'workgraph' ? (
           <div className="flex-1 relative overflow-hidden flex flex-col">
-            <div className="absolute top-3 left-3 z-30">
+            <div className="absolute top-3 start-3 z-30">
               <button
                 type="button"
                 onClick={() => setActiveSurface('chat')}

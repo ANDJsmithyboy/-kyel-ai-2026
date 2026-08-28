@@ -235,7 +235,7 @@ export default function WideResearchStudio() {
         {/* Input Bar & Controls */}
         <div className="mt-4 p-3 bg-[#0E121A] border border-white/[0.08] rounded-2xl shadow-xl flex flex-col gap-3">
           <div className="flex items-center gap-3">
-            <MagnifyingGlass size={20} className="text-[#7E8795] ml-2 shrink-0" />
+            <MagnifyingGlass size={20} className="text-[#7E8795] ms-2 shrink-0" />
             <input
               type="text"
               value={topic}
@@ -387,7 +387,7 @@ export default function WideResearchStudio() {
             </span>
             {sources.map((s, idx) => (
               <div key={idx} className="p-2 rounded-lg bg-white/[0.02] border border-white/[0.04] flex items-center justify-between">
-                <span className="truncate text-[11px] text-[#F1EEE7] pr-2">{s.title}</span>
+                <span className="truncate text-[11px] text-[#F1EEE7] pe-2">{s.title}</span>
                 <CheckCircle size={14} className="text-[#6F9485] shrink-0" />
               </div>
             ))}

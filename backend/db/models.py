@@ -699,4 +699,144 @@ class BetaAccess(Base):
     )
     tier: Mapped[str] = mapped_column(String(32), default="BETA_PIONEER", nullable=False)
 
+# ── 19. Modèles Quotas & Ressources Beta (Resource Management) ──
 
+class BetaConfig(Base):
+    __tablename__ = "beta_config"
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=generate_uuid)
+    beta_start_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    beta_end_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    max_public_users: Mapped[int] = mapped_column(Integer, default=100, nullable=False)
+    runpod_beta_budget_usd: Mapped[float] = mapped_column(Float, default=7.45, nullable=False)
+    fal_budget_usd: Mapped[float] = mapped_column(Float, default=0.00, nullable=False)
+    is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
+
+class EntitlementProfile(Base):
+    __tablename__ = "entitlement_profiles"
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=generate_uuid)
+    tier_name: Mapped[str] = mapped_column(String(50), unique=True, nullable=False)
+    priority: Mapped[int] = mapped_column(Integer, nullable=False)
+    max_active_missions: Mapped[int] = mapped_column(Integer, nullable=False)
+    max_queued_missions: Mapped[int] = mapped_column(Integer, nullable=False)
+    max_cumulative_tokens_per_mission: Mapped[int] = mapped_column(Integer, nullable=False)
+    daily_agent_token_soft_budget: Mapped[int] = mapped_column(Integer, nullable=False)
+    daily_agent_token_hard_budget: Mapped[int] = mapped_column(Integer, nullable=False)
+    weekly_agent_token_soft_budget: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
+    deep_research_per_day: Mapped[int] = mapped_column(Integer, default=5, nullable=False)
+    searches_per_mission: Mapped[int] = mapped_column(Integer, default=10, nullable=False)
+    sources_per_mission: Mapped[int] = mapped_column(Integer, default=40, nullable=False)
+    artifacts_per_day: Mapped[int] = mapped_column(Integer, default=20, nullable=False)
+    images_beta: Mapped[int] = mapped_column(Integer, default=10, nullable=False)
+    videos_beta: Mapped[int] = mapped_column(Integer, default=1, nullable=False)
+    video_duration_max: Mapped[int] = mapped_column(Integer, default=5, nullable=False)
+    code_builds_per_day: Mapped[int] = mapped_column(Integer, default=10, nullable=False)
+    website_builds_per_day: Mapped[int] = mapped_column(Integer, default=5, nullable=False)
+    mobile_app_builds_per_day: Mapped[int] = mapped_column(Integer, default=3, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
+
+class UserEntitlement(Base):
+    __tablename__ = "user_entitlements"
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=generate_uuid)
+    user_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    profile_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("entitlement_profiles.id"), nullable=False)
+    starts_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+    ends_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+    is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
+    custom_overrides_json: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    created_by: Mapped[Optional[uuid.UUID]] = mapped_column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
+
+    user: Mapped["User"] = relationship()
+    profile: Mapped["EntitlementProfile"] = relationship()
+
+class QuotaUsageEvent(Base):
+    __tablename__ = "quota_usage_events"
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=generate_uuid)
+    user_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    event_type: Mapped[str] = mapped_column(String(50), nullable=False)
+    cost_value: Mapped[int] = mapped_column(Integer, default=1, nullable=False)
+    idempotency_key: Mapped[str] = mapped_column(String(255), unique=True, nullable=False)
+    metadata_json: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+
+class ProviderAccount(Base):
+    __tablename__ = "provider_accounts"
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=generate_uuid)
+    provider_type: Mapped[str] = mapped_column(String(50), nullable=False)
+    display_internal_name: Mapped[str] = mapped_column(String(100), nullable=False)
+    credential_reference: Mapped[str] = mapped_column(String(255), nullable=False)
+    project_or_org_reference: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
+    enabled: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
+    priority: Mapped[int] = mapped_column(Integer, default=10, nullable=False)
+    capabilities: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    health_status: Mapped[str] = mapped_column(String(50), default="HEALTHY", nullable=False)
+    rate_state_json: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    budget_state_json: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    last_success_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+    last_error_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+    last_429_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+    cooldown_until: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
+
+class MissionQueue(Base):
+    __tablename__ = "mission_queue"
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=generate_uuid)
+    mission_id: Mapped[str] = mapped_column(String(128), nullable=False)
+    user_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    conversation_id: Mapped[Optional[uuid.UUID]] = mapped_column(UUID(as_uuid=True), ForeignKey("conversations.id"), nullable=True)
+    entitlement_tier: Mapped[str] = mapped_column(String(50), nullable=False)
+    priority: Mapped[int] = mapped_column(Integer, default=50, nullable=False)
+    status: Mapped[str] = mapped_column(String(32), default="QUEUED", nullable=False)
+    attempts: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    resource_class: Mapped[Optional[str]] = mapped_column(String(64), default="AGENT", nullable=True)
+    estimated_token_budget: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
+    metadata_json: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    requested_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+    available_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+    claimed_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+    claimed_by: Mapped[Optional[str]] = mapped_column(String(128), nullable=True)
+    started_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+    finished_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+    last_error: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+
+class SpecialInvite(Base):
+    __tablename__ = "special_invites"
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=generate_uuid)
+    token_hash: Mapped[str] = mapped_column(String(512), unique=True, nullable=False)
+    invite_type: Mapped[str] = mapped_column(String(50), nullable=False)
+    entitlement_profile: Mapped[Optional[uuid.UUID]] = mapped_column(UUID(as_uuid=True), ForeignKey("entitlement_profiles.id"), nullable=True)
+    max_redemptions: Mapped[int] = mapped_column(Integer, default=1, nullable=False)
+    redemptions_count: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    expires_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+    is_revoked: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
+    first_redeemed_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+    redeemed_by_user_id: Mapped[Optional[uuid.UUID]] = mapped_column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=True)
+    created_by: Mapped[Optional[uuid.UUID]] = mapped_column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=True)
+    metadata_json: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
+
+class ModelRegistry(Base):
+    __tablename__ = "model_registry"
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=generate_uuid)
+    provider_type: Mapped[str] = mapped_column(String(50), nullable=False)
+    model_id: Mapped[str] = mapped_column(String(128), nullable=False)
+    capabilities_json: Mapped[str] = mapped_column(Text, nullable=False)
+    context_window: Mapped[int] = mapped_column(Integer, nullable=False)
+    enabled: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
+    priority: Mapped[int] = mapped_column(Integer, default=10, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))

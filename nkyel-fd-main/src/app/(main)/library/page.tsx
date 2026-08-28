@@ -9,6 +9,7 @@
 'use client';
 
 import React, { useState, useMemo } from 'react';
+import useSWR from 'swr';
 import {
   Books,
   SquaresFour,
@@ -133,11 +134,42 @@ const CANONICAL_ARTIFACTS: LibraryArtifact[] = [
   },
 ];
 
+const fetcher = (url: string) => fetch(url).then(res => res.json());
+
 export default function LibraryPage() {
   const { t, uiLocale } = useLanguageStore();
   const isFr = !uiLocale || uiLocale.startsWith('fr');
 
-  const [artifacts] = useState<LibraryArtifact[]>(CANONICAL_ARTIFACTS);
+  const { data: backendArtifacts, error, isLoading } = useSWR<any[]>('/api/artifacts', fetcher);
+
+  const artifacts = useMemo<LibraryArtifact[]>(() => {
+    let list = [...CANONICAL_ARTIFACTS];
+    if (backendArtifacts && Array.isArray(backendArtifacts)) {
+      const mapped = backendArtifacts.map((a): LibraryArtifact => {
+        let mappedType: ArtifactType = 'document';
+        if (a.artifact_type === 'REPORT') mappedType = 'document';
+        else if (a.artifact_type === 'CODE') mappedType = 'code';
+        else if (a.artifact_type === 'CHART' || a.artifact_type === 'IMAGE') mappedType = 'image';
+        else if (a.artifact_type === 'TABLE') mappedType = 'spreadsheet';
+        
+        return {
+          id: a.id,
+          title: a.title,
+          type: mappedType,
+          missionTitle: a.mission_id ? `Mission: ${a.mission_id.substring(0,8)}` : 'Génération',
+          projectName: 'Workspace',
+          url: a.content_url || '#',
+          size: a.content_size_bytes ? `${Math.round(a.content_size_bytes / 1024)} KB` : 'N/A',
+          createdAtHuman: 'Récemment',
+          updatedAtTimestamp: new Date(a.created_at).getTime(),
+          previewSnippet: a.description || 'Artefact généré par IA.',
+        };
+      });
+      list = [...mapped, ...list];
+    }
+    return list;
+  }, [backendArtifacts]);
+
   const [activeFilter, setActiveFilter] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
@@ -236,14 +268,14 @@ export default function LibraryPage() {
           <div className="relative flex-1">
             <MagnifyingGlass
               size={18}
-              className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--text-tertiary)] pointer-events-none"
+              className="absolute start-3.5 top-1/2 -translate-y-1/2 text-[var(--text-tertiary)] pointer-events-none"
             />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder={t('sanctuary.searchPlaceholder') || 'Search artifacts, decks, documents, models...'}
-              className="w-full h-11 pl-10 pr-4 rounded-2xl border border-[var(--border)] bg-[var(--surface-raised)] text-xs sm:text-sm text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] transition-all"
+              className="w-full h-11 ps-10 pe-4 rounded-2xl border border-[var(--border)] bg-[var(--surface-raised)] text-xs sm:text-sm text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] transition-all"
             />
           </div>
 

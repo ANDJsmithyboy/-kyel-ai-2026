@@ -314,10 +314,10 @@ export default function MessageBubble({
                             return <p style={{ marginBottom: '16px', lineHeight: 'var(--lh-body)' }}>{children}</p>;
                           },
                           ul({ children }) {
-                            return <ul className="list-disc pl-5 mb-4 space-y-1">{children}</ul>;
+                            return <ul className="list-disc ps-5 mb-4 space-y-1">{children}</ul>;
                           },
                           ol({ children }) {
-                            return <ol className="list-decimal pl-5 mb-4 space-y-1">{children}</ol>;
+                            return <ol className="list-decimal ps-5 mb-4 space-y-1">{children}</ol>;
                           },
                           li({ children }) {
                             return <li style={{ lineHeight: 'var(--lh-body)', paddingLeft: '4px' }}>{children}</li>;
@@ -397,7 +397,7 @@ export default function MessageBubble({
 
               <button
                 onClick={() => setFeedbackGiven('up')}
-                className={cn('p-1.5 rounded-lg transition-colors ml-4')}
+                className={cn('p-1.5 rounded-lg transition-colors ms-4')}
                 style={{
                   color: feedbackGiven === 'up' ? 'var(--color-success)' : 'var(--text-tertiary)',
                   background: feedbackGiven === 'up' ? 'rgba(31,157,107,0.10)' : 'transparent',

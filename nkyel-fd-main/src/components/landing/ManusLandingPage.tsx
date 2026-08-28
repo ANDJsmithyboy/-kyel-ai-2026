@@ -135,9 +135,9 @@ export default function ManusLandingPage() {
     <div className="min-h-screen bg-[#05060A] text-[#EDEDEC] selection:bg-[var(--accent-subtle)] selection:text-white relative overflow-x-hidden" style={{ fontFamily: 'var(--font-sans, "Geist", system-ui, -apple-system, sans-serif)' }}>
       {/* ── Apple-Grade Ambient Aurora Mesh ── */}
       <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
-        <div className="absolute -top-32 left-1/2 -translate-x-1/2 w-[1000px] h-[600px] bg-gradient-to-b from-[var(--accent-subtle)] via-[#6F9485]/10 to-transparent blur-[140px] rounded-full" />
-        <div className="absolute top-[25%] -left-48 w-[650px] h-[650px] bg-[#3B82F6]/10 blur-[160px] rounded-full" />
-        <div className="absolute top-[55%] -right-48 w-[650px] h-[650px] bg-[var(--accent-subtle)] blur-[160px] rounded-full" />
+        <div className="absolute -top-32 start-1/2 -translate-x-1/2 w-[1000px] h-[600px] bg-gradient-to-b from-[var(--accent-subtle)] via-[#6F9485]/10 to-transparent blur-[140px] rounded-full" />
+        <div className="absolute top-[25%] -start-48 w-[650px] h-[650px] bg-[#3B82F6]/10 blur-[160px] rounded-full" />
+        <div className="absolute top-[55%] -end-48 w-[650px] h-[650px] bg-[var(--accent-subtle)] blur-[160px] rounded-full" />
         <div className="absolute inset-0 bg-[radial-gradient(#ffffff08_1px,transparent_1px)] [background-size:28px_28px] opacity-30" />
       </div>
 
@@ -235,7 +235,7 @@ export default function ManusLandingPage() {
             initial={{ opacity: 0, scale: 0.98, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             transition={{ delay: 0.3 }}
-            className="w-full max-w-3xl mx-auto p-3.5 sm:p-5 rounded-3xl border border-white/[0.12] bg-[#0A0C14]/95 backdrop-blur-3xl shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_30px_90px_rgba(0,0,0,0.8)] space-y-4 text-left"
+            className="w-full max-w-3xl mx-auto p-3.5 sm:p-5 rounded-3xl border border-white/[0.12] bg-[#0A0C14]/95 backdrop-blur-3xl shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_30px_90px_rgba(0,0,0,0.8)] space-y-4 text-start"
           >
             <div className="relative">
               <textarea

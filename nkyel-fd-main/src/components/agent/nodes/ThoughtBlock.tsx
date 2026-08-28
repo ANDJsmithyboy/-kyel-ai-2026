@@ -35,7 +35,7 @@ export default function ThoughtBlock({ title, icon, children, status = 'active',
       className="relative mb-3 flex gap-3"
     >
       {/* Ligne verticale de connexion façon "arbre de pensée" */}
-      <div className="absolute left-[11px] top-7 bottom-[-20px] w-[2px] bg-[var(--border)] rounded-full z-0" />
+      <div className="absolute start-[11px] top-7 bottom-[-20px] w-[2px] bg-[var(--border)] rounded-full z-0" />
       
       {/* Icône Status */}
       <div 

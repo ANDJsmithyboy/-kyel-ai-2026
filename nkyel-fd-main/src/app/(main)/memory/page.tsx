@@ -98,13 +98,13 @@ export default function MemoryPage() {
         {/* Namespace tabs & Search */}
         <div className="flex flex-col sm:flex-row items-center justify-between gap-3 mb-6">
           <div className="relative w-full sm:w-80">
-            <MagnifyingGlass size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#7E8795]" />
+            <MagnifyingGlass size={16} className="absolute start-3 top-1/2 -translate-y-1/2 text-[#7E8795]" />
             <input
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Rechercher un souvenir..."
-              className="w-full pl-9 pr-3 py-2 rounded-xl bg-[#0E121A] border border-white/[0.08] text-xs text-[#F1EEE7] outline-none"
+              className="w-full ps-9 pe-3 py-2 rounded-xl bg-[#0E121A] border border-white/[0.08] text-xs text-[#F1EEE7] outline-none"
             />
           </div>
 

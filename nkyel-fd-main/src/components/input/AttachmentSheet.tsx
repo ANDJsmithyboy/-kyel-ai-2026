@@ -52,7 +52,7 @@ export default function AttachmentSheet({
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: 10 }}
-        className="absolute bottom-full left-0 mb-2 w-[320px] rounded-2xl shadow-xl overflow-hidden z-50 flex flex-col"
+        className="absolute bottom-full start-0 mb-2 w-[320px] rounded-2xl shadow-xl overflow-hidden z-50 flex flex-col"
         style={{
           background: 'var(--bg-glass)',
           border: '1px solid var(--glass-border)',
@@ -92,7 +92,7 @@ export default function AttachmentSheet({
               <button
                 key={m}
                 onClick={() => handleSelectModel(m)}
-                className="w-full flex items-center justify-between p-2 rounded-xl hover:bg-[var(--accent-06)] transition-colors text-left group"
+                className="w-full flex items-center justify-between p-2 rounded-xl hover:bg-[var(--accent-06)] transition-colors text-start group"
               >
                 <div className="flex items-center gap-3">
                   <div className="w-8 h-8 rounded-lg bg-[var(--bg-elevated)] group-hover:bg-[var(--accent-08)] flex items-center justify-center">
@@ -117,11 +117,11 @@ export default function AttachmentSheet({
         <div className="p-3 border-b border-[var(--border)]">
           <button
             onClick={onToggleWandana}
-            className={`w-full flex items-center justify-between p-3 rounded-xl transition-all duration-300 ${wandanaEnabled ? 'bg-[rgba(31,157,107,0.10)] border-l-2 border-[var(--color-success)]' : 'hover:bg-[var(--accent-06)]'}`}
+            className={`w-full flex items-center justify-between p-3 rounded-xl transition-all duration-300 ${wandanaEnabled ? 'bg-[rgba(31,157,107,0.10)] border-s-2 border-[var(--color-success)]' : 'hover:bg-[var(--accent-06)]'}`}
           >
             <div className="flex items-center gap-3">
               <IconWandana className={`w-5 h-5 ${wandanaEnabled ? 'text-[var(--color-success)]' : 'text-[var(--text-secondary)]'}`} />
-              <div className="flex flex-col text-left">
+              <div className="flex flex-col text-start">
                 <span className="text-[13px] font-semibold text-[var(--text-primary)]">WANDANA</span>
                 <span className="text-[11px] text-[var(--text-secondary)]">Recherche web / vidéo</span>
               </div>

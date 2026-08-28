@@ -53,7 +53,7 @@ export default function SettingsPage() {
               <div className="flex items-center gap-3">
                 <span className="text-[11px] text-[var(--text-muted)]">{m.provider}</span>
                 <div className={`w-10 h-5 rounded-full ${m.active ? 'bg-emerald-500' : 'bg-gray-600'} relative cursor-pointer transition-colors`}>
-                  <div className={`w-4 h-4 rounded-full bg-white absolute top-0.5 transition-all ${m.active ? 'left-5' : 'left-0.5'}`} />
+                  <div className={`w-4 h-4 rounded-full bg-white absolute top-0.5 transition-all ${m.active ? 'start-5' : 'start-0.5'}`} />
                 </div>
               </div>
             </div>
@@ -79,7 +79,7 @@ export default function SettingsPage() {
                 onClick={() => toggleFlag(flag.key)}
                 className={`w-10 h-5 rounded-full ${flag.enabled ? 'bg-emerald-500' : 'bg-gray-600'} relative transition-colors`}
               >
-                <div className={`w-4 h-4 rounded-full bg-white absolute top-0.5 transition-all ${flag.enabled ? 'left-5' : 'left-0.5'}`} />
+                <div className={`w-4 h-4 rounded-full bg-white absolute top-0.5 transition-all ${flag.enabled ? 'start-5' : 'start-0.5'}`} />
               </button>
             </div>
           ))}

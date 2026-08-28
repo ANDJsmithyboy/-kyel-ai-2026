@@ -37,7 +37,7 @@ export default function ModelBadge({ model, isVisible, onDismiss }: ModelBadgePr
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, y: -10, scale: 0.95 }}
           onClick={onDismiss}
-          className="absolute left-1/2 -translate-x-1/2 bottom-[100%] mb-3 flex items-center gap-2 px-3 py-1.5 rounded-full cursor-pointer shadow-lg backdrop-blur-xl z-50"
+          className="absolute start-1/2 -translate-x-1/2 bottom-[100%] mb-3 flex items-center gap-2 px-3 py-1.5 rounded-full cursor-pointer shadow-lg backdrop-blur-xl z-50"
           style={{
             background: 'var(--bg-glass)',
             border: '1px solid var(--border)',

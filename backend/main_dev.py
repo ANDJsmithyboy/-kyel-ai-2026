@@ -25,6 +25,7 @@ FRONTEND_STATIC = BASE_DIR / "apps" / "web" / "static"
 
 from api.v1.media import router as media_router
 from api.v1.wide_research import router as wide_research_router
+from api.routes.admin_capacity import router as admin_capacity_router
 
 # ── Application FastAPI ──────────────────────────────────────
 app = FastAPI(
@@ -44,6 +45,7 @@ app.add_middleware(
 
 app.include_router(media_router)
 app.include_router(wide_research_router, prefix="/api/v1")
+app.include_router(admin_capacity_router, prefix="/api/v1")
 
 # ── Models ───────────────────────────────────────────────────
 class Message(BaseModel):

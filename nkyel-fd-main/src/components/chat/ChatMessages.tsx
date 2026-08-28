@@ -38,13 +38,13 @@ export default function ChatMessages({ messages, isLoading, error, onRegenerate 
       {/* AURORA BACKGROUND */}
       <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden mix-blend-screen">
         {/* Violet Halo (Top Left) */}
-        <div className="absolute -top-[20%] -left-[10%] w-[50%] h-[50%] bg-[var(--violet-fuji, #9B8BB3)] rounded-full blur-[120px] opacity-[0.06] transform rotate-12" />
+        <div className="absolute -top-[20%] -start-[10%] w-[50%] h-[50%] bg-[var(--violet-fuji, #9B8BB3)] rounded-full blur-[120px] opacity-[0.06] transform rotate-12" />
         
         {/* Gold Halo (Center Right) */}
-        <div className="absolute top-[30%] right-[5%] w-[40%] h-[40%] bg-[var(--accent, #C5A059)] rounded-full blur-[140px] opacity-[0.05] transform -rotate-12" />
+        <div className="absolute top-[30%] end-[5%] w-[40%] h-[40%] bg-[var(--accent, #C5A059)] rounded-full blur-[140px] opacity-[0.05] transform -rotate-12" />
         
         {/* Emerald Halo (Bottom Center) */}
-        <div className="absolute bottom-0 left-[20%] w-[60%] h-[50%] bg-[var(--emerald, #19C37D)] rounded-full blur-[150px] opacity-[0.04]" />
+        <div className="absolute bottom-0 start-[20%] w-[60%] h-[50%] bg-[var(--emerald, #19C37D)] rounded-full blur-[150px] opacity-[0.04]" />
       </div>
 
       <div className="flex flex-col px-4 md:px-0 w-full md:max-w-3xl lg:max-w-4xl mx-auto z-10 relative">

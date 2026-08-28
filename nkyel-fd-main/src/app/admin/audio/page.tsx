@@ -135,11 +135,11 @@ export default function AdminAudioPage() {
                     value={ttsApiKey}
                     onChange={(e) => setTtsApiKey(e.target.value)}
                     placeholder="sk-..."
-                    className="w-full px-3 py-2 pr-10 rounded-xl bg-[var(--zc-input)] border border-[var(--border)] text-sm text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] outline-none focus:border-[var(--accent)] transition-colors font-mono"
+                    className="w-full px-3 py-2 pe-10 rounded-xl bg-[var(--zc-input)] border border-[var(--border)] text-sm text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] outline-none focus:border-[var(--accent)] transition-colors font-mono"
                   />
                   <button
                     onClick={() => setShowTtsKey(!showTtsKey)}
-                    className="absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded hover:bg-white/[0.06]"
+                    className="absolute end-2 top-1/2 -translate-y-1/2 p-1 rounded hover:bg-white/[0.06]"
                   >
                     {showTtsKey ? <EyeOff size={14} className="text-[var(--text-tertiary)]" /> : <Eye size={14} className="text-[var(--text-tertiary)]" />}
                   </button>
@@ -197,11 +197,11 @@ export default function AdminAudioPage() {
                     value={sttApiKey}
                     onChange={(e) => setSttApiKey(e.target.value)}
                     placeholder="sk-..."
-                    className="w-full px-3 py-2 pr-10 rounded-xl bg-[var(--zc-input)] border border-[var(--border)] text-sm text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] outline-none focus:border-[var(--accent)] transition-colors font-mono"
+                    className="w-full px-3 py-2 pe-10 rounded-xl bg-[var(--zc-input)] border border-[var(--border)] text-sm text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] outline-none focus:border-[var(--accent)] transition-colors font-mono"
                   />
                   <button
                     onClick={() => setShowSttKey(!showSttKey)}
-                    className="absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded hover:bg-white/[0.06]"
+                    className="absolute end-2 top-1/2 -translate-y-1/2 p-1 rounded hover:bg-white/[0.06]"
                   >
                     {showSttKey ? <EyeOff size={14} className="text-[var(--text-tertiary)]" /> : <Eye size={14} className="text-[var(--text-tertiary)]" />}
                   </button>

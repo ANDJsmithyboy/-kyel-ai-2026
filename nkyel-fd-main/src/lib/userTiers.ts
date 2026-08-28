@@ -14,7 +14,7 @@ export interface UserTierConfig {
     messagesPerDay: number;
     videosPerMonth: number;
     imagesPerMonth: number;
-    pdfIaRequestsPerMonth: number;
+    siteAndExtensionGensPerMonth: number;
     concurrentMissions: number;
     deepResearchPerDay: number;
   };
@@ -32,7 +32,7 @@ export const USER_TIERS: Record<string, UserTierConfig> = {
       messagesPerDay: 999999,
       videosPerMonth: 999999,
       imagesPerMonth: 999999,
-      pdfIaRequestsPerMonth: 999999,
+      siteAndExtensionGensPerMonth: 999999,
       concurrentMissions: 999,
       deepResearchPerDay: 999,
     },
@@ -48,7 +48,7 @@ export const USER_TIERS: Record<string, UserTierConfig> = {
       messagesPerDay: 100,
       videosPerMonth: 3,
       imagesPerMonth: 10,
-      pdfIaRequestsPerMonth: 150,
+      siteAndExtensionGensPerMonth: 150,
       concurrentMissions: 3,
       deepResearchPerDay: 25,
     },
@@ -61,12 +61,12 @@ export const USER_TIERS: Record<string, UserTierConfig> = {
     badgeLabelFr: 'Accès Bêta',
     isGodMode: false,
     quotas: {
-      messagesPerDay: 30,
+      messagesPerDay: 150,
       videosPerMonth: 1,
       imagesPerMonth: 3,
-      pdfIaRequestsPerMonth: 20,
-      concurrentMissions: 1,
-      deepResearchPerDay: 5,
+      siteAndExtensionGensPerMonth: 100,
+      concurrentMissions: 3,
+      deepResearchPerDay: 15,
     },
   },
 };

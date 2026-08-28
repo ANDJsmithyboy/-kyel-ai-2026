@@ -34,7 +34,7 @@ export default function RenduPanel() {
             exit={{ x: '100%', opacity: 0.5 }}
             transition={{ type: 'spring', damping: 25, stiffness: 200 }}
             className={cn(
-              "fixed right-0 top-0 h-screen z-50 flex flex-col bg-[var(--bg-panel)] shadow-2xl border-l border-white/10",
+              "fixed end-0 top-0 h-screen z-50 flex flex-col bg-[var(--bg-panel)] shadow-2xl border-s border-white/10",
               isMobile ? "w-[100vw]" : "w-[45vw] min-w-[400px] max-w-[800px]"
             )}
           >

@@ -100,7 +100,7 @@ export default function DeerFlowCanvas() {
             variant="secondary"
             onClick={() => toast.success('Canvas Obsidian activé et interactif !')}
           >
-            <Sparkles size={16} className="mr-2" />
+            <Sparkles size={16} className="me-2" />
             Activer
           </Button>
         </div>

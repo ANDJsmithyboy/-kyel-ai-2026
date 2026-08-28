@@ -162,7 +162,7 @@ export default function Sidebar() {
   /* -- Collapsed sidebar (desktop, fermé) -- */
   if (!isOpen && !isMobile) {
     return (
-      <div className="fixed top-0 left-0 z-50 h-screen w-[48px] flex flex-col items-center py-2 border-r border-[var(--border)] bg-[var(--zc-surface)]" suppressHydrationWarning>
+      <div className="fixed top-0 start-0 z-50 h-screen w-[48px] flex flex-col items-center py-2 border-e border-[var(--border)] bg-[var(--zc-surface)]" suppressHydrationWarning>
         <IbogaNavigationTrigger
           open={false}
           onToggle={toggle}
@@ -223,7 +223,7 @@ export default function Sidebar() {
               className="w-full max-w-md p-6 rounded-2xl relative flex flex-col gap-4 shadow-2xl"
               style={{ background: '#0B0D0F', border: '1px solid rgba(239,68,68,0.25)' }}
             >
-              <div className="absolute top-4 right-4 w-2 h-2 rounded-full" style={{ background: '#ef4444', boxShadow: '0 0 10px #ef4444' }} />
+              <div className="absolute top-4 end-4 w-2 h-2 rounded-full" style={{ background: '#ef4444', boxShadow: '0 0 10px #ef4444' }} />
               <h3 className="text-[16px] font-bold flex items-center gap-2" style={{ color: '#F0EDE6' }}>
                 <span>⚠️</span> Suppression Définitive
               </h3>
@@ -282,17 +282,17 @@ export default function Sidebar() {
       <aside
         id="sidebar"
         className={cn(
-          'fixed top-0 left-0 z-50 h-screen flex flex-col select-none',
+          'fixed top-0 start-0 z-50 h-screen flex flex-col select-none',
           'w-[260px] bg-[var(--zc-surface)]/80 backdrop-blur-xl text-[var(--text-secondary)]',
-          'border-r border-white/[0.03]',
+          'border-e border-white/[0.03]',
           'transition-transform duration-250',
           isMobile ? 'shadow-2xl' : '',
         )}        suppressHydrationWarning      >
         {/* -- En-tête : Wordmark-First Ñkyel + Iboga Navigation Signature -- */}
         <div className="flex items-center justify-between gap-2 px-3 pt-3 pb-2 relative">
           {/* Dot indicator lumineux */}
-          <div className="absolute top-4 left-3 w-1.5 h-1.5 rounded-full bg-[var(--accent)] shadow-[0_0_10px_var(--accent)]" />
-          <a href="/chat" className="flex items-center gap-2 min-w-0 pl-3 focus-visible:outline-none" onClick={() => { if (isMobile) close(); }}>
+          <div className="absolute top-4 start-3 w-1.5 h-1.5 rounded-full bg-[var(--accent)] shadow-[0_0_10px_var(--accent)]" />
+          <a href="/chat" className="flex items-center gap-2 min-w-0 ps-3 focus-visible:outline-none" onClick={() => { if (isMobile) close(); }}>
             <span className="text-[16px] font-semibold tracking-tight text-[var(--text-primary)]" style={{ letterSpacing: '-0.025em' }}>
               Ñkyel
             </span>
@@ -315,7 +315,7 @@ export default function Sidebar() {
           >
             <Plus size={16} weight="bold" className="text-[var(--text-secondary)] group-hover:text-[var(--accent)]" />
             <span className="font-medium">Nouvelle Piste</span>
-            <span className="ml-auto text-[10px] text-[var(--text-tertiary)] opacity-0 group-hover:opacity-100 transition-opacity">Ctrl+N</span>
+            <span className="ms-auto text-[10px] text-[var(--text-tertiary)] opacity-0 group-hover:opacity-100 transition-opacity">Ctrl+N</span>
           </button>
 
           <button
@@ -324,7 +324,7 @@ export default function Sidebar() {
           >
             <Search size={16} weight="bold" className="text-[var(--text-secondary)] group-hover:text-[var(--accent)]" />
             <span className="font-medium">Radar WANDANA</span>
-            <span className="ml-auto text-[10px] text-[var(--text-tertiary)] opacity-0 group-hover:opacity-100 transition-opacity">Ctrl+K</span>
+            <span className="ms-auto text-[10px] text-[var(--text-tertiary)] opacity-0 group-hover:opacity-100 transition-opacity">Ctrl+K</span>
           </button>
         </div>
 
@@ -374,13 +374,13 @@ export default function Sidebar() {
                   >
                     {/* Indicateur actif latéral */}
                     {conv.id === activeId && (
-                      <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-4 bg-[var(--accent)] rounded-r-full" />
+                      <div className="absolute start-0 top-1/2 -translate-y-1/2 w-[3px] h-4 bg-[var(--accent)] rounded-e-full" />
                     )}
                     <MessageSquare size={14} className={cn(
                       'shrink-0',
                       conv.id === activeId ? 'text-[var(--accent)]' : 'text-[var(--text-tertiary)]'
                     )} strokeWidth={1.5} />
-                    <span className="truncate flex-1 text-left">{conv.title}</span>
+                    <span className="truncate flex-1 text-start">{conv.title}</span>
 
                     {/* Bouton supprimer au hover */}
                     <button

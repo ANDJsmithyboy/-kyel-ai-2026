@@ -242,7 +242,7 @@ export default function MobileMissionModal({
                 <p className="text-[11px] text-[var(--text-secondary)]">Étapes séquentielles et temps de réponse.</p>
               </div>
 
-              <div className="relative pl-6 space-y-4 border-l border-[var(--border)] ml-3 pt-2">
+              <div className="relative ps-6 space-y-4 border-s border-[var(--border)] ms-3 pt-2">
                 {[
                   { label: 'Ingestion de la consigne utilisateur', time: '0.2s', status: 'done' },
                   { label: 'Déploiement du Research Agent', time: '1.1s', status: 'done' },
@@ -252,7 +252,7 @@ export default function MobileMissionModal({
                 ].map((item, idx) => (
                   <div key={idx} className="relative">
                     <span
-                      className={`absolute -left-[31px] top-0.5 w-4 h-4 rounded-full flex items-center justify-center text-[10px] ${
+                      className={`absolute -start-[31px] top-0.5 w-4 h-4 rounded-full flex items-center justify-center text-[10px] ${
                         item.status === 'done'
                           ? 'bg-emerald-500 text-black'
                           : item.status === 'active'

@@ -59,7 +59,7 @@ export default function ChatPlaceholder({ userName }: ChatPlaceholderProps) {
       </div>
 
       {/* Suggestions Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full text-left">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full text-start">
         {GLOBAL_SUGGESTIONS.map((item, idx) => {
           const Icon = item.icon;
           return (

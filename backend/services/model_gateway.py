@@ -789,6 +789,28 @@ MODEL_REGISTRY: List[ModelSpec] = [
         priority=90,
         is_fallback=True,
     ),
+    ModelSpec(
+        id="groq/qwen-2.5-32b",
+        provider=ModelProvider.GROQ,
+        capability=ModelCapability.FAST,
+        display_name="Qwen 2.5 32B (Groq OSS)",
+        context_window=8192,
+        max_tokens=4096,
+        input_cost_per_m=0.10,
+        output_cost_per_m=0.10,
+        priority=88,
+    ),
+    ModelSpec(
+        id="groq/mixtral-8x7b-32768",
+        provider=ModelProvider.GROQ,
+        capability=ModelCapability.FAST,
+        display_name="Mixtral 8x7B (Groq OSS)",
+        context_window=32768,
+        max_tokens=4096,
+        input_cost_per_m=0.10,
+        output_cost_per_m=0.10,
+        priority=89,
+    ),
 
     # ── BALANCED Capabilities ────────────────────────────────
     ModelSpec(

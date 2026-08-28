@@ -50,7 +50,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     return (
       <div className="min-h-screen w-full flex flex-col items-center justify-center bg-[#07090E] text-white p-6 select-none relative overflow-hidden font-sans">
         {/* Specular Ambient Glow */}
-        <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[600px] h-[400px] bg-rose-500/10 rounded-full blur-[140px] pointer-events-none" />
+        <div className="absolute top-1/3 start-1/2 -translate-x-1/2 w-[600px] h-[400px] bg-rose-500/10 rounded-full blur-[140px] pointer-events-none" />
 
         <div className="w-full max-w-md p-8 sm:p-10 rounded-[32px] bg-[#0E121B]/90 backdrop-blur-3xl border border-white/12 text-center space-y-6 shadow-2xl relative z-10 animate-in fade-in zoom-in-95 duration-200">
           <div className="w-14 h-14 mx-auto rounded-2xl bg-rose-500/10 border border-rose-500/20 flex items-center justify-center text-rose-400 shadow-lg">
@@ -85,7 +85,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     );
   }
 
-  const marginLeft = isMobile ? 'ml-0' : (sidebarCollapsed ? 'ml-[64px]' : 'ml-[220px]');
+  const marginLeft = isMobile ? 'ms-0' : (sidebarCollapsed ? 'ms-[64px]' : 'ms-[220px]');
 
   return (
     <div 
@@ -98,7 +98,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         <AdminHeader isMobile={isMobile} toggleSidebar={() => setSidebarOpen(!sidebarOpen)} />
         <main className="flex-1 overflow-y-auto overflow-x-hidden relative w-full">
           {/* Subtle background glow effect (Dynamic) */}
-          <div className={`absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-[var(--accent2)]/[0.03] blur-[120px] rounded-full pointer-events-none transition-colors duration-300`} />
+          <div className={`absolute top-0 start-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-[var(--accent2)]/[0.03] blur-[120px] rounded-full pointer-events-none transition-colors duration-300`} />
           
           <div className="max-w-[1600px] mx-auto p-4 md:p-8 lg:p-10 relative z-10">
             {children}

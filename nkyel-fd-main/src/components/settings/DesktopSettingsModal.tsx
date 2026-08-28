@@ -156,9 +156,15 @@ export default function DesktopSettingsModal() {
   const { signOut } = useClerk();
   const isOpen = useSettingsModal((state: any) => state.isOpen);
   const close = useSettingsModal((state: any) => state.close);
-  const { t, uiLocale, setUiLocale } = useLanguageStore();
+  const modalSection = useSettingsModal((state: any) => state.activeSection);
+  const { t, uiLocale, setUiLocale, setLocale } = useLanguageStore();
+  const isFr = !uiLocale || uiLocale.startsWith('fr');
 
   const [activeSection, setActiveSection] = useState<SettingsSection>('general');
+
+  useEffect(() => {
+    if (modalSection) setActiveSection(modalSection as SettingsSection);
+  }, [modalSection]);
   const [query, setQuery] = useState('');
   const [languageDropdownOpen, setLanguageDropdownOpen] = useState(false);
 
@@ -306,7 +312,7 @@ export default function DesktopSettingsModal() {
 
                   {/* Dropdown Menu matching Screenshot 2 */}
                   {languageDropdownOpen && (
-                    <div className="absolute left-0 top-full mt-1.5 w-64 max-h-80 overflow-y-auto rounded-2xl border border-[var(--border-strong)] bg-[var(--bg-elevated)] p-1.5 shadow-2xl z-50 animate-scale-in text-xs space-y-0.5">
+                    <div className="absolute start-0 top-full mt-1.5 w-64 max-h-80 overflow-y-auto rounded-2xl border border-[var(--border-strong)] bg-[var(--bg-elevated)] p-1.5 shadow-2xl z-50 animate-scale-in text-xs space-y-0.5">
                       {LANGUAGES.map((lang) => {
                         const isSelected =
                           uiLocale === lang.code || (uiLocale.startsWith('fr') && lang.code === 'fr-FR');
@@ -316,9 +322,10 @@ export default function DesktopSettingsModal() {
                             type="button"
                             onClick={() => {
                               setUiLocale(lang.code);
+                              if (setLocale) setLocale(lang.code);
                               setLanguageDropdownOpen(false);
                             }}
-                            className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-left transition-colors ${
+                            className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-start transition-colors ${
                               isSelected
                                 ? 'bg-[var(--surface-raised)] text-[var(--text-primary)] font-semibold'
                                 : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--hover)]'
@@ -391,16 +398,36 @@ export default function DesktopSettingsModal() {
               <div className="flex items-start justify-between gap-6 pt-2">
                 <div className="space-y-1">
                   <p className="text-sm font-medium text-[var(--text-primary)]">
-                    Alerte sonore
+                    {isFr ? 'Alerte sonore' : 'Sound alert'}
                   </p>
                   <p className="text-xs text-[var(--text-secondary)] leading-relaxed max-w-md">
-                    Jouer un son une fois lorsqu'une tâche est terminée pendant votre absence.
+                    {isFr ? 'Jouer un son une fois lorsqu’une tâche est terminée pendant votre absence.' : 'Play a sound once when a task completes while you are away.'}
                   </p>
                 </div>
                 <Toggle
                   checked={soundAlerts}
                   onChange={handleToggleSound}
                   label="Alerte sonore"
+                />
+              </div>
+
+              {/* Recevez les mises à jour du produit (Screenshot 1 & 2) */}
+              <div className="flex items-start justify-between gap-6 pt-2">
+                <div className="space-y-1">
+                  <p className="text-sm font-medium text-[var(--text-primary)]">
+                    {isFr ? 'Recevez les mises à jour du produit' : 'Receive product updates'}
+                  </p>
+                  <p className="text-xs text-[var(--text-secondary)] leading-relaxed max-w-md">
+                    {isFr ? 'Accédez tôt aux nouvelles fonctionnalités et aux études de cas pour optimiser votre flux de travail.' : 'Get early access to new features and case studies to optimize your workflow.'}
+                  </p>
+                </div>
+                <Toggle
+                  checked={readBool('Nkyel AI_productUpdates', true)}
+                  onChange={() => {
+                    const next = !readBool('Nkyel AI_productUpdates', true);
+                    persistBool('Nkyel AI_productUpdates', next);
+                  }}
+                  label="Recevez les mises à jour du produit"
                 />
               </div>
             </div>
@@ -725,7 +752,7 @@ export default function DesktopSettingsModal() {
         onMouseDown={(event) => event.stopPropagation()}
       >
         {/* Navigation Sidebar matching Screenshot 1 */}
-        <aside className="nkyel-settings-nav flex md:w-[260px] w-full shrink-0 flex-col border-b md:border-r md:border-b-0 border-[var(--border)] bg-[var(--surface)] px-3 py-2 md:py-4 select-none">
+        <aside className="nkyel-settings-nav flex md:w-[260px] w-full shrink-0 flex-col border-b md:border-e md:border-b-0 border-[var(--border)] bg-[var(--surface)] px-3 py-2 md:py-4 select-none">
           {/* User Profile Header & Mobile Close */}
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center gap-2.5 px-2 py-1">
@@ -754,12 +781,12 @@ export default function DesktopSettingsModal() {
 
           {/* Search Box - Hidden on mobile */}
           <div className="relative my-2 hidden md:block">
-            <MagnifyingGlass size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-tertiary)]" />
+            <MagnifyingGlass size={15} className="absolute start-3 top-1/2 -translate-y-1/2 text-[var(--text-tertiary)]" />
             <input
               value={query}
               onChange={(event) => setQuery(event.target.value)}
               placeholder="Rechercher"
-              className="h-9 w-full rounded-xl border border-[var(--border)] bg-[var(--bg-inset)] pl-8 pr-3 text-xs text-[var(--text-primary)] outline-none placeholder:text-[var(--text-tertiary)] focus:border-[var(--accent)]"
+              className="h-9 w-full rounded-xl border border-[var(--border)] bg-[var(--bg-inset)] ps-8 pe-3 text-xs text-[var(--text-primary)] outline-none placeholder:text-[var(--text-tertiary)] focus:border-[var(--accent)]"
             />
           </div>
 
@@ -779,7 +806,7 @@ export default function DesktopSettingsModal() {
                       type="button"
                       key={id}
                       onClick={() => setActiveSection(id)}
-                      className={`flex h-8 shrink-0 items-center gap-2.5 rounded-xl px-2.5 md:w-full text-left text-xs font-medium transition-colors ${
+                      className={`flex h-8 shrink-0 items-center gap-2.5 rounded-xl px-2.5 md:w-full text-start text-xs font-medium transition-colors ${
                         activeSection === id
                           ? 'bg-[var(--surface-raised)] font-semibold text-[var(--text-primary)] shadow-xs border border-[var(--border)]'
                           : 'text-[var(--text-secondary)] bg-[var(--surface-raised)] md:bg-transparent hover:bg-[var(--hover)] hover:text-[var(--text-primary)]'
@@ -815,7 +842,7 @@ export default function DesktopSettingsModal() {
             type="button"
             onClick={close}
             aria-label="Fermer les paramètres"
-            className="hidden md:flex absolute right-6 top-6 h-8 w-8 items-center justify-center rounded-xl text-[var(--text-tertiary)] hover:bg-[var(--hover)] hover:text-[var(--text-primary)] transition-colors z-50"
+            className="hidden md:flex absolute end-6 top-6 h-8 w-8 items-center justify-center rounded-xl text-[var(--text-tertiary)] hover:bg-[var(--hover)] hover:text-[var(--text-primary)] transition-colors z-50"
           >
             <X size={18} weight="bold" />
           </button>
@@ -840,7 +867,7 @@ function SettingRow({
 }) {
   return (
     <div className="flex items-center justify-between border-b border-[var(--border)] py-4">
-      <div className="pr-6">
+      <div className="pe-6">
         <p className="text-xs font-semibold text-[var(--text-primary)]">{label}</p>
         <p className="mt-0.5 text-[11px] leading-relaxed text-[var(--text-secondary)]">{detail}</p>
       </div>

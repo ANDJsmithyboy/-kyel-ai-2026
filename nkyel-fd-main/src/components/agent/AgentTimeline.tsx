@@ -96,7 +96,7 @@ export function AgentTimeline({ sessionId }: AgentTimelineProps) {
             >
               {/* Ligne connectrice verticale */}
               {idx !== events.length - 1 && (
-                <div className="absolute left-2.5 top-6 bottom-[-16px] w-[1px] bg-[var(--text-ai)]/20"></div>
+                <div className="absolute start-2.5 top-6 bottom-[-16px] w-[1px] bg-[var(--text-ai)]/20"></div>
               )}
               
               <div className="flex-shrink-0 mt-0.5 bg-[var(--bg-panel)] z-10">

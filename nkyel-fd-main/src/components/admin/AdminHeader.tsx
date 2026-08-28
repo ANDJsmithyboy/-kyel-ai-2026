@@ -58,7 +58,7 @@ export default function AdminHeader({
         {isMobile && (
           <button 
             onClick={toggleSidebar}
-            className="w-8 h-8 flex items-center justify-center rounded-md text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-card2)] transition-colors -ml-1"
+            className="w-8 h-8 flex items-center justify-center rounded-md text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-card2)] transition-colors -ms-1"
           >
             <List size={20} weight="thin" />
           </button>
@@ -78,9 +78,9 @@ export default function AdminHeader({
             <input
               type="search"
               placeholder="Rechercher utilisateurs, logs, agents..."
-              className="w-full h-8 pl-8 pr-4 rounded-full bg-[var(--bg-card)] border border-[var(--glass-border)] text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:outline-none focus:border-[var(--accent)] transition-all shadow-sm antialiased font-sans"
+              className="w-full h-8 ps-8 pe-4 rounded-full bg-[var(--bg-card)] border border-[var(--glass-border)] text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:outline-none focus:border-[var(--accent)] transition-all shadow-sm antialiased font-sans"
             />
-            <MagnifyingGlass className="absolute left-2.5 top-2 w-4 h-4 text-[var(--text-muted)] group-focus-within:text-[var(--accent)] transition-colors" weight="thin" />
+            <MagnifyingGlass className="absolute start-2.5 top-2 w-4 h-4 text-[var(--text-muted)] group-focus-within:text-[var(--accent)] transition-colors" weight="thin" />
           </div>
         </div>
       )}
@@ -89,7 +89,7 @@ export default function AdminHeader({
       <div className="flex items-center gap-2 relative">
         {/* System status (Desktop only) */}
         {!isMobile && (
-          <div className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg bg-[var(--glass)] border border-[var(--glass-border)] mr-2">
+          <div className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg bg-[var(--glass)] border border-[var(--glass-border)] me-2">
             <div className="w-1.5 h-1.5 rounded-full bg-[var(--emerald)] animate-pulse shadow-[0_0_8px_var(--emerald)]" />
             <span className="text-[10px] text-[var(--text-primary)] font-mono tracking-widest uppercase antialiased">Opérationnel</span>
           </div>
@@ -98,7 +98,7 @@ export default function AdminHeader({
         {/* Notifications */}
         <button className="relative w-8 h-8 rounded-lg flex items-center justify-center text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--glass)] transition-colors">
           <Bell size={18} weight="thin" />
-          <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-[var(--destructive)] border-[1.5px] border-[var(--bg-base)]" />
+          <span className="absolute top-1.5 end-1.5 w-1.5 h-1.5 rounded-full bg-[var(--destructive)] border-[1.5px] border-[var(--bg-base)]" />
         </button>
 
         {/* Theme Switcher */}
@@ -118,7 +118,7 @@ export default function AdminHeader({
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: 10, scale: 0.95 }}
                 transition={{ duration: 0.15 }}
-                className="absolute right-0 mt-2 w-56 rounded-xl bg-[var(--bg-card)] border border-[var(--glass-border)] shadow-2xl py-1.5 z-50 overflow-hidden"
+                className="absolute end-0 mt-2 w-56 rounded-xl bg-[var(--bg-card)] border border-[var(--glass-border)] shadow-2xl py-1.5 z-50 overflow-hidden"
               >
                 <div className="px-3 py-1.5 border-b border-[var(--divider)] mb-1">
                   <p className="text-[10px] font-semibold text-[var(--text-muted)] uppercase tracking-widest antialiased">Thèmes Nkyel</p>

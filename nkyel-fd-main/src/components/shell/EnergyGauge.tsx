@@ -31,7 +31,7 @@ export default function EnergyGauge({ used, total }: EnergyGaugeProps) {
         style={{ background: 'var(--control-bg)', border: '1px solid var(--border)' }}
       >
         <motion.div
-          className="absolute inset-y-0 left-0 rounded-full"
+          className="absolute inset-y-0 start-0 rounded-full"
           style={{ background: fillColor }}
           initial={{ width: 0 }}
           animate={{ width: `${pct}%` }}

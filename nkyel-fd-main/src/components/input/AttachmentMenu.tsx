@@ -128,7 +128,7 @@ export default function AttachmentMenu({
                     key={cap.id}
                     type="button"
                     onClick={() => { onSelectOption(cap.label); onClose(); }}
-                    className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-white hover:bg-white/10 text-left text-sm"
+                    className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-white hover:bg-white/10 text-start text-sm"
                   >
                     <Icon size={18} className="text-[var(--accent)] shrink-0" />
                     <span className="truncate">{cap.label}</span>
@@ -144,7 +144,7 @@ export default function AttachmentMenu({
               <button
                 type="button"
                 onClick={() => { onSelectOption('Google Drive'); onClose(); }}
-                className="w-full flex items-center gap-3 px-3 py-3 rounded-xl text-white hover:bg-white/10 text-left text-sm"
+                className="w-full flex items-center gap-3 px-3 py-3 rounded-xl text-white hover:bg-white/10 text-start text-sm"
               >
                 <GoogleDriveLogo size={20} className="text-[#00D4AA]" />
                 <span>Google Drive</span>
@@ -152,7 +152,7 @@ export default function AttachmentMenu({
               <button
                 type="button"
                 onClick={() => { onSelectOption('Mémoire Ñkyel'); onClose(); }}
-                className="w-full flex items-center gap-3 px-3 py-3 rounded-xl text-white hover:bg-white/10 text-left text-sm"
+                className="w-full flex items-center gap-3 px-3 py-3 rounded-xl text-white hover:bg-white/10 text-start text-sm"
               >
                 <Books size={20} className="text-[var(--accent)]" />
                 <span>Mémoire Ñkyel</span>
@@ -166,7 +166,7 @@ export default function AttachmentMenu({
               <button
                 type="button"
                 onClick={() => setActiveSubmenu('capacities')}
-                className="w-full flex items-center justify-between px-3 py-3 rounded-xl text-white hover:bg-white/10 text-left text-sm"
+                className="w-full flex items-center justify-between px-3 py-3 rounded-xl text-white hover:bg-white/10 text-start text-sm"
               >
                 <div className="flex items-center gap-3">
                   <Robot size={18} className="text-[var(--accent)]" />
@@ -178,7 +178,7 @@ export default function AttachmentMenu({
               <button
                 type="button"
                 onClick={() => { onSelectOption('Plan d’exécution'); onClose(); }}
-                className="w-full flex items-center justify-between px-3 py-3 rounded-xl text-white hover:bg-white/10 text-left text-sm"
+                className="w-full flex items-center justify-between px-3 py-3 rounded-xl text-white hover:bg-white/10 text-start text-sm"
               >
                 <div className="flex items-center gap-3">
                   <TreeStructure size={18} className="text-[#6757E8]" />
@@ -189,7 +189,7 @@ export default function AttachmentMenu({
               <button
                 type="button"
                 onClick={() => setActiveSubmenu('sources')}
-                className="w-full flex items-center justify-between px-3 py-3 rounded-xl text-white hover:bg-white/10 text-left text-sm"
+                className="w-full flex items-center justify-between px-3 py-3 rounded-xl text-white hover:bg-white/10 text-start text-sm"
               >
                 <div className="flex items-center gap-3">
                   <FolderOpen size={18} className="text-[#9199A8]" />
@@ -198,7 +198,7 @@ export default function AttachmentMenu({
                 <CaretRight size={16} className="text-[#9199A8]" />
               </button>
 
-              <label className="w-full flex items-center gap-3 px-3 py-3 rounded-xl text-white hover:bg-white/10 text-left text-sm cursor-pointer">
+              <label className="w-full flex items-center gap-3 px-3 py-3 rounded-xl text-white hover:bg-white/10 text-start text-sm cursor-pointer">
                 <FileArrowUp size={18} className="text-[#9199A8]" />
                 <span>Ajouter depuis les fichiers locaux</span>
                 <input
@@ -221,7 +221,7 @@ export default function AttachmentMenu({
       {/* 2. Desktop Floating Menu (>= 640px) */}
       <div
         ref={menuRef}
-        className="hidden sm:block absolute bottom-full left-0 mb-3 w-64 p-1.5 rounded-2xl bg-[#10141F] border border-white/10 shadow-2xl backdrop-blur-2xl z-50 text-[13px] font-medium"
+        className="hidden sm:block absolute bottom-full start-0 mb-3 w-64 p-1.5 rounded-2xl bg-[#10141F] border border-white/10 shadow-2xl backdrop-blur-2xl z-50 text-[13px] font-medium"
         style={{
           boxShadow: '0 20px 50px rgba(0,0,0,0.7), 0 0 1px 1px rgba(255,255,255,0.08)',
         }}
@@ -234,7 +234,7 @@ export default function AttachmentMenu({
         >
           <button
             type="button"
-            className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-[#EDEAE3] hover:text-white hover:bg-white/[0.06] transition-colors text-left"
+            className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-[#EDEAE3] hover:text-white hover:bg-white/[0.06] transition-colors text-start"
           >
             <div className="flex items-center gap-2.5">
               <FolderOpen size={16} className="text-[#9199A8]" />
@@ -244,11 +244,11 @@ export default function AttachmentMenu({
           </button>
 
           {activeSubmenu === 'sources' && (
-            <div className="absolute left-full top-0 ml-1.5 w-60 p-1.5 rounded-2xl bg-[#10141F] border border-white/10 shadow-2xl backdrop-blur-2xl z-50 space-y-1">
+            <div className="absolute start-full top-0 ms-1.5 w-60 p-1.5 rounded-2xl bg-[#10141F] border border-white/10 shadow-2xl backdrop-blur-2xl z-50 space-y-1">
               <button
                 type="button"
                 onClick={() => { onSelectOption('Google Drive'); onClose(); }}
-                className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-[#EDEAE3] hover:bg-white/[0.06] text-left"
+                className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-[#EDEAE3] hover:bg-white/[0.06] text-start"
               >
                 <GoogleDriveLogo size={16} className="text-[#00D4AA]" />
                 <span>Google Drive</span>
@@ -256,7 +256,7 @@ export default function AttachmentMenu({
               <button
                 type="button"
                 onClick={() => { onSelectOption('Mémoire Ñkyel'); onClose(); }}
-                className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-[#EDEAE3] hover:bg-white/[0.06] text-left"
+                className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-[#EDEAE3] hover:bg-white/[0.06] text-start"
               >
                 <Books size={16} className="text-[var(--accent)]" />
                 <span>Mémoire Ñkyel</span>
@@ -269,7 +269,7 @@ export default function AttachmentMenu({
         <button
           type="button"
           onClick={() => { onSelectOption('Google Drive'); onClose(); }}
-          className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-[#EDEAE3] hover:text-white hover:bg-white/[0.06] transition-colors text-left"
+          className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-[#EDEAE3] hover:text-white hover:bg-white/[0.06] transition-colors text-start"
         >
           <GoogleDriveLogo size={16} className="text-[#00D4AA]" />
           <span>Ajouter depuis Google Drive</span>
@@ -279,7 +279,7 @@ export default function AttachmentMenu({
         <button
           type="button"
           onClick={() => { onSelectOption('Plan d’exécution'); onClose(); }}
-          className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-[#EDEAE3] hover:text-white hover:bg-white/[0.06] transition-colors text-left"
+          className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-[#EDEAE3] hover:text-white hover:bg-white/[0.06] transition-colors text-start"
         >
           <div className="flex items-center gap-2.5">
             <TreeStructure size={16} className="text-[#6757E8]" />
@@ -296,7 +296,7 @@ export default function AttachmentMenu({
         >
           <button
             type="button"
-            className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-[#EDEAE3] hover:text-white hover:bg-white/[0.06] transition-colors text-left"
+            className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-[#EDEAE3] hover:text-white hover:bg-white/[0.06] transition-colors text-start"
           >
             <div className="flex items-center gap-2.5">
               <Robot size={16} className="text-[var(--accent)]" />
@@ -306,7 +306,7 @@ export default function AttachmentMenu({
           </button>
 
           {activeSubmenu === 'capacities' && (
-            <div className="absolute left-full top-0 ml-1.5 w-72 p-1.5 rounded-2xl bg-[#10141F] border border-white/10 shadow-2xl backdrop-blur-2xl z-50 space-y-1 max-h-80 overflow-y-auto scrollbar-thin">
+            <div className="absolute start-full top-0 ms-1.5 w-72 p-1.5 rounded-2xl bg-[#10141F] border border-white/10 shadow-2xl backdrop-blur-2xl z-50 space-y-1 max-h-80 overflow-y-auto scrollbar-thin">
               <div className="px-3 py-1.5 text-[11px] font-semibold text-[#9199A8] uppercase tracking-wider">
                 Capacités d'action Ñkyel
               </div>
@@ -317,7 +317,7 @@ export default function AttachmentMenu({
                     key={cap.id}
                     type="button"
                     onClick={() => { onSelectOption(cap.label); onClose(); }}
-                    className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-[#EDEAE3] hover:bg-white/[0.06] text-left transition-colors"
+                    className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-[#EDEAE3] hover:bg-white/[0.06] text-start transition-colors"
                   >
                     <Icon size={16} className="text-[var(--accent)] shrink-0" />
                     <span className="truncate">{cap.label}</span>
@@ -332,7 +332,7 @@ export default function AttachmentMenu({
         <button
           type="button"
           onClick={() => { onSelectOption('Mémoire Ñkyel'); onClose(); }}
-          className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-[#EDEAE3] hover:text-white hover:bg-white/[0.06] transition-colors text-left"
+          className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-[#EDEAE3] hover:text-white hover:bg-white/[0.06] transition-colors text-start"
         >
           <div className="flex items-center gap-2.5">
             <Books size={16} className="text-[var(--accent)]" />
@@ -343,7 +343,7 @@ export default function AttachmentMenu({
         <div className="h-[1px] bg-white/[0.06] my-1" />
 
         {/* Ajouter depuis les fichiers locaux */}
-        <label className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-[#EDEAE3] hover:text-white hover:bg-white/[0.06] transition-colors text-left cursor-pointer">
+        <label className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-[#EDEAE3] hover:text-white hover:bg-white/[0.06] transition-colors text-start cursor-pointer">
           <FileArrowUp size={16} className="text-[#9199A8]" />
           <span>Ajouter depuis les fichiers locaux</span>
           <input

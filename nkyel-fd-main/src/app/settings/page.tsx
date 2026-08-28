@@ -216,7 +216,7 @@ function SettingsContent() {
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
-            className="fixed top-16 left-1/2 -translate-x-1/2 px-4 py-2 rounded-full bg-[var(--surface-raised)] border border-[var(--border-strong)] text-xs text-[var(--text-primary)] shadow-lg backdrop-blur-2xl z-50 flex items-center gap-2"
+            className="fixed top-16 start-1/2 -translate-x-1/2 px-4 py-2 rounded-full bg-[var(--surface-raised)] border border-[var(--border-strong)] text-xs text-[var(--text-primary)] shadow-lg backdrop-blur-2xl z-50 flex items-center gap-2"
           >
             <CheckCircle size={14} weight="fill" className="text-emerald-400" />
             <span>{toastMessage}</span>
@@ -241,7 +241,7 @@ function SettingsContent() {
                     key={tab.id}
                     type="button"
                     onClick={() => setActiveTab(tab.id)}
-                    className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-2xl text-xs font-medium transition-all text-left touch-manipulation ${
+                    className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-2xl text-xs font-medium transition-all text-start touch-manipulation ${
                       isSelected
                         ? 'bg-[var(--surface-raised)] text-[var(--text-primary)] font-semibold shadow-xs border border-[var(--border)]'
                         : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--hover)] border border-transparent'
@@ -615,7 +615,7 @@ function SettingsContent() {
                         >
                           <span
                             className={`w-5 h-5 rounded-full bg-white absolute top-0.5 transition-transform ${
-                              memoryEnabled ? 'right-0.5' : 'left-0.5'
+                              memoryEnabled ? 'end-0.5' : 'start-0.5'
                             }`}
                           />
                         </button>
@@ -732,7 +732,7 @@ function SettingsContent() {
                       key={tab.id}
                       type="button"
                       onClick={() => setMobileDrilldown(tab.id)}
-                      className="w-full flex items-center justify-between p-4 rounded-2xl bg-[var(--surface-raised)] border border-[var(--border)] text-left active:scale-[0.99] touch-manipulation min-h-[54px]"
+                      className="w-full flex items-center justify-between p-4 rounded-2xl bg-[var(--surface-raised)] border border-[var(--border)] text-start active:scale-[0.99] touch-manipulation min-h-[54px]"
                     >
                       <div className="flex items-center gap-3">
                         <div className="w-8 h-8 rounded-xl bg-[var(--control-bg)] border border-[var(--border-subtle)] flex items-center justify-center text-[var(--accent)]">

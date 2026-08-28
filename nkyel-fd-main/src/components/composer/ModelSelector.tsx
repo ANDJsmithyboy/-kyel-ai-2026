@@ -63,7 +63,7 @@ export default function ModelSelector({
     DYNAMIC_ENGINES.find((e) => e.id === selectedEngineId) || DYNAMIC_ENGINES[0];
 
   return (
-    <div className="relative inline-block text-left">
+    <div className="relative inline-block text-start">
       {/* Bouton de sélection */}
       <button
         type="button"
@@ -91,7 +91,7 @@ export default function ModelSelector({
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 4, scale: 0.98 }}
               transition={{ duration: 0.15, ease: 'easeOut' }}
-              className="absolute left-0 bottom-full mb-2 w-72 rounded-2xl bg-[#0E121A]/95 backdrop-blur-xl border border-white/[0.1] shadow-2xl p-1.5 z-50 overflow-hidden"
+              className="absolute start-0 bottom-full mb-2 w-72 rounded-2xl bg-[#0E121A]/95 backdrop-blur-xl border border-white/[0.1] shadow-2xl p-1.5 z-50 overflow-hidden"
             >
               <div className="px-3 py-2 border-b border-white/[0.06] mb-1">
                 <span className="text-[11px] font-mono text-[#7E8795] uppercase tracking-wider">
@@ -111,7 +111,7 @@ export default function ModelSelector({
                         onSelectEngine(engine.id);
                         setIsOpen(false);
                       }}
-                      className={`w-full text-left p-2.5 rounded-xl transition-colors flex items-start justify-between gap-2 ${
+                      className={`w-full text-start p-2.5 rounded-xl transition-colors flex items-start justify-between gap-2 ${
                         isSelected
                           ? 'bg-[#151922] border border-white/[0.08] text-[#F1EEE7]'
                           : 'hover:bg-white/[0.04] text-[#B8C0CC]'

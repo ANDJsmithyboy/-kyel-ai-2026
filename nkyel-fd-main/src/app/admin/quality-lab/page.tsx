@@ -59,9 +59,9 @@ export default function QualityLabPage() {
                   <div className="h-full bg-gradient-to-r from-emerald-500 to-teal-400 rounded-full" style={{ width: `${(pv.passed / pv.total) * 100}%` }} />
                 </div>
               </div>
-              <span className="text-xs text-gray-400 w-24 text-right">{pv.passed}/{pv.total} passed</span>
-              <span className="text-xs text-amber-400 w-16 text-right">⭐ {pv.score}</span>
-              <span className="text-[10px] text-gray-600 w-20 text-right">{pv.date}</span>
+              <span className="text-xs text-gray-400 w-24 text-end">{pv.passed}/{pv.total} passed</span>
+              <span className="text-xs text-amber-400 w-16 text-end">⭐ {pv.score}</span>
+              <span className="text-[10px] text-gray-600 w-20 text-end">{pv.date}</span>
             </div>
           ))}
         </div>

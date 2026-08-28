@@ -108,7 +108,7 @@ export default function TierPicker({
             className={cn(
               'z-50 overflow-hidden shadow-2xl',
               'fixed inset-x-0 bottom-0 rounded-t-3xl md:rounded-2xl',
-              'md:absolute md:inset-auto md:bottom-full md:left-0 md:mb-2 md:w-[320px]',
+              'md:absolute md:inset-auto md:bottom-full md:start-0 md:mb-2 md:w-[320px]',
               'max-h-[85vh] overflow-y-auto pb-safe',
             )}
             style={{
@@ -146,7 +146,7 @@ export default function TierPicker({
                       onClose();
                     }}
                     className={cn(
-                      'w-full min-h-[48px] flex items-start gap-3 p-3 rounded-2xl text-left transition-colors touch-manipulation active:scale-[0.99]',
+                      'w-full min-h-[48px] flex items-start gap-3 p-3 rounded-2xl text-start transition-colors touch-manipulation active:scale-[0.99]',
                       isSelected
                         ? 'bg-[var(--surface-raised)] border border-[var(--accent)]/40 shadow-xs'
                         : 'hover:bg-[var(--hover)] border border-transparent',

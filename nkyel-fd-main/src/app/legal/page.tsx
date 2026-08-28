@@ -61,7 +61,7 @@ export default function LegalPage() {
             <p>
               L&apos;infrastructure de production Ñkyel AI repose sur une architecture de haute disponibilité distribuée et souveraine :
             </p>
-            <ul className="list-disc pl-5 space-y-1 text-white/70">
+            <ul className="list-disc ps-5 space-y-1 text-white/70">
               <li><strong>Frontend & Edge CDN</strong> : Vercel Inc. (San Francisco, CA, USA) avec réplication multi-régions.</li>
               <li><strong>Base de données relationnelle</strong> : Neon PostgreSQL (Francfort, Allemagne / UE) avec Row-Level Security.</li>
               <li><strong>Stockage d&apos;objets & Artefacts</strong> : Cloudflare R2 (Chiffrement au repos, réplication globale sans frais de sortie).</li>

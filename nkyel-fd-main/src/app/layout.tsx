@@ -10,6 +10,7 @@ import { frFR } from '@clerk/localizations';
 import SplashScreen from '@/components/SplashScreen';
 import GlobalShortcuts from '@/components/shortcuts/GlobalShortcuts';
 import CommandPalette from '@/components/palette/CommandPalette';
+import LocaleFontLoader from '@/components/LocaleFontLoader';
 import './globals.css';
 
 /* ── Typography: Geist Sans + Geist Mono only ──────── */
@@ -88,6 +89,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         </head>
         <body className={`antialiased overflow-hidden ${geist.variable} ${geistMono.variable}`} suppressHydrationWarning>
           {enableSplash && <SplashScreen />}
+          <LocaleFontLoader />
           <GlobalShortcuts />
           <CommandPalette />
           {children}

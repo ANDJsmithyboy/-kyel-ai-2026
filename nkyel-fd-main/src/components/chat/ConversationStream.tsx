@@ -72,7 +72,7 @@ export default function ConversationStream({
                 <div className="w-2 h-2 rounded-full bg-[var(--accent)] animate-pulse" style={{ animationDelay: '0ms' }} />
                 <div className="w-2 h-2 rounded-full bg-[var(--accent)] animate-pulse" style={{ animationDelay: '200ms' }} />
                 <div className="w-2 h-2 rounded-full bg-[var(--accent)] animate-pulse" style={{ animationDelay: '400ms' }} />
-                <span className="text-[11px] text-[#9199A8] font-medium ml-1">Ñkyel réfléchit…</span>
+                <span className="text-[11px] text-[#9199A8] font-medium ms-1">Ñkyel réfléchit…</span>
               </div>
             </motion.div>
           )}

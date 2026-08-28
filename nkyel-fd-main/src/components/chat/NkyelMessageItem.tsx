@@ -2,7 +2,7 @@
  * Ñkyel AI — Canonical Message Item (Google-Grade Clarity × Apple Luxury)
  * SmartANDJ AI Technologies · Founder: Daniel Jonathan ANDJ
  *
- * User: Compact right-aligned elevated bubble.
+ * User: Compact end-aligned elevated bubble.
  * Assistant: Natural centered reading column, full Markdown, citations,
  *            artifact deliverable card, follow-up suggestions, action bar.
  */
@@ -132,7 +132,7 @@ export default function NkyelMessageItem({
           <p className="whitespace-pre-wrap break-words">{content}</p>
 
           {/* Discreet hover copy button */}
-          <div className="absolute -left-9 bottom-2 opacity-0 group-hover:opacity-100 transition-opacity hidden sm:flex items-center">
+          <div className="absolute -start-9 bottom-2 opacity-0 group-hover:opacity-100 transition-opacity hidden sm:flex items-center">
             <button
               type="button"
               onClick={handleCopy}
@@ -318,7 +318,7 @@ export default function NkyelMessageItem({
             <button
               type="button"
               onClick={onRegenerate}
-              className="min-h-[36px] sm:min-h-[32px] px-2.5 rounded-lg flex items-center gap-1.5 hover:text-[var(--text-primary)] hover:bg-[var(--hover)] transition-colors active:scale-95 touch-manipulation ml-auto"
+              className="min-h-[36px] sm:min-h-[32px] px-2.5 rounded-lg flex items-center gap-1.5 hover:text-[var(--text-primary)] hover:bg-[var(--hover)] transition-colors active:scale-95 touch-manipulation ms-auto"
               title={isFr ? 'Régénérer la réponse' : 'Regenerate response'}
               aria-label="Regenerate response"
             >

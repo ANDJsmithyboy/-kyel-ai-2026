@@ -285,7 +285,7 @@ export default function NkyelChatScreen({
           >
             Nkyel AI
           </span>
-          <div className="ml-auto w-2 h-2 rounded-full animate-pulse" style={{ background: 'var(--accent)' }} />
+          <div className="ms-auto w-2 h-2 rounded-full animate-pulse" style={{ background: 'var(--accent)' }} />
         </div>
 
         {/* New Chat */}
@@ -317,7 +317,7 @@ export default function NkyelChatScreen({
               <button
                 key={c.id}
                 onClick={() => { onSelectConversation?.(c.id); setSidebarOpen(false); }}
-                className="w-full text-left px-3 py-2.5 rounded-lg text-sm truncate transition-colors hover:bg-[var(--accent-06)]"
+                className="w-full text-start px-3 py-2.5 rounded-lg text-sm truncate transition-colors hover:bg-[var(--accent-06)]"
                 style={{ color: 'var(--text-primary)' }}
               >
                 ★ {c.title}
@@ -341,7 +341,7 @@ export default function NkyelChatScreen({
               <button
                 key={c.id}
                 onClick={() => { onSelectConversation?.(c.id); setSidebarOpen(false); }}
-                className="w-full text-left px-3 py-2.5 rounded-lg text-sm truncate transition-colors hover:bg-[var(--accent-06)]"
+                className="w-full text-start px-3 py-2.5 rounded-lg text-sm truncate transition-colors hover:bg-[var(--accent-06)]"
                 style={{ color: 'var(--text-primary)' }}
               >
                 {c.title}
@@ -375,7 +375,7 @@ export default function NkyelChatScreen({
                 className="flex flex-1 items-center justify-between hover:bg-[var(--accent-06)] rounded px-1 py-1 transition-colors"
               >
                 <span className="text-[11px] font-bold uppercase tracking-wider" style={{ color: 'var(--text-tertiary)' }}>⚙️ L'Antre [Paramètres]</span>
-                <ChevronDown size={14} style={{ transform: antreExpanded ? 'rotate(180deg)' : 'none', color: 'var(--text-tertiary)' }} className="transition-transform mr-1" />
+                <ChevronDown size={14} style={{ transform: antreExpanded ? 'rotate(180deg)' : 'none', color: 'var(--text-tertiary)' }} className="transition-transform me-1" />
               </button>
               <button className="p-1 rounded hover:bg-[var(--accent-06)] transition-colors" title="Mentions légales & Confidentialité">
                 <MoreVertical size={14} style={{ color: 'var(--text-tertiary)' }} />
@@ -383,7 +383,7 @@ export default function NkyelChatScreen({
             </div>
             
             {antreExpanded && (
-              <div className="space-y-3 pl-2 border-l border-[var(--border)] ml-2 pb-2">
+              <div className="space-y-3 ps-2 border-s border-[var(--border)] ms-2 pb-2">
                 
                 {/* Vecteur de Force */}
                 <div>
@@ -396,7 +396,7 @@ export default function NkyelChatScreen({
                 {/* Extensions de Traque */}
                 <div>
                   <p className="text-[12px] font-semibold mb-2" style={{ color: 'var(--text-secondary)' }}>Extensions de Traque</p>
-                  <div className="space-y-2 pl-2">
+                  <div className="space-y-2 ps-2">
                     <label className="flex items-center justify-between cursor-pointer">
                       <span className="text-[11px]" style={{ color: 'var(--text-tertiary)' }}>Invoquer Wandana</span>
                       <Switch checked={toggles.wandana} onChange={() => toggleSetting('wandana')} />
@@ -411,7 +411,7 @@ export default function NkyelChatScreen({
                 {/* Souveraineté */}
                 <div>
                   <p className="text-[12px] font-semibold mb-2" style={{ color: 'var(--text-secondary)' }}>Souveraineté</p>
-                  <div className="space-y-2 pl-2">
+                  <div className="space-y-2 ps-2">
                     <label className="flex items-center justify-between cursor-pointer">
                       <span className="text-[11px]" style={{ color: 'var(--text-tertiary)' }}>Mode Ombre</span>
                       <Switch checked={toggles.ombre} onChange={() => toggleSetting('ombre')} />
@@ -430,9 +430,9 @@ export default function NkyelChatScreen({
                 {/* Administration */}
                 <div>
                   <p className="text-[12px] font-semibold mb-1" style={{ color: 'var(--text-secondary)' }}>Administration</p>
-                  <div className="space-y-1 pl-2">
-                    <button className="w-full text-left text-[11px] transition-colors hover:text-[var(--text-primary)]" style={{ color: 'var(--text-tertiary)' }}>Profil Cadre</button>
-                    <button className="w-full text-left text-[11px] transition-colors hover:text-[var(--text-primary)]" style={{ color: 'var(--text-tertiary)' }}>Pacte de Chasse</button>
+                  <div className="space-y-1 ps-2">
+                    <button className="w-full text-start text-[11px] transition-colors hover:text-[var(--text-primary)]" style={{ color: 'var(--text-tertiary)' }}>Profil Cadre</button>
+                    <button className="w-full text-start text-[11px] transition-colors hover:text-[var(--text-primary)]" style={{ color: 'var(--text-tertiary)' }}>Pacte de Chasse</button>
                   </div>
                 </div>
                 
@@ -523,7 +523,7 @@ export default function NkyelChatScreen({
               </button>
               {showConvMenu && (
                 <div
-                  className="absolute right-0 top-10 w-48 rounded-xl py-1 z-50 glass"
+                  className="absolute end-0 top-10 w-48 rounded-xl py-1 z-50 glass"
                   style={{ border: '1px solid var(--glass-border)' }}
                 >
                   {[
@@ -689,7 +689,7 @@ export default function NkyelChatScreen({
                   <>
                     <div className="fixed inset-0 z-40" onClick={() => setShowAddSheet(false)} />
                     <div
-                      className="absolute bottom-[calc(100%+12px)] left-0 w-[320px] max-w-[85vw] rounded-[22px] p-2 z-50 animate-in fade-in slide-in-from-bottom-2"
+                      className="absolute bottom-[calc(100%+12px)] start-0 w-[320px] max-w-[85vw] rounded-[22px] p-2 z-50 animate-in fade-in slide-in-from-bottom-2"
                       style={{ 
                         background: 'var(--glass-floating)', 
                         backdropFilter: 'blur(30px) saturate(190%)',
@@ -728,7 +728,7 @@ export default function NkyelChatScreen({
                           <button
                             key={item.id}
                             onClick={() => { onAddToChatAction?.(item.id); setShowAddSheet(false); }}
-                            className="w-full flex items-center gap-3 px-3 py-2 rounded-xl transition-colors hover:bg-[var(--hover)] text-left"
+                            className="w-full flex items-center gap-3 px-3 py-2 rounded-xl transition-colors hover:bg-[var(--hover)] text-start"
                             style={{ color: 'var(--text-primary)' }}
                           >
                             <span style={{ color: 'var(--text-secondary)' }}>{item.icon}</span>
@@ -746,7 +746,7 @@ export default function NkyelChatScreen({
                           <button
                             key={item.id}
                             onClick={() => { onAddToChatAction?.(item.id); setShowAddSheet(false); }}
-                            className="w-full flex items-center justify-between px-3 py-2 rounded-xl transition-colors hover:bg-[var(--hover)] text-left"
+                            className="w-full flex items-center justify-between px-3 py-2 rounded-xl transition-colors hover:bg-[var(--hover)] text-start"
                             style={{ color: 'var(--text-primary)' }}
                           >
                             <div className="flex items-center gap-3">
@@ -808,7 +808,7 @@ export default function NkyelChatScreen({
                 ) : (
                   /* Live mode button (Headphones) */
                   <button
-                    className="h-8 px-3 flex items-center gap-1.5 rounded-full transition-all relative overflow-hidden group ml-1"
+                    className="h-8 px-3 flex items-center gap-1.5 rounded-full transition-all relative overflow-hidden group ms-1"
                     style={{
                       background: 'var(--accent-06)',
                       color: 'var(--text-secondary)',

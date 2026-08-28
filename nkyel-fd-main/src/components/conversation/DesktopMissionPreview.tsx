@@ -17,7 +17,7 @@ export default function DesktopMissionPreview({ composer }: DesktopMissionPrevie
             <div className="flex items-center gap-3 border-b border-white/[0.06] pb-3">
               <div className="flex h-9 w-9 items-center justify-center rounded-[9px] bg-[#C9A24E] text-[#1B1B1B]"><FileText size={20} weight="fill" /></div>
               <div className="min-w-0 flex-1">
-                <p className="truncate text-[15px] font-medium text-[#E5E5E5]">Ñkyel AI — IA souveraine du Gabon <span className="ml-1 rounded bg-[#C9A24E]/15 px-1.5 py-0.5 text-[10px] text-[#C9A24E]">Temporaire</span></p>
+                <p className="truncate text-[15px] font-medium text-[#E5E5E5]">Ñkyel AI — IA souveraine du Gabon <span className="ms-1 rounded bg-[#C9A24E]/15 px-1.5 py-0.5 text-[10px] text-[#C9A24E]">Temporaire</span></p>
                 <p className="truncate text-[12px] text-[#858585]">Ñkyel AI par SmartANDJ AI Technologies — IA souveraine du Gabon</p>
               </div>
             </div>
@@ -32,13 +32,13 @@ export default function DesktopMissionPreview({ composer }: DesktopMissionPrevie
             <span className="h-4 w-px bg-white/[0.10]" />
             <button type="button" aria-label="Copier le résultat" className="text-[#858585] hover:text-[#E5E5E5]"><Copy size={17} /></button>
             <button type="button" aria-label="Partager le résultat" className="text-[#858585] hover:text-[#E5E5E5]"><ShareNetwork size={17} /></button>
-            <span className="ml-auto hidden items-center gap-2 text-[#858585] sm:flex">Comment était ce résultat ? <Star size={17} /><Star size={17} /><Star size={17} /><Star size={17} /><Star size={17} /><ArrowDown size={18} className="ml-2 rounded-full bg-[#2A2A2A] p-1 text-[#D0D0D0]" /></span>
+            <span className="ms-auto hidden items-center gap-2 text-[#858585] sm:flex">Comment était ce résultat ? <Star size={17} /><Star size={17} /><Star size={17} /><Star size={17} /><Star size={17} /><ArrowDown size={18} className="ms-2 rounded-full bg-[#2A2A2A] p-1 text-[#D0D0D0]" /></span>
           </div>
 
           <div data-surface="checkpoint" className="nkyel-checkpoint-row mt-6 flex items-center gap-3 rounded-[20px] border border-white/[0.08] bg-[#202020] px-5 py-3 text-[14px] text-[#E5E5E5]">
             <span className="flex h-6 w-6 items-center justify-center rounded bg-[#315A70] text-white"><Check size={14} weight="bold" /></span>
             <span className="truncate font-medium">Présenter la nouvelle version à juger</span>
-            <span className="ml-auto flex items-center gap-1 text-[12px] text-[#858585]">5 / 5 <CaretDown size={14} /></span>
+            <span className="ms-auto flex items-center gap-1 text-[12px] text-[#858585]">5 / 5 <CaretDown size={14} /></span>
           </div>
         </div>
       </div>

@@ -543,7 +543,7 @@ export default function AdminCommandCenter() {
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            className="fixed top-6 right-6 z-50 px-4 py-2.5 rounded-2xl bg-[#0C0E14] border border-[var(--accent)]/40 text-xs text-white shadow-2xl flex items-center gap-2"
+            className="fixed top-6 end-6 z-50 px-4 py-2.5 rounded-2xl bg-[#0C0E14] border border-[var(--accent)]/40 text-xs text-white shadow-2xl flex items-center gap-2"
           >
             <CheckCircle size={16} weight="fill" className="text-[var(--accent)]" />
             <span>{notification}</span>
@@ -785,7 +785,7 @@ export default function AdminCommandCenter() {
             {/* Users Table */}
             <div className="rounded-2xl border border-white/[0.08] bg-[#0C0E14] overflow-hidden">
               <div className="overflow-x-auto custom-scrollbar">
-                <table className="w-full text-left text-xs text-white/80">
+                <table className="w-full text-start text-xs text-white/80">
                   <thead className="bg-white/[0.03] border-b border-white/10 text-white/40 uppercase font-mono text-[10px]">
                     <tr>
                       <th className="p-4 font-semibold">Utilisateur</th>
@@ -793,7 +793,7 @@ export default function AdminCommandCenter() {
                       <th className="p-4 font-semibold">Quotas Alloués</th>
                       <th className="p-4 font-semibold">Consommation</th>
                       <th className="p-4 font-semibold">Statut</th>
-                      <th className="p-4 font-semibold text-right">Actions</th>
+                      <th className="p-4 font-semibold text-end">Actions</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-white/[0.04]">
@@ -855,7 +855,7 @@ export default function AdminCommandCenter() {
                           </span>
                         </td>
 
-                        <td className="p-4 text-right space-x-2">
+                        <td className="p-4 text-end space-x-2">
                           <button
                             type="button"
                             onClick={() => handleOpenQuotaEditor(u)}
@@ -988,7 +988,7 @@ export default function AdminCommandCenter() {
             {/* RAG Documents Table */}
             <div className="rounded-2xl border border-white/[0.08] bg-[#0C0E14] overflow-hidden">
               <div className="overflow-x-auto custom-scrollbar">
-                <table className="w-full text-left text-xs text-white/80">
+                <table className="w-full text-start text-xs text-white/80">
                   <thead className="bg-white/[0.03] border-b border-white/10 text-white/40 uppercase font-mono text-[10px]">
                     <tr>
                       <th className="p-4 font-semibold">Document & Titre</th>
@@ -997,7 +997,7 @@ export default function AdminCommandCenter() {
                       <th className="p-4 font-semibold">Vecteurs Qdrant</th>
                       <th className="p-4 font-semibold">Dernière Indexation</th>
                       <th className="p-4 font-semibold">Statut</th>
-                      <th className="p-4 font-semibold text-right">Actions</th>
+                      <th className="p-4 font-semibold text-end">Actions</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-white/[0.04]">
@@ -1035,7 +1035,7 @@ export default function AdminCommandCenter() {
                           </span>
                         </td>
 
-                        <td className="p-4 text-right">
+                        <td className="p-4 text-end">
                           <button
                             type="button"
                             onClick={() => notify(`Ré-indexation de « ${doc.title} » lancée.`)}
@@ -1062,14 +1062,14 @@ export default function AdminCommandCenter() {
                 <h3 className="text-xs font-mono font-bold text-white/80 uppercase tracking-wider">
                   Missions Récentes ({missionsData.length})
                 </h3>
-                <div className="space-y-2 max-h-[600px] overflow-y-auto pr-1 custom-scrollbar">
+                <div className="space-y-2 max-h-[600px] overflow-y-auto pe-1 custom-scrollbar">
                   {missionsData.map((m) => {
                     const isSelected = selectedMission?.mission_id === m.mission_id;
                     return (
                       <button
                         key={m.mission_id}
                         onClick={() => handleSelectMission(m)}
-                        className={`w-full text-left p-3.5 rounded-xl border transition-all ${
+                        className={`w-full text-start p-3.5 rounded-xl border transition-all ${
                           isSelected
                             ? 'bg-[var(--accent-subtle)] border-[var(--accent)]/50 text-white'
                             : 'bg-[#0C0E14] border-white/[0.06] text-white/70 hover:border-white/20 hover:text-white'
@@ -1151,7 +1151,7 @@ export default function AdminCommandCenter() {
                 Artefacts Universels Persistés dans Cloudflare R2 ({artifactsData.length})
               </h3>
               <div className="overflow-x-auto">
-                <table className="w-full text-left text-xs font-mono">
+                <table className="w-full text-start text-xs font-mono">
                   <thead>
                     <tr className="text-white/40 border-b border-white/[0.06] pb-2">
                       <th className="py-2">ID Artefact</th>
@@ -1194,13 +1194,13 @@ export default function AdminCommandCenter() {
             {/* Providers Search */}
             <div className="flex items-center gap-3">
               <div className="relative flex-1">
-                <MagnifyingGlass size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-white/40" />
+                <MagnifyingGlass size={16} className="absolute start-3.5 top-1/2 -translate-y-1/2 text-white/40" />
                 <input
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Filtrer parmi les 38 fournisseurs d'IA souverains..."
-                  className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-[#0C0E14] border border-white/[0.08] text-xs text-white placeholder:text-white/30 focus:border-[var(--accent)] outline-none transition-colors"
+                  className="w-full ps-10 pe-4 py-2.5 rounded-xl bg-[#0C0E14] border border-white/[0.08] text-xs text-white placeholder:text-white/30 focus:border-[var(--accent)] outline-none transition-colors"
                 />
               </div>
             </div>
@@ -1272,7 +1272,7 @@ export default function AdminCommandCenter() {
               </div>
 
               <div className="overflow-x-auto">
-                <table className="w-full text-left text-xs font-mono">
+                <table className="w-full text-start text-xs font-mono">
                   <thead>
                     <tr className="text-white/40 border-b border-white/[0.06] pb-2">
                       <th className="py-2">Sévérité</th>
@@ -1405,7 +1405,7 @@ export default function AdminCommandCenter() {
                 <div key={log.id} className="p-3 rounded-xl bg-black/40 border border-white/[0.04] text-xs font-mono flex items-center justify-between">
                   <div>
                     <span className="text-[var(--accent)] font-bold">{log.action}</span>
-                    <span className="text-white/40 ml-2">par {log.actor_email}</span>
+                    <span className="text-white/40 ms-2">par {log.actor_email}</span>
                   </div>
                   <span className="text-white/40 text-[10px]">{log.timestamp}</span>
                 </div>

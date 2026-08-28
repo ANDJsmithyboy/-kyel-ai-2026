@@ -90,7 +90,7 @@ export default function SidebarFooter({ isCollapsed }: SidebarFooterProps) {
           <button
             type="button"
             onClick={() => setShowDropdown(!showDropdown)}
-            className="flex items-center gap-2.5 min-w-0 flex-1 text-left"
+            className="flex items-center gap-2.5 min-w-0 flex-1 text-start"
           >
             <div className="w-7 h-7 rounded-full bg-[var(--accent)] text-[var(--accent-fg)] flex items-center justify-center text-[11px] font-extrabold shadow-sm shrink-0">
               {initials}
@@ -126,7 +126,7 @@ export default function SidebarFooter({ isCollapsed }: SidebarFooterProps) {
 
         {/* Settings Dropdown Menu (Luma AI Style) */}
         {showDropdown && (
-          <div className="absolute bottom-full left-2 right-2 mb-2 p-1.5 rounded-2xl bg-[var(--material-glass-elevated)] border border-[var(--border-strong)] shadow-[var(--shadow-modal)] backdrop-blur-2xl z-50 text-[13px] space-y-0.5 animate-in fade-in zoom-in-95 duration-150">
+          <div className="absolute bottom-full start-2 end-2 mb-2 p-1.5 rounded-2xl bg-[var(--material-glass-elevated)] border border-[var(--border-strong)] shadow-[var(--shadow-modal)] backdrop-blur-2xl z-50 text-[13px] space-y-0.5 animate-in fade-in zoom-in-95 duration-150">
             <div className="px-3 py-2 border-b border-[var(--border-subtle)]">
               <div className="font-semibold text-[var(--text-primary)] text-[13px]">{displayName}</div>
               <div className="text-[11px] text-[var(--text-tertiary)]">SmartANDJ AI Technologies</div>
@@ -138,7 +138,7 @@ export default function SidebarFooter({ isCollapsed }: SidebarFooterProps) {
                 setShowDropdown(false);
                 setIsUpgradeOpen(true);
               }}
-              className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-[var(--accent)] hover:bg-[var(--accent-subtle)] transition-colors text-left font-semibold"
+              className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-[var(--accent)] hover:bg-[var(--accent-subtle)] transition-colors text-start font-semibold"
             >
               <Crown size={15} weight="fill" />
               <span>S&apos;abonner à Ñkyel Pro</span>
@@ -150,7 +150,7 @@ export default function SidebarFooter({ isCollapsed }: SidebarFooterProps) {
                 setShowDropdown(false);
                 router.push('/settings');
               }}
-              className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--hover)] transition-colors text-left font-medium"
+              className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--hover)] transition-colors text-start font-medium"
             >
               <GearSix size={15} />
               <span>Paramètres & Préférences</span>
@@ -161,7 +161,7 @@ export default function SidebarFooter({ isCollapsed }: SidebarFooterProps) {
             <button
               type="button"
               onClick={handleSignOut}
-              className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-[var(--error)] hover:bg-[var(--error)]/10 transition-colors text-left font-medium"
+              className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-[var(--error)] hover:bg-[var(--error)]/10 transition-colors text-start font-medium"
             >
               <SignOut size={15} />
               <span>Déconnexion</span>

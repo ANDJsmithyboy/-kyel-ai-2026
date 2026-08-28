@@ -55,8 +55,8 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
       <div
         className={cn(
           'flex-1 flex flex-col h-screen max-h-[100dvh] overflow-hidden transition-[margin] duration-300 relative',
-          !isMobile && isOpen && 'ml-[260px]',
-          !isMobile && !isOpen && 'ml-[48px]',
+          !isMobile && isOpen && 'ms-[260px]',
+          !isMobile && !isOpen && 'ms-[48px]',
         )}
       >
         <TopBar />

@@ -35,8 +35,8 @@ export default function AuthShell({ mode, children }: AuthShellProps) {
       
       {/* ── Ambient Specular Lighting Mesh (Apple Studio Atmosphere) ── */}
       <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden">
-        <div className="absolute -top-40 left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-gradient-to-b from-[#E5A93C]/12 via-[#4F46E5]/8 to-transparent rounded-full blur-[140px]" />
-        <div className="absolute -bottom-40 left-1/3 w-[600px] h-[500px] bg-gradient-to-t from-[#10B981]/8 via-transparent to-transparent rounded-full blur-[120px]" />
+        <div className="absolute -top-40 start-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-gradient-to-b from-[#E5A93C]/12 via-[#4F46E5]/8 to-transparent rounded-full blur-[140px]" />
+        <div className="absolute -bottom-40 start-1/3 w-[600px] h-[500px] bg-gradient-to-t from-[#10B981]/8 via-transparent to-transparent rounded-full blur-[120px]" />
         {/* Subtle dot matrix grid */}
         <div className="absolute inset-0 bg-[radial-gradient(#ffffff0a_1px,transparent_1px)] [background-size:28px_28px] opacity-70" />
       </div>
@@ -118,7 +118,7 @@ export default function AuthShell({ mode, children }: AuthShellProps) {
                 {isEn ? "Don't have an account? " : "Vous n'avez pas de compte ? "}
                 <Link
                   href="/sign-up"
-                  className="font-semibold text-[var(--accent)] hover:underline transition-colors ml-1"
+                  className="font-semibold text-[var(--accent)] hover:underline transition-colors ms-1"
                 >
                   {isEn ? 'Sign up' : 'Inscrivez-vous'}
                 </Link>
@@ -128,7 +128,7 @@ export default function AuthShell({ mode, children }: AuthShellProps) {
                 {isEn ? 'Already have an account? ' : 'Vous avez déjà un compte ? '}
                 <Link
                   href="/sign-in"
-                  className="font-semibold text-[var(--accent)] hover:underline transition-colors ml-1"
+                  className="font-semibold text-[var(--accent)] hover:underline transition-colors ms-1"
                 >
                   {isEn ? 'Sign in' : 'Connectez-vous'}
                 </Link>

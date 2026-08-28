@@ -31,7 +31,7 @@ export default function ExistingChatPage({ params }: { params: Promise<{ id: str
         />
       </div>
 
-      <div className="absolute bottom-0 left-0 w-full bg-gradient-to-t from-[var(--zc-background)] via-[var(--zc-background)] to-transparent pt-10 pb-4">
+      <div className="absolute bottom-0 start-0 w-full bg-gradient-to-t from-[var(--zc-background)] via-[var(--zc-background)] to-transparent pt-10 pb-4">
         <InputBar 
           model={isBlackPanther ? 'BLACK_PANTHER' : 'NKYEL_CHUI'}
           setModel={(m) => { /* TODO */ }}

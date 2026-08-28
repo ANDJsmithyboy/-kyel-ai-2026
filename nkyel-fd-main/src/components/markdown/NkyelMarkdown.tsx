@@ -241,8 +241,8 @@ export default function NkyelMarkdown({ content }: NkyelMarkdownProps) {
             }
 
             return (
-              <blockquote className="relative my-4 p-4 pl-5 rounded-xl border-l-4 border-[var(--accent)] bg-gradient-to-r from-[var(--accent-10)] to-transparent backdrop-blur-sm italic text-white/90 shadow-[0_4px_20px_rgba(0,0,0,0.2)]">
-                <Quotes size={24} weight="fill" className="absolute top-2 right-3 text-[var(--accent-20)] pointer-events-none" />
+              <blockquote className="relative my-4 p-4 ps-5 rounded-xl border-s-4 border-[var(--accent)] bg-gradient-to-r from-[var(--accent-10)] to-transparent backdrop-blur-sm italic text-white/90 shadow-[0_4px_20px_rgba(0,0,0,0.2)]">
+                <Quotes size={24} weight="fill" className="absolute top-2 end-3 text-[var(--accent-20)] pointer-events-none" />
                 <div className="relative z-10 leading-relaxed">{children}</div>
               </blockquote>
             );
@@ -250,7 +250,7 @@ export default function NkyelMarkdown({ content }: NkyelMarkdownProps) {
           table({ children }) {
             return (
               <div className="overflow-x-auto my-5 rounded-2xl border border-white/10 shadow-2xl bg-black/40 backdrop-blur-md">
-                <table className="w-full text-[13px] text-left divide-y divide-white/10">
+                <table className="w-full text-[13px] text-start divide-y divide-white/10">
                   {children}
                 </table>
               </div>
@@ -284,10 +284,10 @@ export default function NkyelMarkdown({ content }: NkyelMarkdownProps) {
             return <p className="mb-3.5 last:mb-0 leading-[1.78]">{children}</p>;
           },
           ul({ children }) {
-            return <ul className="list-none pl-1 mb-3.5 space-y-2">{children}</ul>;
+            return <ul className="list-none ps-1 mb-3.5 space-y-2">{children}</ul>;
           },
           ol({ children }) {
-            return <ol className="list-decimal pl-5 mb-3.5 space-y-2">{children}</ol>;
+            return <ol className="list-decimal ps-5 mb-3.5 space-y-2">{children}</ol>;
           },
           li({ children }) {
             return (

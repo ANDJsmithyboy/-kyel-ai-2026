@@ -50,7 +50,7 @@ export default function Header({ currentModel, onModelChange }: HeaderProps) {
     <header className="sticky top-0 z-30 flex items-center gap-2 px-3 py-2 navbar-glass border-b border-[var(--border)]">
       {/* Iboga Navigation Trigger + Wordmark (visible quand sidebar fermée ou mobile) */}
       {(isMobile || !isOpen) && (
-        <div className="flex items-center gap-1.5 mr-2">
+        <div className="flex items-center gap-1.5 me-2">
           <IbogaNavigationTrigger
             open={false}
             onToggle={toggle}
@@ -82,7 +82,7 @@ export default function Header({ currentModel, onModelChange }: HeaderProps) {
         </button>
 
         {showModelPicker && (
-          <div className="absolute top-full left-0 mt-1 w-56 py-1.5 rounded-xl bg-[var(--bg-elevated)] border border-[var(--border)] shadow-lg animate-fade-in z-50">
+          <div className="absolute top-full start-0 mt-1 w-56 py-1.5 rounded-xl bg-[var(--bg-elevated)] border border-[var(--border)] shadow-lg animate-fade-in z-50">
             {MODELS.map((m) => (
               <button
                 key={m.id}
@@ -97,7 +97,7 @@ export default function Header({ currentModel, onModelChange }: HeaderProps) {
                 <m.icon width={16} height={16} style={{ color: m.color }} />
                 <span className="font-medium">{getDisplayModelName(m.id, isAdmin)}</span>
                 {m.id === currentModel && (
-                  <span className="ml-auto w-1.5 h-1.5 rounded-full bg-[var(--accent)]" />
+                  <span className="ms-auto w-1.5 h-1.5 rounded-full bg-[var(--accent)]" />
                 )}
               </button>
             ))}

@@ -69,13 +69,13 @@ export default function NkyelAuthShell({
     <div className="min-h-screen w-full bg-[var(--material-canvas)] text-[var(--text-primary)] flex flex-col lg:flex-row relative overflow-x-hidden font-sans selection:bg-[var(--accent-subtle)] selection:text-[var(--accent)]">
       
       {/* ── Background Ambient Glow ────────────────── */}
-      <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-gradient-to-br from-[var(--accent-subtle)] via-[#6757E8]/5 to-transparent rounded-full blur-[140px] pointer-events-none -z-10" />
-      <div className="absolute bottom-0 right-10 w-[500px] h-[500px] bg-gradient-to-tl from-[#10B981]/5 via-[var(--accent-subtle)] to-transparent rounded-full blur-[120px] pointer-events-none -z-10" />
+      <div className="absolute top-0 start-1/4 w-[600px] h-[600px] bg-gradient-to-br from-[var(--accent-subtle)] via-[#6757E8]/5 to-transparent rounded-full blur-[140px] pointer-events-none -z-10" />
+      <div className="absolute bottom-0 end-10 w-[500px] h-[500px] bg-gradient-to-tl from-[#10B981]/5 via-[var(--accent-subtle)] to-transparent rounded-full blur-[120px] pointer-events-none -z-10" />
 
       {/* ══════════════════════════════════════════════════════════════
           GAUCHE : Vitrine Souveraine Ñkyel AI (Desktop)
       ══════════════════════════════════════════════════════════════ */}
-      <div className="hidden lg:flex lg:w-1/2 flex-col justify-between p-12 xl:p-16 border-r border-[var(--border-subtle)] relative bg-[var(--surface-sunken)]/40 backdrop-blur-2xl">
+      <div className="hidden lg:flex lg:w-1/2 flex-col justify-between p-12 xl:p-16 border-e border-[var(--border-subtle)] relative bg-[var(--surface-sunken)]/40 backdrop-blur-2xl">
         
         {/* Top: Brand Header */}
         <div className="space-y-6">
@@ -224,7 +224,7 @@ export default function NkyelAuthShell({
           </div>
 
           {/* Header Title */}
-          <div className="space-y-1.5 text-center sm:text-left">
+          <div className="space-y-1.5 text-center sm:text-start">
             <h2 className="text-2xl font-extrabold text-[var(--text-primary)] tracking-tight">
               {title}
             </h2>

@@ -41,7 +41,7 @@ export default function AgentPage() {
     <div className="flex flex-col lg:flex-row h-full w-full relative">
       
       {/* Colonne gauche : Chat (Directives) */}
-      <div className="flex-1 flex flex-col relative h-1/2 lg:h-full border-b lg:border-b-0 lg:border-r border-white/5">
+      <div className="flex-1 flex flex-col relative h-1/2 lg:h-full border-b lg:border-b-0 lg:border-e border-white/5">
         <div className="flex-1 overflow-hidden relative">
           <ConversationStream 
             messages={messages} 
@@ -50,7 +50,7 @@ export default function AgentPage() {
           />
         </div>
 
-        <div className="absolute bottom-0 left-0 w-full bg-gradient-to-t from-[var(--zc-background)] via-[var(--zc-background)] to-transparent pt-10 pb-4">
+        <div className="absolute bottom-0 start-0 w-full bg-gradient-to-t from-[var(--zc-background)] via-[var(--zc-background)] to-transparent pt-10 pb-4">
           <InputBar 
             model={isBlackPanther ? 'BLACK_PANTHER' : 'NKYEL_RADI'}
             setModel={(m) => { /* TODO */ }}

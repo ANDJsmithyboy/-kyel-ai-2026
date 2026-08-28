@@ -75,7 +75,7 @@ export function IbogaNavigationTrigger({
       />
 
       {showWordmark && (
-        <span className="ml-2.5 font-semibold text-[16px] tracking-tight text-[var(--text-primary)] select-none">
+        <span className="ms-2.5 font-semibold text-[16px] tracking-tight text-[var(--text-primary)] select-none">
           {wordmarkText}
         </span>
       )}

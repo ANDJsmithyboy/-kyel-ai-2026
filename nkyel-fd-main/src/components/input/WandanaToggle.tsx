@@ -32,7 +32,7 @@ export default function WandanaToggle({ enabled, onToggle }: WandanaToggleProps)
             enabled ? 'text-[#1F9D6B]' : 'text-[var(--text-secondary,#8A8378)]'
           }`}
         />
-        <div className="flex flex-col text-left">
+        <div className="flex flex-col text-start">
           <span
             className="text-[13px] font-semibold uppercase tracking-wide"
             style={{ color: 'var(--text-primary, #EDEAE3)' }}

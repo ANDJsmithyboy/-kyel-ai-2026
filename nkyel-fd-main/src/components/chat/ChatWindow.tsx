@@ -157,7 +157,7 @@ export default function ChatWindow({ conversationId, model }: ChatWindowProps) {
                 key={i}
                 onClick={() => handleSend(s.text)}
                 className={cn(
-                  'flex items-start gap-3 p-4 rounded-2xl border transition-all duration-300 text-left group',
+                  'flex items-start gap-3 p-4 rounded-2xl border transition-all duration-300 text-start group',
                   'border-white/[0.04] bg-[var(--bg-surface)]/40 backdrop-blur-md',
                   'hover:bg-[var(--bg-surface)]/60 hover:border-white/[0.08] active:scale-[0.98]'
                 )}

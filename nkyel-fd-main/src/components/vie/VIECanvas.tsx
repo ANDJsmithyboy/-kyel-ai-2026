@@ -173,7 +173,7 @@ export default function VIECanvas() {
       }`}
     >
       {/* Barre de Contrôle Supérieure */}
-      <div className="absolute top-4 left-4 right-4 z-20 flex items-center justify-between pointer-events-none">
+      <div className="absolute top-4 start-4 end-4 z-20 flex items-center justify-between pointer-events-none">
         <div className="pointer-events-auto">
           <HumanInterventionBar />
         </div>

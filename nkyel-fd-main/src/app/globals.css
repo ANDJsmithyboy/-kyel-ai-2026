@@ -65,12 +65,27 @@
     background-color: var(--bg);
     color: var(--text-primary);
     line-height: var(--leading-normal);
-    letter-spacing: var(--tracking-snug);
+    letter-spacing: var(--tracking-normal);
     min-height: 100dvh;
     overflow-x: hidden;
     overscroll-behavior-y: none;
     -webkit-tap-highlight-color: transparent;
   }
+
+  /* ═══════════════════════════════════════════════════════
+     GLOBAL FONT ENGINE & SCRIPT FALLBACKS
+     ═══════════════════════════════════════════════════════ */
+  :lang(ar), :lang(ur) { 
+    font-family: "Noto Sans Arabic", var(--font-sans); 
+    line-height: 1.6;
+  }
+  :lang(hi) { font-family: "Noto Sans Devanagari UI", var(--font-sans); }
+  :lang(bn) { font-family: "Noto Sans Bengali UI", var(--font-sans); }
+  :lang(zh-Hans), :lang(zh-CN) { font-family: "Noto Sans SC", var(--font-sans); }
+  :lang(zh-Hant) { font-family: "Noto Sans TC", var(--font-sans); }
+  :lang(ja) { font-family: "Noto Sans JP", var(--font-sans); }
+  :lang(ko) { font-family: "Noto Sans KR", var(--font-sans); }
+  :lang(th) { font-family: "Noto Sans Thai UI", var(--font-sans); }
 }
 
 /* ═══════════════════════════════════════════════════════
@@ -137,16 +152,33 @@ code, pre, kbd, samp {
 .no-scrollbar::-webkit-scrollbar { display: none; }
 
 /* ═══════════════════════════════════════════════════════
-   MATERIAL SYSTEM (Apple Liquid Glass × Geist × Ñkyel VIE)
+   MATERIAL SYSTEM (Apple Liquid Glass × Geist × Ñkyel)
    ═══════════════════════════════════════════════════════ */
 
+/* DARK GLASS */
+.dark-material {
+  background: rgba(22, 26, 31, 0.86);
+  backdrop-filter: blur(18px) saturate(115%);
+  -webkit-backdrop-filter: blur(18px) saturate(115%);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+}
+
+/* LIGHT GLASS */
+.light-material {
+  background: rgba(252, 250, 246, 0.84);
+  backdrop-filter: blur(18px) saturate(108%);
+  -webkit-backdrop-filter: blur(18px) saturate(108%);
+  border: 1px solid rgba(20, 20, 20, 0.09);
+}
+
+/* Base surface materials for non-glass components */
 .material-canvas {
-  background: var(--material-canvas);
+  background: var(--canvas);
   color: var(--text-primary);
 }
 
 .material-content {
-  background: var(--material-content);
+  background: var(--surface);
   color: var(--text-primary);
   border: 1px solid var(--border);
 }

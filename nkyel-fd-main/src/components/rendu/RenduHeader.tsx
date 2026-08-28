@@ -38,7 +38,7 @@ export default function RenduHeader({ title, type, version, onClose }: RenduHead
           <Icon size={18} weight="duotone" />
         </div>
         <div className="flex flex-col min-w-0">
-          <span className="text-sm font-semibold text-[var(--text-primary)] truncate pr-2">
+          <span className="text-sm font-semibold text-[var(--text-primary)] truncate pe-2">
             {title}
           </span>
           <div className="flex items-center gap-2">

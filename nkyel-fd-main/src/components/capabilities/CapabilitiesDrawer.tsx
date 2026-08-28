@@ -257,7 +257,7 @@ export default function CapabilitiesDrawer({
             damping: 32,
             mass: 0.8,
           }}
-          className="relative w-full max-w-4xl max-h-[88vh] rounded-[28px] overflow-hidden flex flex-col z-10 border border-white/12 shadow-[0_32px_64px_-16px_rgba(0,0,0,0.85),0_0_0_1px_rgba(255,255,255,0.08)] bg-[#0C0F17]/90 backdrop-blur-3xl text-left"
+          className="relative w-full max-w-4xl max-h-[88vh] rounded-[28px] overflow-hidden flex flex-col z-10 border border-white/12 shadow-[0_32px_64px_-16px_rgba(0,0,0,0.85),0_0_0_1px_rgba(255,255,255,0.08)] bg-[#0C0F17]/90 backdrop-blur-3xl text-start"
           style={{
             boxShadow:
               '0 30px 70px rgba(0,0,0,0.8), 0 0 1px 1px rgba(255,255,255,0.12), inset 0 1px 0 rgba(255,255,255,0.15)',
@@ -331,20 +331,20 @@ export default function CapabilitiesDrawer({
               <div className="relative flex-1 w-full">
                 <MagnifyingGlass
                   size={14}
-                  className="absolute left-3 top-1/2 -translate-y-1/2 text-white/40 pointer-events-none"
+                  className="absolute start-3 top-1/2 -translate-y-1/2 text-white/40 pointer-events-none"
                 />
                 <input
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Rechercher une capacité ou un moteur..."
-                  className="w-full pl-8 pr-3 py-1.5 rounded-xl bg-black/30 border border-white/[0.08] text-xs text-white placeholder:text-white/35 focus:outline-none focus:border-white/25 focus:ring-1 focus:ring-white/20 transition-all"
+                  className="w-full ps-8 pe-3 py-1.5 rounded-xl bg-black/30 border border-white/[0.08] text-xs text-white placeholder:text-white/35 focus:outline-none focus:border-white/25 focus:ring-1 focus:ring-white/20 transition-all"
                 />
                 {searchQuery && (
                   <button
                     type="button"
                     onClick={() => setSearchQuery('')}
-                    className="absolute right-2.5 top-1/2 -translate-y-1/2 text-white/40 hover:text-white"
+                    className="absolute end-2.5 top-1/2 -translate-y-1/2 text-white/40 hover:text-white"
                   >
                     <X size={12} />
                   </button>
@@ -415,7 +415,7 @@ export default function CapabilitiesDrawer({
                 >
                   {/* Subtle Top-Right Ambient Glow on Hover */}
                   <div
-                    className="absolute -top-12 -right-12 w-28 h-28 rounded-full blur-2xl opacity-0 group-hover:opacity-20 transition-opacity duration-300 pointer-events-none"
+                    className="absolute -top-12 -end-12 w-28 h-28 rounded-full blur-2xl opacity-0 group-hover:opacity-20 transition-opacity duration-300 pointer-events-none"
                     style={{ background: cap.accentColor }}
                   />
 

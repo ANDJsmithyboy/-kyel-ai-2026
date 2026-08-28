@@ -11,6 +11,7 @@
 
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import IntlMessageFormat from 'intl-messageformat';
 
 export type BCP47Language = string;
 
@@ -545,7 +546,7 @@ interface LanguageState {
   setAgentLanguage: (lang: string) => void;
   setModalOpen: (open: boolean) => void;
   setSearchQuery: (q: string) => void;
-  t: (key: string) => string;
+  t: (key: string, values?: Record<string, any>) => string;
   hydrate: () => void;
 }
 
@@ -575,9 +576,19 @@ export const useLanguageStore = create<LanguageState>()(
       setModalOpen: (open: boolean) => set({ isModalOpen: open }),
       setSearchQuery: (q: string) => set({ searchQuery: q }),
 
-      t: (key: string) => {
+      t: (key: string, values?: Record<string, any>) => {
         const locale = get().uiLocale || 'en-US';
-        return t(key, locale);
+        const rawString = t(key, locale);
+        
+        if (!values) return rawString;
+        
+        try {
+          const formatter = new IntlMessageFormat(rawString, locale);
+          return formatter.format(values) as string;
+        } catch (err) {
+          console.warn(`[i18n] Error formatting key "${key}":`, err);
+          return rawString;
+        }
       },
 
       hydrate: () => {

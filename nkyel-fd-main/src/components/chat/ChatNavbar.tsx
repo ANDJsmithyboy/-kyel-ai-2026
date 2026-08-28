@@ -18,7 +18,7 @@ export default function ChatNavbar({
   onOpenArtifact,
 }: ChatNavbarProps) {
   return (
-    <div className="fixed top-4 left-4 right-4 md:left-[280px] md:right-auto md:w-[calc(100vw-320px)] lg:w-[800px] xl:w-[900px] md:mx-auto z-30 flex justify-center pointer-events-none">
+    <div className="fixed top-4 start-4 end-4 md:start-[280px] md:end-auto md:w-[calc(100vw-320px)] lg:w-[800px] xl:w-[900px] md:mx-auto z-30 flex justify-center pointer-events-none">
       {/* GLASS PILL */}
       <div className="pointer-events-auto flex items-center justify-between w-full h-[56px] px-2 bg-white/7 backdrop-blur-xl backdrop-saturate-150 border border-white/18 rounded-full shadow-[0_18px_60px_rgba(0,0,0,0.65)]">
         
@@ -46,13 +46,13 @@ export default function ChatNavbar({
         </div>
 
         {/* RIGHT: Actions */}
-        <div className="flex items-center gap-1 pr-1">
+        <div className="flex items-center gap-1 pe-1">
           {hasArtifact && (
             <button
               onClick={onOpenArtifact}
               className="px-3 h-8 flex items-center rounded-full bg-[var(--accent)]/12 border border-[var(--accent)]/35 text-[11px] font-semibold text-[var(--accent)] tracking-tight hover:bg-[var(--accent)]/20 transition-colors active:scale-95"
             >
-              Le Rendu <span className="ml-1 text-[10px]">💎</span>
+              Le Rendu <span className="ms-1 text-[10px]">💎</span>
             </button>
           )}
           

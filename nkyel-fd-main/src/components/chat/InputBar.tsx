@@ -8,6 +8,7 @@ import {
 import { IconAurata, IconNkyel, IconOnyxGris, IconBlackPanther } from '@/components/icons';
 import { WandanaIcon, RenduIcon } from '@/components/icons/NkyelIcons';
 import { saveDraft, getDraft } from '@/lib/indexedDB';
+import { useNkyelModel } from '@/hooks/useNkyelModel';
 
 /* -- Types ------------------------------------------ */
 type ModelKey = 'aurata' | 'nkyel' | 'onyx-gris' | 'black-panther' | 'wandana';
@@ -99,7 +100,7 @@ function ChevronDown() {
 /* -- Main InputBar ---------------------------------- */
 export default function InputBar({ onSend, onStop, isGenerating }: InputBarProps) {
   const [text, setText] = useState('');
-  const [selectedModel, setSelectedModel] = useState<ModelKey | null>(null);
+  const { engineId: selectedModel, setEngineId: setSelectedModel } = useNkyelModel();
   const [popoverOpen, setPopoverOpen] = useState(false);
   const [isLiveMode, setIsLiveMode] = useState(false);
   const [isTranscribing, setIsTranscribing] = useState(false);
@@ -198,7 +199,7 @@ export default function InputBar({ onSend, onStop, isGenerating }: InputBarProps
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 8, scale: 0.96 }}
               transition={{ duration: 0.15 }}
-              className="absolute bottom-full left-0 mb-4 overflow-hidden rounded-[24px] shadow-2xl backdrop-blur-3xl w-[320px]"
+              className="absolute bottom-full start-0 mb-4 overflow-hidden rounded-[24px] shadow-2xl backdrop-blur-3xl w-[320px]"
               style={{
                 background: 'rgba(var(--bg-elevated-rgb), 0.75)',
                 border: '1px solid rgba(255,255,255,0.08)',
@@ -232,7 +233,7 @@ export default function InputBar({ onSend, onStop, isGenerating }: InputBarProps
                         }
                       })()}
                     </div>
-                    <div className="text-left flex-1">
+                    <div className="text-start flex-1">
                       <div className="flex items-center justify-between">
                         <p className="text-[14px] font-semibold text-white">{model.label}</p>
                         {model.status === 'offline' && <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-red-500/20 text-red-400">Offline</span>}

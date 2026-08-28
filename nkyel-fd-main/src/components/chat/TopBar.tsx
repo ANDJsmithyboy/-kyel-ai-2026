@@ -54,7 +54,7 @@ export default function TopBar({ onToggleSidebar, sidebarOpen }: { onToggleSideb
         <div className="w-px h-5 bg-white/10 mx-1"></div>
 
         {/* Avatar */}
-        <button className="h-8 w-8 rounded-full bg-gradient-to-tr from-yellow-600 to-amber-400 p-[2px] ml-1">
+        <button className="h-8 w-8 rounded-full bg-gradient-to-tr from-yellow-600 to-amber-400 p-[2px] ms-1">
           <div className="w-full h-full rounded-full bg-black flex items-center justify-center overflow-hidden">
             <span className="text-[10px] font-bold text-white">DJ</span>
           </div>

@@ -131,7 +131,7 @@ export default function HuntingZone({ messages, isGenerating, onEditMessage, onR
                       setEditingId(msg.id);
                       setEditBuffer(msg.content);
                     }}
-                    className="absolute -left-10 top-2 opacity-0 group-hover:opacity-100 p-1.5 rounded-full bg-white/5 hover:bg-white/10 transition-all text-white/50 hover:text-white"
+                    className="absolute -start-10 top-2 opacity-0 group-hover:opacity-100 p-1.5 rounded-full bg-white/5 hover:bg-white/10 transition-all text-white/50 hover:text-white"
                     aria-label="Éditer"
                   >
                     <PencilSimple weight="duotone" size={16} />

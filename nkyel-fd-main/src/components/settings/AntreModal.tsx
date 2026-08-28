@@ -215,7 +215,7 @@ export default function AntreModal({ isOpen, onClose, initialTab = 'general' }: 
           }}
         >
           {/* ── Sidebar Navigation ── */}
-          <aside className="w-full md:w-64 border-b md:border-b-0 md:border-r flex flex-col shrink-0 bg-black/20" style={{ borderColor: 'var(--border-subtle, rgba(255,255,255,0.06))' }}>
+          <aside className="w-full md:w-64 border-b md:border-b-0 md:border-e flex flex-col shrink-0 bg-black/20" style={{ borderColor: 'var(--border-subtle, rgba(255,255,255,0.06))' }}>
             <div className="p-4 flex items-center justify-between border-b" style={{ borderColor: 'var(--border-subtle, rgba(255,255,255,0.06))' }}>
               <div className="flex items-center gap-2">
                 <div className="w-7 h-7 rounded-lg flex items-center justify-center font-bold text-xs bg-[var(--accent)] text-[var(--accent-fg)]">
@@ -248,7 +248,7 @@ export default function AntreModal({ isOpen, onClose, initialTab = 'general' }: 
                     <Icon size={16} weight={isActive ? 'fill' : 'regular'} className={isActive ? 'text-[var(--accent)]' : ''} />
                     <span className="truncate">{tab.label}</span>
                     {tab.adminOnly && (
-                      <span className="ml-auto text-[9px] px-1.5 py-0.2 rounded bg-amber-500/20 text-amber-300 font-mono">
+                      <span className="ms-auto text-[9px] px-1.5 py-0.2 rounded bg-amber-500/20 text-amber-300 font-mono">
                         ADMIN
                       </span>
                     )}
@@ -371,7 +371,7 @@ export default function AntreModal({ isOpen, onClose, initialTab = 'general' }: 
                         <h4 className="text-sm font-bold text-white">Akare Ntoutoume Daniel Jonathan</h4>
                         <p className="text-xs text-white/50">daniel.andj@smartandj.com · Fondateur Ñkyel AI</p>
                       </div>
-                      <span className="ml-auto px-2.5 py-1 rounded-full bg-[var(--accent-subtle)] border border-[var(--accent)]/40 text-[var(--accent)] text-[10px] font-bold">
+                      <span className="ms-auto px-2.5 py-1 rounded-full bg-[var(--accent-subtle)] border border-[var(--accent)]/40 text-[var(--accent)] text-[10px] font-bold">
                         SOUVERAIN PRO
                       </span>
                     </div>
@@ -388,13 +388,13 @@ export default function AntreModal({ isOpen, onClose, initialTab = 'general' }: 
                         <label className="text-xs font-bold text-white mb-1 block">Langue de l&apos;interface (UI Locale)</label>
                         <p className="text-[11px] text-white/50 mb-2">Définit la langue des menus, boutons et l&apos;orientation (RTL / LTR).</p>
                         <div className="relative">
-                          <MagnifyingGlass size={15} className="absolute left-3 top-2.5 text-white/40" />
+                          <MagnifyingGlass size={15} className="absolute start-3 top-2.5 text-white/40" />
                           <input
                             type="text"
                             placeholder="Rechercher une langue mondiale ou africaine..."
                             value={langSearch}
                             onChange={(e) => setLangSearch(e.target.value)}
-                            className="w-full pl-9 pr-3 py-2 rounded-xl bg-black/40 border border-white/10 text-xs text-white focus:outline-none focus:border-[var(--accent)]"
+                            className="w-full ps-9 pe-3 py-2 rounded-xl bg-black/40 border border-white/10 text-xs text-white focus:outline-none focus:border-[var(--accent)]"
                           />
                         </div>
                       </div>
@@ -432,7 +432,7 @@ export default function AntreModal({ isOpen, onClose, initialTab = 'general' }: 
                               settings.setUiLocale(lang.tag);
                               toast.success(`Langue d'interface définie sur ${lang.nativeName}`);
                             }}
-                            className={`p-2.5 rounded-xl border text-left flex flex-col justify-between transition-all ${
+                            className={`p-2.5 rounded-xl border text-start flex flex-col justify-between transition-all ${
                               isSelected
                                 ? 'bg-[var(--accent-subtle)] border-[var(--accent)] text-white shadow-sm'
                                 : 'bg-black/20 border-white/5 hover:border-white/20 text-white/80'
@@ -471,7 +471,7 @@ export default function AntreModal({ isOpen, onClose, initialTab = 'general' }: 
                           <button
                             key={t.key}
                             onClick={() => settings.setTheme(t.key)}
-                            className={`p-3 rounded-xl border text-left flex flex-col justify-between transition-all ${
+                            className={`p-3 rounded-xl border text-start flex flex-col justify-between transition-all ${
                               isSelected
                                 ? 'bg-white/10 border-[var(--accent)] text-white shadow'
                                 : 'bg-black/30 border-white/10 hover:border-white/20 text-white/70'
@@ -572,7 +572,7 @@ export default function AntreModal({ isOpen, onClose, initialTab = 'general' }: 
                               key={card.id}
                               className="p-3 rounded-xl border border-white/5 bg-black/30 flex items-center justify-between text-xs text-white/90"
                             >
-                              <span className="truncate pr-3">{card.content}</span>
+                              <span className="truncate pe-3">{card.content}</span>
                               <button
                                 onClick={() => deleteMemory(card.id)}
                                 className="p-1 rounded hover:bg-red-500/20 text-red-400 hover:text-red-300 shrink-0"

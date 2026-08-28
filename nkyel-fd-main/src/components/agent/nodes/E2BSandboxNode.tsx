@@ -62,7 +62,7 @@ export default function E2BSandboxNode({ language, code, status, stdout, stderr 
                   </span>
                 )}
                 {status === 'active' && (
-                  <span className="w-1.5 h-3 bg-[var(--accent)] animate-pulse inline-block ml-1 align-middle" />
+                  <span className="w-1.5 h-3 bg-[var(--accent)] animate-pulse inline-block ms-1 align-middle" />
                 )}
               </div>
             </motion.div>

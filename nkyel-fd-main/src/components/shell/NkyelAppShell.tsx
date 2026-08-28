@@ -95,7 +95,7 @@ export default function NkyelAppShell({
         <NkyelSidebar />
 
         {/* Zone 2: Espace Central Dédié (Conversation ou Mission) */}
-        <div className="nkyel-shell-center relative flex flex-col flex-1 min-w-0 h-full overflow-hidden">
+        <div className="nkyel-shell-center relative flex flex-col flex-1 min-w-0 h-[100dvh] overflow-hidden bg-[var(--bg)]">
           {/* Barre supérieure unique : modèle, offre et modes */}
           <TopBar onOpenCapabilities={() => setCapabilitiesOpen(true)} />
 

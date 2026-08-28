@@ -133,12 +133,12 @@ export default function AdminNoeudPage() {
                       className="text-sm font-semibold bg-transparent text-[var(--text-primary)] placeholder:text-[var(--text-muted)] outline-none flex-1 tracking-tight"
                     />
                   </div>
-                  <button onClick={() => removeConnection(conn.id)} className="p-1.5 rounded-lg hover:bg-[var(--destructive)]/10 transition-colors ml-4 group">
+                  <button onClick={() => removeConnection(conn.id)} className="p-1.5 rounded-lg hover:bg-[var(--destructive)]/10 transition-colors ms-4 group">
                     <Trash size={16} className="text-[var(--text-muted)] group-hover:text-[var(--destructive)] transition-colors" weight="thin" />
                   </button>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 ml-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 ms-6">
                   <div>
                     <label className="text-[10px] font-semibold text-[var(--text-muted)] uppercase tracking-widest block mb-1.5">URL de base (Compatible OpenAI)</label>
                     <input
@@ -160,12 +160,12 @@ export default function AdminNoeudPage() {
                         onChange={(e) => updateConnection(conn.id, 'key', e.target.value)}
                         placeholder="sk-..."
                         disabled={!conn.enabled}
-                        className="w-full px-3 py-2 pr-10 rounded-lg bg-[var(--bg-base)] border border-[var(--glass-border)] text-[13px] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] outline-none focus:border-[var(--accent)] transition-colors font-mono disabled:opacity-50"
+                        className="w-full px-3 py-2 pe-10 rounded-lg bg-[var(--bg-base)] border border-[var(--glass-border)] text-[13px] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] outline-none focus:border-[var(--accent)] transition-colors font-mono disabled:opacity-50"
                       />
                       <button
                         onClick={() => setShowKeys({ ...showKeys, [conn.id]: !showKeys[conn.id] })}
                         disabled={!conn.enabled}
-                        className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 rounded-md hover:bg-[var(--glass)] transition-colors disabled:opacity-50"
+                        className="absolute end-2 top-1/2 -translate-y-1/2 p-1.5 rounded-md hover:bg-[var(--glass)] transition-colors disabled:opacity-50"
                       >
                         {showKeys[conn.id] ? <EyeSlash size={16} className="text-[var(--text-muted)]" weight="thin" /> : <Eye size={16} className="text-[var(--text-muted)]" weight="thin" />}
                       </button>

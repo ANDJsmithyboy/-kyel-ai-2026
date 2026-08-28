@@ -69,7 +69,7 @@ export default function MCPAppRunner({ app, onClose }: MCPAppRunnerProps) {
         </div>
 
         <div className="flex items-center gap-1.5">
-          <div className="flex bg-[#08090D] rounded-lg p-0.5 border border-white/[0.06] mr-2">
+          <div className="flex bg-[#08090D] rounded-lg p-0.5 border border-white/[0.06] me-2">
             <button
               onClick={() => setActiveTab('view')}
               className={`px-2.5 py-1 rounded-md text-[11px] font-medium transition-all ${

@@ -138,7 +138,7 @@ export default function LiveFlowTimelineView({
         </div>
 
         {/* Live Flow Stepper */}
-        <div className="space-y-3 relative pl-6 border-l-2 border-[var(--border-subtle)] ml-3">
+        <div className="space-y-3 relative ps-6 border-s-2 border-[var(--border-subtle)] ms-3">
           {DEFAULT_STEPS.map((step, idx) => {
             const isCompleted = step.status === 'completed';
             const isRunning = step.status === 'running';
@@ -156,7 +156,7 @@ export default function LiveFlowTimelineView({
               >
                 {/* Status Dot */}
                 <div
-                  className={`absolute -left-[31px] top-4 w-4 h-4 rounded-full border-2 bg-[var(--material-canvas)] flex items-center justify-center ${
+                  className={`absolute -start-[31px] top-4 w-4 h-4 rounded-full border-2 bg-[var(--material-canvas)] flex items-center justify-center ${
                     isCompleted
                       ? 'border-emerald-400 text-emerald-400'
                       : isRunning
@@ -190,7 +190,7 @@ export default function LiveFlowTimelineView({
                     </p>
                   </div>
 
-                  <div className="text-right shrink-0">
+                  <div className="text-end shrink-0">
                     <span className="text-[10px] font-mono text-[var(--text-tertiary)] block">
                       {step.timestamp}
                     </span>

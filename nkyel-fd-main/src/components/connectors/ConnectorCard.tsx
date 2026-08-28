@@ -47,8 +47,8 @@ export default function ConnectorCard({ connector, onSelect, onConnect }: Connec
       }}
       className="group relative grid w-full rounded-[18px] p-3.5 sm:p-4 transition-all select-none cursor-pointer active:scale-[0.99] touch-manipulation min-h-[98px]"
       style={{
-        gridTemplateColumns: '50px minmax(0, 1fr) 44px',
-        columnGap: '14px',
+        gridTemplateColumns: '50px minmax(0, 1fr) 42px',
+        columnGap: '12px',
         alignItems: 'center',
         background: 'var(--surface-raised)',
         border: isConnected ? '1px solid var(--border-strong)' : '1px solid var(--border-subtle)',

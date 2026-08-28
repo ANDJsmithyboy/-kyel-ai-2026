@@ -152,7 +152,7 @@ export default function WideSearchInterface() {
                 
                 {/* Rendu des outils / Thought Blocks façon Manus AI */}
                 {m.toolInvocations && m.toolInvocations.length > 0 && (
-                  <div className="flex flex-col gap-1 w-full pl-2 border-l border-[var(--border)] ml-2 my-2">
+                  <div className="flex flex-col gap-1 w-full ps-2 border-s border-[var(--border)] ms-2 my-2">
                     <AnimatePresence>
                       {m.toolInvocations.map(renderToolInvocation)}
                     </AnimatePresence>
@@ -191,7 +191,7 @@ export default function WideSearchInterface() {
               disabled={isLoading}
             />
             
-            <div className="pr-4 flex items-center gap-2">
+            <div className="pe-4 flex items-center gap-2">
               {isLoading ? (
                 <button 
                   type="button" 
@@ -207,7 +207,7 @@ export default function WideSearchInterface() {
                   disabled={!input.trim()}
                   className="p-3 bg-[var(--accent)] text-[var(--bg)] rounded-xl hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-md flex items-center justify-center"
                 >
-                  <Send size={18} className="ml-1" />
+                  <Send size={18} className="ms-1" />
                 </button>
               )}
             </div>

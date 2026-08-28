@@ -40,14 +40,14 @@ export default function FloatingReactor({
   };
 
   return (
-    <div className="fixed bottom-6 left-1/2 -translate-x-1/2 w-full max-w-3xl px-4 z-50">
+    <div className="fixed bottom-6 start-1/2 -translate-x-1/2 w-full max-w-3xl px-4 z-50">
       {/* The Floating Pill */}
       <motion.div
         className="relative flex items-end p-2 bg-background/60 backdrop-blur-2xl border border-white/10 shadow-2xl rounded-3xl"
         layout
       >
         {/* Left Axis: The Master Button (+) / Model Pill */}
-        <div className="flex-shrink-0 flex items-center pr-2">
+        <div className="flex-shrink-0 flex items-center pe-2">
           {activeModel && !isMenuOpen ? (
             <motion.button
               onClick={() => setIsMenuOpen(true)}
@@ -78,7 +78,7 @@ export default function FloatingReactor({
               animate={{ opacity: 1, y: -80, scale: 1 }}
               exit={{ opacity: 0, y: 20, scale: 0.95 }}
               transition={{ type: "spring", bounce: 0.2, duration: 0.4 }}
-              className="absolute left-0 bottom-full mb-4 w-72 bg-background/90 backdrop-blur-xl border border-white/10 rounded-2xl p-2 shadow-2xl"
+              className="absolute start-0 bottom-full mb-4 w-72 bg-background/90 backdrop-blur-xl border border-white/10 rounded-2xl p-2 shadow-2xl"
             >
               <div className="flex flex-col gap-1">
                 {MODELS.map(model => (
@@ -88,7 +88,7 @@ export default function FloatingReactor({
                       setActiveModel(model);
                       setIsMenuOpen(false);
                     }}
-                    className={`flex items-start gap-3 p-3 rounded-xl transition-colors text-left ${activeModel.id === model.id ? 'bg-primary/20 text-primary' : 'hover:bg-white/5'}`}
+                    className={`flex items-start gap-3 p-3 rounded-xl transition-colors text-start ${activeModel.id === model.id ? 'bg-primary/20 text-primary' : 'hover:bg-white/5'}`}
                   >
                     <div className="flex items-center justify-center w-8 h-8 rounded-full bg-white/5 border border-white/10 shrink-0">
                       {model.icon}
@@ -130,7 +130,7 @@ export default function FloatingReactor({
         </div>
 
         {/* Right Axis: Mic/Wave or Send Button */}
-        <div className="flex-shrink-0 flex items-center pl-2 gap-1 pb-1">
+        <div className="flex-shrink-0 flex items-center ps-2 gap-1 pb-1">
           <AnimatePresence mode="popLayout">
             {!hasInput && !isGenerating ? (
               <motion.div

@@ -205,7 +205,7 @@ export default function VIEComprehensionView({
               </span>
             </div>
 
-            <div className="space-y-1.5 max-h-48 overflow-y-auto pr-1">
+            <div className="space-y-1.5 max-h-48 overflow-y-auto pe-1">
               <div className="p-2 rounded-xl bg-[var(--surface)] border border-[var(--border)] text-xs">
                 <div className="flex items-center gap-1.5 text-emerald-400 font-semibold text-[11px]">
                   <CheckCircle size={13} weight="fill" />
@@ -240,7 +240,7 @@ export default function VIEComprehensionView({
               </span>
             </div>
 
-            <div className="space-y-1.5 max-h-48 overflow-y-auto pr-1">
+            <div className="space-y-1.5 max-h-48 overflow-y-auto pe-1">
               <div className="p-2 rounded-xl bg-[var(--surface)] border border-[var(--border)] text-xs flex items-center justify-between">
                 <div className="flex items-center gap-2 min-w-0">
                   <FileText size={15} className="text-blue-400 shrink-0" />

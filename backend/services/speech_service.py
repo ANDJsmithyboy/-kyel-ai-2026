@@ -60,6 +60,37 @@ class SpeechService:
     ) -> AudioSynthesisResult:
         """Synthétise du texte en flux audio MP3."""
         start = time.time()
+        
+        # 1. Tentative avec Groq TTS (Orpheus) - 2026 Ultra-fast Micro TTS
+        groq_api_key = settings.groq_api_key
+        if groq_api_key:
+            groq_voice = "canopylabs/orpheus-v1-english" if language == "en" else "canopylabs/orpheus-v1-english"
+            url = "https://api.groq.com/openai/v1/audio/speech"
+            headers = {
+                "Authorization": f"Bearer {groq_api_key}",
+                "Content-Type": "application/json",
+            }
+            body = {
+                "model": groq_voice,
+                "input": text,
+                "voice": "alloy",
+                "response_format": "mp3"
+            }
+            try:
+                async with httpx.AsyncClient(timeout=30.0) as client:
+                    resp = await client.post(url, headers=headers, json=body)
+                    resp.raise_for_status()
+                    duration = int((time.time() - start) * 1000)
+                    return AudioSynthesisResult(
+                        audio_bytes=resp.content,
+                        format="mp3",
+                        provider="groq_orpheus",
+                        latency_ms=duration,
+                    )
+            except Exception as e:
+                logger.warning(f"Échec TTS Groq Orpheus: {e}, repli vers ElevenLabs")
+
+        # 2. Repli vers ElevenLabs
         elevenlabs_api_key = os.getenv("ELEVENLABS_API_KEY", "")
 
         if elevenlabs_api_key:

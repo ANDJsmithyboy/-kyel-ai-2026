@@ -31,7 +31,7 @@ export default function BPWorkspace() {
   const content = tabContent[activeTab];
 
   return (
-    <div className="flex flex-col w-1/2 min-w-[360px] max-w-[55%] h-full border-l border-[rgba(212,164,23,0.12)] bg-[#010102] font-mono max-md:w-full max-md:max-w-full max-md:min-w-0 max-md:h-[40vh] max-md:border-l-0 max-md:border-t max-md:border-t-[rgba(212,164,23,0.12)]">
+    <div className="flex flex-col w-1/2 min-w-[360px] max-w-[55%] h-full border-s border-[rgba(212,164,23,0.12)] bg-[#010102] font-mono max-md:w-full max-md:max-w-full max-md:min-w-0 max-md:h-[40vh] max-md:border-s-0 max-md:border-t max-md:border-t-[rgba(212,164,23,0.12)]">
       {/* Tabbar */}
       <div className="flex items-center gap-0 px-1 h-9 border-b border-[rgba(212,164,23,0.08)] bg-[rgba(2,3,4,0.95)] shrink-0">
         {tabs.map((tab) => (

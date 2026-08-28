@@ -30,7 +30,7 @@ export function TaskChecklist({ todos }: TaskChecklistProps) {
       <div className="flex items-center gap-2 mb-3">
         <h3 className="text-sm font-medium text-muted-foreground">Plan</h3>
         <span className="text-xs text-primary">{completed}/{todos.length}</span>
-        <div className="flex-1 ml-2 h-1 bg-surface-high rounded-full overflow-hidden">
+        <div className="flex-1 ms-2 h-1 bg-surface-high rounded-full overflow-hidden">
           <div 
             className="h-full bg-primary transition-all duration-500 ease-out" 
             style={{ width: `${progress}%` }} 
@@ -78,7 +78,7 @@ export function LiveAgentPanel({ events }: { events: any[] }) {
   const activeTools = events.filter(e => e.type === 'tool_start' && !events.some(end => end.type === 'tool_end' && end.data.tool_call_id === e.data.tool_call_id));
 
   return (
-    <div className="flex flex-col h-full bg-[var(--bg)] border-l border-[var(--border)] relative">
+    <div className="flex flex-col h-full bg-[var(--bg)] border-s border-[var(--border)] relative">
       <div className="p-4 border-b border-[var(--border)] flex justify-between items-center glass backdrop-blur-md sticky top-0 z-10">
         <h2 className="text-sm font-semibold flex items-center gap-2">
           <Loader2 className="w-4 h-4 animate-spin text-accent" />

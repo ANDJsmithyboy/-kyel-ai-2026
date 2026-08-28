@@ -724,6 +724,7 @@ interface ProtocolStoreState {
   requestPaymentMandate: (mandate: Omit<AP2PaymentMandate, 'id' | 'status' | 'requestedAt'>) => void;
   approvePaymentMandate: (mandateId: string) => void;
   cancelPaymentMandate: (mandateId: string, reason: string) => void;
+  fetchA2AAgents: () => Promise<void>;
 }
 
 export const useProtocolStore = create<ProtocolStoreState>((set: any, get: any) => ({
@@ -1008,5 +1009,44 @@ export const useProtocolStore = create<ProtocolStoreState>((set: any, get: any) 
       };
     });
     protocolEventBus.emit('ap2.mandate.requested', 'ap2', `Mandat AP2 annulé : ${reason}`, { mandateId, reason }, 'error');
+  },
+
+  fetchA2AAgents: async () => {
+    try {
+      const res = await fetch('/api/agents');
+      if (res.ok) {
+        const data = await res.json();
+        if (data.agents && Array.isArray(data.agents)) {
+          set((state: ProtocolStoreState) => {
+            const newAgents = data.agents.map((agent: any) => ({
+              id: agent.agent_id,
+              name: agent.name,
+              role: agent.role || 'Visual Agent',
+              avatar: agent.name.charAt(0).toUpperCase(),
+              provider: 'Visual Agent Studio',
+              endpoint: `a2a://internal/${agent.agent_id}`,
+              version: agent.version?.toString() || '1.0.0',
+              status: 'idle',
+              declaredCapabilities: [agent.cognition_mode, 'autonomy:' + agent.autonomy],
+              supportedProtocols: ['A2A/2.0'],
+              maxConcurrency: 1,
+              activeDelegations: 0,
+              reputationScore: 100,
+              latencyMs: Math.floor(Math.random() * 50) + 10,
+            }));
+            
+            // Merge with static agents
+            const existingIds = new Set(newAgents.map((a: any) => a.id));
+            const retainedStatic = state.a2aAgents.filter(a => !existingIds.has(a.id));
+            
+            return {
+              a2aAgents: [...newAgents, ...retainedStatic]
+            };
+          });
+        }
+      }
+    } catch (err) {
+      console.error('Failed to fetch A2A agents:', err);
+    }
   },
 }));

@@ -2,12 +2,14 @@ import { create } from 'zustand';
 
 interface SettingsModalState {
   isOpen: boolean;
-  open: () => void;
+  activeSection: string;
+  open: (section?: string) => void;
   close: () => void;
 }
 
 export const useSettingsModal = create<SettingsModalState>((set) => ({
   isOpen: false,
-  open: () => set({ isOpen: true }),
+  activeSection: 'general',
+  open: (section?: string) => set({ isOpen: true, activeSection: section || 'general' }),
   close: () => set({ isOpen: false }),
 }));

@@ -109,7 +109,7 @@ export function VisionUpload({ onUpload, isLoading }: VisionUploadProps) {
               {!isLoading && (
                 <button
                   onClick={clearFile}
-                  className="absolute top-1 right-1 bg-black/50 rounded-full p-0.5 opacity-0 group-hover:opacity-100 transition-opacity"
+                  className="absolute top-1 end-1 bg-black/50 rounded-full p-0.5 opacity-0 group-hover:opacity-100 transition-opacity"
                   aria-label="Supprimer le fichier"
                 >
                   <XCircle weight="fill" className="w-4 h-4 text-white" />

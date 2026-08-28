@@ -32,7 +32,7 @@ export default function LiveToggleButton({ isStreaming, hasText, onSend, onStop 
         className="w-10 h-10 mb-1 flex items-center justify-center rounded-full bg-[var(--text-primary)] text-black hover:scale-105 transition-transform shrink-0"
         title="Envoyer la directive"
       >
-        <PaperPlaneTilt size={18} weight="fill" className="ml-0.5" />
+        <PaperPlaneTilt size={18} weight="fill" className="ms-0.5" />
       </button>
     );
   }

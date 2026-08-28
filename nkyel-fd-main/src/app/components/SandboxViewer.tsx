@@ -54,7 +54,7 @@ export default function SandboxViewer({
           <span className="text-xs font-semibold text-primary font-mono tracking-wide">
             WORKSPACE SANDBOX
           </span>
-          <span className="ml-2 px-2 py-0.5 rounded-full bg-accent/10 text-accent text-[10px] font-bold">
+          <span className="ms-2 px-2 py-0.5 rounded-full bg-accent/10 text-accent text-[10px] font-bold">
             {provider}
           </span>
         </div>

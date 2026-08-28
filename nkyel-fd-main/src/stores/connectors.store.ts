@@ -101,6 +101,7 @@ interface ConnectorsState {
   disconnectConnector: (id: string) => Promise<void>;
   toggleSkill: (id: string) => void;
   addCustomSkill: (skill: Omit<SkillItem, 'id' | 'version' | 'author' | 'verified'>) => void;
+  fetchConnectors: () => Promise<void>;
 }
 
 const INITIAL_CONNECTORS: ConnectorItem[] = [
@@ -447,5 +448,47 @@ export const useConnectorsStore = create<ConnectorsState>((set: any, get: any) =
     set((state: ConnectorsState) => ({
       skills: [newSkill, ...state.skills],
     }));
+  },
+
+  fetchConnectors: async () => {
+    try {
+      const res = await fetch('/api/connectors/providers');
+      if (res.ok) {
+        const providers = await res.json();
+        set((state: ConnectorsState) => {
+          // Merge dynamic providers with static Connectors
+          const existingConnectors = [...state.connectors];
+          
+          providers.forEach((prov: any) => {
+            const idx = existingConnectors.findIndex(c => c.id === prov.id);
+            if (idx >= 0) {
+              existingConnectors[idx] = {
+                ...existingConnectors[idx],
+                status: prov.status === 'CONNECTED' ? 'CONNECTED' : (prov.enabled ? 'AVAILABLE' : 'ERROR'),
+                capabilities: prov.capabilities || existingConnectors[idx].capabilities
+              };
+            } else {
+              // Add as a new custom connector if not in static list
+              existingConnectors.push({
+                id: prov.id,
+                slug: prov.name.toLowerCase().replace(/\s+/g, '-'),
+                name: prov.name,
+                description: prov.notes || 'Fournisseur d\'intelligence et de calcul.',
+                category: 'Developer',
+                icon: 'Cpu',
+                status: prov.status === 'CONNECTED' ? 'CONNECTED' : (prov.enabled ? 'AVAILABLE' : 'ERROR'),
+                isGoogle: false,
+                capabilities: prov.capabilities || [],
+                permissions: []
+              });
+            }
+          });
+
+          return { connectors: existingConnectors };
+        });
+      }
+    } catch (err) {
+      console.error('Failed to fetch connectors', err);
+    }
   },
 }));

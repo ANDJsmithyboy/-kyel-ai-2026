@@ -91,7 +91,7 @@ export default function TopBar({ onOpenCapabilities }: TopBarProps) {
         }}
       />
 
-      <header className="relative h-12 flex items-center justify-between px-3 sm:px-4 border-b border-[var(--border-subtle)] bg-[var(--material-glass-regular)] backdrop-blur-md select-none z-50">
+      <header className="relative h-[56px] flex items-center justify-between px-3 sm:px-4 border-b border-[var(--border-subtle)] bg-[var(--material-glass-regular)] backdrop-blur-md select-none z-50">
         {/* Leading: Iboga Navigation Trigger (Mobile) + Wordmark (Desktop) + Model Selector */}
         <div className="flex items-center gap-2 sm:gap-3">
           {/* Mobile Iboga Navigation Trigger Button (No logo/wordmark on mobile) */}
@@ -124,7 +124,7 @@ export default function TopBar({ onOpenCapabilities }: TopBarProps) {
             </button>
 
             {modelDropdown && (
-              <div className="absolute left-0 top-full mt-1.5 w-72 space-y-1 rounded-2xl border border-[var(--border-strong)] bg-[var(--bg-elevated)] p-1.5 shadow-[0_20px_50px_rgba(0,0,0,0.7)] z-[150] animate-scale-in">
+              <div className="absolute start-0 top-full mt-1.5 w-72 space-y-1 rounded-2xl border border-[var(--border-strong)] bg-[var(--bg-elevated)] p-1.5 shadow-[0_20px_50px_rgba(0,0,0,0.7)] z-[150] animate-scale-in">
                 <div className="px-2.5 py-1 text-[10px] uppercase tracking-wider text-[var(--text-tertiary)] border-b border-[var(--border-subtle)] mb-1 flex items-center justify-between">
                   <span>{isFr ? "Moteurs Souverains" : "Sovereign Engines"}</span>
                   <span className="text-[9px] font-mono text-[var(--accent)] font-semibold">ñkyel</span>
@@ -141,13 +141,13 @@ export default function TopBar({ onOpenCapabilities }: TopBarProps) {
                         setEngineId(mode.id);
                         setModelDropdown(false);
                       }}
-                      className={`flex w-full items-start justify-between rounded-xl px-2.5 py-2 text-left transition-colors ${
+                      className={`flex w-full items-start justify-between rounded-xl px-2.5 py-2 text-start transition-colors ${
                         isSelected
                           ? 'bg-[var(--surface-raised)] border border-[var(--accent-muted)] text-[var(--text-primary)]'
                           : 'hover:bg-[var(--hover)] text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
                       }`}
                     >
-                      <div className="flex-1 min-w-0 pr-2">
+                      <div className="flex-1 min-w-0 pe-2">
                         <div className="flex items-center gap-1.5 text-xs font-semibold">
                           <span>{modeLabel}</span>
                           {mode.badge && (
@@ -175,7 +175,7 @@ export default function TopBar({ onOpenCapabilities }: TopBarProps) {
                       setModelDropdown(false);
                       setIsModelModalOpen(true);
                     }}
-                    className="flex w-full items-center justify-between rounded-xl px-2.5 py-2 text-left bg-[var(--accent-subtle)]/40 hover:bg-[var(--accent-subtle)] text-[var(--accent)] transition-colors"
+                    className="flex w-full items-center justify-between rounded-xl px-2.5 py-2 text-start bg-[var(--accent-subtle)]/40 hover:bg-[var(--accent-subtle)] text-[var(--accent)] transition-colors"
                   >
                     <div className="flex items-center gap-2">
                       <MagnifyingGlass size={14} weight="bold" />
@@ -208,37 +208,28 @@ export default function TopBar({ onOpenCapabilities }: TopBarProps) {
             </kbd>
           </button>
 
-          {/* Upgrade Button (Manus Style Desktop) */}
+          {/* Plan Gratuit | Mise à niveau (Screenshot 3) */}
+          <div className="hidden sm:flex items-center gap-1.5 px-3 py-1 rounded-full bg-[var(--surface-raised)] border border-[var(--border)] text-xs text-[var(--text-secondary)]">
+            <span className="text-[11px] text-[var(--text-tertiary)]">{isFr ? 'Plan gratuit' : 'Free plan'}</span>
+            <span className="text-[10px] text-[var(--border-strong)]">|</span>
+            <button
+              type="button"
+              onClick={() => setIsUpgradeOpen(true)}
+              className="text-[11px] font-semibold text-[var(--accent)] hover:underline"
+            >
+              {isFr ? 'Mise à niveau' : 'Upgrade'}
+            </button>
+          </div>
+
+          {/* Credits Chip ✨ 300 (Screenshot 3) */}
           <button
             type="button"
             onClick={() => setIsUpgradeOpen(true)}
-            className="hidden sm:flex h-8 items-center gap-1.5 rounded-xl bg-[var(--hover)] hover:bg-[var(--active)] px-3 text-xs font-semibold text-[var(--text-primary)] transition-colors border border-[var(--border-subtle)]"
+            className="flex items-center gap-1.5 h-8 px-3 rounded-full bg-[var(--surface-raised)] hover:bg-[var(--hover)] border border-[var(--border)] text-xs font-semibold text-[var(--text-primary)] transition-all shadow-xs"
+            title={isFr ? "300 crédits disponibles" : "300 credits available"}
           >
             <Sparkle size={14} weight="fill" className="text-[var(--accent)]" />
-            <span>{isFr ? "Mise à niveau" : "Upgrade"}</span>
-          </button>
-
-          {/* Share Button (Desktop) */}
-          <button
-            type="button"
-            onClick={handleShare}
-            className="hidden md:flex h-8 items-center gap-1.5 rounded-xl px-2.5 text-xs text-[var(--text-secondary)] transition-colors hover:bg-[var(--hover)] hover:text-[var(--text-primary)]"
-            title="Share"
-            aria-label="Share"
-          >
-            <ShareNetwork size={16} />
-            <span className="text-[11px] font-medium">{isFr ? "Partager" : "Share"}</span>
-          </button>
-
-          {/* Mission Intelligence Control (Ñkyel Spark) */}
-          <button
-            type="button"
-            onClick={onOpenCapabilities}
-            aria-label="Mission Intelligence"
-            title="Mission Intelligence"
-            className="flex h-8 w-8 items-center justify-center rounded-xl text-[var(--accent)] bg-[var(--accent)]/10 transition-colors hover:bg-[var(--accent)] hover:text-[var(--accent-fg)]"
-          >
-            <RenduIcon width={16} height={16} />
+            <span className="font-mono">300</span>
           </button>
         </div>
       </header>

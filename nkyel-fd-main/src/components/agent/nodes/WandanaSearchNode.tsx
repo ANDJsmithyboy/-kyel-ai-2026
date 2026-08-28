@@ -88,7 +88,7 @@ export default function WandanaSearchNode({ query, status, results = [] }: Wanda
                   className="flex flex-col gap-1 p-2 bg-[var(--bg-elevated)] border border-[var(--border)] rounded-md hover:border-[var(--accent-35)] transition-colors group"
                 >
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-medium text-[var(--text-primary)] truncate pr-2">
+                    <span className="text-xs font-medium text-[var(--text-primary)] truncate pe-2">
                       {result.title || result.url}
                     </span>
                     <ExternalLink size={12} className="opacity-0 group-hover:opacity-100 text-[var(--accent)] transition-opacity" />

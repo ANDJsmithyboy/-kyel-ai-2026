@@ -54,7 +54,7 @@ export default function ModelSelector({ value, onChange, isPioneer = false }: Mo
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 8, scale: 0.95 }}
             transition={{ duration: 0.15 }}
-            className="absolute bottom-full mb-2 left-0 p-1.5 rounded-xl z-50"
+            className="absolute bottom-full mb-2 start-0 p-1.5 rounded-xl z-50"
             style={{
               background: '#131618',
               border: '1px solid rgba(255,255,255,0.1)',
@@ -72,7 +72,7 @@ export default function ModelSelector({ value, onChange, isPioneer = false }: Mo
                   key={key}
                   whileHover={locked ? {} : { x: 2 }}
                   onClick={() => { if (!locked) { onChange(key); setOpen(false); } }}
-                  className="flex items-center gap-2 w-full px-3 py-2 rounded-lg text-left text-[13px] transition-colors"
+                  className="flex items-center gap-2 w-full px-3 py-2 rounded-lg text-start text-[13px] transition-colors"
                   style={{
                     background: value === key ? 'rgba(197,160,89,0.08)' : 'transparent',
                     border: value === key ? '1px solid rgba(197,160,89,0.15)' : '1px solid transparent',
@@ -85,7 +85,7 @@ export default function ModelSelector({ value, onChange, isPioneer = false }: Mo
                   <span>{m.icon}</span>
                   <div className="flex-1">
                     <span className="font-semibold">{m.label}</span>
-                    <span className="text-[11px] ml-1" style={{ color: '#8A8A92' }}>
+                    <span className="text-[11px] ms-1" style={{ color: '#8A8A92' }}>
                       — {m.desc}
                     </span>
                   </div>

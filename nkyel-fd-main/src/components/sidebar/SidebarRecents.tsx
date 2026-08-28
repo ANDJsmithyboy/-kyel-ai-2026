@@ -138,7 +138,7 @@ export default function SidebarRecents({ isCollapsed }: SidebarRecentsProps) {
               <button
                 type="button"
                 onClick={() => router.push(item.id.startsWith('m-') ? '/' : `/chat/${item.id}`)}
-                className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg text-left transition-colors ${
+                className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg text-start transition-colors ${
                   isActive
                     ? 'bg-white/[0.08] text-white font-medium'
                     : 'text-[#9199A8] hover:text-white hover:bg-white/[0.04]'
@@ -163,7 +163,7 @@ export default function SidebarRecents({ isCollapsed }: SidebarRecentsProps) {
               {/* Menu Contextuel */}
               {isMenuOpen && (
                 <div
-                  className="absolute right-2 top-8 z-50 w-40 py-1 rounded-xl bg-[#0E121A] border border-white/[0.08] shadow-2xl text-[11px] text-[#B8C0CC]"
+                  className="absolute end-2 top-8 z-50 w-40 py-1 rounded-xl bg-[#0E121A] border border-white/[0.08] shadow-2xl text-[11px] text-[#B8C0CC]"
                   onMouseLeave={() => setActiveMenuId(null)}
                 >
                   <button
@@ -173,7 +173,7 @@ export default function SidebarRecents({ isCollapsed }: SidebarRecentsProps) {
                       if (newTitle) item.title = newTitle;
                       setActiveMenuId(null);
                     }}
-                    className="w-full flex items-center gap-2 px-3 py-1.5 hover:bg-white/[0.06] hover:text-white text-left"
+                    className="w-full flex items-center gap-2 px-3 py-1.5 hover:bg-white/[0.06] hover:text-white text-start"
                   >
                     <PencilSimple size={13} />
                     <span>Renommer</span>
@@ -184,7 +184,7 @@ export default function SidebarRecents({ isCollapsed }: SidebarRecentsProps) {
                       alert('Mission dupliquée');
                       setActiveMenuId(null);
                     }}
-                    className="w-full flex items-center gap-2 px-3 py-1.5 hover:bg-white/[0.06] hover:text-white text-left"
+                    className="w-full flex items-center gap-2 px-3 py-1.5 hover:bg-white/[0.06] hover:text-white text-start"
                   >
                     <Copy size={13} />
                     <span>Dupliquer</span>
@@ -195,7 +195,7 @@ export default function SidebarRecents({ isCollapsed }: SidebarRecentsProps) {
                       item.isArchived = !item.isArchived;
                       setActiveMenuId(null);
                     }}
-                    className="w-full flex items-center gap-2 px-3 py-1.5 hover:bg-white/[0.06] hover:text-white text-left"
+                    className="w-full flex items-center gap-2 px-3 py-1.5 hover:bg-white/[0.06] hover:text-white text-start"
                   >
                     <Archive size={13} />
                     <span>{item.isArchived ? 'Désarchiver' : 'Archiver'}</span>
@@ -206,7 +206,7 @@ export default function SidebarRecents({ isCollapsed }: SidebarRecentsProps) {
                       router.push('/export-data');
                       setActiveMenuId(null);
                     }}
-                    className="w-full flex items-center gap-2 px-3 py-1.5 hover:bg-white/[0.06] hover:text-white text-left"
+                    className="w-full flex items-center gap-2 px-3 py-1.5 hover:bg-white/[0.06] hover:text-white text-start"
                   >
                     <DownloadSimple size={13} />
                     <span>Exporter</span>
@@ -220,7 +220,7 @@ export default function SidebarRecents({ isCollapsed }: SidebarRecentsProps) {
                       }
                       setActiveMenuId(null);
                     }}
-                    className="w-full flex items-center gap-2 px-3 py-1.5 text-[#BE6254] hover:bg-[#BE6254]/10 text-left font-semibold"
+                    className="w-full flex items-center gap-2 px-3 py-1.5 text-[#BE6254] hover:bg-[#BE6254]/10 text-start font-semibold"
                   >
                     <Trash size={13} />
                     <span>Supprimer</span>
@@ -256,7 +256,7 @@ export default function SidebarRecents({ isCollapsed }: SidebarRecentsProps) {
               key={proj.id}
               type="button"
               onClick={handleAddProject}
-              className="w-full flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg text-[#9199A8] hover:text-white hover:bg-white/[0.04] transition-colors text-left"
+              className="w-full flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg text-[#9199A8] hover:text-white hover:bg-white/[0.04] transition-colors text-start"
             >
               <FolderSimplePlus size={15} className="shrink-0 text-[#665F9E]" />
               <span className="truncate text-[12px]">{proj.name}</span>

@@ -486,7 +486,7 @@ export default function CommandPalette() {
             initial={{ opacity: 0, y: -20, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -20, scale: 0.95 }}
-            className="fixed top-5 right-5 z-[100] px-4 py-2.5 rounded-2xl bg-[var(--material-content-raised)] border border-[var(--accent)]/50 text-xs text-[var(--text-primary)] shadow-[var(--shadow-floating)] flex items-center gap-2"
+            className="fixed top-5 end-5 z-[100] px-4 py-2.5 rounded-2xl bg-[var(--material-content-raised)] border border-[var(--accent)]/50 text-xs text-[var(--text-primary)] shadow-[var(--shadow-floating)] flex items-center gap-2"
           >
             <CheckCircle size={16} weight="fill" className="text-[var(--accent)]" />
             <span className="font-medium">{toastMessage}</span>
@@ -540,7 +540,7 @@ export default function CommandPalette() {
                         key={cmd.id}
                         onClick={() => cmd.handler()}
                         onMouseEnter={() => setSelectedIndex(idx)}
-                        className={`w-full flex items-center justify-between p-2.5 rounded-2xl text-left transition-all ${
+                        className={`w-full flex items-center justify-between p-2.5 rounded-2xl text-start transition-all ${
                           isSelected
                             ? 'bg-[var(--accent-subtle)] border border-[var(--accent)]/40 text-[var(--text-primary)] shadow-sm'
                             : 'hover:bg-[var(--hover)] border border-transparent text-[var(--text-secondary)]'
@@ -567,7 +567,7 @@ export default function CommandPalette() {
                         </div>
 
                         {cmd.shortcut && (
-                          <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-lg bg-[var(--surface-raised)] border border-[var(--border)] text-[var(--text-tertiary)] shrink-0 ml-2">
+                          <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-lg bg-[var(--surface-raised)] border border-[var(--border)] text-[var(--text-tertiary)] shrink-0 ms-2">
                             {cmd.shortcut}
                           </span>
                         )}

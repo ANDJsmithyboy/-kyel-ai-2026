@@ -214,7 +214,7 @@ export default function NkyelAgentView() {
                       key={style.id}
                       type="button"
                       onClick={() => setWorkingStyle(style.id as any)}
-                      className={`p-3 rounded-2xl border text-left transition-all ${
+                      className={`p-3 rounded-2xl border text-start transition-all ${
                         workingStyle === style.id
                           ? 'bg-[var(--control-bg)] border-[var(--accent)] text-[var(--text-primary)] shadow-xs'
                           : 'bg-[var(--surface)] border-[var(--border-subtle)] text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
@@ -255,7 +255,7 @@ export default function NkyelAgentView() {
                       >
                         <Icon size={14} className={isEnabled ? 'text-[var(--accent)]' : ''} />
                         <span>{tool.label}</span>
-                        {isEnabled && <Check size={12} weight="bold" className="text-emerald-400 ml-0.5" />}
+                        {isEnabled && <Check size={12} weight="bold" className="text-emerald-400 ms-0.5" />}
                       </button>
                     );
                   })}
@@ -301,7 +301,7 @@ export default function NkyelAgentView() {
                 >
                   <Microphone size={16} />
                 </button>
-                <span className="text-[11px] font-mono ml-2 hidden sm:inline text-[var(--text-disabled)]">
+                <span className="text-[11px] font-mono ms-2 hidden sm:inline text-[var(--text-disabled)]">
                   ⌘ + Enter
                 </span>
               </div>
@@ -377,7 +377,7 @@ export default function NkyelAgentView() {
                 </div>
 
                 <div className="shrink-0 flex items-center gap-3">
-                  <div className="text-right hidden sm:block">
+                  <div className="text-end hidden sm:block">
                     <span className="text-xs font-mono text-[var(--text-secondary)] block">
                       {dispatch.artifactsCount} {isFr ? 'artefacts' : 'artifacts'}
                     </span>

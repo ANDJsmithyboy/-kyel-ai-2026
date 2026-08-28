@@ -79,7 +79,7 @@ export default function PWAInstallPrompt() {
         animate={{ opacity: 1, y: 0, scale: 1 }}
         exit={{ opacity: 0, y: 30, scale: 0.95 }}
         transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
-        className="fixed bottom-4 left-4 right-4 sm:left-auto sm:right-6 sm:max-w-md z-[120] p-4 rounded-2xl border border-[var(--accent-muted)] bg-[var(--surface-raised, #10131A)]/95 backdrop-blur-xl shadow-2xl"
+        className="fixed bottom-4 start-4 end-4 sm:start-auto sm:end-6 sm:max-w-md z-[120] p-4 rounded-2xl border border-[var(--accent-muted)] bg-[var(--surface-raised, #10131A)]/95 backdrop-blur-xl shadow-2xl"
         style={{
           boxShadow: '0 20px 40px rgba(0, 0, 0, 0.6), 0 0 0 1px var(--accent-muted)',
         }}
@@ -88,13 +88,13 @@ export default function PWAInstallPrompt() {
         <button
           type="button"
           onClick={handleDismiss}
-          className="absolute top-3 right-3 p-1 rounded-lg text-[var(--text-tertiary)] hover:text-[var(--text-primary)] hover:bg-[var(--hover)] transition-colors"
+          className="absolute top-3 end-3 p-1 rounded-lg text-[var(--text-tertiary)] hover:text-[var(--text-primary)] hover:bg-[var(--hover)] transition-colors"
           aria-label="Fermer"
         >
           <X size={16} />
         </button>
 
-        <div className="flex items-start gap-3.5 pr-6">
+        <div className="flex items-start gap-3.5 pe-6">
           {/* Brand Icon Badge */}
           <div className="w-11 h-11 rounded-xl bg-[var(--accent)] text-[var(--accent-fg)] flex items-center justify-center shrink-0 shadow-md">
             <PantherMissionGlyph size={24} />

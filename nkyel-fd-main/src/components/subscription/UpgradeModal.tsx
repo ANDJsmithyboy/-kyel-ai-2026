@@ -121,7 +121,7 @@ export default function UpgradeModal({ isOpen, onClose }: UpgradeModalProps) {
               {plans.map((p) => (
                 <div
                   key={p.id}
-                  className={`p-4 rounded-2xl border flex flex-col justify-between text-left transition-all ${
+                  className={`p-4 rounded-2xl border flex flex-col justify-between text-start transition-all ${
                     p.popular
                       ? 'bg-[var(--surface-raised)] border-[var(--accent)]/50 shadow-md'
                       : 'bg-[var(--surface)] border-[var(--border)]'
