@@ -348,10 +348,13 @@ export const DICTIONARY: Record<string, Record<string, string>> = {
   'nav.newTask': { 'en-US': 'New mission', 'fr-FR': 'Nouvelle mission', 'fr-GA': 'Nouvelle mission' },
   'nav.agent': { 'en-US': 'Agent', 'fr-FR': 'Agent', 'fr-GA': 'Agent' },
   'nav.connections': { 'en-US': 'Connectors', 'fr-FR': 'Connecteurs', 'fr-GA': 'Connecteurs' },
+  'nav.connectors': { 'en-US': 'Connectors', 'fr-FR': 'Connecteurs', 'fr-GA': 'Connecteurs' },
   'nav.plugins': { 'en-US': 'Connectors', 'fr-FR': 'Connecteurs', 'fr-GA': 'Connecteurs' },
   'nav.automations': { 'en-US': 'Programs', 'fr-FR': 'Programmes', 'fr-GA': 'Programmes' },
+  'nav.programs': { 'en-US': 'Programs', 'fr-FR': 'Programmes', 'fr-GA': 'Programmes' },
   'nav.scheduled': { 'en-US': 'Programs', 'fr-FR': 'Programmes', 'fr-GA': 'Programmes' },
   'nav.creations': { 'en-US': 'Sanctuary', 'fr-FR': 'Sanctuaire', 'fr-GA': 'Sanctuaire' },
+  'nav.sanctuary': { 'en-US': 'Sanctuary', 'fr-FR': 'Sanctuaire', 'fr-GA': 'Sanctuaire' },
   'nav.library': { 'en-US': 'Sanctuary', 'fr-FR': 'Sanctuaire', 'fr-GA': 'Sanctuaire' },
   'nav.projects': { 'en-US': 'Projects', 'fr-FR': 'Projets', 'fr-GA': 'Projets' },
   'nav.newProject': { 'en-US': 'New project', 'fr-FR': 'Nouveau projet', 'fr-GA': 'Nouveau projet' },
@@ -362,6 +365,8 @@ export const DICTIONARY: Record<string, Record<string, string>> = {
   'time.today': { 'en-US': 'Today', 'fr-FR': "Aujourd'hui", 'fr-GA': "Aujourd'hui" },
   'time.yesterday': { 'en-US': 'Yesterday', 'fr-FR': 'Hier', 'fr-GA': 'Hier' },
   'time.previous7Days': { 'en-US': 'Previous 7 days', 'fr-FR': '7 derniers jours', 'fr-GA': '7 derniers jours' },
+  'time.last7Days': { 'en-US': 'Previous 7 days', 'fr-FR': '7 derniers jours', 'fr-GA': '7 derniers jours' },
+  'time.last30Days': { 'en-US': 'Previous 30 days', 'fr-FR': '30 derniers jours', 'fr-GA': '30 derniers jours' },
   'time.older': { 'en-US': 'Older', 'fr-FR': 'Plus anciennes', 'fr-GA': 'Plus anciennes' },
 
   // Intelligence Modes
@@ -381,26 +386,47 @@ export const DICTIONARY: Record<string, Record<string, string>> = {
   'header.commands': { 'en-US': 'Commands', 'fr-FR': 'Commandes', 'fr-GA': 'Commandes' },
   'header.mission': { 'en-US': 'Mission', 'fr-FR': 'Mission', 'fr-GA': 'Mission' },
   'header.missionIntelligence': { 'en-US': 'Mission Intelligence', 'fr-FR': 'Intelligence de Mission', 'fr-GA': 'Intelligence de Mission' },
+  'header.focus': { 'en-US': 'Focus', 'fr-FR': 'Focus', 'fr-GA': 'Focus' },
+  'header.context': { 'en-US': 'Context', 'fr-FR': 'Contexte', 'fr-GA': 'Contexte' },
 
   // Mission Views
-  'view.overview': { 'en-US': 'Overview', 'fr-FR': 'Aperçu', 'fr-GA': 'Aperçu' },
+  'view.overview': { 'en-US': 'Overview', 'fr-FR': 'Vue d’ensemble', 'fr-GA': 'Vue d’ensemble' },
   'view.workgraph': { 'en-US': 'WorkGraph', 'fr-FR': 'WorkGraph', 'fr-GA': 'WorkGraph' },
-  'view.vie': { 'en-US': 'VIE Studio', 'fr-FR': 'Studio VIE', 'fr-GA': 'Studio VIE' },
+  'view.vie': { 'en-US': 'VIE', 'fr-FR': 'VIE', 'fr-GA': 'VIE' },
   'view.liveFlow': { 'en-US': 'Live Flow', 'fr-FR': 'Live Flow', 'fr-GA': 'Live Flow' },
+
+  // Composer
+  'composer.placeholder': { 'en-US': 'Send a message to Ñkyel...', 'fr-FR': 'Envoyez un message à Ñkyel...', 'fr-GA': 'Envoyez un message à Ñkyel...' },
+  'composer.ask': { 'en-US': 'Ask Ñkyel anything...', 'fr-FR': 'Demandez quelque chose à Ñkyel...', 'fr-GA': 'Demandez quelque chose à Ñkyel...' },
+  'composer.accomplish': { 'en-US': 'What would you like to accomplish?', 'fr-FR': 'Que souhaitez-vous accomplir ?', 'fr-GA': 'Que souhaitez-vous accomplir ?' },
+  'composer.accomplishSubtitle': { 'en-US': 'Turn your intention into observable, structured, and executable work.', 'fr-FR': 'Transformez votre intention en travail observable, structuré et exécutable.', 'fr-GA': 'Transformez votre intention en travail observable, structuré et exécutable.' },
+  'composer.addToMission': { 'en-US': 'Add to mission', 'fr-FR': 'Ajouter à la mission', 'fr-GA': 'Ajouter à la mission' },
 
   // Profile & Popover
   'profile.personal': { 'en-US': 'Personal', 'fr-FR': 'Personnel', 'fr-GA': 'Personnel' },
   'profile.free': { 'en-US': 'Free Plan', 'fr-FR': 'Forfait Gratuit', 'fr-GA': 'Forfait Gratuit' },
-  'profile.upgrade': { 'en-US': 'Plan & Usage', 'fr-FR': 'Forfait & Utilisation', 'fr-GA': 'Forfait & Utilisation' },
+  'profile.upgrade': { 'en-US': 'Upgrade', 'fr-FR': 'Mise à niveau', 'fr-GA': 'Mise à niveau' },
   'profile.credits': { 'en-US': 'Credits', 'fr-FR': 'Crédits', 'fr-GA': 'Crédits' },
   'profile.account': { 'en-US': 'Account', 'fr-FR': 'Compte', 'fr-GA': 'Compte' },
-  'profile.customization': { 'en-US': 'Customization', 'fr-FR': 'Personnalisation', 'fr-GA': 'Personnalisation' },
+  'profile.customization': { 'en-US': 'Personalization', 'fr-FR': 'Personnalisation', 'fr-GA': 'Personnalisation' },
   'profile.settings': { 'en-US': 'Settings', 'fr-FR': 'Paramètres', 'fr-GA': 'Paramètres' },
-  'profile.home': { 'en-US': 'Home page', 'fr-FR': "Page d'accueil", 'fr-GA': "Page d'accueil" },
+  'profile.home': { 'en-US': 'Home', 'fr-FR': "Accueil", 'fr-GA': "Accueil" },
   'profile.help': { 'en-US': 'Help & Support', 'fr-FR': "Aide & Assistance", 'fr-GA': "Aide & Assistance" },
   'profile.docs': { 'en-US': 'Documentation', 'fr-FR': 'Documentation', 'fr-GA': 'Documentation' },
   'profile.logout': { 'en-US': 'Log out', 'fr-FR': 'Se déconnecter', 'fr-GA': 'Se déconnecter' },
+  'profile.defaultName': { 'en-US': 'User', 'fr-FR': 'Utilisateur', 'fr-GA': 'Utilisateur' },
   
+  // Settings Tabs
+  'settings.general': { 'en-US': 'General', 'fr-FR': 'Général', 'fr-GA': 'Général' },
+  'settings.account': { 'en-US': 'Account', 'fr-FR': 'Compte', 'fr-GA': 'Compte' },
+  'settings.appearance': { 'en-US': 'Appearance', 'fr-FR': 'Apparence', 'fr-GA': 'Apparence' },
+  'settings.intelligence': { 'en-US': 'Intelligence', 'fr-FR': 'Intelligence', 'fr-GA': 'Intelligence' },
+  'settings.memory': { 'en-US': 'Memory', 'fr-FR': 'Mémoire', 'fr-GA': 'Mémoire' },
+  'settings.connectors': { 'en-US': 'Connectors', 'fr-FR': 'Connecteurs', 'fr-GA': 'Connecteurs' },
+  'settings.usage': { 'en-US': 'Usage', 'fr-FR': 'Utilisation', 'fr-GA': 'Utilisation' },
+  'settings.security': { 'en-US': 'Security', 'fr-FR': 'Sécurité', 'fr-GA': 'Sécurité' },
+  'settings.language': { 'en-US': 'Language', 'fr-FR': 'Langue', 'fr-GA': 'Langue' },
+
   // Auth
   'auth.welcome': { 'en-US': 'Welcome to Ñkyel', 'fr-FR': 'Bienvenue sur Ñkyel', 'fr-GA': 'Bienvenue sur Ñkyel' },
   'auth.continueTo': { 'en-US': 'Sign in to continue to Ñkyel', 'fr-FR': 'Connectez-vous pour continuer sur Ñkyel', 'fr-GA': 'Connectez-vous pour continuer sur Ñkyel' },

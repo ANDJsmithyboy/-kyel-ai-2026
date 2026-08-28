@@ -4,12 +4,11 @@
 
 'use client';
 
+import React from 'react';
 import {
   useUser,
   useAuth,
   useClerk,
-  SignedIn,
-  SignedOut,
   SignInButton,
   SignUpButton,
   UserButton,
@@ -17,12 +16,20 @@ import {
   SignUp,
 } from '@clerk/nextjs';
 
+export function SignedIn({ children }: { children: React.ReactNode }) {
+  const { isSignedIn } = useAuth();
+  return isSignedIn ? React.createElement(React.Fragment, null, children) : null;
+}
+
+export function SignedOut({ children }: { children: React.ReactNode }) {
+  const { isSignedIn } = useAuth();
+  return !isSignedIn ? React.createElement(React.Fragment, null, children) : null;
+}
+
 export {
   useUser,
   useAuth,
   useClerk,
-  SignedIn,
-  SignedOut,
   SignInButton,
   SignUpButton,
   UserButton,

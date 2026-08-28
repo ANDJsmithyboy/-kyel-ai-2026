@@ -153,7 +153,7 @@ export default function DesktopSettingsModal() {
   const { signOut } = useClerk();
   const isOpen = useSettingsModal((state: any) => state.isOpen);
   const close = useSettingsModal((state: any) => state.close);
-  const { uiLocale, setUiLocale } = useLanguageStore();
+  const { t, uiLocale, setUiLocale } = useLanguageStore();
 
   const [activeSection, setActiveSection] = useState<SettingsSection>('general');
   const [query, setQuery] = useState('');
@@ -276,19 +276,19 @@ export default function DesktopSettingsModal() {
         return (
           <div className="space-y-8 animate-in fade-in duration-150">
             <div>
-              <h1 className="text-2xl font-bold text-[var(--text-primary)] font-sans">Général</h1>
+              <h1 className="text-2xl font-bold text-[var(--text-primary)] font-sans">{t('settings.general')}</h1>
             </div>
 
             {/* Section: Apparence */}
             <div className="space-y-6">
               <h2 className="text-sm font-semibold uppercase tracking-wider text-[var(--accent)]">
-                Apparence
+                {t('settings.appearance')}
               </h2>
 
               {/* Langue Dropdown */}
               <div className="space-y-2">
                 <label className="text-sm font-medium text-[var(--text-primary)] block">
-                  Langue
+                  {t('settings.language')}
                 </label>
                 <div className="relative max-w-sm" ref={languageDropdownRef}>
                   <button
@@ -336,7 +336,7 @@ export default function DesktopSettingsModal() {
               {/* Thème Cards matching Screenshot 1 */}
               <div className="space-y-2 pt-2">
                 <label className="text-sm font-medium text-[var(--text-primary)] block">
-                  Thème
+                  {uiLocale?.startsWith('fr') ? "Thème" : "Theme"}
                 </label>
                 <div className="grid grid-cols-3 gap-3 max-w-md">
                   {THEME_OPTIONS.map(({ id, label, icon: Icon }) => {

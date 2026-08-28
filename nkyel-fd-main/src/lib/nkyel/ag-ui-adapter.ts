@@ -338,8 +338,6 @@ export class AgUiStreamAdapter {
         type: 'final.delivered',
         version: '1.0.0',
         runId: this.runId,
-        sequenceNumber: 0,
-        timestamp: '',
       });
 
     } catch (error) {
@@ -350,8 +348,6 @@ export class AgUiStreamAdapter {
           type: 'run.cancelled',
           version: '1.0.0',
           runId: this.runId,
-          sequenceNumber: 0,
-          timestamp: '',
           payload: { error: (error as Error).message },
         });
       }

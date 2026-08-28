@@ -122,8 +122,8 @@ export default function NkyelSidebar() {
   const router = useRouter();
   const { user } = useUser();
   const { signOut } = useClerk();
-  const { isCollapsed, toggleSidebar, isMobile, isOpen, closeMobileSidebar } = useSidebar();
-  const { t } = useLanguageStore();
+  const { t, uiLocale } = useLanguageStore();
+  const isFr = !uiLocale || uiLocale.startsWith('fr');
   const openDesktopSettings = useSettingsModal((s: any) => s.open);
 
   const {
@@ -874,13 +874,13 @@ export default function NkyelSidebar() {
                       <span>Mode God</span>
                     </div>
                     <span className="text-[10px] text-[var(--text-tertiary)] uppercase tracking-wider font-semibold">
-                      Créateur de Ñkyel
+                      {isFr ? "Créateur de Ñkyel" : "Creator of Ñkyel"}
                     </span>
                   </>
                 ) : (
                   <>
                     <span className="text-xs font-semibold text-[var(--text-primary)]">
-                      Free <span className="text-[var(--text-tertiary)] font-normal px-1">·</span> Accès bêta
+                      Free <span className="text-[var(--text-tertiary)] font-normal px-1">·</span> {isFr ? "Accès bêta" : "Beta access"}
                     </span>
                   </>
                 )}

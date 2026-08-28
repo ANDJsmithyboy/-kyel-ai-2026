@@ -380,10 +380,10 @@ export default function AdaptiveChatWorkspace({
                   ? 'bg-[var(--accent-subtle)] border-[var(--accent)]/40 text-[var(--accent)]'
                   : 'border-[var(--border)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--hover)]'
               }`}
-              title="Mode concentration"
+              title={t('header.focus')}
             >
               <GeistSparkle size={13} />
-              <span>Focus</span>
+              <span>{t('header.focus')}</span>
             </button>
 
             {/* Right Inspector Trigger Button with Live Status Badge */}
@@ -395,10 +395,10 @@ export default function AdaptiveChatWorkspace({
                   ? 'bg-[var(--surface-raised)] border-[var(--border-strong)] text-[var(--text-primary)] shadow-sm'
                   : 'border-[var(--border)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--hover)]'
               }`}
-              title="Inspecteur de Contexte (Sources, Outils, Activité)"
+              title={t('header.context')}
             >
               <GeistActivity size={14} className={isStreaming ? 'animate-spin text-[var(--accent)]' : 'text-[var(--text-tertiary)]'} />
-              <span className="hidden sm:inline">Contexte</span>
+              <span className="hidden sm:inline">{t('header.context')}</span>
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
             </button>
           </div>
@@ -424,12 +424,10 @@ export default function AdaptiveChatWorkspace({
                     </div>
 
                     <h2 className="text-2xl sm:text-[28px] font-semibold tracking-tight text-[var(--text-primary)]">
-                      {isFr ? "Que souhaitez-vous accomplir ?" : "What would you like to accomplish?"}
+                      {t('composer.accomplish')}
                     </h2>
                     <p className="text-xs sm:text-sm text-[var(--text-tertiary)] mt-1.5 max-w-md leading-relaxed">
-                      {isFr
-                        ? "Transformez votre intention en travail observable, structuré et exécutable."
-                        : "Turn your intention into observable, structured, and executable work."}
+                      {t('composer.accomplishSubtitle')}
                     </p>
 
                     {/* Suggestion Starter Cards (Apple Squircles) */}

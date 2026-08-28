@@ -9,7 +9,7 @@ export function useTabSync(channelName: string = 'nkyel_ai_sync') {
   const [isReadOnly, setIsReadOnly] = useState<boolean>(false);
   const channelRef = useRef<BroadcastChannel | null>(null);
   const tabId = useRef<string>(Math.random().toString(36).substring(2, 9));
-  const electionTimeoutRef = useRef<NodeJS.Timeout>();
+  const electionTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     // Only run in browser
@@ -44,7 +44,7 @@ export function useTabSync(channelName: string = 'nkyel_ai_sync') {
           
         case 'LEADER_CLAIMED':
           if (senderId !== tabId.current) {
-            clearTimeout(electionTimeoutRef.current);
+            if (electionTimeoutRef.current) clearTimeout(electionTimeoutRef.current);
             setTabState('FOLLOWER');
             setIsReadOnly(true);
           }
@@ -52,7 +52,7 @@ export function useTabSync(channelName: string = 'nkyel_ai_sync') {
 
         case 'LEADER_PING':
           if (tabState === 'ELECTION') {
-            clearTimeout(electionTimeoutRef.current);
+            if (electionTimeoutRef.current) clearTimeout(electionTimeoutRef.current);
             setTabState('FOLLOWER');
             setIsReadOnly(true);
           }
@@ -87,7 +87,7 @@ export function useTabSync(channelName: string = 'nkyel_ai_sync') {
 
     return () => {
       clearInterval(heartbeat);
-      clearTimeout(electionTimeoutRef.current);
+      if (electionTimeoutRef.current) clearTimeout(electionTimeoutRef.current);
       window.removeEventListener('beforeunload', onUnload);
       channel.close();
     };
