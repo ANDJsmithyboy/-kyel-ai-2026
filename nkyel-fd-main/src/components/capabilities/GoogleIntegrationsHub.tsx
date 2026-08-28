@@ -136,7 +136,7 @@ export default function GoogleIntegrationsHub() {
                     <CheckCircle size={14} weight="fill" />
                     <span>Test réussi</span>
                   </div>
-                  <p className="text-[10px] text-[#B8C0CC] whitespace-pre-line font-mono">{testResult.text}</p>
+                  <p className="text-[10px] text-[#B8C0CC] whitespace-pre-line font-mono">{testResult?.text}</p>
                 </div>
               ) : (
                 <button

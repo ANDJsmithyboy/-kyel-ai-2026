@@ -41,7 +41,6 @@ export default function AttachmentSheet({
       case 'NKYEL_TAI': return <IconNkyel {...props} />;
       case 'NKYEL_RADI': return <IconOnyxGris {...props} />;
       case 'RECHERCHE_WEB': return <IconWandana {...props} />;
-      case 'BLACK_PANTHER': return <IconBlackPanther {...props} />;
       case 'BLUE_PANTHER': return <IconBlackPanther {...props} style={{ color: '#0070F3' }} />;
       default: return <IconAurata {...props} />;
     }

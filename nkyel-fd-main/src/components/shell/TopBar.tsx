@@ -99,7 +99,7 @@ export default function TopBar({ onOpenCapabilities }: TopBarProps) {
             <IbogaNavigationTrigger
               open={false}
               onToggle={openMobileSidebar}
-              glyphSize={24}
+              glyphSize={17}
               variant="mobile"
               title="Ouvrir la navigation"
               label="Ouvrir la navigation"
@@ -108,16 +108,16 @@ export default function TopBar({ onOpenCapabilities }: TopBarProps) {
 
           <div className="hidden md:block w-[1px] h-4 bg-[var(--border-subtle)] mx-1" />
 
-          {/* Canonical Intelligence Mode Selector — Visible on all viewports */}
+          {/* Canonical Intelligence Mode Selector — Visible on all viewports (Section 16) */}
           <div className="relative flex items-center" ref={dropdownRef}>
             <button
               type="button"
               onClick={() => setModelDropdown((prev) => !prev)}
               aria-expanded={modelDropdown}
               aria-label={isFr ? "Choisir le mode d'intelligence" : "Select intelligence mode"}
-              className="flex h-[28px] items-center gap-1.5 rounded-lg bg-transparent px-2 text-[14px] sm:text-[13px] font-semibold text-[var(--text-primary)] sm:text-[var(--text-secondary)] transition-colors hover:bg-[var(--hover)] hover:text-[var(--text-primary)] active:scale-[0.98]"
+              className="flex h-[32px] items-center gap-1.5 rounded-lg bg-transparent px-2 text-[14px] sm:text-[13.5px] font-semibold text-[var(--text-primary)] transition-colors hover:bg-[var(--hover)] active:scale-[0.98]"
             >
-              <span className="truncate max-w-[120px] sm:max-w-none tracking-tight">
+              <span className="truncate max-w-[140px] sm:max-w-none tracking-tight">
                 {isFr ? currentEngine.labelFr : currentEngine.labelEn}
               </span>
               <CaretDown size={12} className="opacity-60" />
@@ -127,7 +127,7 @@ export default function TopBar({ onOpenCapabilities }: TopBarProps) {
               <div className="absolute left-0 top-full mt-1.5 w-72 space-y-1 rounded-2xl border border-[var(--border-strong)] bg-[var(--bg-elevated)] p-1.5 shadow-[0_20px_50px_rgba(0,0,0,0.7)] z-[150] animate-scale-in">
                 <div className="px-2.5 py-1 text-[10px] uppercase tracking-wider text-[var(--text-tertiary)] border-b border-[var(--border-subtle)] mb-1 flex items-center justify-between">
                   <span>{isFr ? "Moteurs Souverains" : "Sovereign Engines"}</span>
-                  <span className="text-[9px] font-mono text-[var(--accent)] font-semibold">ÑKYEL IA</span>
+                  <span className="text-[9px] font-mono text-[var(--accent)] font-semibold">ñkyel</span>
                 </div>
                 {modesList.map((mode) => {
                   const isSelected = mode.id === engineId;
@@ -179,7 +179,7 @@ export default function TopBar({ onOpenCapabilities }: TopBarProps) {
                   >
                     <div className="flex items-center gap-2">
                       <MagnifyingGlass size={14} weight="bold" />
-                      <span className="text-xs font-semibold">Catalogue +500 Modèles…</span>
+                      <span className="text-xs font-semibold">{isFr ? "Catalogue +500 Modèles…" : "500+ Model Catalog…"}</span>
                     </div>
                     <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-[var(--surface)] border border-[var(--border-subtle)] text-[var(--text-secondary)]">
                       ⌘M
@@ -191,18 +191,18 @@ export default function TopBar({ onOpenCapabilities }: TopBarProps) {
           </div>
         </div>
 
-        {/* Trailing: Clean Actions (Commandes, Mise à niveau, Partager, Fichiers, DAG) */}
+        {/* Trailing: Clean Actions (Commands, Upgrade, Share, Mission Intelligence) */}
         <div className="flex items-center gap-1.5 sm:gap-2">
           {/* Universal Search / Command Palette Trigger */}
           <button
             type="button"
             onClick={handleOpenCommands}
             className="flex h-8 items-center gap-1.5 rounded-xl border border-[var(--border)] bg-[var(--surface-raised)] px-2.5 text-xs text-[var(--text-secondary)] transition-colors hover:border-[var(--accent-muted)] hover:text-[var(--text-primary)]"
-            title="Commandes (⌘K / Ctrl+K)"
-            aria-label="Recherche"
+            title="Commands (⌘K / Ctrl+K)"
+            aria-label="Commands"
           >
             <MagnifyingGlass size={14} className="text-[var(--accent)]" />
-            <span className="hidden sm:inline text-[11px] font-medium">Commandes</span>
+            <span className="hidden sm:inline text-[11px] font-medium">{isFr ? "Commandes" : "Commands"}</span>
             <kbd className="hidden sm:inline-block px-1.5 py-0.5 rounded bg-white/10 text-[9px] font-mono text-[var(--text-tertiary)]">
               ⌘K
             </kbd>
@@ -215,7 +215,7 @@ export default function TopBar({ onOpenCapabilities }: TopBarProps) {
             className="hidden sm:flex h-8 items-center gap-1.5 rounded-xl bg-[var(--hover)] hover:bg-[var(--active)] px-3 text-xs font-semibold text-[var(--text-primary)] transition-colors border border-[var(--border-subtle)]"
           >
             <Sparkle size={14} weight="fill" className="text-[var(--accent)]" />
-            <span>Mise à niveau</span>
+            <span>{isFr ? "Mise à niveau" : "Upgrade"}</span>
           </button>
 
           {/* Share Button (Desktop) */}
@@ -223,19 +223,19 @@ export default function TopBar({ onOpenCapabilities }: TopBarProps) {
             type="button"
             onClick={handleShare}
             className="hidden md:flex h-8 items-center gap-1.5 rounded-xl px-2.5 text-xs text-[var(--text-secondary)] transition-colors hover:bg-[var(--hover)] hover:text-[var(--text-primary)]"
-            title="Partager"
-            aria-label="Partager"
+            title="Share"
+            aria-label="Share"
           >
             <ShareNetwork size={16} />
-            <span className="text-[11px] font-medium">Partager</span>
+            <span className="text-[11px] font-medium">{isFr ? "Partager" : "Share"}</span>
           </button>
 
           {/* Mission Intelligence Control (Ñkyel Spark) */}
           <button
             type="button"
             onClick={onOpenCapabilities}
-            aria-label="Intelligence de Mission"
-            title="Ouvrir l'Intelligence de Mission"
+            aria-label="Mission Intelligence"
+            title="Mission Intelligence"
             className="flex h-8 w-8 items-center justify-center rounded-xl text-[var(--accent)] bg-[var(--accent)]/10 transition-colors hover:bg-[var(--accent)] hover:text-[var(--accent-fg)]"
           >
             <RenduIcon width={16} height={16} />

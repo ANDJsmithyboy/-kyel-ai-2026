@@ -294,10 +294,10 @@ export default function NkyelWorkspaceCanvas() {
 
   // Convert WorkGraph to React Flow nodes/edges
   const rfNodes = useMemo(() => {
-    const nodesArray = Array.from(workNodes.values());
+    const nodesArray = Array.from(workNodes.values()) as any[];
     const positions = computeLayout(workNodes, workEdges);
 
-    return nodesArray.map((wn, i) => ({
+    return nodesArray.map((wn: any, i: number) => ({
       id: wn.id,
       type: 'nkyel',
       position: positions[i] || { x: 0, y: 0 },
@@ -318,14 +318,14 @@ export default function NkyelWorkspaceCanvas() {
   }, [workNodes, workEdges, selectedNodeId, selectNode, userEditNode, userCreateBranch]);
 
   const rfEdges = useMemo(() => {
-    return Array.from(workEdges.values()).map(we => ({
+    return (Array.from(workEdges.values()) as any[]).map((we: any) => ({
       id: we.id,
       source: we.sourceId,
       target: we.targetId,
-      label: EDGE_LABELS[we.type] || we.type.replace('_', ' '),
+      label: (EDGE_LABELS as any)[we.type] || we.type?.replace('_', ' ') || '',
       animated: we.type === 'depends_on' || we.type === 'assigned_to' || we.type === 'streams_agui',
       style: {
-        stroke: EDGE_COLORS[we.type] || 'rgba(255,255,255,0.3)',
+        stroke: (EDGE_COLORS as any)[we.type] || 'rgba(255,255,255,0.3)',
         strokeWidth: 2,
       },
       labelStyle: {
@@ -336,7 +336,7 @@ export default function NkyelWorkspaceCanvas() {
   }, [workEdges]);
 
   const [nodes, setNodes, onNodesChange] = useNodesState(rfNodes);
-  const [edges, setEdges, onEdgesChange] = useEdgesState(rfEdges);
+  const [edges, setEdges, onEdgesChange] = useEdgesState<any>(rfEdges);
 
   // Sync React Flow state when work graph changes
   useEffect(() => {
@@ -349,13 +349,13 @@ export default function NkyelWorkspaceCanvas() {
 
   const onConnect = useCallback(
     (params: Connection | RFEdge) =>
-      setEdges((eds) =>
+      setEdges((eds: any) =>
         addEdge(
           {
             ...params,
             animated: true,
             style: { stroke: 'rgba(255,255,255,0.3)' },
-          },
+          } as any,
           eds
         )
       ),

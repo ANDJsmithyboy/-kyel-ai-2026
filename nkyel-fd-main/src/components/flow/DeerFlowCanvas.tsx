@@ -72,10 +72,10 @@ const initialEdges = [
 export default function DeerFlowCanvas() {
   const [liveMode, setLiveMode] = useState(true);
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
-  const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
+  const [edges, setEdges, onEdgesChange] = useEdgesState<any>(initialEdges);
 
   const onConnect = useCallback(
-    (params: Connection | Edge) => setEdges((eds) => addEdge({ ...params, animated: true, style: { stroke: 'rgba(255,255,255,0.3)' } }, eds)),
+    (params: Connection | Edge) => setEdges((eds: any) => addEdge({ ...params, animated: true, style: { stroke: 'rgba(255,255,255,0.3)' } } as any, eds)),
     [setEdges]
   );
 

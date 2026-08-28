@@ -11,12 +11,22 @@
 
 'use client';
 
-import React, { useRef, useEffect, useCallback } from 'react';
-import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
+import React, { useRef, useEffect, useCallback, useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { Sparkle, Lightning, Brain, Globe, Check } from '@phosphor-icons/react';
 import { INTELLIGENCE_MODES, type IntelligenceModeId } from '@/hooks/useNkyelModel';
 import { useLanguageStore } from '@/stores/language.store';
+
+function useReducedMotion() {
+  const [reduced, setReduced] = useState(false);
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      setReduced(window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+    }
+  }, []);
+  return reduced;
+}
 
 export type TierKey = IntelligenceModeId;
 

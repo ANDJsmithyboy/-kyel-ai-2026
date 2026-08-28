@@ -39,6 +39,7 @@ import {
   PuzzlePiece,
   PlugsConnected,
   UsersThree,
+  ArrowClockwise,
 } from '@phosphor-icons/react';
 
 // Palette Wada Sanzo pour les types de nœuds
@@ -124,12 +125,15 @@ const nodeTypes = {
 };
 
 export default function VIECanvas() {
-  const { nodes: graphNodes, edges: graphEdges, selectedNodeId, selectNode } = useWorkGraphStore();
+  const { nodes: graphNodesMap, edges: graphEdgesMap, selectedNodeId, selectNode, reset: resetGraph } = useWorkGraphStore();
   const [isFullscreen, setIsFullscreen] = useState(false);
 
+  const graphNodes = useMemo(() => Array.from(graphNodesMap.values()) as any[], [graphNodesMap]);
+  const graphEdges = useMemo(() => Array.from(graphEdgesMap.values()) as any[], [graphEdgesMap]);
+
   // Conversion des nœuds pour React Flow
-  const rfNodes = useMemo(() => {
-    return graphNodes.map((n, idx) => ({
+  const rfNodes = useMemo<any[]>(() => {
+    return graphNodes.map((n: any, idx: number) => ({
       id: n.id,
       type: 'workNode',
       data: n,
@@ -140,22 +144,19 @@ export default function VIECanvas() {
     }));
   }, [graphNodes]);
 
-  // Conversion des arêtes
-  const rfEdges = useMemo(() => {
-    return graphEdges.map((e) => ({
+  // Conversion des arêtes pour React Flow
+  const rfEdges = useMemo<any[]>(() => {
+    return graphEdges.map((e: any) => ({
       id: e.id,
       source: e.sourceId,
       target: e.targetId,
-      label: e.type.replace('_', ' '),
       animated: true,
-      style: { stroke: '#665F9E', strokeWidth: 1.5 },
-      labelStyle: { fill: '#B8C0CC', fontSize: 10, fontFamily: 'monospace' },
-      labelBgStyle: { fill: '#08090D', fillOpacity: 0.8 },
+      style: { stroke: 'var(--accent)', strokeWidth: 1.5 },
     }));
   }, [graphEdges]);
 
-  const [nodes, setNodes, onNodesChange] = useNodesState(rfNodes);
-  const [edges, setEdges, onEdgesChange] = useEdgesState(rfEdges);
+  const [nodes, setNodes, onNodesChange] = useNodesState<any>(rfNodes);
+  const [edges, setEdges, onEdgesChange] = useEdgesState<any>(rfEdges);
 
   useEffect(() => {
     setNodes(rfNodes);
@@ -181,11 +182,11 @@ export default function VIECanvas() {
         <div className="pointer-events-auto flex items-center gap-2">
           <button
             type="button"
-            onClick={resetGraph}
+            onClick={() => resetGraph()}
             className="p-2.5 rounded-xl bg-[var(--surface)] backdrop-blur-md border border-[var(--border)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--hover)] transition-colors shadow-lg"
             title="Réinitialiser la vue"
           >
-            <ArrowsClockwise size={16} />
+            <ArrowClockwise size={16} />
           </button>
           <button
             type="button"
@@ -213,7 +214,7 @@ export default function VIECanvas() {
           <Background color="var(--graph-grid)" gap={24} size={1.5} />
           <Controls className="bg-[var(--surface-raised)] border border-[var(--border)] text-[var(--text-primary)] rounded-xl fill-[var(--text-primary)] shadow-md" />
           <MiniMap
-            nodeColor={(n) => NODE_COLORS[(n.data as WorkNode)?.type] || '#665F9E'}
+            nodeColor={(n) => NODE_COLORS[(n.data as any)?.type as WorkNodeType] || '#665F9E'}
             className="bg-[var(--surface-raised)] border border-[var(--border)] rounded-xl overflow-hidden shadow-2xl"
             maskColor="var(--material-overlay)"
           />

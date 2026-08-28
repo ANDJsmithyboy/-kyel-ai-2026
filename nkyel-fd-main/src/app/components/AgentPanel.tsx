@@ -84,7 +84,7 @@ export function LiveAgentPanel({ events }: { events: any[] }) {
           <Loader2 className="w-4 h-4 animate-spin text-accent" />
           Agent Live View
         </h2>
-        <Button variant="outline" size="sm" className="h-7 text-xs rounded-full takeover-btn">
+        <Button variant="secondary" size="sm" className="h-7 text-xs rounded-full takeover-btn">
           Takeover
         </Button>
       </div>

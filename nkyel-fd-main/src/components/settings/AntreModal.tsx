@@ -478,11 +478,11 @@ export default function AntreModal({ isOpen, onClose, initialTab = 'general' }: 
                             }`}
                           >
                             <div className="flex items-center justify-between mb-2">
-                              <div className="w-4 h-4 rounded-full border border-white/20" style={{ background: t.dot }} />
+                              <div className="w-4 h-4 rounded-full border border-white/20" style={{ background: t.color }} />
                               {isSelected && <Check size={14} weight="bold" className="text-[var(--accent)]" />}
                             </div>
-                            <span className="font-bold text-xs text-white">{t.label}</span>
-                            <span className="text-[10px] text-white/40">{t.desc}</span>
+                            <span className="font-bold text-xs text-white">{t.name}</span>
+                            <span className="text-[10px] text-white/40">{t.description}</span>
                           </button>
                         );
                       })}

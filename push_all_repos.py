@@ -77,12 +77,13 @@ def push_frontend():
     status = subprocess.run(["git", "status", "--porcelain"], cwd=temp_dir, capture_output=True, text=True)
     if status.stdout.strip():
         commit_msg = (
-            "feat(frontend): Manus × Apple Navigation & Popover, Tavily-style Auth Card on Replicate/Leonardo Wallpaper\n\n"
-            "- Manus-Style Sidebar Navigation, Task Composer & Floating Glass Profile Popover\n"
-            "- Google Profile Image / Avatar sync in Sidebar Footer and Popover\n"
-            "- Tavily by Nebius Sign-In & Sign-Up Card on /brand/nkyel-ai-ios.png wallpaper\n"
-            "- Canonical Iboga Navigation Signature (shared across Ñkyel AI and Gaboma AI)\n"
-            "- Production Feedback Modal & 40-Hour Validation Cockpit\n\n"
+            "feat(frontend): Master Visual Specification & Production Design System\n\n"
+            "- Canonical lowercase 'ñkyel' wordmark (26px editorial size, text-only)\n"
+            "- Sumi ink dark mode & Gofun ivory paper light mode design tokens\n"
+            "- Mobile-first overlay drawer (min(85vw, 336px)) with touch swipe & backdrop dismiss\n"
+            "- Single-column mobile Connectors with dedicated 50px logo tiles & authentic brand SVGs\n"
+            "- TopBar sovereign intelligence model selector, 28px composer & 44px capability chips\n"
+            "- Full TypeScript type safety and zero compilation errors\n\n"
             "SmartANDJ AI Technologies - Founder & Lead Architect: Daniel Jonathan ANDJ"
         )
         subprocess.run(["git", "commit", "-m", commit_msg], cwd=temp_dir, check=True)
@@ -118,12 +119,12 @@ def push_backend():
     status = subprocess.run(["git", "status", "--porcelain"], cwd=root_dir, capture_output=True, text=True)
     if status.stdout.strip():
         commit_msg = (
-            "feat(platform): Manus × Apple UI, Tavily Auth Card, 40-Hour Validation Cockpit & Product Scope Freeze\n\n"
-            "- Manus Sidebar Navigation, Google Profile Image Sync & Floating Profile Popover\n"
-            "- Tavily by Nebius Auth Shell & Replicate/Leonardo Wallpaper (/brand/nkyel-ai-ios.png)\n"
-            "- 40-Hour Live Validation Cockpit, Mission Inspector & Canonical Run Event Timeline\n"
-            "- Universal Production Feedback System (P0-P3 Triage, R2 Screenshots, Neon DB)\n"
-            "- Product Scope Freeze (PRODUCT_FREEZE.md) & 32-vCPU VPS Deployment Guide\n\n"
+            "feat(platform): Master Visual Specification, Sovereign Model Router & User Tier Governance\n\n"
+            "- Full 5-prompt production visual contract implementation\n"
+            "- Sovereign AI mode selector (Auto / Fast / Deep / Research) in TopBar\n"
+            "- User Tier & God Mode governance (Creator, VIP Contributor, Beta User)\n"
+            "- Responsive Connectors catalogue & custom MCP server modal\n"
+            "- Clean build pass with 0 TypeScript compilation errors\n\n"
             "SmartANDJ AI Technologies - Founder & Lead Architect: Daniel Jonathan ANDJ"
         )
         subprocess.run(["git", "commit", "-m", commit_msg], cwd=root_dir, check=True)

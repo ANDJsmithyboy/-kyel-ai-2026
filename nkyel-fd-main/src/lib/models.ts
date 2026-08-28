@@ -20,7 +20,7 @@ export interface NkyelMessage {
   id: string;
   role: 'user' | 'assistant' | 'system';
   content: string;
-  model?: NkyelModel;
+  model?: NkyelModel | string;
   sources?: NkyelSource[];
   rendu?: NkyelRendu;
   created_at: number;

@@ -1,218 +1,138 @@
 /**
- * Nkyel AI · ChatHero
- * SmartANDJ AI Technologies
- * Responsive Center Hero: Title, Action Pills, Discovery Carousel with dots
+ * Ñkyel AI · ChatHero (Prompt 1 Section 6 & Prompt 5 Component 19)
+ * SmartANDJ AI Technologies · Founder: Daniel Jonathan ANDJ
+ *
+ * Visual Restraint & Editorial Hierarchy:
+ * - NO giant logo
+ * - NO floating panther paw
+ * - Canonical Hero Title: "Turn your intention into visible work."
+ * - Canonical Supporting Copy: "See the structure. Follow the flow. Verify the evidence. Stay in control."
+ * - Compact capability suggestion chips (44–46px height, rounded-full, 14–18px padding, 18px icon, 14px text)
  */
 
 'use client';
 
-import { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import React from 'react';
+import { motion } from 'framer-motion';
 import {
-  Presentation,
   Globe,
-  Palette,
-  GameController,
+  Cpu,
+  Table,
+  FileText,
+  Image as ImageIcon,
   DotsThree,
-  Sparkle,
-  Suitcase,
-  Browsers,
 } from '@phosphor-icons/react';
+import { useLanguageStore } from '@/stores/language.store';
 
 interface ChatHeroProps {
   onSelectAction: (prompt: string) => void;
-  onOpenMore: () => void;
+  onOpenMore?: () => void;
 }
-
-interface CarouselCard {
-  id: string;
-  title: string;
-  subtitle: string;
-  tag: string;
-  icon: React.ComponentType<any>;
-  gradient: string;
-  actionPrompt: string;
-}
-
-const CAROUSEL_CARDS: CarouselCard[] = [
-  {
-    id: 'c-1',
-    title: 'Créez votre propre jeu ou application',
-    subtitle: 'Jeux de stratégie, de réflexion, aventures et applications sur-mesure.',
-    tag: 'Ñkyel App & Code',
-    icon: GameController,
-    gradient: 'from-[#171B27] to-[#10141F]',
-    actionPrompt: 'Crée un jeu vidéo interactif complet avec interface moderne en HTML5/Canvas.',
-  },
-  {
-    id: 'c-2',
-    title: 'Personnalisez votre agent IA pour votre entreprise',
-    subtitle: 'Une identité souveraine et distincte qui évolue avec votre organisation.',
-    tag: 'Entreprise & RAG',
-    icon: Suitcase,
-    gradient: 'from-[#10141F] to-[#171B27]',
-    actionPrompt: 'Configure un agent IA spécialisé avec la charte et les objectifs de mon entreprise.',
-  },
-  {
-    id: 'c-3',
-    title: 'Personnalisez votre Ñkyel',
-    subtitle: 'Permettez à Ñkyel d\'en savoir plus sur vos projets et visions d\'avenir.',
-    tag: 'Mémoire Ñkyel',
-    icon: Sparkle,
-    gradient: 'from-[#171B27] to-[#10141F]',
-    actionPrompt: 'Aide-moi à personnaliser les instructions et la mémoire de travail de Ñkyel.',
-  },
-  {
-    id: 'c-4',
-    title: 'Ñkyel Research & Veille Stratégique',
-    subtitle: 'Recherches web approfondies, analyse de marché et synthèses instantanées.',
-    tag: 'Deep Search',
-    icon: Browsers,
-    gradient: 'from-[#10141F] to-[#171B27]',
-    actionPrompt: 'Effectue une recherche approfondie sur les opportunités technologiques majeures de 2026.',
-  },
-];
 
 export default function ChatHero({ onSelectAction, onOpenMore }: ChatHeroProps) {
-  const [activeSlide, setActiveSlide] = useState(0);
+  const { t, uiLocale } = useLanguageStore();
+  const isFr = !uiLocale || uiLocale.startsWith('fr');
 
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setActiveSlide((prev) => (prev + 1) % CAROUSEL_CARDS.length);
-    }, 5500);
-    return () => clearInterval(timer);
-  }, []);
-
-  const actionPills = [
+  const chips = [
     {
-      id: 'slides',
-      label: 'Diapositives',
-      icon: Presentation,
-      prompt: 'Crée une présentation PowerPoint professionnelle et percutante de 10 diapositives sur :',
-    },
-    {
-      id: 'web',
-      label: 'Site web',
+      id: 'research',
       icon: Globe,
-      prompt: 'Conçois et génère le code complet d\'un site web moderne et élégant pour :',
+      label: isFr ? 'Recherche approfondie' : 'Deep research',
+      prompt: isFr
+        ? 'Effectue une recherche approfondie et documentée sur : '
+        : 'Perform a comprehensive structured deep research on: ',
     },
     {
-      id: 'design',
-      label: 'Conception',
-      icon: Palette,
-      prompt: 'Propose une direction artistique et une charte graphique premium pour :',
+      id: 'code',
+      icon: Cpu,
+      label: isFr ? 'Concevoir avec du code' : 'Build with code',
+      prompt: isFr
+        ? 'Conçois une architecture logicielle et écris le code pour : '
+        : 'Design a software architecture and implement clean code for: ',
     },
     {
-      id: 'games',
-      label: 'Jeux',
-      icon: GameController,
-      prompt: 'Développe un jeu vidéo complet et interactif en JavaScript sur le thème :',
+      id: 'data',
+      icon: Table,
+      label: isFr ? 'Analyser des données' : 'Analyze data',
+      prompt: isFr
+        ? 'Analyse ces données chiffrées et dégage les tendances clés pour : '
+        : 'Analyze these quantitative data points and identify key trends for: ',
+    },
+    {
+      id: 'document',
+      icon: FileText,
+      label: isFr ? 'Créer un document' : 'Create document',
+      prompt: isFr
+        ? 'Rédige un document structuré et officiel sur : '
+        : 'Draft a structured executive document on: ',
+    },
+    {
+      id: 'image',
+      icon: ImageIcon,
+      label: isFr ? 'Générer une image' : 'Generate image',
+      prompt: isFr
+        ? 'Génère une image haute fidélité représentant : '
+        : 'Generate a high-fidelity image depicting: ',
     },
   ];
 
-  const currentCard = CAROUSEL_CARDS[activeSlide];
-  const CardIcon = currentCard.icon;
-
   return (
-    <div className="flex flex-col items-center justify-center w-full max-w-2xl mx-auto px-3 pt-4 sm:pt-8 pb-2 text-center select-none">
-      {/* Central Title */}
+    <div className="flex flex-col items-center justify-center w-full max-w-2xl mx-auto px-4 pt-6 sm:pt-12 pb-2 text-center select-none animate-in fade-in duration-300">
+      {/* Canonical Hero Title (Section 25 & Component 15) */}
       <motion.h1
-        initial={{ opacity: 0, y: -10 }}
+        initial={{ opacity: 0, y: -8 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.35 }}
-        className="text-2xl sm:text-3xl md:text-4xl font-normal text-[#F5F6FA] tracking-tight mb-4 sm:mb-6"
-        style={{
-          fontFamily: 'var(--font-heading, "Outfit", sans-serif)',
-          letterSpacing: '-0.02em',
-        }}
+        transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+        className="text-3xl sm:text-4xl md:text-[42px] font-medium text-[var(--text-primary)] tracking-tight whitespace-pre-line leading-[1.08]"
+        style={{ letterSpacing: '-0.025em' }}
       >
-        Que puis-je faire pour vous ?
+        {t('hero.title') || 'Turn your intention\ninto visible work.'}
       </motion.h1>
 
-      {/* Action Pills Row */}
+      {/* Supporting Copy (Section 25 & Component 15) */}
+      <motion.p
+        initial={{ opacity: 0, y: 6 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3, delay: 0.08, ease: [0.16, 1, 0.3, 1] }}
+        className="text-[13.5px] sm:text-[15px] text-[var(--text-tertiary)] mt-3 max-w-md mx-auto whitespace-pre-line leading-relaxed"
+      >
+        {t('hero.subtitle') || 'See the structure. Follow the flow.\nVerify the evidence. Stay in control.'}
+      </motion.p>
+
+      {/* Compact Capability Chips (Prompt 1 Section 6 & Prompt 5 Component 19) */}
       <motion.div
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.3, delay: 0.1 }}
-        className="flex items-center justify-center flex-wrap gap-2 mb-4 sm:mb-6 w-full"
+        transition={{ duration: 0.3, delay: 0.15 }}
+        className="flex items-center justify-center flex-wrap gap-2 sm:gap-2.5 max-w-xl mx-auto mt-7"
       >
-        {actionPills.map((pill) => {
-          const Icon = pill.icon;
+        {chips.map((chip) => {
+          const Icon = chip.icon;
           return (
             <button
-              key={pill.id}
+              key={chip.id}
               type="button"
-              onClick={() => onSelectAction(pill.prompt)}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#10141F] hover:bg-[#171B27] border border-white/[0.08] hover:border-white/[0.15] text-[#EDEAE3] hover:text-white text-xs font-medium transition-all shadow-sm active:scale-95"
+              onClick={() => onSelectAction(chip.prompt)}
+              className="flex items-center gap-2 h-[44px] px-4 rounded-full bg-[var(--surface-raised)] hover:bg-[var(--hover)] border border-[var(--border)] hover:border-[var(--accent-muted)] text-[var(--text-primary)] text-[14px] font-medium transition-all duration-150 shadow-xs active:scale-[0.98] touch-manipulation whitespace-nowrap"
             >
-              <Icon size={14} className="text-[var(--accent)]" />
-              <span>{pill.label}</span>
+              <Icon size={18} className="text-[var(--accent)] shrink-0" />
+              <span>{chip.label}</span>
             </button>
           );
         })}
 
-        {/* Plus Button */}
-        <button
-          type="button"
-          onClick={onOpenMore}
-          className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-[#10141F] hover:bg-[#171B27] border border-white/[0.08] text-[#9199A8] hover:text-white text-xs font-medium transition-all active:scale-95"
-        >
-          <span>Plus</span>
-          <DotsThree size={14} weight="bold" />
-        </button>
-      </motion.div>
-
-      {/* Discovery Interactive Carousel Card */}
-      <div className="w-full max-w-lg">
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={currentCard.id}
-            initial={{ opacity: 0, scale: 0.98 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.98 }}
-            transition={{ duration: 0.25 }}
-            onClick={() => onSelectAction(currentCard.actionPrompt)}
-            className="w-full p-3.5 sm:p-4 rounded-2xl bg-gradient-to-br from-[#10141F] to-[#171B27] border border-white/[0.08] hover:border-[var(--accent)]/30 shadow-lg cursor-pointer text-left transition-all group relative overflow-hidden"
+        {/* More Chip */}
+        {onOpenMore && (
+          <button
+            type="button"
+            onClick={onOpenMore}
+            className="flex items-center gap-1.5 h-[44px] px-3.5 rounded-full bg-[var(--surface-raised)] hover:bg-[var(--hover)] border border-[var(--border)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] text-[14px] font-medium transition-all duration-150 shadow-xs active:scale-[0.98] touch-manipulation"
           >
-            <div className="flex items-start justify-between gap-3">
-              <div className="space-y-1 flex-1 min-w-0">
-                <div className="flex items-center gap-2">
-                  <span className="text-[9px] sm:text-[10px] uppercase tracking-wider font-bold text-[var(--accent)] bg-[var(--accent-subtle)] px-1.5 py-0.2 rounded-full border border-[var(--accent)]/20">
-                    {currentCard.tag}
-                  </span>
-                </div>
-                <h3 className="text-xs sm:text-sm font-bold text-white group-hover:text-[var(--accent)] transition-colors truncate">
-                  {currentCard.title}
-                </h3>
-                <p className="text-[11px] text-[#9199A8] leading-relaxed line-clamp-2">
-                  {currentCard.subtitle}
-                </p>
-              </div>
-
-              <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-gradient-to-tr from-[#6757E8]/20 to-[var(--accent-subtle)] border border-white/10 flex items-center justify-center text-[var(--accent)] shrink-0 group-hover:scale-105 transition-transform">
-                <CardIcon size={20} weight="duotone" />
-              </div>
-            </div>
-          </motion.div>
-        </AnimatePresence>
-
-        {/* Carousel Pagination Dots */}
-        <div className="flex items-center justify-center gap-1.5 mt-2.5">
-          {CAROUSEL_CARDS.map((_, i) => (
-            <button
-              key={i}
-              type="button"
-              onClick={() => setActiveSlide(i)}
-              aria-label={`Slide ${i + 1}`}
-              className={`h-1 rounded-full transition-all ${
-                activeSlide === i
-                  ? 'w-5 bg-[var(--accent)] shadow-[var(--shadow-accent)]'
-                  : 'w-1 bg-white/20 hover:bg-white/40'
-              }`}
-            />
-          ))}
-        </div>
-      </div>
+            <span>{isFr ? 'Plus' : 'More'}</span>
+            <DotsThree size={18} weight="bold" />
+          </button>
+        )}
+      </motion.div>
     </div>
   );
 }

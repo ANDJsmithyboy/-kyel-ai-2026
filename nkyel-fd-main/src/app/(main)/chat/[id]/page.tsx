@@ -14,8 +14,8 @@ import ConversationStream from '@/components/chat/ConversationStream';
 import InputBar from '@/components/input/InputBar';
 
 export default function ChatIdPage() {
-  const params = useParams<{ id: string }>();
-  const conversationId = params.id;
+  const params = useParams();
+  const conversationId = (Array.isArray(params?.id) ? params.id[0] : params?.id) || null;
   const [model, setModel] = useState<NkyelModel>('NKYEL_CHUI');
   const [loading, setLoading] = useState(true);
   const chat = useChat({

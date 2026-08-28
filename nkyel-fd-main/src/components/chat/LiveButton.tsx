@@ -6,7 +6,18 @@
 
 'use client';
 
-import { motion, useReducedMotion } from 'framer-motion';
+import React, { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
+
+function useReducedMotion() {
+  const [reduced, setReduced] = useState(false);
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      setReduced(window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+    }
+  }, []);
+  return reduced;
+}
 
 const BAR_HEIGHTS = [
   { min: 4, max: 6, duration: 0.6 },
@@ -38,25 +49,21 @@ export default function LiveButton() {
           key={i}
           animate={
             shouldReduceMotion
-              ? { height: bar.min }
-              : { height: [bar.min, bar.max, bar.min] }
+              ? {}
+              : { height: [`${bar.min}px`, `${bar.max}px`, `${bar.min}px`] }
           }
           transition={
             shouldReduceMotion
               ? {}
               : {
                   duration: bar.duration,
-                  repeat: Infinity,
                   ease: 'easeInOut',
+                  repeat: Infinity,
                   delay: i * 0.15,
                 }
           }
-          className="block rounded-sm"
-          style={{
-            width: 2,
-            background: 'var(--accent)',
-            borderRadius: 1,
-          }}
+          className="w-[2.5px] rounded-full bg-[var(--accent)]"
+          style={{ height: `${bar.min}px` }}
         />
       ))}
     </motion.button>

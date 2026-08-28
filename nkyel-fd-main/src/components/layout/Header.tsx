@@ -9,11 +9,18 @@ import {
   PanelLeft, ChevronDown, Sparkles
 } from 'lucide-react';
 import { useSidebarStore } from '@/stores/sidebar';
-import { useSettingsStore, getDisplayModelName } from '@/stores/settings.store';
+import { useSettingsStore } from '@/stores/settings.store';
 import { useAuthStore } from '@/stores/auth.store';
 import { cn } from '@/lib/utils';
 import { IconAurata, IconNkyel, IconWandana } from '@/components/icons';
 import { IbogaNavigationTrigger } from '@/components/brand';
+
+function getDisplayModelName(modelId: string, _isAdmin?: boolean) {
+  if (modelId === 'aurata-spark') return 'Ñkyel Fast';
+  if (modelId === 'nyel-deep') return 'Ñkyel Deep';
+  if (modelId === 'wandana-archive') return 'Ñkyel Research';
+  return 'Ñkyel Auto';
+}
 
 /* -- Modèles disponibles -- */
 const MODELS = [
@@ -67,7 +74,7 @@ export default function Header({ currentModel, onModelChange }: HeaderProps) {
           onClick={() => setShowModelPicker(!showModelPicker)}
           className="flex items-center gap-2 px-3 py-1.5 rounded-xl hover:bg-[var(--accent-10)] transition-colors"
         >
-          <currentModelInfo.icon size={16} style={{ color: currentModelInfo.color }} />
+          <currentModelInfo.icon width={16} height={16} style={{ color: currentModelInfo.color }} />
           <span className="text-sm font-medium text-[var(--text-primary)]">
             {currentDisplayName}
           </span>
@@ -87,7 +94,7 @@ export default function Header({ currentModel, onModelChange }: HeaderProps) {
                     : 'text-[var(--text-secondary)] hover:bg-white/[0.04]'
                 )}
               >
-                <m.icon size={16} style={{ color: m.color }} />
+                <m.icon width={16} height={16} style={{ color: m.color }} />
                 <span className="font-medium">{getDisplayModelName(m.id, isAdmin)}</span>
                 {m.id === currentModel && (
                   <span className="ml-auto w-1.5 h-1.5 rounded-full bg-[var(--accent)]" />

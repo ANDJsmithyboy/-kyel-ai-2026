@@ -60,6 +60,7 @@ import VIECanvas from '@/components/vie/VIECanvas';
 import VIEComprehensionView from '@/components/vie/VIEComprehensionView';
 import LiveFlowTimelineView from '@/components/flow/LiveFlowTimelineView';
 import SimulationScenarioView from '@/components/vie/SimulationScenarioView';
+import ChatHero from './ChatHero';
 
 export interface ChatMessage {
   id: string;
@@ -419,76 +420,12 @@ export default function AdaptiveChatWorkspace({
               {/* Centered Reading Column Container */}
               <div className="max-w-[780px] mx-auto w-full space-y-7 pb-36">
                 {messages.length === 0 ? (
-                  <div className="flex flex-col items-center justify-center min-h-[50vh] text-center px-4 pt-8 select-none animate-in fade-in duration-300">
-                    {/* Apple Frosted Brand Emblem */}
-                    <div className="w-13 h-13 p-3.5 rounded-3xl bg-[var(--surface-raised)] border border-[var(--border-strong)] flex items-center justify-center text-[var(--accent)] shadow-xl mb-4 backdrop-blur-xl">
-                      <PantherMissionGlyph size={26} />
-                    </div>
-
-                    <h2 className="text-2xl sm:text-[28px] font-semibold tracking-tight text-[var(--text-primary)]">
-                      {t('composer.accomplish')}
-                    </h2>
-                    <p className="text-xs sm:text-sm text-[var(--text-tertiary)] mt-1.5 max-w-md leading-relaxed">
-                      {t('composer.accomplishSubtitle')}
-                    </p>
-
-                    {/* Suggestion Starter Cards (Apple Squircles) */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 w-full max-w-xl mt-8 text-left">
-                      {[
-                        {
-                          icon: Globe,
-                          title: isFr ? "Recherche & Synthèse" : "Deep Research",
-                          prompt: isFr ? "Effectue une recherche approfondie et documentée sur : " : "Perform deep research on: ",
-                          engine: "Ñkyel Research · Tavily & Grounding",
-                        },
-                        {
-                          icon: Cpu,
-                          title: isFr ? "Architecture & Code" : "Engineering & Code",
-                          prompt: isFr ? "Développe et déploie un composant Next.js moderne pour : " : "Build and deploy a modern Next.js component for: ",
-                          engine: "Ñkyel Code · Vercel Labs fx",
-                        },
-                        {
-                          icon: Table,
-                          title: isFr ? "Analyse de Données" : "Data Analysis",
-                          prompt: isFr ? "Analyse ces données chiffrées et dresse un tableau avec graphiques pour : " : "Analyze these data points and generate a table with charts for: ",
-                          engine: "Ñkyel Data · Python Sheets",
-                        },
-                        {
-                          icon: FileText,
-                          title: isFr ? "Rapport & Document" : "Formal Document",
-                          prompt: isFr ? "Rédige un document officiel et structuré sur : " : "Draft a formal structured document on: ",
-                          engine: "Ñkyel Documents · PDF & Docs",
-                        },
-                      ].map((card, idx) => {
-                        const CardIcon = card.icon;
-                        return (
-                          <button
-                            key={idx}
-                            type="button"
-                            onClick={() => {
-                              setInputText(card.prompt);
-                              textareaRef.current?.focus();
-                            }}
-                            className="p-3.5 rounded-2xl bg-[var(--surface-raised)] hover:bg-[var(--hover)] border border-[var(--border)] hover:border-[var(--accent)]/40 text-left transition-all duration-150 group shadow-xs active:scale-[0.99]"
-                          >
-                            <div className="flex items-center gap-2.5">
-                              <div className="w-8 h-8 rounded-xl bg-[var(--accent-subtle)] border border-[var(--accent-muted)] flex items-center justify-center text-[var(--accent)] shrink-0">
-                                <CardIcon size={16} />
-                              </div>
-                              <div className="min-w-0 flex-1">
-                                <p className="font-semibold text-xs text-[var(--text-primary)] group-hover:text-[var(--accent)] transition-colors">
-                                  {card.title}
-                                </p>
-                                <p className="text-[10.5px] text-[var(--text-tertiary)] truncate mt-0.5">
-                                  {card.engine}
-                                </p>
-                              </div>
-                            </div>
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </div>
+                  <ChatHero
+                    onSelectAction={(prompt) => {
+                      setInputText(prompt);
+                      textareaRef.current?.focus();
+                    }}
+                  />
                 ) : (
                   messages.map((msg, idx) => {
                     const isLast = idx === messages.length - 1;
@@ -552,11 +489,11 @@ export default function AdaptiveChatWorkspace({
             </div>
 
             {/* ── Fixed Bottom Adaptive Composer ── */}
-            <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-6 bg-gradient-to-t from-[var(--material-canvas)] via-[var(--material-canvas)]/80 to-transparent pointer-events-none flex justify-center z-20">
-              <div className="max-w-[780px] w-full pointer-events-auto">
+            <div className="absolute bottom-0 left-0 right-0 p-3 sm:p-5 bg-gradient-to-t from-[var(--material-canvas)] via-[var(--material-canvas)]/80 to-transparent pointer-events-none flex flex-col items-center z-20">
+              <div className="max-w-[780px] w-full pointer-events-auto flex flex-col gap-1.5">
                 <Surface
                   material="glass-floating"
-                  className="rounded-3xl p-3 sm:p-3.5 transition-all shadow-[var(--shadow-floating)] border border-[var(--border-strong)] flex flex-col gap-2 backdrop-blur-2xl"
+                  className="rounded-[28px] p-2.5 sm:p-3.5 transition-all shadow-[var(--shadow-composer)] border border-[var(--border)] flex flex-col gap-1.5 backdrop-blur-2xl bg-[var(--composer-bg)]"
                 >
                   {/* Hidden File Input for Real Attachments */}
                   <input
@@ -602,7 +539,7 @@ export default function AdaptiveChatWorkspace({
                         e.target.style.height = `${Math.min(e.target.scrollHeight, 180)}px`;
                       }}
                       onKeyDown={handleKeyDown}
-                      placeholder={isFr ? "Demandez quelque chose à Ñkyel..." : "Ask Ñkyel anything..."}
+                      placeholder={t('composer.ask') || "Ask Ñkyel anything..."}
                       rows={1}
                       className="w-full bg-transparent border-0 focus:ring-0 focus:outline-none resize-none text-base placeholder:text-[var(--text-tertiary)] text-[var(--text-primary)] max-h-44 px-1 py-1 font-sans"
                     />
@@ -610,7 +547,7 @@ export default function AdaptiveChatWorkspace({
 
                   {/* Toolbar Actions Bar */}
                   <div className="flex items-center justify-between border-t border-[var(--border-subtle)] pt-1.5 px-1">
-                    {/* Left Cluster: Plus Button + Mobile-Only Mode Selector */}
+                    {/* Left Cluster: Plus Button */}
                     <div className="flex items-center gap-1.5 relative" ref={plusMenuRef}>
                       <button
                         type="button"
@@ -620,19 +557,6 @@ export default function AdaptiveChatWorkspace({
                         title={isFr ? "Actions et capacités (+)" : "Actions & capabilities (+)"}
                       >
                         <GeistPlus size={15} strokeWidth={2} />
-                      </button>
-
-                      {/* Mobile-Only Mode Selector Pill (Never rendered on Desktop where TopBar is canonical) */}
-                      <button
-                        type="button"
-                        onClick={() => setTierPickerOpen(true)}
-                        className="flex md:hidden h-8 min-h-[36px] px-2.5 rounded-xl bg-[var(--surface)] hover:bg-[var(--surface-raised)] border border-[var(--border)] items-center gap-1.5 text-xs text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors active:scale-95 touch-manipulation shadow-xs select-none"
-                        title={isFr ? "Changer de mode d'intelligence" : "Change intelligence mode"}
-                        aria-label={isFr ? "Changer de mode d'intelligence" : "Change intelligence mode"}
-                      >
-                        <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent)] shrink-0" />
-                        <span className="font-semibold text-xs text-[var(--text-primary)] max-w-[105px] truncate">{activeModeLabel}</span>
-                        <CaretDown size={11} weight="bold" className="opacity-60 shrink-0 text-[var(--text-tertiary)]" />
                       </button>
 
                       {/* Functional Action Launcher Popover */}
@@ -726,14 +650,6 @@ export default function AdaptiveChatWorkspace({
                           </button>
                         </div>
                       )}
-
-                      {/* Mobile-Only Mode Picker Modal */}
-                      <TierPicker
-                        isOpen={tierPickerOpen}
-                        onClose={() => setTierPickerOpen(false)}
-                        selectedMode={modeId}
-                        onSelect={(m) => setModeId(m)}
-                      />
                     </div>
 
                     {/* Right Cluster: Mic / Send / Stop */}
@@ -773,6 +689,12 @@ export default function AdaptiveChatWorkspace({
                     </div>
                   </div>
                 </Surface>
+                {/* Canonical Disclaimer (Section 29) */}
+                <div className="text-center px-4 pt-1">
+                  <span className="text-[11px] text-[var(--text-tertiary)] leading-tight tracking-tight">
+                    {t('composer.disclaimer') || "Ñkyel AI is an AI agent and can make mistakes. Please verify important information."}
+                  </span>
+                </div>
               </div>
             </div>
           </>

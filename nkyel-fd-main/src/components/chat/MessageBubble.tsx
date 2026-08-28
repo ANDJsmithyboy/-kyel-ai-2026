@@ -206,7 +206,7 @@ export default function MessageBubble({
 
             {/* <think> block parsing */}
             {(() => {
-              let thinking = null;
+              let thinking: string | null = null;
               let mainContent = content;
               
               const thinkStart = content.indexOf('<think>');

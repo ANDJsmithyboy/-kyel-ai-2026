@@ -64,14 +64,18 @@
   --density-padding: 12px;
   --density-gap: 8px;
 
-  /* Échelle de rayons concentriques (R_inner = R_outer - padding) */
-  --radius-control-sm: 6px;
-  --radius-control:    8px;
-  --radius-panel:      12px;
-  --radius-floating:   16px;
-  --radius-modal:      20px;
-  --radius-composer:   22px;
-  --radius-hero:       26px;
+  /* Échelle de rayons concentriques (Nested Radii) — Manus-Level Precision */
+  --radius-control-sm: 10px;
+  --radius-control:    12px;
+  --radius-button:     14px;
+  --radius-panel:      16px;
+  --radius-card:       18px;
+  --radius-floating:   18px;
+  --radius-popover:    18px;
+  --radius-modal:      24px;
+  --radius-sheet:      26px;
+  --radius-composer:   28px;
+  --radius-hero:       28px;
   --radius-pill:       9999px;
 
   /* ═══════════════════════════════════════════════════════
@@ -81,9 +85,9 @@
   --ease-spring:    cubic-bezier(0.175, 0.885, 0.32, 1.1);
 
   --motion-instant:  90ms;
-  --motion-fast:     150ms;
-  --motion-standard: 220ms;
-  --motion-context:  320ms;
+  --motion-fast:     140ms;
+  --motion-standard: 200ms;
+  --motion-context:  260ms;
 
   --transition-fast:     var(--motion-fast) var(--ease-apple);
   --transition-standard: var(--motion-standard) var(--ease-apple);
@@ -116,7 +120,7 @@
   --header-height:          48px;
   --touch-target:           44px;
 
-  /* Accent par défaut (Or Souverain) */
+  /* Accent par défaut (Kin - Or Restreint) */
   --brand-gold:        #D5AE57;
   --brand-gold-soft:   rgba(213, 174, 87, 0.42);
   --accent:            #D5AE57;
@@ -165,12 +169,12 @@
   --transition-slow:   400ms var(--ease-apple);
 
   /* Layout — Sidebar */
-  --sidebar-item-height: 38px;
+  --sidebar-item-height: 44px;
   --sidebar-hover:     var(--hover);
   --sidebar-active:    var(--active);
 
   /* Layout — Header */
-  --header-height-mobile: 44px;
+  --header-height-mobile: 48px;
 
   /* Layout — Messages */
   --user-msg-max-width:     85%;
@@ -178,7 +182,7 @@
 }
 
 /* ═══════════════════════════════════════════════════════
-   THEME: DARK (Black Panther / Nuit Lopé / Default OLED)
+   THEME: DARK (Sumi / Ink Black — Master Discipline)
    ═══════════════════════════════════════════════════════ */
 
 :root,
@@ -190,39 +194,39 @@
 html.dark {
   color-scheme: dark;
 
-  /* Level 0: Canvas */
-  --material-canvas:         #05060A;
+  /* Level 0: Canvas / App Background */
+  --material-canvas:         #090B0E;
   --background:              var(--material-canvas);
   --bg:                      var(--material-canvas);
 
   /* Level 1: Solid Content Surfaces (Chat, Artifacts, Documents) */
-  --material-content:        #0D0F17;
-  --material-content-raised: #131622;
+  --material-content:        #101216;
+  --material-content-raised: #14171C;
   --surface-primary:         var(--material-content);
   --surface-secondary:       var(--material-content-raised);
   --surface:                 var(--material-content);
   --surface-raised:          var(--material-content-raised);
 
   /* Level 2: Functional Regular Glass (Sidebar, Composer, Palette) */
-  --material-glass-regular:  rgba(13, 15, 23, 0.85);
-  --material-glass-elevated: rgba(19, 22, 34, 0.88);
-  --material-glass-floating: rgba(13, 15, 23, 0.92);
+  --material-glass-regular:  rgba(16, 18, 22, 0.88);
+  --material-glass-elevated: rgba(20, 23, 28, 0.92);
+  --material-glass-floating: rgba(22, 25, 30, 0.95);
   --glass-regular:           var(--material-glass-regular);
   --glass-elevated:          var(--material-glass-elevated);
   --glass-floating:          var(--material-glass-floating);
 
   /* Level 3: Transient Glass & Overlays */
-  --material-glass-clear:    rgba(13, 15, 23, 0.65);
-  --material-overlay:        rgba(5, 6, 10, 0.75);
-  --material-scrim:          rgba(0, 0, 0, 0.85);
+  --material-glass-clear:    rgba(16, 18, 22, 0.65);
+  --material-overlay:        rgba(9, 11, 14, 0.75);
+  --material-scrim:          rgba(0, 0, 0, 0.75);
   --surface-overlay:         var(--material-overlay);
 
-  /* Garanties de Contraste Absolu WCAG 2.2 AA */
-  --text-primary:            #FFFFFF;               /* 100% visibilité pure */
-  --text-secondary:          #B4BAC8;               /* 80% contraste net, jamais délavé */
-  --text-tertiary:           #7E889B;               /* 65% métadonnées lisibles */
-  --text-disabled:           #4A5260;               /* 40% désactivé */
-  --text-inverse:            #05060A;
+  /* Garanties de Contraste Absolu WCAG 2.2 AA (Manus Precision) */
+  --text-primary:            #F5F5F3;               /* 100% visibilité pure */
+  --text-secondary:          rgba(245, 245, 243, 0.72); /* 72% contraste net, jamais délavé */
+  --text-tertiary:           rgba(245, 245, 243, 0.48); /* 48% métadonnées lisibles */
+  --text-disabled:           rgba(245, 245, 243, 0.28); /* 28% désactivé */
+  --text-inverse:            #090B0E;
   --foreground:              var(--text-primary);
   --foreground-secondary:    var(--text-secondary);
   --foreground-tertiary:     var(--text-tertiary);
@@ -234,22 +238,22 @@ html.dark {
   --icon-tertiary:           var(--text-tertiary);
   --icon-disabled:           var(--text-disabled);
 
-  /* Bordures Subpixel Raffinées */
-  --border:                  rgba(255, 255, 255, 0.08);
-  --border-default:          rgba(255, 255, 255, 0.08);
-  --border-strong:           rgba(255, 255, 255, 0.16);
+  /* Bordures Subpixel Raffinées (Section 8) */
+  --border:                  rgba(255, 255, 255, 0.075);
+  --border-default:          rgba(255, 255, 255, 0.075);
+  --border-strong:           rgba(255, 255, 255, 0.11);
   --border-subtle:           rgba(255, 255, 255, 0.045);
-  --glass-border:            rgba(255, 255, 255, 0.09);
+  --glass-border:            rgba(255, 255, 255, 0.08);
   --glass-highlight:         rgba(255, 255, 255, 0.05);
 
   /* Contrôles et Interactions */
-  --control-bg:              rgba(255, 255, 255, 0.05);
-  --control-hover:           rgba(255, 255, 255, 0.09);
-  --control-active:          rgba(255, 255, 255, 0.12);
-  --control-border:          rgba(255, 255, 255, 0.10);
-  --hover:                   rgba(255, 255, 255, 0.045);
-  --active:                  rgba(255, 255, 255, 0.08);
-  --selected:                rgba(255, 255, 255, 0.06);
+  --control-bg:              rgba(255, 255, 255, 0.04);
+  --control-hover:           rgba(255, 255, 255, 0.07);
+  --control-active:          rgba(255, 255, 255, 0.10);
+  --control-border:          rgba(255, 255, 255, 0.08);
+  --hover:                   rgba(255, 255, 255, 0.04);
+  --active:                  rgba(255, 255, 255, 0.07);
+  --selected:                rgba(255, 255, 255, 0.07);
 
   /* Statuts Sémantiques */
   --success:                 #22C55E;
@@ -263,28 +267,28 @@ html.dark {
   --shadow-floating:         var(--shadow-key), var(--shadow-ambient);
   --shadow-modal:            0 24px 72px rgba(0, 0, 0, 0.85);
 
-  --sidebar-bg:              #080A0F;
-  --sidebar-border:          rgba(255, 255, 255, 0.065);
-  --composer-bg:             #0D0F17;
-  --composer-border:         rgba(255, 255, 255, 0.10);
-  --settings-bg:             #0D0F17;
-  --settings-nav-bg:         #080A0F;
-  --bg-elevated:             var(--material-content-raised);
-  --bg-surface:              var(--material-content);
-  --bg-card:                 var(--material-content);
+  --sidebar-bg:              #101216;
+  --sidebar-border:          rgba(255, 255, 255, 0.075);
+  --composer-bg:             #14171C;
+  --composer-border:         rgba(255, 255, 255, 0.09);
+  --settings-bg:             #101216;
+  --settings-nav-bg:         #090B0E;
+  --bg-elevated:             #14171C;
+  --bg-surface:              #101216;
+  --bg-card:                 #16191E;
   --accent-10:               rgba(213, 174, 87, 0.12);
   --accent-06:               rgba(213, 174, 87, 0.06);
 
   /* Graphes Sémantiques & VIE */
-  --graph-canvas:            #08090D;
+  --graph-canvas:            #090B0E;
   --graph-grid:              rgba(255, 255, 255, 0.04);
-  --graph-node:              #0E121A;
-  --graph-node-selected:     #161C28;
-  --graph-node-border:       rgba(255, 255, 255, 0.12);
-  --graph-edge:              rgba(255, 255, 255, 0.18);
+  --graph-node:              #101216;
+  --graph-node-selected:     #16191E;
+  --graph-node-border:       rgba(255, 255, 255, 0.10);
+  --graph-edge:              rgba(255, 255, 255, 0.16);
   --graph-edge-active:       var(--accent);
-  --graph-label:             #FFFFFF;
-  --graph-label-muted:       #8A94A6;
+  --graph-label:             #F5F5F3;
+  --graph-label-muted:       rgba(245, 245, 243, 0.48);
 
   /* Agent / VIE Semantic States */
   --agent-planning:          #8B5CF6;
@@ -306,7 +310,7 @@ html.dark {
 }
 
 /* ═══════════════════════════════════════════════════════
-   THEME: LIGHT (Neo Blanc / Aurore Ogooué / Apple Paper)
+   THEME: LIGHT (Gofun / Warm Paper — Section 9 Discipline)
    ═══════════════════════════════════════════════════════ */
 
 [data-theme="light"],
@@ -315,21 +319,21 @@ html.dark {
 html.light {
   color-scheme: light;
 
-  /* Level 0: Canvas */
-  --material-canvas:         #FBFBF9;
+  /* Level 0: Canvas / App Background */
+  --material-canvas:         #F7F5EF;
   --background:              var(--material-canvas);
   --bg:                      var(--material-canvas);
 
   /* Level 1: Solid Content Surfaces */
-  --material-content:        #FFFFFF;
-  --material-content-raised: #F4F4F1;
+  --material-content:        #FCFBF8;
+  --material-content-raised: #FFFFFF;
   --surface-primary:         var(--material-content);
   --surface-secondary:       var(--material-content-raised);
   --surface:                 var(--material-content);
   --surface-raised:          var(--material-content-raised);
 
   /* Level 2: Functional Regular Glass */
-  --material-glass-regular:  rgba(251, 251, 249, 0.90);
+  --material-glass-regular:  rgba(247, 245, 239, 0.90);
   --material-glass-elevated: rgba(255, 255, 255, 0.94);
   --material-glass-floating: rgba(255, 255, 255, 0.96);
   --glass-regular:           var(--material-glass-regular);
@@ -338,15 +342,15 @@ html.light {
 
   /* Level 3: Transient Glass & Overlays */
   --material-glass-clear:    rgba(255, 255, 255, 0.70);
-  --material-overlay:        rgba(9, 10, 14, 0.35);
-  --material-scrim:          rgba(9, 10, 14, 0.60);
+  --material-overlay:        rgba(20, 20, 20, 0.35);
+  --material-scrim:          rgba(20, 20, 20, 0.60);
   --surface-overlay:         var(--material-overlay);
 
-  /* Garanties de Contraste Absolu */
-  --text-primary:            #090A0E;               /* Encre noire pure */
-  --text-secondary:          #474E5D;               /* Anthracite lisible */
-  --text-tertiary:           #6E7687;               /* Ardoise équilibrée */
-  --text-disabled:           #9CA3AF;
+  /* Garanties de Contraste Absolu (Section 9) */
+  --text-primary:            #171717;               /* Encre noire sobre */
+  --text-secondary:          rgba(23, 23, 23, 0.70); /* 70% anthracite */
+  --text-tertiary:           rgba(23, 23, 23, 0.48); /* 48% ardoise équilibrée */
+  --text-disabled:           rgba(23, 23, 23, 0.28);
   --text-inverse:            #FFFFFF;
   --foreground:              var(--text-primary);
   --foreground-secondary:    var(--text-secondary);
@@ -359,40 +363,41 @@ html.light {
   --icon-tertiary:           var(--text-tertiary);
   --icon-disabled:           var(--text-disabled);
 
-  --border:                  rgba(9, 10, 14, 0.08);
-  --border-default:          rgba(9, 10, 14, 0.08);
-  --border-strong:           rgba(9, 10, 14, 0.16);
-  --border-subtle:           rgba(9, 10, 14, 0.045);
-  --glass-border:            rgba(9, 10, 14, 0.08);
+  --border:                  rgba(20, 20, 20, 0.08);
+  --border-default:          rgba(20, 20, 20, 0.08);
+  --border-strong:           rgba(20, 20, 20, 0.14);
+  --border-subtle:           rgba(20, 20, 20, 0.045);
+  --glass-border:            rgba(20, 20, 20, 0.08);
   --glass-highlight:         rgba(255, 255, 255, 0.8);
 
-  --control-bg:              rgba(9, 10, 14, 0.04);
-  --control-hover:           rgba(9, 10, 14, 0.08);
-  --control-active:          rgba(9, 10, 14, 0.12);
-  --control-border:          rgba(9, 10, 14, 0.08);
-  --hover:                   rgba(9, 10, 14, 0.04);
-  --active:                  rgba(9, 10, 14, 0.08);
-  --selected:                rgba(9, 10, 14, 0.06);
+  --control-bg:              rgba(20, 20, 20, 0.04);
+  --control-hover:           rgba(20, 20, 20, 0.07);
+  --control-active:          rgba(20, 20, 20, 0.10);
+  --control-border:          rgba(20, 20, 20, 0.08);
+  --hover:                   rgba(20, 20, 20, 0.04);
+  --active:                  rgba(20, 20, 20, 0.07);
+  --selected:                rgba(20, 20, 20, 0.06);
 
+  /* Statuts Sémantiques */
   --success:                 #15803D;
   --warning:                 #B45309;
   --error:                   #DC2626;
   --info:                    #1D4ED8;
 
-  --shadow-ambient:          0 8px 30px rgba(9, 10, 14, 0.07);
-  --shadow-key:              0 2px 6px rgba(9, 10, 14, 0.04);
+  --shadow-ambient:          0 8px 30px rgba(20, 20, 20, 0.06);
+  --shadow-key:              0 2px 6px rgba(20, 20, 20, 0.04);
   --shadow-floating:         var(--shadow-key), var(--shadow-ambient);
-  --shadow-modal:            0 24px 60px rgba(9, 10, 14, 0.14);
+  --shadow-modal:            0 24px 60px rgba(20, 20, 20, 0.12);
 
-  --sidebar-bg:              #F7F7F4;
-  --sidebar-border:          rgba(9, 10, 14, 0.07);
-  --composer-bg:             rgba(255, 255, 255, 0.94);
-  --composer-border:         rgba(9, 10, 14, 0.10);
-  --settings-bg:             #FFFFFF;
-  --settings-nav-bg:         #F7F7F4;
-  --bg-elevated:             var(--material-content-raised);
-  --bg-surface:              var(--material-content);
-  --bg-card:                 var(--material-content);
+  --sidebar-bg:              #F1EEE7;
+  --sidebar-border:          rgba(20, 20, 20, 0.07);
+  --composer-bg:             #FFFFFF;
+  --composer-border:         rgba(20, 20, 20, 0.08);
+  --settings-bg:             #FCFBF8;
+  --settings-nav-bg:         #F1EEE7;
+  --bg-elevated:             #FFFFFF;
+  --bg-surface:              #FCFBF8;
+  --bg-card:                 #FFFFFF;
   --accent-10:               rgba(213, 174, 87, 0.12);
   --accent-06:               rgba(213, 174, 87, 0.06);
 

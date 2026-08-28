@@ -4,12 +4,20 @@
  * Wordmark-First Ñkyel + Iboga Navigation Signature
  */
 
-'use client';
-
-import React from 'react';
-import { motion, useReducedMotion } from 'framer-motion';
+import React, { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
 import { useSidebarStore } from '@/stores/sidebar';
 import { IbogaNavigationTrigger } from '@/components/brand';
+
+function useReducedMotion() {
+  const [reduced, setReduced] = useState(false);
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      setReduced(window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+    }
+  }, []);
+  return reduced;
+}
 
 export default function SidebarHeader() {
   const shouldReduceMotion = useReducedMotion();

@@ -1,69 +1,48 @@
 /**
- * Ñkyel AI · Connecteurs Workspace
+ * Ñkyel AI · Connectors Workspace (Section 33–53 Master Visual Polish)
  * SmartANDJ AI Technologies · Founder: Daniel Jonathan ANDJ
  *
- * Professional Connectors, MCP & MCP Server Catalog:
- * 1. Applications (Google, Microsoft, Notion, Slack, GitHub, Linear, Stripe, PostgreSQL, Supabase...)
- * 2. MCP (Model Context Protocol client tools & native integrations)
- * 3. MCP Servers (Custom stdio / Streamable HTTP / SSE servers with live test wizard)
+ * Geometric discipline:
+ * - Mobile: near-fullscreen modal/sheet aesthetic, 1-column cards
+ * - Header: Connectors title (24–28px) + close button
+ * - Search bar: 48–52px height, 14–18px radius immediately below header
+ * - Tabs: Applications, Custom API, MCP Servers, Projects
+ * - Create control: Create ˅ menu
+ * - Bottom catalog demand suggestion
  */
 
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useRef, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import {
   PlugsConnected,
-  PuzzlePiece,
-  Database,
+  Cpu,
+  Terminal,
+  FolderSimple,
   MagnifyingGlass,
   Plus,
-  CheckCircle,
-  SlidersHorizontal,
+  CaretDown,
+  X,
   Sparkle,
-  HardDrives,
-  TrendUp,
-  FileText,
-  Browsers,
-  VideoCamera,
-  Target,
-  ShieldCheck,
-  Check,
-  Terminal,
   Globe,
-  ArrowSquareOut,
   Trash,
-  ArrowClockwise,
-  CloudCheck,
-  Cpu,
-  CaretRight,
+  CheckCircle,
+  PaperPlaneTilt,
 } from '@phosphor-icons/react';
 import { useConnectorsStore, type ConnectorItem } from '@/stores/connectors.store';
+import { useLanguageStore } from '@/stores/language.store';
 import ConnectorCard from '@/components/connectors/ConnectorCard';
 import ConnectorDetailSheet from '@/components/connectors/ConnectorDetailSheet';
 import MCPServerModal, { type MCPServerConfig } from '@/components/connectors/MCPServerModal';
 
-export type ConnectorsActiveTab = 'apps' | 'mcp' | 'mcp_servers';
-
-const ALL_CATEGORIES = [
-  'Tous',
-  'Productivité',
-  'Cloud',
-  'Développement',
-  'Base de données',
-  'Communication',
-  'CRM & Ventes',
-  'Finance',
-  'Recherche & Data',
-  'Stockage',
-  'Design & Média',
-  'Entreprise',
-];
+export type ConnectorsActiveTab = 'apps' | 'custom_api' | 'mcp_servers' | 'projects';
 
 const INITIAL_MCP_SERVERS: MCPServerConfig[] = [
   {
     id: 'mcp_postgres_prod',
     name: 'PostgreSQL Enterprise Hub',
-    description: 'Accès sécurisé en lecture seule aux schémas analytiques et tables relationnelles.',
+    description: 'Secure read-only analytics access to relational tables and schemas.',
     transport: 'stdio',
     command: 'npx -y @modelcontextprotocol/server-postgres',
     enabled: true,
@@ -74,7 +53,7 @@ const INITIAL_MCP_SERVERS: MCPServerConfig[] = [
   {
     id: 'mcp_github_gateway',
     name: 'GitHub Repository Gateway',
-    description: 'Gestion des pull requests, commits, issues et navigation d’arborescence Git.',
+    description: 'Pull request management, issues, repository tree navigation, and Git actions.',
     transport: 'stdio',
     command: 'npx -y @modelcontextprotocol/server-github',
     enabled: true,
@@ -87,7 +66,7 @@ const INITIAL_MCP_SERVERS: MCPServerConfig[] = [
     name: 'Brave Search Live Feed',
     transport: 'streamable-http',
     url: 'https://mcp.brave.com/v1',
-    description: 'Indexation web mondiale indépendante et extraction de contenu sans pistage.',
+    description: 'Independent live web indexing and privacy-focused multi-source search.',
     enabled: true,
     status: 'connected',
     discoveredToolsCount: 3,
@@ -95,8 +74,8 @@ const INITIAL_MCP_SERVERS: MCPServerConfig[] = [
   },
   {
     id: 'mcp_filesystem_sandbox',
-    name: 'Sandbox Filesystem Workspace',
-    description: 'Lecture et écriture d’artefacts dans le répertoire de travail /workspace.',
+    name: 'Filesystem Sandbox Workspace',
+    description: 'Read and write artifacts safely inside the /workspace environment.',
     transport: 'stdio',
     command: 'npx -y @modelcontextprotocol/server-filesystem',
     enabled: true,
@@ -107,9 +86,11 @@ const INITIAL_MCP_SERVERS: MCPServerConfig[] = [
 ];
 
 export default function ConnectorsPage() {
+  const router = useRouter();
+  const { t } = useLanguageStore();
+
   const {
     connectors,
-    skills,
     selectedConnectorId,
     searchQuery,
     setSearchQuery,
@@ -119,36 +100,40 @@ export default function ConnectorsPage() {
   } = useConnectorsStore();
 
   const [activeTab, setActiveTab] = useState<ConnectorsActiveTab>('apps');
-  const [selectedCategory, setSelectedCategory] = useState('Tous');
+  const [createMenuOpen, setCreateMenuOpen] = useState(false);
   const [isAddServerOpen, setIsAddServerOpen] = useState(false);
-  const [showAllConnectors, setShowAllConnectors] = useState(false);
+  const [isSuggestModalOpen, setIsSuggestModalOpen] = useState(false);
+  const [suggestInput, setSuggestInput] = useState('');
+  const [suggestComment, setSuggestComment] = useState('');
+  const [suggestSubmitted, setSuggestSubmitted] = useState(false);
   const [mcpServers, setMcpServers] = useState<MCPServerConfig[]>(INITIAL_MCP_SERVERS);
 
-  // Filtered applications
+  const createMenuRef = useRef<HTMLDivElement>(null);
+
+  // Close create menu on click outside
+  useEffect(() => {
+    if (!createMenuOpen) return;
+    const handler = (e: MouseEvent) => {
+      if (createMenuRef.current && !createMenuRef.current.contains(e.target as Node)) {
+        setCreateMenuOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, [createMenuOpen]);
+
+  // Filtered connectors
   const filteredConnectors = useMemo(() => {
     const q = searchQuery.toLowerCase().trim();
-    return connectors.filter((c) => {
-      const matchSearch =
-        !q ||
+    if (!q) return connectors;
+    return connectors.filter(
+      (c) =>
         c.name.toLowerCase().includes(q) ||
         c.description.toLowerCase().includes(q) ||
-        c.capabilities.some((cap) => cap.toLowerCase().includes(q));
-
-      const matchCat =
-        selectedCategory === 'Tous' ||
-        c.category.toLowerCase().includes(selectedCategory.toLowerCase());
-
-      return matchSearch && matchCat;
-    });
-  }, [connectors, searchQuery, selectedCategory]);
-
-  const popularConnectors = useMemo(() => {
-    return filteredConnectors.slice(0, 6);
-  }, [filteredConnectors]);
-
-  const remainingConnectors = useMemo(() => {
-    return filteredConnectors.slice(6);
-  }, [filteredConnectors]);
+        c.category.toLowerCase().includes(q) ||
+        c.capabilities.some((cap) => cap.toLowerCase().includes(q))
+    );
+  }, [connectors, searchQuery]);
 
   const handleSaveMCPServer = (server: MCPServerConfig) => {
     setMcpServers((prev) => [server, ...prev]);
@@ -164,68 +149,171 @@ export default function ConnectorsPage() {
     );
   };
 
+  const handleSendSuggestion = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!suggestInput.trim()) return;
+    // Persist connector demand to local storage/API
+    try {
+      const existing = JSON.parse(localStorage.getItem('nkyel_connector_demands') || '[]');
+      existing.push({
+        connector: suggestInput.trim(),
+        comment: suggestComment.trim(),
+        timestamp: new Date().toISOString(),
+      });
+      localStorage.setItem('nkyel_connector_demands', JSON.stringify(existing));
+    } catch {}
+    setSuggestSubmitted(true);
+    setTimeout(() => {
+      setIsSuggestModalOpen(false);
+      setSuggestSubmitted(false);
+      setSuggestInput('');
+      setSuggestComment('');
+    }, 1500);
+  };
+
   return (
-    <div className="flex-1 flex flex-col h-full overflow-hidden" style={{ background: 'var(--material-canvas)' }}>
+    <div
+      className="flex-1 flex flex-col h-full overflow-hidden select-none"
+      style={{ background: 'var(--material-canvas)' }}
+    >
       <MCPServerModal
         isOpen={isAddServerOpen}
         onClose={() => setIsAddServerOpen(false)}
         onSaveServer={handleSaveMCPServer}
       />
 
-      {/* ═══════════════════════════════════════════════════
-         TOP HEADER
-         ═══════════════════════════════════════════════════ */}
-      <div className="shrink-0 p-6 border-b border-[var(--border-subtle)] bg-[var(--surface-raised)]">
-        <div className="max-w-6xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div>
-            <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-xl flex items-center justify-center bg-[var(--accent-subtle)] text-[var(--accent)] border border-[var(--accent-muted)]">
-                <PlugsConnected size={18} weight="bold" />
-              </div>
-              <h1 className="text-xl font-bold tracking-tight text-[var(--text-primary)]">
-                Connecteurs & Protocoles
-              </h1>
-            </div>
-            <p className="text-xs mt-1 text-[var(--text-secondary)]">
-              Étendez les pouvoirs de votre agent avec des applications SaaS, le Model Context Protocol (MCP) et vos serveurs personnalisés.
-            </p>
-          </div>
+      {/* Selected Connector Detail Sheet */}
+      <ConnectorDetailSheet
+        connector={connectors.find((c) => c.id === selectedConnectorId) || null}
+        isOpen={Boolean(selectedConnectorId)}
+        onClose={() => setSelectedConnectorId(null)}
+        onConnect={connectConnector}
+        onDisconnect={disconnectConnector}
+      />
 
-          <div className="flex items-center gap-2">
-            {activeTab === 'mcp_servers' ? (
+      {/* Connector Catalog Suggestion Modal (Section 52) */}
+      {isSuggestModalOpen && (
+        <div
+          className="fixed inset-0 flex items-center justify-center p-4 z-50 bg-black/60 backdrop-blur-sm animate-in fade-in"
+          onClick={() => setIsSuggestModalOpen(false)}
+        >
+          <div
+            className="w-full max-w-md p-6 rounded-[24px] bg-[var(--surface-raised)] border border-[var(--border-strong)] shadow-[var(--shadow-modal)] space-y-4"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between">
+              <h3 className="text-lg font-semibold text-[var(--text-primary)]">
+                {t('connectors.suggest') || 'Suggest a connector'}
+              </h3>
               <button
                 type="button"
-                onClick={() => setIsAddServerOpen(true)}
-                className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold shadow-sm bg-[var(--accent)] text-[var(--accent-fg)] hover:brightness-110 active:scale-95 transition-all"
+                onClick={() => setIsSuggestModalOpen(false)}
+                className="w-8 h-8 rounded-full flex items-center justify-center hover:bg-[var(--hover)] text-[var(--text-tertiary)] hover:text-[var(--text-primary)]"
               >
-                <Plus size={14} weight="bold" />
-                <span>Ajouter un Serveur MCP</span>
+                <X size={16} />
               </button>
+            </div>
+
+            {suggestSubmitted ? (
+              <div className="py-8 text-center space-y-2">
+                <CheckCircle size={36} weight="fill" className="text-emerald-400 mx-auto" />
+                <p className="font-semibold text-sm text-[var(--text-primary)]">
+                  {t('connectors.suggestSubmitted') || 'Thank you! Your request has been recorded.'}
+                </p>
+              </div>
             ) : (
-              <button
-                type="button"
-                onClick={() => setIsAddServerOpen(true)}
-                className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-medium border border-[var(--border)] bg-[var(--surface)] text-[var(--text-primary)] hover:bg-[var(--hover)] transition-all"
-              >
-                <Plus size={14} />
-                <span>Serveur MCP</span>
-              </button>
+              <form onSubmit={handleSendSuggestion} className="space-y-3.5">
+                <div>
+                  <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">
+                    Connector Name or Service
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={suggestInput}
+                    onChange={(e) => setSuggestInput(e.target.value)}
+                    placeholder="e.g. Canva, Airtable, HubSpot, Jira..."
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-[var(--border)] bg-[var(--control-bg)] text-xs text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">
+                    Use Case (Optional)
+                  </label>
+                  <textarea
+                    rows={2}
+                    value={suggestComment}
+                    onChange={(e) => setSuggestComment(e.target.value)}
+                    placeholder="How would you like Ñkyel to use this connector?"
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-[var(--border)] bg-[var(--control-bg)] text-xs text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)] resize-none"
+                  />
+                </div>
+                <div className="flex items-center justify-end gap-2 pt-2">
+                  <button
+                    type="button"
+                    onClick={() => setIsSuggestModalOpen(false)}
+                    className="px-4 py-2 rounded-xl text-xs font-medium hover:bg-[var(--hover)] text-[var(--text-secondary)]"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold bg-[var(--accent)] text-[var(--accent-fg)] shadow-sm active:scale-95 transition-all"
+                  >
+                    <PaperPlaneTilt size={14} weight="bold" />
+                    <span>Submit</span>
+                  </button>
+                </div>
+              </form>
             )}
           </div>
         </div>
-      </div>
+      )}
 
       {/* ═══════════════════════════════════════════════════
-         3 FIRST-CLASS TABS & SEARCH
+         MAIN CONTAINER (Mobile-First Sheet Style: Section 34 & 35)
          ═══════════════════════════════════════════════════ */}
-      <div className="shrink-0 px-6 py-3 border-b border-[var(--border-subtle)] bg-[var(--surface)]">
-        <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3">
-          {/* Main Navigation Tabs */}
-          <div className="flex items-center gap-1.5 w-full sm:w-auto">
+      <div className="flex-1 flex flex-col max-w-4xl mx-auto w-full px-3 sm:px-6 py-4 sm:py-6 overflow-hidden">
+        {/* Header: Title + Close target */}
+        <div className="shrink-0 flex items-center justify-between pb-3">
+          <h1 className="text-2xl sm:text-[28px] font-semibold tracking-tight text-[var(--text-primary)]">
+            {t('connectors.title') || 'Connectors'}
+          </h1>
+          <button
+            type="button"
+            onClick={() => router.push('/')}
+            className="w-11 h-11 min-h-[44px] min-w-[44px] rounded-xl flex items-center justify-center text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--hover)] transition-colors active:scale-95"
+            aria-label="Close"
+            title="Close"
+          >
+            <X size={20} />
+          </button>
+        </div>
+
+        {/* Search Bar: Section 36 (48-52px height, 14-18px radius) */}
+        <div className="shrink-0 relative mb-4">
+          <MagnifyingGlass
+            size={19}
+            className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--text-tertiary)] pointer-events-none"
+          />
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder={t('connectors.searchPlaceholder') || 'Search connectors...'}
+            className="w-full h-12 pl-10 pr-4 rounded-[16px] border border-[var(--border)] bg-[var(--surface-raised)] text-sm text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] transition-all"
+          />
+        </div>
+
+        {/* Categories / Navigation Tabs & Create Control (Section 37 & 38) */}
+        <div className="shrink-0 flex items-center justify-between gap-2 pb-3 border-b border-[var(--border-subtle)]">
+          {/* Horizontally scrollable category tabs */}
+          <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-none py-1 min-w-0">
             {[
-              { id: 'apps', label: 'Applications', icon: PlugsConnected, count: connectors.length },
-              { id: 'mcp', label: 'Outils MCP', icon: Cpu, count: 18 },
-              { id: 'mcp_servers', label: 'MCP Servers', icon: Terminal, count: mcpServers.length },
+              { id: 'apps', label: t('connectors.applications') || 'Applications', icon: PlugsConnected },
+              { id: 'custom_api', label: t('connectors.customApi') || 'Custom API', icon: Globe },
+              { id: 'mcp_servers', label: t('connectors.mcpServers') || 'MCP Servers', icon: Terminal },
+              { id: 'projects', label: t('connectors.projects') || 'Projects', icon: FolderSimple },
             ].map((tab) => {
               const Icon = tab.icon;
               const isActive = activeTab === tab.id;
@@ -234,276 +322,215 @@ export default function ConnectorsPage() {
                   key={tab.id}
                   type="button"
                   onClick={() => setActiveTab(tab.id as ConnectorsActiveTab)}
-                  className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-medium transition-all ${
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium whitespace-nowrap transition-all touch-manipulation min-h-[34px] ${
                     isActive
-                      ? 'bg-[var(--surface-raised)] text-[var(--text-primary)] border border-[var(--border-strong)] shadow-sm'
-                      : 'text-[var(--text-secondary)] hover:bg-[var(--hover)] hover:text-[var(--text-primary)] border border-transparent'
+                      ? 'bg-[var(--surface-raised)] text-[var(--text-primary)] border border-[var(--border-strong)] shadow-xs'
+                      : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--hover)] border border-transparent'
                   }`}
                 >
                   <Icon size={15} weight={isActive ? 'fill' : 'regular'} className={isActive ? 'text-[var(--accent)]' : ''} />
                   <span>{tab.label}</span>
-                  <span
-                    className={`font-mono text-[10px] px-1.5 py-0.2 rounded-full ${
-                      isActive
-                        ? 'bg-[var(--accent-subtle)] text-[var(--accent)]'
-                        : 'bg-[var(--surface-raised)] text-[var(--text-tertiary)]'
-                    }`}
-                  >
-                    {tab.count}
-                  </span>
                 </button>
               );
             })}
           </div>
 
-          {/* Search Box */}
-          <div className="relative w-full sm:w-72">
-            <MagnifyingGlass size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-tertiary)]" />
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Rechercher intégrations, MCP, serveurs…"
-              className="w-full pl-8 pr-3 py-1.5 rounded-xl border border-[var(--border-subtle)] bg-[var(--surface-raised)] text-xs text-[var(--text-primary)] outline-none focus:border-[var(--accent)]"
-            />
+          {/* Create ˅ Control (Section 38) */}
+          <div className="relative shrink-0" ref={createMenuRef}>
+            <button
+              type="button"
+              onClick={() => setCreateMenuOpen(!createMenuOpen)}
+              className="flex items-center gap-1 px-3 py-1.5 rounded-xl text-xs font-semibold bg-[var(--surface-raised)] hover:bg-[var(--hover)] text-[var(--text-primary)] border border-[var(--border)] transition-colors shadow-xs touch-manipulation min-h-[34px]"
+            >
+              <span>{t('connectors.create') || 'Create'}</span>
+              <CaretDown size={12} className="opacity-60" />
+            </button>
+
+            {createMenuOpen && (
+              <div className="absolute right-0 top-full mt-1.5 w-48 p-1.5 rounded-2xl bg-[var(--bg-elevated)] border border-[var(--border-strong)] shadow-[var(--shadow-modal)] text-xs z-50 animate-scale-in">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setCreateMenuOpen(false);
+                    setIsAddServerOpen(true);
+                  }}
+                  className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-left hover:bg-[var(--hover)] text-[var(--text-primary)]"
+                >
+                  <Terminal size={15} className="text-[var(--accent)]" />
+                  <span>MCP Server</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setCreateMenuOpen(false);
+                    setIsSuggestModalOpen(true);
+                  }}
+                  className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-left hover:bg-[var(--hover)] text-[var(--text-primary)]"
+                >
+                  <Globe size={15} className="text-emerald-400" />
+                  <span>Custom API</span>
+                </button>
+              </div>
+            )}
           </div>
         </div>
-      </div>
 
-      {/* ═══════════════════════════════════════════════════
-         TAB CONTENT
-         ═══════════════════════════════════════════════════ */}
-      <div className="flex-1 overflow-y-auto p-6 scrollbar-thin">
-        <div className="max-w-6xl mx-auto space-y-8">
-          {/* TAB 1: APPLICATIONS */}
+        {/* ═══════════════════════════════════════════════════
+           CONNECTOR LIST / TAB PANELS (Section 39: 1-COLUMN MOBILE)
+           ═══════════════════════════════════════════════════ */}
+        <div className="flex-1 overflow-y-auto py-3 space-y-3 scrollbar-thin">
           {activeTab === 'apps' && (
-            <>
-              {/* Category Pills */}
-              <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none">
-                {ALL_CATEGORIES.map((cat) => {
-                  const isSelected = selectedCategory === cat;
-                  return (
-                    <button
-                      key={cat}
-                      type="button"
-                      onClick={() => setSelectedCategory(cat)}
-                      className={`px-3 py-1 rounded-lg text-xs font-medium whitespace-nowrap transition-colors ${
-                        isSelected
-                          ? 'bg-[var(--accent-subtle)] text-[var(--accent)] border border-[var(--accent-muted)] font-semibold'
-                          : 'bg-[var(--surface)] text-[var(--text-secondary)] border border-[var(--border-subtle)] hover:bg-[var(--hover)] hover:text-[var(--text-primary)]'
-                      }`}
-                    >
-                      {cat}
-                    </button>
-                  );
-                })}
-              </div>
-
-              {/* Popular Connectors Grid */}
-              <div>
-                <div className="flex items-center justify-between mb-3">
-                  <h3 className="text-xs font-bold uppercase tracking-wider text-[var(--text-tertiary)] flex items-center gap-1.5">
-                    <Sparkle size={14} weight="fill" className="text-[var(--accent)]" />
-                    <span>Connecteurs Populaires</span>
-                  </h3>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {popularConnectors.map((conn) => (
-                    <ConnectorCard
-                      key={conn.id}
-                      connector={conn}
-                      onSelect={setSelectedConnectorId}
-                      onConnect={connectConnector}
-                    />
-                  ))}
-                </div>
-              </div>
-
-              {/* Progressive Disclosure "Voir plus" */}
-              {remainingConnectors.length > 0 && (
-                <div>
-                  {!showAllConnectors ? (
-                    <div className="text-center py-4 border-t border-[var(--border-subtle)]">
-                      <button
-                        type="button"
-                        onClick={() => setShowAllConnectors(true)}
-                        className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold bg-[var(--surface-raised)] border border-[var(--border)] text-[var(--text-primary)] hover:border-[var(--accent-muted)] hover:text-[var(--accent)] transition-all"
-                      >
-                        <span>Voir tout le catalogue ({remainingConnectors.length} autres connecteurs)</span>
-                        <CaretRight size={14} />
-                      </button>
-                    </div>
-                  ) : (
-                    <div className="space-y-4 pt-4 border-t border-[var(--border-subtle)]">
-                      <h3 className="text-xs font-bold uppercase tracking-wider text-[var(--text-tertiary)]">
-                        Tous les connecteurs du catalogue
-                      </h3>
-                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                        {remainingConnectors.map((conn) => (
-                          <ConnectorCard
-                            key={conn.id}
-                            connector={conn}
-                            onSelect={setSelectedConnectorId}
-                            onConnect={connectConnector}
-                          />
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                </div>
-              )}
-            </>
-          )}
-
-          {/* TAB 2: MCP CLIENT TOOLS */}
-          {activeTab === 'mcp' && (
-            <div className="space-y-6">
-              <div className="p-5 rounded-2xl border border-[var(--accent-muted)] bg-[var(--accent-subtle)]/20 flex items-start gap-4">
-                <Cpu size={24} className="text-[var(--accent)] shrink-0 mt-0.5" />
-                <div>
-                  <h3 className="text-sm font-bold text-[var(--text-primary)]">
-                    Model Context Protocol (MCP) — Client Intégré
-                  </h3>
-                  <p className="text-xs text-[var(--text-secondary)] mt-1">
-                    Le standard ouvert d’Anthropic / Linux Foundation est nativement pris en charge par le moteur d’orchestration Ñkyel.
-                    Vos agents appellent dynamiquement les outils et accèdent aux ressources exposées par les serveurs connectés.
-                  </p>
-                </div>
-              </div>
-
-              {/* Grid of Discovered MCP Tools */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {[
-                  { name: 'execute_sql_query', srv: 'PostgreSQL Enterprise', desc: 'Exécute des requêtes de lecture avec validation AST de sécurité.' },
-                  { name: 'create_pull_request', srv: 'GitHub Repository Gateway', desc: 'Génère une PR automatisée avec description enrichie.' },
-                  { name: 'web_search_brave', srv: 'Brave Search Feed', desc: 'Recherche Web temps réel sans biais publicitaire.' },
-                  { name: 'read_workspace_file', srv: 'Filesystem Sandbox', desc: 'Lit un document ou code source localement.' },
-                  { name: 'write_workspace_artifact', srv: 'Filesystem Sandbox', desc: 'Enregistre un livrable généré dans /workspace.' },
-                  { name: 'list_database_tables', srv: 'PostgreSQL Enterprise', desc: 'Inspecte les métadonnées et types de colonnes.' },
-                ].map((tool, idx) => (
-                  <div
-                    key={idx}
-                    className="p-4 rounded-xl border border-[var(--border-subtle)] bg-[var(--surface-raised)] space-y-2"
-                  >
-                    <div className="flex items-center justify-between">
-                      <span className="font-mono text-xs font-bold text-[var(--accent)]">
-                        {tool.name}
-                      </span>
-                      <span className="text-[10px] px-1.5 py-0.2 rounded bg-[var(--surface)] text-[var(--text-tertiary)] border border-[var(--border-subtle)]">
-                        outil MCP
-                      </span>
-                    </div>
-                    <p className="text-xs text-[var(--text-secondary)] line-clamp-2">
-                      {tool.desc}
-                    </p>
-                    <div className="pt-2 border-t border-[var(--border-subtle)] text-[10px] text-[var(--text-tertiary)] font-mono">
-                      Fourni par : <span className="text-[var(--text-primary)]">{tool.srv}</span>
-                    </div>
+            <div className="flex flex-col gap-2.5">
+              {filteredConnectors.length === 0 ? (
+                <div className="text-center py-12 space-y-3">
+                  <div className="w-10 h-10 rounded-full bg-[var(--surface-raised)] border border-[var(--border)] flex items-center justify-center mx-auto text-[var(--text-tertiary)]">
+                    <PlugsConnected size={20} />
                   </div>
-                ))}
+                  <p className="text-xs text-[var(--text-secondary)]">
+                    No connectors found matching &ldquo;{searchQuery}&rdquo;
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => setIsSuggestModalOpen(true)}
+                    className="inline-block text-xs font-semibold text-[var(--accent)] hover:underline"
+                  >
+                    + Suggest this connector
+                  </button>
+                </div>
+              ) : (
+                filteredConnectors.map((conn) => (
+                  <ConnectorCard
+                    key={conn.id}
+                    connector={conn}
+                    onSelect={setSelectedConnectorId}
+                    onConnect={connectConnector}
+                  />
+                ))
+              )}
+
+              {/* Catalog Request Footer (Section 52) */}
+              <div className="pt-6 pb-8 text-center space-y-1.5 border-t border-[var(--border-subtle)] mt-4">
+                <p className="text-xs text-[var(--text-tertiary)]">
+                  {t('connectors.missing') || "Can't find what you need?"}
+                </p>
+                <button
+                  type="button"
+                  onClick={() => setIsSuggestModalOpen(true)}
+                  className="inline-flex items-center gap-1.5 text-xs font-semibold text-[var(--accent)] hover:underline"
+                >
+                  <span>{t('connectors.suggest') || 'Suggest one'}</span>
+                  <span>→</span>
+                </button>
               </div>
             </div>
           )}
 
-          {/* TAB 3: MCP SERVERS */}
+          {activeTab === 'custom_api' && (
+            <div className="py-8 text-center space-y-3">
+              <div className="w-10 h-10 rounded-xl bg-[var(--control-bg)] border border-[var(--border)] flex items-center justify-center mx-auto text-[var(--accent)]">
+                <Globe size={20} />
+              </div>
+              <h3 className="text-sm font-semibold text-[var(--text-primary)]">Custom OpenAPI / REST Connectors</h3>
+              <p className="text-xs text-[var(--text-secondary)] max-w-sm mx-auto">
+                Connect your private backend APIs and enterprise endpoints directly into the Ñkyel intelligence loop.
+              </p>
+              <button
+                type="button"
+                onClick={() => setIsSuggestModalOpen(true)}
+                className="px-4 py-2 rounded-xl text-xs font-semibold bg-[var(--accent)] text-[var(--accent-fg)]"
+              >
+                Configure Custom Endpoint
+              </button>
+            </div>
+          )}
+
           {activeTab === 'mcp_servers' && (
-            <div className="space-y-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h2 className="text-sm font-bold text-[var(--text-primary)]">
-                    Serveurs MCP Enregistrés ({mcpServers.length})
-                  </h2>
-                  <p className="text-xs text-[var(--text-secondary)]">
-                    Gérez les processus locaux (stdio) et endpoints distants (HTTP / SSE) connectés à Ñkyel.
-                  </p>
-                </div>
+            <div className="space-y-3">
+              <div className="flex items-center justify-between pb-1">
+                <span className="text-xs font-semibold text-[var(--text-tertiary)] uppercase tracking-wider">
+                  Registered MCP Servers ({mcpServers.length})
+                </span>
                 <button
                   type="button"
                   onClick={() => setIsAddServerOpen(true)}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-[var(--accent)] text-[var(--accent-fg)] hover:brightness-110 transition-all"
+                  className="text-xs font-semibold text-[var(--accent)] hover:underline flex items-center gap-1"
                 >
-                  <Plus size={14} weight="bold" />
-                  <span>Nouveau Serveur</span>
+                  <Plus size={12} weight="bold" />
+                  <span>Add Server</span>
                 </button>
               </div>
 
-              {/* MCP Server Cards */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {mcpServers.map((srv) => (
-                  <div
-                    key={srv.id}
-                    className="p-4 rounded-2xl border border-[var(--border)] bg-[var(--surface-raised)] flex flex-col justify-between space-y-4"
-                  >
-                    <div>
-                      <div className="flex items-start justify-between gap-3">
-                        <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-xl bg-[var(--surface-sunken)] border border-[var(--border-subtle)] text-[var(--text-primary)] flex items-center justify-center">
-                            {srv.transport === 'stdio' ? <Terminal size={20} /> : <Globe size={20} />}
-                          </div>
-                          <div>
-                            <h3 className="font-bold text-sm text-[var(--text-primary)]">
-                              {srv.name}
-                            </h3>
-                            <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-[var(--surface)] text-[var(--text-tertiary)] border border-[var(--border-subtle)] uppercase">
-                              {srv.transport}
-                            </span>
-                          </div>
-                        </div>
-
-                        <div className="flex items-center gap-1">
-                          <button
-                            type="button"
-                            onClick={() => handleToggleServer(srv.id)}
-                            className={`px-2 py-1 rounded-lg text-[11px] font-semibold transition-colors ${
-                              srv.enabled
-                                ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
-                                : 'bg-zinc-500/10 text-zinc-400 border border-zinc-500/20'
-                            }`}
-                          >
-                            {srv.enabled ? 'Actif' : 'Désactivé'}
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => handleDeleteServer(srv.id)}
-                            className="p-1.5 rounded-lg text-[var(--text-tertiary)] hover:text-rose-400 hover:bg-rose-500/10 transition-colors"
-                            title="Supprimer le serveur"
-                          >
-                            <Trash size={15} />
-                          </button>
-                        </div>
+              {mcpServers.map((srv) => (
+                <div
+                  key={srv.id}
+                  className="p-4 rounded-[18px] border border-[var(--border)] bg-[var(--surface-raised)] space-y-3"
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-xl bg-[var(--control-bg)] border border-[var(--border-subtle)] text-[var(--text-primary)] flex items-center justify-center">
+                        {srv.transport === 'stdio' ? <Terminal size={18} /> : <Globe size={18} />}
                       </div>
-
-                      <p className="text-xs text-[var(--text-secondary)] mt-3">
-                        {srv.description}
-                      </p>
-
-                      {srv.command && (
-                        <div className="mt-2.5 p-2 rounded-lg bg-[var(--surface-sunken)] font-mono text-[11px] text-[var(--text-secondary)] truncate border border-[var(--border-subtle)]">
-                          $ {srv.command}
-                        </div>
-                      )}
-                      {srv.url && (
-                        <div className="mt-2.5 p-2 rounded-lg bg-[var(--surface-sunken)] font-mono text-[11px] text-[var(--text-secondary)] truncate border border-[var(--border-subtle)]">
-                          Endpoint : {srv.url}
-                        </div>
-                      )}
+                      <div>
+                        <h4 className="font-semibold text-sm text-[var(--text-primary)]">{srv.name}</h4>
+                        <span className="text-[10px] font-mono uppercase text-[var(--text-tertiary)]">
+                          {srv.transport} · {srv.discoveredToolsCount} tools
+                        </span>
+                      </div>
                     </div>
 
-                    <div className="pt-3 border-t border-[var(--border-subtle)] flex items-center justify-between text-[11px] text-[var(--text-tertiary)]">
-                      <div className="flex items-center gap-2">
-                        <CheckCircle size={14} weight="fill" className="text-emerald-400" />
-                        <span>{srv.discoveredToolsCount} outils disponibles</span>
-                      </div>
-                      {srv.lastPingMs && (
-                        <span className="font-mono text-[10px]">
-                          Latence : {srv.lastPingMs}ms
-                        </span>
-                      )}
+                    <div className="flex items-center gap-1.5">
+                      <button
+                        type="button"
+                        onClick={() => handleToggleServer(srv.id)}
+                        className={`px-2 py-0.5 rounded-lg text-[11px] font-semibold ${
+                          srv.enabled
+                            ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
+                            : 'bg-zinc-500/10 text-zinc-400 border border-zinc-500/20'
+                        }`}
+                      >
+                        {srv.enabled ? 'Active' : 'Disabled'}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleDeleteServer(srv.id)}
+                        className="p-1 rounded-lg text-[var(--text-tertiary)] hover:text-rose-400 hover:bg-rose-500/10"
+                        title="Delete Server"
+                      >
+                        <Trash size={14} />
+                      </button>
                     </div>
                   </div>
-                ))}
+
+                  <p className="text-xs text-[var(--text-secondary)] leading-relaxed">
+                    {srv.description}
+                  </p>
+
+                  {srv.command && (
+                    <div className="p-2 rounded-lg bg-[var(--control-bg)] font-mono text-[11px] text-[var(--text-secondary)] truncate border border-[var(--border-subtle)]">
+                      $ {srv.command}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+
+          {activeTab === 'projects' && (
+            <div className="py-8 text-center space-y-3">
+              <div className="w-10 h-10 rounded-xl bg-[var(--control-bg)] border border-[var(--border)] flex items-center justify-center mx-auto text-[var(--text-tertiary)]">
+                <FolderSimple size={20} />
               </div>
+              <h3 className="text-sm font-semibold text-[var(--text-primary)]">Project Workspaces</h3>
+              <p className="text-xs text-[var(--text-secondary)] max-w-sm mx-auto">
+                Group connectors, custom instructions, and mission histories per active project.
+              </p>
+              <button
+                type="button"
+                onClick={() => router.push('/projects')}
+                className="px-4 py-2 rounded-xl text-xs font-semibold bg-[var(--accent)] text-[var(--accent-fg)]"
+              >
+                View Projects
+              </button>
             </div>
           )}
         </div>

@@ -1,20 +1,23 @@
 /**
- * Ñkyel AI · ConnectorCard
+ * Ñkyel AI · ConnectorCard (Prompt 3 & Section 39–48 Master Visual Specification)
  * SmartANDJ AI Technologies · Founder: Daniel Jonathan ANDJ
  *
- * Compact, high-polish card following the Apple × Geist aesthetic.
- * Renders authentic recognizable third-party brand logos (Google, GitHub, Slack, Notion, etc.).
- * Displays truthful backend-derived status, without hardcoded fake connected states.
+ * Geometric discipline:
+ * - Card layout: grid-template-columns: 50px minmax(0,1fr) 44px (column-gap: 14px)
+ * - Height: 98–106px (min-height: 96px), padding: 14px, radius: 18px
+ * - Dedicated logo tile: 50×50px square, radius 14px, optically centered with 7–10px safe margin
+ * - Action button: 42×42px, radius 12px, "+" for disconnected, "✓" for connected
+ * - Authentic brand colors preserved
  */
 
 'use client';
 
 import React from 'react';
 import {
-  CheckCircle,
+  Check,
+  Plus,
   ArrowClockwise,
   WarningCircle,
-  Lock,
 } from '@phosphor-icons/react';
 import type { ConnectorItem } from '@/stores/connectors.store';
 import { getConnectorIcon } from '@/components/icons';
@@ -29,14 +32,24 @@ export default function ConnectorCard({ connector, onSelect, onConnect }: Connec
   const Icon = getConnectorIcon(connector.slug || connector.id);
   const isConnected = connector.status === 'CONNECTED';
   const isConnecting = connector.status === 'CONNECTING';
-  const isAuthRequired = connector.status === 'AUTHORIZATION_REQUIRED' || connector.status === 'REAUTH_REQUIRED';
   const isError = connector.status === 'ERROR';
 
   return (
     <div
+      role="button"
+      tabIndex={0}
       onClick={() => onSelect(connector.id)}
-      className="group relative flex flex-col justify-between rounded-2xl p-4 transition-all cursor-pointer"
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          onSelect(connector.id);
+        }
+      }}
+      className="group relative grid w-full rounded-[18px] p-3.5 sm:p-4 transition-all select-none cursor-pointer active:scale-[0.99] touch-manipulation min-h-[98px]"
       style={{
+        gridTemplateColumns: '50px minmax(0, 1fr) 44px',
+        columnGap: '14px',
+        alignItems: 'center',
         background: 'var(--surface-raised)',
         border: isConnected ? '1px solid var(--border-strong)' : '1px solid var(--border-subtle)',
         boxShadow: 'var(--shadow-key)',
@@ -50,142 +63,69 @@ export default function ConnectorCard({ connector, onSelect, onConnect }: Connec
         e.currentTarget.style.transform = 'translateY(0)';
       }}
     >
-      {/* Top row: Authentic Brand Icon + Status */}
-      <div>
-        <div className="flex items-start justify-between gap-3 mb-3">
-          <div className="flex items-center gap-3 min-w-0">
-            {/* Neutral container preserving real brand colors */}
-            <div
-              className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 bg-[var(--surface)] border border-[var(--border-subtle)] shadow-xs"
-            >
-              <Icon size={22} />
-            </div>
+      {/* ─── LEFT: Dedicated Optical Logo Tile (Prompt 3 Section 9) ─── */}
+      <div
+        className="w-[50px] h-[50px] rounded-[14px] flex items-center justify-center shrink-0 border border-[var(--border-subtle)] shadow-xs transition-transform group-hover:scale-[1.02]"
+        style={{
+          background: 'var(--control-bg)',
+          padding: '8px',
+        }}
+      >
+        <div className="w-full h-full flex items-center justify-center">
+          <Icon size={26} className="object-contain" />
+        </div>
+      </div>
 
-            <div className="min-w-0">
-              <h3 className="font-semibold text-sm truncate" style={{ color: 'var(--text-primary)' }}>
-                {connector.name}
-              </h3>
-              <span
-                className="text-[11px] truncate block"
-                style={{ color: 'var(--text-tertiary)' }}
-              >
-                {connector.category}
-              </span>
-            </div>
-          </div>
-
-          {/* Truthful Status Indicator */}
-          {isConnected && (
-            <span
-              className="flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-full shrink-0"
-              style={{
-                background: 'var(--success-subtle)',
-                color: 'var(--success)',
-                border: '1px solid color-mix(in srgb, var(--success) 25%, transparent)',
-              }}
-            >
-              <CheckCircle size={11} weight="fill" />
-              <span>Connecté</span>
-            </span>
-          )}
-
-          {isAuthRequired && (
-            <span
-              className="flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-full shrink-0 bg-[var(--warning-subtle)] text-[var(--warning)] border border-[color-mix(in_srgb,var(--warning)_25%,transparent)]"
-            >
-              <Lock size={11} />
-              <span>Reconnexion</span>
-            </span>
-          )}
-
-          {isError && (
-            <span
-              className="flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-full shrink-0 bg-[var(--error-subtle)] text-[var(--error)] border border-[color-mix(in_srgb,var(--error)_25%,transparent)]"
-            >
-              <WarningCircle size={11} />
-              <span>Erreur</span>
+      {/* ─── CENTER: Title and Two-Line Description (Prompt 3 Section 15) ─── */}
+      <div className="min-w-0 flex flex-col justify-center">
+        <div className="flex items-center gap-2">
+          <h3 className="font-semibold text-[16px] sm:text-[17px] truncate text-[var(--text-primary)] leading-tight">
+            {connector.name}
+          </h3>
+          {connector.category && (
+            <span className="hidden sm:inline-block text-[10px] uppercase font-mono px-1.5 py-0.2 rounded bg-[var(--surface)] text-[var(--text-tertiary)] border border-[var(--border-subtle)]">
+              {connector.category}
             </span>
           )}
         </div>
 
-        {/* Description */}
-        <p
-          className="text-xs leading-relaxed line-clamp-2 mb-3"
-          style={{ color: 'var(--text-secondary)' }}
-        >
+        <p className="text-[13px] sm:text-[14px] text-[var(--text-secondary)] leading-snug line-clamp-2 mt-1">
           {connector.description}
         </p>
       </div>
 
-      {/* Bottom row: Account metadata / Action button */}
-      <div
-        className="flex items-center justify-between pt-3 mt-auto"
-        style={{ borderTop: '1px solid var(--border-subtle)' }}
-      >
-        <div className="min-w-0 text-[11px] truncate" style={{ color: 'var(--text-tertiary)' }}>
-          {isConnected && connector.connectedAccount ? (
-            <span className="font-mono text-[10px]">{connector.connectedAccount}</span>
+      {/* ─── RIGHT: Compact Action Button (Prompt 3 Section 16) ─── */}
+      <div className="shrink-0 flex items-center justify-center">
+        <button
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation();
+            if (isConnected) {
+              onSelect(connector.id);
+            } else {
+              onConnect(connector.id);
+            }
+          }}
+          disabled={isConnecting}
+          aria-label={isConnected ? `Manage ${connector.name}` : `Connect ${connector.name}`}
+          className={`w-[42px] h-[42px] rounded-[12px] flex items-center justify-center transition-all duration-150 active:scale-95 shadow-xs border ${
+            isConnected
+              ? 'bg-[var(--success-subtle)] text-[var(--success)] border-[color-mix(in_srgb,var(--success)_30%,transparent)] hover:brightness-110'
+              : isError
+              ? 'bg-[var(--error-subtle)] text-[var(--error)] border-[color-mix(in_srgb,var(--error)_30%,transparent)]'
+              : 'bg-[var(--control-bg)] hover:bg-[var(--hover)] text-[var(--text-primary)] border-[var(--border)] hover:border-[var(--accent-muted)]'
+          }`}
+        >
+          {isConnecting ? (
+            <ArrowClockwise size={18} className="animate-spin text-[var(--accent)]" />
+          ) : isConnected ? (
+            <Check size={20} weight="bold" />
+          ) : isError ? (
+            <WarningCircle size={20} />
           ) : (
-            <span>{connector.capabilities.length} capacités</span>
+            <Plus size={20} weight="bold" />
           )}
-        </div>
-
-        <div>
-          {isConnected ? (
-            <button
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                onSelect(connector.id);
-              }}
-              className="px-2.5 py-1 rounded-lg text-xs font-medium transition-colors"
-              style={{
-                background: 'var(--surface)',
-                color: 'var(--text-secondary)',
-                border: '1px solid var(--border-subtle)',
-              }}
-              onMouseEnter={(e: any) => {
-                e.currentTarget.style.color = 'var(--text-primary)';
-                e.currentTarget.style.background = 'var(--hover)';
-              }}
-              onMouseLeave={(e: any) => {
-                e.currentTarget.style.color = 'var(--text-secondary)';
-                e.currentTarget.style.background = 'var(--surface)';
-              }}
-            >
-              Gérer
-            </button>
-          ) : (
-            <button
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                onConnect(connector.id);
-              }}
-              disabled={isConnecting}
-              className="flex items-center gap-1 px-3 py-1 rounded-lg text-xs font-semibold transition-all shadow-sm"
-              style={{
-                background: 'var(--accent)',
-                color: 'var(--accent-fg)',
-              }}
-              onMouseEnter={(e: any) => {
-                e.currentTarget.style.background = 'var(--accent-hover)';
-              }}
-              onMouseLeave={(e: any) => {
-                e.currentTarget.style.background = 'var(--accent)';
-              }}
-            >
-              {isConnecting ? (
-                <>
-                  <ArrowClockwise size={12} className="animate-spin" />
-                  <span>Connexion...</span>
-                </>
-              ) : (
-                <span>Connecter</span>
-              )}
-            </button>
-          )}
-        </div>
+        </button>
       </div>
     </div>
   );

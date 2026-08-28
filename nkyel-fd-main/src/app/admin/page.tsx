@@ -281,6 +281,17 @@ export default function AdminCommandCenter() {
     setTimeout(() => setNotification(null), 3500);
   };
 
+  const filteredProviders = useMemo(() => {
+    const q = searchQuery.toLowerCase().trim();
+    if (!q) return providersData;
+    return providersData.filter(
+      (p: any) =>
+        p.name?.toLowerCase().includes(q) ||
+        p.id?.toLowerCase().includes(q) ||
+        p.region?.toLowerCase().includes(q)
+    );
+  }, [providersData, searchQuery]);
+
   // ── API Fetchers ──────────────────────────────────────────
   const fetchAllData = useCallback(async () => {
     setRefreshing(true);

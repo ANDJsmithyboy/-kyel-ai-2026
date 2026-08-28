@@ -1,7 +1,5 @@
 /* Nkyel AI - next.config.ts - SmartANDJ AI Technologies */
-import type { NextConfig } from 'next';
-
-const nextConfig: NextConfig = {
+const nextConfig = {
   output: process.env.STANDALONE === 'true' ? 'standalone' : undefined,
   productionBrowserSourceMaps: true,
   images: {

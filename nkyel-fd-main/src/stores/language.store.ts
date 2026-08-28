@@ -427,6 +427,23 @@ export const DICTIONARY: Record<string, Record<string, string>> = {
   'settings.security': { 'en-US': 'Security', 'fr-FR': 'Sécurité', 'fr-GA': 'Sécurité' },
   'settings.language': { 'en-US': 'Language', 'fr-FR': 'Langue', 'fr-GA': 'Langue' },
 
+  // Canonical Hero & Disclaimer (Section 25 & 29)
+  'hero.title': { 'en-US': 'Turn your intention\ninto visible work.', 'fr-FR': 'Transformez votre intention\nen travail visible.', 'fr-GA': 'Transformez votre intention\nen travail visible.' },
+  'hero.subtitle': { 'en-US': 'See the structure. Follow the flow.\nVerify the evidence. Stay in control.', 'fr-FR': 'Voyez la structure. Suivez le flux.\nVérifiez les preuves. Gardez le contrôle.', 'fr-GA': 'Voyez la structure. Suivez le flux.\nVérifiez les preuves. Gardez le contrôle.' },
+  'composer.disclaimer': { 'en-US': 'Ñkyel AI is an AI agent and can make mistakes. Please verify important information.', 'fr-FR': 'Ñkyel AI est un agent IA et peut faire des erreurs. Veuillez vérifier les informations importantes.', 'fr-GA': 'Ñkyel AI est un agent IA et peut faire des erreurs. Veuillez vérifier les informations importantes.' },
+
+  // Connectors
+  'connectors.title': { 'en-US': 'Connectors', 'fr-FR': 'Connecteurs', 'fr-GA': 'Connecteurs' },
+  'connectors.searchPlaceholder': { 'en-US': 'Search connectors...', 'fr-FR': 'Rechercher des connecteurs...', 'fr-GA': 'Rechercher des connecteurs...' },
+  'connectors.applications': { 'en-US': 'Applications', 'fr-FR': 'Applications', 'fr-GA': 'Applications' },
+  'connectors.customApi': { 'en-US': 'Custom API', 'fr-FR': 'API Personnalisée', 'fr-GA': 'API Personnalisée' },
+  'connectors.mcpServers': { 'en-US': 'MCP Servers', 'fr-FR': 'Serveurs MCP', 'fr-GA': 'Serveurs MCP' },
+  'connectors.projects': { 'en-US': 'Projects', 'fr-FR': 'Projets', 'fr-GA': 'Projets' },
+  'connectors.create': { 'en-US': 'Create', 'fr-FR': 'Créer', 'fr-GA': 'Créer' },
+  'connectors.missing': { 'en-US': "Can't find what you need?", 'fr-FR': 'Vous ne trouvez pas ce dont vous avez besoin ?', 'fr-GA': 'Vous ne trouvez pas ce dont vous avez besoin ?' },
+  'connectors.suggest': { 'en-US': 'Suggest a connector', 'fr-FR': 'Suggérer un connecteur', 'fr-GA': 'Suggérer un connecteur' },
+  'connectors.suggestSubmitted': { 'en-US': 'Thank you! Your request has been recorded.', 'fr-FR': 'Merci ! Votre demande a été enregistrée.', 'fr-GA': 'Merci ! Votre demande a été enregistrée.' },
+
   // Auth
   'auth.welcome': { 'en-US': 'Welcome to Ñkyel', 'fr-FR': 'Bienvenue sur Ñkyel', 'fr-GA': 'Bienvenue sur Ñkyel' },
   'auth.continueTo': { 'en-US': 'Sign in to continue to Ñkyel', 'fr-FR': 'Connectez-vous pour continuer sur Ñkyel', 'fr-GA': 'Connectez-vous pour continuer sur Ñkyel' },

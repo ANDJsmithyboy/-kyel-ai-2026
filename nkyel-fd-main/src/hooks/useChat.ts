@@ -19,7 +19,7 @@ import {
 
 interface UseChatParams {
   conversationId: string | null;
-  model: NkyelModel;
+  model: NkyelModel | string;
   loxoEnabled: boolean;
   loxoRAGEnabled: boolean;
 }

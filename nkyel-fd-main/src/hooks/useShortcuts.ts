@@ -22,7 +22,7 @@ export function useShortcuts(shortcuts: ShortcutMap) {
       }
 
       // Build key string, e.g. "Ctrl+Shift+N" or "Cmd+Shift+N"
-      const keys = [];
+      const keys: string[] = [];
       if (e.ctrlKey || e.metaKey) keys.push('mod');
       if (e.shiftKey) keys.push('shift');
       if (e.altKey) keys.push('alt');

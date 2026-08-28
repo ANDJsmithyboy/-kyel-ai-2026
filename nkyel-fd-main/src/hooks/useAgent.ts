@@ -56,7 +56,7 @@ export function useAgent(): UseAgentReturn {
     setError(null);
     setIsStreaming(true);
 
-    const agentType = (model === 'BLACK_PANTHER' || model === 'BLUE_PANTHER') ? 'black-panther' : 'onyx';
+    const agentType = model === 'BLUE_PANTHER' ? 'black-panther' : 'onyx';
     let retries = 0;
     let success = false;
 

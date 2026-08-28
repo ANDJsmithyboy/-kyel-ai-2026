@@ -152,12 +152,13 @@ export default function NkyelSidebar() {
   const userInitials = (displayName.slice(0, 2) || 'NK').toUpperCase();
   const isSuperAdmin = user?.publicMetadata?.role === 'SUPER_ADMIN';
   const userTier = getUserTier(userEmail, (user?.publicMetadata?.role as string) || null);
+  const showIconsOnly = isCollapsed && !isMobile;
 
   const navItems: NavItem[] = [
-    { id: 'agent',        label: t('nav.agent'),        href: '/agent',      icon: Robot },
-    { id: 'connections',  label: t('nav.connections'),  href: '/connectors', icon: PlugsConnected },
-    { id: 'automations',  label: t('nav.automations'),  href: '/scheduled',  icon: CalendarCheck },
-    { id: 'creations',    label: t('nav.creations'),    href: '/library',    icon: Books },
+    { id: 'agent',        label: t('nav.agent') || 'Agent',                  href: '/agent',      icon: Robot },
+    { id: 'connections',  label: t('nav.connectors') || 'Connectors',       href: '/connectors', icon: PlugsConnected },
+    { id: 'automations',  label: t('nav.programs') || 'Programs',          href: '/scheduled',  icon: CalendarCheck },
+    { id: 'creations',    label: t('nav.sanctuary') || 'Sanctuary',         href: '/library',    icon: Books },
   ];
 
   const hydrateFromStorage = useSidebar((s: any) => s.hydrateFromStorage);
@@ -278,89 +279,64 @@ export default function NkyelSidebar() {
            ZONE 1: Header — Wordmark + Iboga Navigation Signature
            ═══════════════════════════════════════════════════ */}
         <div
-          className={`flex items-center ${isCollapsed ? 'justify-center' : 'justify-between'} shrink-0`}
+          className={`flex items-center ${showIconsOnly ? 'justify-center' : 'justify-between'} shrink-0`}
           style={{
             height: 'var(--header-height)',
-            paddingInline: isCollapsed ? '0' : 'var(--space-3)',
+            paddingInline: showIconsOnly ? '0' : 'var(--space-3)',
             borderBottom: '1px solid var(--border-subtle)',
           }}
         >
-          {isCollapsed ? (
-            <div className="hidden md:block">
+          {showIconsOnly ? (
+            <div className="hidden md:flex items-center justify-center w-full">
               <IbogaNavigationTrigger
                 open={false}
                 onToggle={toggleSidebar}
-                glyphSize={20}
+                glyphSize={18}
                 variant="desktop"
                 title="Expand navigation"
                 label="Expand navigation"
               />
             </div>
-          ) : isMobile ? (
-            <div className="flex items-center justify-between w-full">
-              <span className="font-semibold tracking-tight text-[19px] select-none text-[var(--text-primary)]">
-                nkyel
-              </span>
-              <div className="flex items-center gap-1 pr-1">
-                <button
-                  type="button"
-                  onClick={() => {
-                    closeMobileSidebar();
-                    setTimeout(() => {
-                      window.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', metaKey: true, bubbles: true }));
-                    }, 100);
-                  }}
-                  className="flex items-center justify-center p-2 rounded-xl text-[var(--text-tertiary)] hover:bg-[var(--hover)] hover:text-[var(--text-primary)] transition-colors"
-                  title="Recherche (⌘K)"
-                  aria-label="Recherche"
-                >
-                  <MagnifyingGlass size={20} />
-                </button>
-                <IbogaNavigationTrigger
-                  open={true}
-                  onToggle={closeMobileSidebar}
-                  glyphSize={24}
-                  variant="mobile"
-                  title="Close navigation"
-                  label="Close navigation"
-                />
-              </div>
-            </div>
           ) : (
             <>
+              {/* Wordmark (Mobile & Desktop — Section 2) */}
               <Link
                 href="/"
-                className="flex items-center gap-2 overflow-hidden rounded-lg px-2 py-1.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]"
-                title="Ñkyel — Home"
+                className="flex items-center gap-2 overflow-hidden rounded-lg px-2 py-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]"
+                title="ñkyel — Home"
                 onClick={handleNavClick}
               >
                 <span
-                  className="font-semibold truncate tracking-tight text-[17px] select-none text-[var(--text-primary)]"
-                  style={{
-                    letterSpacing: '-0.025em',
-                  }}
+                  className="font-medium truncate tracking-tight text-[26px] select-none text-[var(--text-primary)] leading-none"
+                  style={{ letterSpacing: '-0.035em' }}
                 >
-                  nkyel
+                  ñkyel
                 </span>
               </Link>
 
+              {/* Utility Controls: Search + Iboga (Section 3 & 18) */}
               <div className="flex items-center gap-0.5">
                 <button
                   type="button"
-                  onClick={() => window.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', metaKey: true, bubbles: true }))}
-                  className="flex items-center justify-center p-1.5 rounded-lg text-[var(--text-tertiary)] hover:bg-[var(--hover)] hover:text-[var(--text-primary)] transition-colors"
-                  title="Commandes (⌘K)"
-                  aria-label="Recherche"
+                  onClick={() => {
+                    if (isMobile) closeMobileSidebar();
+                    setTimeout(() => {
+                      window.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', metaKey: true, bubbles: true }));
+                    }, 50);
+                  }}
+                  className="flex items-center justify-center rounded-xl text-[var(--text-tertiary)] hover:bg-[var(--hover)] hover:text-[var(--text-primary)] transition-colors md:h-9 md:w-9 h-11 w-11"
+                  title="Search (⌘K)"
+                  aria-label="Search"
                 >
                   <MagnifyingGlass size={18} />
                 </button>
                 <IbogaNavigationTrigger
                   open={true}
-                  onToggle={toggleSidebar}
-                  glyphSize={19}
-                  variant="desktop"
-                  title="Collapse navigation"
-                  label="Collapse navigation"
+                  onToggle={isMobile ? closeMobileSidebar : toggleSidebar}
+                  glyphSize={isMobile ? 17 : 18}
+                  variant={isMobile ? 'mobile' : 'desktop'}
+                  title={isMobile ? "Close navigation" : "Collapse navigation"}
+                  label={isMobile ? "Close navigation" : "Collapse navigation"}
                 />
               </div>
             </>
@@ -368,17 +344,17 @@ export default function NkyelSidebar() {
         </div>
 
         {/* ═══════════════════════════════════════════════════
-           ZONE 2: Nouvelle Mission Button (Canonical Ñkyel IA)
+           ZONE 2: Nouvelle Mission Button (Section 4 & 5)
            ═══════════════════════════════════════════════════ */}
         <div style={{ padding: `var(--space-3) var(--space-3) var(--space-2)` }}>
           <Link
             href="/chat?new=true"
-            className="group flex items-center gap-2.5 w-full font-medium min-h-[40px] touch-manipulation shadow-sm"
+            className="group flex items-center gap-2.5 w-full font-medium min-h-[44px] touch-manipulation shadow-sm"
             style={{
-              borderRadius: 'var(--radius-control)',
-              padding: isCollapsed ? '10px' : '10px var(--space-3)',
-              fontSize: 'var(--text-sm)',
-              justifyContent: isCollapsed ? 'center' : 'flex-start',
+              borderRadius: 'var(--radius-button)',
+              padding: showIconsOnly ? '10px' : '10px var(--space-3)',
+              fontSize: '15.5px',
+              justifyContent: showIconsOnly ? 'center' : 'flex-start',
               background: 'var(--accent)',
               color: 'var(--accent-fg)',
               transition: `all var(--transition-fast)`,
@@ -392,8 +368,8 @@ export default function NkyelSidebar() {
               e.currentTarget.style.background = 'var(--accent)';
             }}
           >
-            <PantherMissionGlyph size={26} className="shrink-0 drop-shadow-sm" />
-            {!isCollapsed && <span className="truncate font-semibold tracking-wide" style={{ fontSize: '15px' }}>{t('nav.newMission')}</span>}
+            <PantherMissionGlyph size={22} className="shrink-0 drop-shadow-sm" />
+            {!showIconsOnly && <span className="truncate font-semibold tracking-wide" style={{ fontSize: '15.5px' }}>{t('nav.newMission')}</span>}
           </Link>
         </div>
 
@@ -420,7 +396,7 @@ export default function NkyelSidebar() {
                     paddingInline: 'var(--space-3)',
                     borderRadius: 'var(--radius-control)',
                     fontSize: 'var(--text-sm)',
-                    justifyContent: isCollapsed ? 'center' : 'flex-start',
+                    justifyContent: showIconsOnly ? 'center' : 'flex-start',
                     color: active ? 'var(--text-primary)' : 'var(--text-secondary)',
                     background: active ? 'var(--surface-raised)' : 'transparent',
                     transition: `all var(--transition-fast)`,
@@ -439,7 +415,7 @@ export default function NkyelSidebar() {
                     }
                     setHoveredItem(null);
                   }}
-                  title={isCollapsed ? item.label : undefined}
+                  title={showIconsOnly ? item.label : undefined}
                 >
                   <Icon
                     size={18}
@@ -451,7 +427,7 @@ export default function NkyelSidebar() {
                     }}
                   />
 
-                  {!isCollapsed && (
+                  {!showIconsOnly && (
                     <div className="flex-1 flex items-center justify-between min-w-0">
                       <span className="truncate">{item.label}</span>
                       {item.badge && (
@@ -474,7 +450,7 @@ export default function NkyelSidebar() {
                   )}
 
                   {/* Collapsed tooltip */}
-                  {isCollapsed && hoveredItem === item.id && (
+                  {showIconsOnly && hoveredItem === item.id && (
                     <div
                       className="absolute whitespace-nowrap pointer-events-none"
                       style={{
@@ -503,7 +479,7 @@ export default function NkyelSidebar() {
         {/* ═══════════════════════════════════════════════════
            ZONE 4: Projects
            ═══════════════════════════════════════════════════ */}
-        {!isCollapsed && (
+        {!showIconsOnly && (
           <div style={{ padding: `var(--space-2) var(--space-2) 0` }}>
             <div
               role="button"
@@ -603,7 +579,7 @@ export default function NkyelSidebar() {
             paddingBottom: 'var(--space-2)',
           }}
         >
-          {!isCollapsed && (
+          {!showIconsOnly && (
             <div className="flex flex-col" style={{ gap: 'var(--space-3)' }}>
               {recentGroups.length === 0 ? (
                 <div className="px-3 py-6 text-center space-y-2">
@@ -673,7 +649,7 @@ export default function NkyelSidebar() {
                             >
                               <div className="flex items-center gap-2 min-w-0 w-full">
                                 <ChatCircleDots size={14} className="shrink-0" style={{ color: 'var(--accent)' }} />
-                                <span className="truncate">{mission.title || 'Untitled task'}</span>
+                                <span className="truncate">{mission.title || 'Untitled mission'}</span>
                               </div>
                             </button>
                             <button
@@ -713,7 +689,7 @@ export default function NkyelSidebar() {
                                   type="button"
                                   onClick={() => {
                                     setContextMenuId(null);
-                                    const newTitle = window.prompt('Rename task:', mission.title);
+                                    const newTitle = window.prompt('Rename mission:', mission.title);
                                     if (newTitle && newTitle.trim()) {
                                       updateConversationTitle(mission.id, newTitle.trim());
                                     }
@@ -774,7 +750,7 @@ export default function NkyelSidebar() {
           )}
 
           {/* Collapsed: show chat icon */}
-          {isCollapsed && (
+          {showIconsOnly && (
             <div className="flex flex-col items-center" style={{ gap: 4 }}>
               <Link
                 href="/"
@@ -817,7 +793,7 @@ export default function NkyelSidebar() {
             <div
               className="absolute bottom-full left-2 right-2 mb-2 animate-in fade-in slide-in-from-bottom-2 duration-150"
               style={{
-                width: isCollapsed ? 260 : 'calc(100% - 16px)',
+                width: showIconsOnly ? 260 : 'calc(100% - 16px)',
                 maxWidth: 360,
                 minWidth: 250,
                 padding: '10px',
@@ -993,7 +969,7 @@ export default function NkyelSidebar() {
 
           {/* Profile Trigger in Sidebar Footer */}
           <div
-            className={`w-full flex items-center ${isCollapsed ? 'justify-center' : 'justify-between'} rounded-xl transition-colors p-1.5 hover:bg-[var(--hover)] min-h-[44px] touch-manipulation`}
+            className={`w-full flex items-center ${showIconsOnly ? 'justify-center' : 'justify-between'} rounded-xl transition-colors p-1.5 hover:bg-[var(--hover)] min-h-[44px] touch-manipulation`}
           >
             <button
               type="button"
@@ -1019,7 +995,7 @@ export default function NkyelSidebar() {
                   {userInitials}
                 </div>
               )}
-              {!isCollapsed && (
+              {!showIconsOnly && (
                 <div className="min-w-0 flex-1">
                   <div className="text-xs font-semibold truncate text-[var(--text-primary)]">
                     {displayName}
@@ -1027,7 +1003,7 @@ export default function NkyelSidebar() {
                 </div>
               )}
             </button>
-            {!isCollapsed && (
+            {!showIconsOnly && (
               <div className="flex items-center gap-1 text-[var(--text-tertiary)] shrink-0">
                 <button
                   type="button"

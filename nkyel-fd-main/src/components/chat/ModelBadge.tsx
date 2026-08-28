@@ -24,7 +24,6 @@ export default function ModelBadge({ model, isVisible, onDismiss }: ModelBadgePr
       case 'NKYEL_TAI': return <IconNkyel className="w-4 h-4" />;
       case 'NKYEL_RADI': return <IconOnyxGris className="w-4 h-4" />;
       case 'RECHERCHE_WEB': return <IconWandana className="w-4 h-4" />;
-      case 'BLACK_PANTHER': return <IconBlackPanther className="w-4 h-4" />;
       case 'BLUE_PANTHER': return <IconBlackPanther className="w-4 h-4" style={{ color: '#0070F3' }} />;
       default: return <IconAurata className="w-4 h-4" />;
     }

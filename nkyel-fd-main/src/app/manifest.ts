@@ -1,6 +1,4 @@
-import type { MetadataRoute } from 'next';
-
-export default function manifest(): MetadataRoute.Manifest {
+export default function manifest(): any {
   return {
     name: 'Ñkyel AI — Sovereign Global Intelligence',
     short_name: 'Ñkyel',

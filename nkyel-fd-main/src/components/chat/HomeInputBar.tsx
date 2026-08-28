@@ -7,15 +7,26 @@
 'use client';
 
 import { useState, useRef, useCallback, useEffect } from 'react';
-import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import LiveButton from './LiveButton';
 import TierPicker, { type TierKey } from './TierPicker';
+import type { IntelligenceModeId } from '@/hooks/useNkyelModel';
+
+function useReducedMotion() {
+  const [reduced, setReduced] = useState(false);
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      setReduced(window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+    }
+  }, []);
+  return reduced;
+}
 
 export default function HomeInputBar() {
   const [value, setValue] = useState('');
   const [isFocused, setIsFocused] = useState(false);
-  const [selectedTier, setSelectedTier] = useState<TierKey>('NKYEL_CHUI');
+  const [selectedTier, setSelectedTier] = useState<IntelligenceModeId>('auto');
   const [showTierPicker, setShowTierPicker] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const shouldReduceMotion = useReducedMotion();
@@ -37,95 +48,47 @@ export default function HomeInputBar() {
   /* Handle submit */
   const handleSubmit = useCallback(() => {
     if (!hasValue) return;
-    // TODO: route to conversation with value + selectedTier
-    setValue('');
-  }, [hasValue, value, selectedTier]);
+    // Route to conversation with value + selectedTier
+  }, [hasValue]);
 
-  /* Handle keydown — Enter to submit, Shift+Enter for newline */
-  const handleKeyDown = useCallback(
-    (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-      if (e.key === 'Enter' && !e.shiftKey) {
-        e.preventDefault();
-        handleSubmit();
-      }
-    },
-    [handleSubmit],
-  );
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSubmit();
+    }
+  };
 
-  /* Tier chip label */
-  const tierLabel = (() => {
-    const labels: Record<string, string> = {
-      NKYEL_CHUI: 'Nkyel Chui',
-      NKYEL_TAI: 'Nkyel Tai',
-      RECHERCHE_WEB: 'Recherche Web',
-      NKYEL_RADI: 'Nkyel Radi',
-      BLUE_PANTHER: 'Blue Panther (Créateur)',
-    };
-    return labels[selectedTier];
-  })();
+  const tierLabel = selectedTier === 'auto' ? 'Auto' : selectedTier.toUpperCase();
 
   return (
-    <div className="relative w-full">
-      {/* Wrapper pill */}
+    <div className="relative mx-auto w-full max-w-2xl px-4">
       <div
         className={cn(
-          'relative flex w-full items-end gap-2 rounded-[var(--radius-pill)] px-4 py-3',
-          'transition-all',
+          'relative flex flex-col rounded-3xl border p-3.5 transition-all duration-200',
+          isFocused
+            ? 'border-[var(--accent)] shadow-lg'
+            : 'border-[var(--border)] bg-[var(--surface-raised)]'
         )}
-        style={{
-          background: 'var(--bg-elevated)',
-          border: `1px solid ${isFocused ? 'var(--accent-20)' : 'var(--border)'}`,
-          transition: 'var(--transition-fast)',
-        }}
       >
-        {/* LEFT — Plus button / Tier chip */}
-        <div className="relative flex flex-shrink-0 items-center">
+        <div className="flex items-center gap-2 mb-2">
+          {/* Tier picker trigger */}
           <button
             type="button"
-            onClick={() => setShowTierPicker(!showTierPicker)}
-            className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-full transition-colors"
-            style={{
-              background: showTierPicker ? 'var(--accent-10)' : 'transparent',
-              color: 'var(--text-secondary)',
-              transition: 'var(--transition-fast)',
-            }}
-            aria-label="Choisir le tier"
+            onClick={() => setShowTierPicker(true)}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-[var(--control-bg)] hover:bg-[var(--hover)] text-[var(--text-primary)] border border-[var(--border)] transition-colors"
           >
-            {/* Plus icon */}
-            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-              <path
-                d="M10 4V16M4 10H16"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-              />
-            </svg>
+            <span>{tierLabel}</span>
           </button>
 
-          {/* Tier chip (visible when not showing picker) */}
-          {!showTierPicker && selectedTier !== 'NKYEL_CHUI' && (
-            <span
-              className="ml-1 rounded-full px-2.5 py-1 text-[11px] font-medium"
-              style={{
-                fontFamily: 'var(--font-body)',
-                background: 'var(--accent-06)',
-                color: 'var(--accent)',
-              }}
-            >
-              {tierLabel}
-            </span>
-          )}
-
-          {/* TierPicker */}
           <TierPicker
             isOpen={showTierPicker}
             onClose={() => setShowTierPicker(false)}
-            selectedTier={selectedTier}
+            selectedMode={selectedTier}
             onSelect={setSelectedTier}
           />
         </div>
 
-        {/* CENTER — Textarea */}
+        {/* Textarea */}
         <textarea
           ref={textareaRef}
           value={value}
@@ -135,54 +98,28 @@ export default function HomeInputBar() {
           onKeyDown={handleKeyDown}
           placeholder="Exécuter une directive..."
           rows={1}
-          className="min-h-[36px] flex-1 resize-none border-0 bg-transparent text-sm leading-[1.5] outline-none placeholder:select-none"
-          style={{
-            fontFamily: 'var(--font-body)',
-            color: 'var(--text-primary)',
-            caretColor: 'var(--accent)',
-            maxHeight: 160,
-          }}
+          className="min-h-[44px] w-full resize-none border-0 bg-transparent text-sm leading-[1.5] outline-none text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)]"
         />
 
-        {/* RIGHT — LiveButton or Send */}
-        <div className="flex flex-shrink-0 items-center">
-          <AnimatePresence mode="wait">
-            {hasValue ? (
-              <motion.button
-                key="send"
-                type="button"
-                onClick={handleSubmit}
-                initial={shouldReduceMotion ? { opacity: 1 } : { scale: 0, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                exit={shouldReduceMotion ? { opacity: 0 } : { scale: 0, opacity: 0 }}
-                transition={{ type: 'spring', stiffness: 500, damping: 30, duration: 0.2 }}
-                className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-full"
-                style={{ background: 'var(--accent)' }}
-                aria-label="Envoyer"
-              >
-                {/* Arrow up icon */}
-                <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-                  <path
-                    d="M9 14V4M9 4L5 8M9 4L13 8"
-                    stroke="var(--accent-fg)"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-              </motion.button>
-            ) : (
-              <motion.div
-                key="live"
-                initial={shouldReduceMotion ? { opacity: 1 } : { opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={shouldReduceMotion ? { opacity: 0 } : { opacity: 0 }}
-                transition={{ duration: 0.15 }}
-              >
-                <LiveButton />
-              </motion.div>
+        {/* Bottom controls */}
+        <div className="flex items-center justify-between mt-2 pt-2 border-t border-[var(--border-subtle)]">
+          <div className="flex items-center gap-2">
+            <LiveButton />
+          </div>
+
+          <button
+            type="button"
+            onClick={handleSubmit}
+            disabled={!hasValue}
+            className={cn(
+              'h-9 w-9 rounded-full flex items-center justify-center transition-all',
+              hasValue
+                ? 'bg-[var(--accent)] text-[var(--accent-fg)] shadow-sm'
+                : 'bg-[var(--control-bg)] text-[var(--text-tertiary)] opacity-50'
             )}
-          </AnimatePresence>
+          >
+            ↑
+          </button>
         </div>
       </div>
     </div>

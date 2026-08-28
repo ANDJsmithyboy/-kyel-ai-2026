@@ -120,10 +120,11 @@ function extractCalloutInfo(children: ReactNode): { type: string | null; cleanCo
   if (!children) return { type: null, cleanContent: children };
 
   const firstChild = Array.isArray(children) ? children[0] : children;
-  if (React.isValidElement(firstChild) && firstChild.props && firstChild.props.children) {
-    const rawText = Array.isArray(firstChild.props.children)
-      ? firstChild.props.children[0]
-      : firstChild.props.children;
+  if (React.isValidElement(firstChild) && (firstChild.props as any)?.children) {
+    const childProps = firstChild.props as any;
+    const rawText = Array.isArray(childProps.children)
+      ? childProps.children[0]
+      : childProps.children;
 
     if (typeof rawText === 'string') {
       const match = rawText.match(/^\[!(NOTE|INFO|TIP|IMPORTANT|WARNING|CAUTION|SUMMARY|VISION)\]\s*(.*)/i);
@@ -133,7 +134,7 @@ function extractCalloutInfo(children: ReactNode): { type: string | null; cleanCo
 
         const newChildren = React.Children.map(children, (child, idx) => {
           if (idx === 0 && React.isValidElement(child)) {
-            const inner = React.Children.toArray(child.props.children);
+            const inner = React.Children.toArray((child.props as any)?.children);
             inner[0] = remainingFirstText;
             return React.cloneElement(child as React.ReactElement<any>, {}, ...inner);
           }
