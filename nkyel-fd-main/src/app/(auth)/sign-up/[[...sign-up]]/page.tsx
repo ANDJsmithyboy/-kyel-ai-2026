@@ -29,19 +29,19 @@ export default function SignUpPage() {
               footer: 'hidden',
               footerAction: 'hidden',
               formButtonPrimary:
-                'w-full h-11 rounded-xl bg-black hover:bg-slate-800 text-white font-semibold text-sm shadow-md transition-all active:scale-[0.99] touch-manipulation min-h-[44px]',
+                'w-full h-11 rounded-2xl bg-gradient-to-r from-[#E5A93C] to-[#D4952B] hover:from-[#F0B74B] hover:to-[#E5A93C] text-black font-semibold text-sm shadow-[0_4px_25px_rgba(229,169,60,0.3)] transition-all active:scale-[0.98] touch-manipulation min-h-[44px]',
               formFieldInput:
-                'w-full h-11 px-3.5 rounded-xl border border-slate-300 bg-white text-slate-900 placeholder:text-slate-400 focus:border-black focus:ring-1 focus:ring-black text-sm outline-none transition-all touch-manipulation',
-              formFieldLabel: 'text-xs font-semibold text-slate-700',
+                'w-full h-11 px-4 rounded-2xl border border-white/12 bg-white/[0.04] text-white placeholder:text-neutral-500 focus:border-[#E5A93C] focus:ring-1 focus:ring-[#E5A93C] text-sm outline-none transition-all touch-manipulation',
+              formFieldLabel: 'text-xs font-semibold text-neutral-300',
               socialButtonsBlockButton:
-                'w-full h-11 px-4 rounded-xl bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 font-medium text-xs flex items-center justify-center gap-2.5 transition-all shadow-sm active:scale-[0.99] touch-manipulation min-h-[44px]',
-              socialButtonsBlockButtonText: 'text-xs font-medium text-slate-700',
-              dividerLine: 'bg-slate-200',
-              dividerText: 'text-[11px] font-mono text-slate-400 uppercase bg-white px-2',
-              identityPreview: 'rounded-xl border border-slate-200 bg-slate-50 p-3',
-              formFieldSuccessText: 'text-xs text-emerald-600',
-              formFieldErrorText: 'text-xs text-red-600',
-              alert: 'rounded-xl border border-red-200 bg-red-50 text-red-700 text-xs p-3',
+                'w-full h-11 px-4 rounded-2xl bg-white/[0.04] border border-white/12 hover:bg-white/[0.08] hover:border-white/20 text-white font-medium text-xs flex items-center justify-center gap-2.5 transition-all shadow-sm active:scale-[0.98] touch-manipulation min-h-[44px]',
+              socialButtonsBlockButtonText: 'text-xs font-medium text-white',
+              dividerLine: 'bg-white/10',
+              dividerText: 'text-[10px] font-mono text-neutral-500 uppercase bg-[#0E121B] px-3',
+              identityPreview: 'rounded-2xl border border-white/10 bg-white/[0.03] p-3 text-white',
+              formFieldSuccessText: 'text-xs text-emerald-400',
+              formFieldErrorText: 'text-xs text-rose-400',
+              alert: 'rounded-2xl border border-rose-500/20 bg-rose-500/10 text-rose-300 text-xs p-3.5',
             },
           }}
         />
