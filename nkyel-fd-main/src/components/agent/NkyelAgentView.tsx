@@ -30,6 +30,7 @@ import {
   ShieldCheck,
   HardDrives,
   Cpu,
+  Robot,
 } from '@phosphor-icons/react';
 import { NkyelAgentIcon } from '@/components/icons';
 
@@ -88,7 +89,7 @@ export default function NkyelAgentView() {
                 border: '1px solid var(--accent-muted)',
               }}
             >
-              <NkyelAgentIcon className="w-5 h-5 text-[var(--accent)]" />
+              <Robot size={20} weight="bold" className="text-[var(--accent)]" />
             </div>
             <div>
               <div className="flex items-center gap-2">

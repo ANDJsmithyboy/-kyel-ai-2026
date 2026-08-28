@@ -151,7 +151,7 @@ export default function NkyelSidebar() {
   const isSuperAdmin = user?.publicMetadata?.role === 'SUPER_ADMIN';
 
   const navItems: NavItem[] = [
-    { id: 'agent',        label: t('nav.agent'),        href: '/agent',      icon: NkyelAgentIcon },
+    { id: 'agent',        label: t('nav.agent'),        href: '/agent',      icon: Robot },
     { id: 'connections',  label: t('nav.connections'),  href: '/connectors', icon: PlugsConnected },
     { id: 'automations',  label: t('nav.automations'),  href: '/scheduled',  icon: CalendarCheck },
     { id: 'creations',    label: t('nav.creations'),    href: '/library',    icon: Books },
