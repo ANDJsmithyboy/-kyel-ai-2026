@@ -28,7 +28,7 @@ import {
 } from '@phosphor-icons/react';
 import { useSettingsModal } from '@/hooks/useSettingsModal';
 import { useFocusTrap } from '@/hooks/useFocusTrap';
-import { useLanguageStore, type SupportedLocale } from '@/stores/language.store';
+import { useLanguageStore } from '@/stores/language.store';
 import {
   ACCENTS,
   useSettingsStore,
@@ -49,7 +49,7 @@ type SettingsSection =
 
 type ThemeMode = 'light' | 'dark' | 'auto';
 
-const LANGUAGES: Array<{ code: SupportedLocale | string; label: string }> = [
+const LANGUAGES: Array<{ code: string; label: string }> = [
   { code: 'de-DE', label: 'Deutsch' },
   { code: 'en-US', label: 'English' },
   { code: 'es-ES', label: 'Español' },
@@ -149,6 +149,7 @@ function Toggle({ checked, onChange, label }: { checked: boolean; onChange: () =
 
 export default function DesktopSettingsModal() {
   const { user } = useUser();
+  const isSuperAdmin = user?.publicMetadata?.role === 'SUPER_ADMIN';
   const { signOut } = useClerk();
   const isOpen = useSettingsModal((state: any) => state.isOpen);
   const close = useSettingsModal((state: any) => state.close);
@@ -311,7 +312,7 @@ export default function DesktopSettingsModal() {
                             key={lang.code}
                             type="button"
                             onClick={() => {
-                              setUiLocale(lang.code as SupportedLocale);
+                              setUiLocale(lang.code);
                               setLanguageDropdownOpen(false);
                             }}
                             className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-left transition-colors ${
@@ -427,8 +428,20 @@ export default function DesktopSettingsModal() {
             <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface-raised)] p-5 space-y-2">
               <div className="flex items-center justify-between">
                 <div>
-                  <h3 className="text-base font-semibold text-[var(--text-primary)]">Forfait Pionnier Bêta</h3>
-                  <p className="text-xs text-[var(--text-tertiary)]">300 crédits autonomes alloués</p>
+                  {isSuperAdmin ? (
+                    <>
+                      <div className="flex items-center gap-2">
+                        <span className="text-[20px] font-bold text-[var(--accent)]">∞</span>
+                        <h3 className="text-base font-semibold text-[var(--accent)]">Mode God</h3>
+                      </div>
+                      <p className="text-xs text-[var(--text-tertiary)] uppercase tracking-wider font-semibold mt-1">Créateur de Ñkyel</p>
+                    </>
+                  ) : (
+                    <>
+                      <h3 className="text-base font-semibold text-[var(--text-primary)]">Free</h3>
+                      <p className="text-xs text-[var(--text-tertiary)]">Accès bêta</p>
+                    </>
+                  )}
                 </div>
                 <span className="px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-400 font-semibold text-xs border border-emerald-500/20">
                   Actif
@@ -686,30 +699,58 @@ export default function DesktopSettingsModal() {
       aria-label="Paramètres Ñkyel"
       onMouseDown={close}
     >
+      <style>{`
+        .nkyel-settings-content::-webkit-scrollbar {
+          width: 5px;
+        }
+        .nkyel-settings-content::-webkit-scrollbar-track {
+          background: transparent;
+        }
+        .nkyel-settings-content::-webkit-scrollbar-thumb {
+          background: rgba(128, 128, 128, 0.2);
+          border-radius: 10px;
+        }
+        .nkyel-settings-content::-webkit-scrollbar-thumb:hover {
+          background: rgba(128, 128, 128, 0.4);
+        }
+      `}</style>
       <div
         ref={dialogRef}
-        className="nkyel-settings-dialog flex h-[min(740px,calc(100dvh-40px))] w-[min(1080px,calc(100vw-32px))] overflow-hidden rounded-3xl border border-[var(--border-strong)] bg-[var(--bg-elevated)] shadow-2xl text-[var(--text-primary)]"
+        className="flex h-[95vh] md:h-[80vh] md:max-h-[700px] w-full max-w-5xl flex-col md:flex-row overflow-hidden rounded-t-[32px] md:rounded-[32px] bg-[var(--surface)] shadow-2xl transition-all duration-300 md:scale-100 slide-in-from-bottom-full md:slide-in-from-bottom-0 mt-auto md:mt-0"
+        style={{ border: '1px solid var(--border)' }}
+        onClick={(e) => e.stopPropagation()}
         onMouseDown={(event) => event.stopPropagation()}
       >
         {/* Navigation Sidebar matching Screenshot 1 */}
-        <aside className="nkyel-settings-nav flex w-[260px] shrink-0 flex-col border-r border-[var(--border)] bg-[var(--surface)] px-3 py-4 select-none">
-          {/* User Profile Header */}
-          <div className="flex items-center gap-2.5 px-2 py-1 mb-2">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-[var(--border-strong)] bg-[var(--surface-raised)] text-xs font-bold text-[var(--text-primary)]">
-              {user?.imageUrl ? (
-                <img src={user.imageUrl} alt={displayName} className="h-full w-full rounded-xl object-cover" />
-              ) : (
-                initials
-              )}
+        <aside className="nkyel-settings-nav flex md:w-[260px] w-full shrink-0 flex-col border-b md:border-r md:border-b-0 border-[var(--border)] bg-[var(--surface)] px-3 py-2 md:py-4 select-none">
+          {/* User Profile Header & Mobile Close */}
+          <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center gap-2.5 px-2 py-1">
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-[var(--border-strong)] bg-[var(--surface-raised)] text-xs font-bold text-[var(--text-primary)]">
+                {user?.imageUrl ? (
+                  <img src={user.imageUrl} alt={displayName} className="h-full w-full rounded-xl object-cover" />
+                ) : (
+                  initials
+                )}
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className="truncate text-xs font-bold text-[var(--text-primary)]">{displayName}</p>
+                <p className="text-[10px] text-[var(--text-tertiary)]">Personnel</p>
+              </div>
             </div>
-            <div className="min-w-0 flex-1">
-              <p className="truncate text-xs font-bold text-[var(--text-primary)]">{displayName}</p>
-              <p className="text-[10px] text-[var(--text-tertiary)]">Personnel</p>
-            </div>
+            
+            {/* Close Button on Mobile */}
+            <button
+              type="button"
+              onClick={close}
+              className="md:hidden flex h-8 w-8 items-center justify-center rounded-xl text-[var(--text-tertiary)] hover:bg-[var(--hover)] hover:text-[var(--text-primary)] transition-colors"
+            >
+              <X size={18} weight="bold" />
+            </button>
           </div>
 
-          {/* Search Box */}
-          <div className="relative my-2">
+          {/* Search Box - Hidden on mobile */}
+          <div className="relative my-2 hidden md:block">
             <MagnifyingGlass size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-tertiary)]" />
             <input
               value={query}
@@ -720,22 +761,25 @@ export default function DesktopSettingsModal() {
           </div>
 
           {/* Grouped Tabs */}
-          <nav className="flex-1 overflow-y-auto space-y-4 pt-2">
+          <nav 
+            className="flex md:flex-col flex-row overflow-x-auto md:overflow-y-auto md:space-y-4 pt-2 pb-2 md:pb-0 gap-2 md:gap-0 scrollbar-hidden touch-pan-x"
+            style={{ WebkitOverflowScrolling: 'touch', overscrollBehaviorX: 'contain' }}
+          >
             {visibleGroups.map((group) => (
-              <div key={group.label}>
-                <p className="mb-1.5 px-2 text-[10px] font-semibold text-[var(--text-tertiary)]">
+              <div key={group.label} className="flex md:block gap-2 items-center shrink-0">
+                <p className="hidden md:block mb-1.5 px-2 text-[10px] font-semibold text-[var(--text-tertiary)]">
                   {group.label}
                 </p>
-                <div className="space-y-0.5">
+                <div className="flex md:block flex-row md:space-y-0.5 gap-2 md:gap-0">
                   {group.items.map(({ id, label, icon: Icon }) => (
                     <button
                       type="button"
                       key={id}
                       onClick={() => setActiveSection(id)}
-                      className={`flex h-8 w-full items-center gap-2.5 rounded-xl px-2.5 text-left text-xs font-medium transition-colors ${
+                      className={`flex h-8 shrink-0 items-center gap-2.5 rounded-xl px-2.5 md:w-full text-left text-xs font-medium transition-colors ${
                         activeSection === id
                           ? 'bg-[var(--surface-raised)] font-semibold text-[var(--text-primary)] shadow-xs border border-[var(--border)]'
-                          : 'text-[var(--text-secondary)] hover:bg-[var(--hover)] hover:text-[var(--text-primary)]'
+                          : 'text-[var(--text-secondary)] bg-[var(--surface-raised)] md:bg-transparent hover:bg-[var(--hover)] hover:text-[var(--text-primary)]'
                       }`}
                     >
                       <Icon size={16} weight={activeSection === id ? 'fill' : 'regular'} />
@@ -747,14 +791,14 @@ export default function DesktopSettingsModal() {
             ))}
           </nav>
 
-          {/* Sign Out Button */}
+          {/* Sign Out Button - Hidden on mobile to save space, but let's keep it accessible via Account tab if they want */}
           <button
             type="button"
             onClick={() => {
               close();
               signOut();
             }}
-            className="mt-auto flex items-center gap-2 border-t border-[var(--border)] px-2 pt-3 text-xs text-red-400 hover:text-red-300 transition-colors"
+            className="hidden md:flex mt-auto items-center gap-2 border-t border-[var(--border)] px-2 pt-3 text-xs text-red-400 hover:text-red-300 transition-colors"
           >
             <SignOut size={16} />
             <span>Se déconnecter</span>
@@ -762,18 +806,18 @@ export default function DesktopSettingsModal() {
         </aside>
 
         {/* Main Content Area */}
-        <main className="nkyel-settings-content relative flex-1 overflow-y-auto p-8 sm:p-10 bg-[var(--bg)]">
-          {/* Close 'X' Button matching Screenshot 1 */}
+        <main className="nkyel-settings-content relative flex-1 overflow-y-auto p-5 sm:p-10 bg-[var(--bg)]">
+          {/* Close 'X' Button matching Screenshot 1 - Desktop only */}
           <button
             type="button"
             onClick={close}
             aria-label="Fermer les paramètres"
-            className="absolute right-6 top-6 flex h-8 w-8 items-center justify-center rounded-xl text-[var(--text-tertiary)] hover:bg-[var(--hover)] hover:text-[var(--text-primary)] transition-colors"
+            className="hidden md:flex absolute right-6 top-6 h-8 w-8 items-center justify-center rounded-xl text-[var(--text-tertiary)] hover:bg-[var(--hover)] hover:text-[var(--text-primary)] transition-colors z-50"
           >
             <X size={18} weight="bold" />
           </button>
 
-          <div className="max-w-2xl">{renderContent()}</div>
+          <div className="max-w-2xl pb-12">{renderContent()}</div>
         </main>
       </div>
     </div>

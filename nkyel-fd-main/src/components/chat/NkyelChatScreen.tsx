@@ -9,18 +9,20 @@ import {
   Copy, Share2, Volume2, ThumbsUp, ThumbsDown, RotateCcw,
   Camera, FileText, Globe, Layers, Wrench, Plug,
   MoreVertical, Star, Trash2, Pencil, Eye, MessageSquare,
-  BatteryCharging, Headphones
+  BatteryCharging, Headphones, Video, Code, Database, UploadCloud,
+  Image as ImageIcon, Clock, Archive, Puzzle, Sparkles, FolderOpen
 } from 'lucide-react';
 
 import { useAudioSTT } from '@/hooks/useAudioSTT';
 import { IbogaNavigationTrigger } from '@/components/brand';
+import { SonarIcon } from '@/components/icons';
 
 /* -----------------------------------------------------------------------
    TYPES & CONSTANTS
    ----------------------------------------------------------------------- */
 
 /** User subscription tiers — ordered from lowest to highest */
-const TIER_ORDER = ['aurata', 'nkyel', 'wandana', 'onyxgris', 'black-panther'] as const;
+const TIER_ORDER = ['nkyel-radi', 'nkyel', 'nkyel-chui', 'nkyel-research'] as const;
 export type UserTier = (typeof TIER_ORDER)[number];
 
 export interface ChatMessage {
@@ -41,11 +43,10 @@ export interface NkyelModel {
 }
 
 const MODELS: NkyelModel[] = [
-  { id: 'aurata', displayName: 'Aurata', description: 'Flash · Réponse rapide', tier: 'aurata', accentVar: 'var(--accent)' },
-  { id: 'nkyel', displayName: 'Nkyel', description: 'Pro · Qualité élevée', tier: 'nkyel', accentVar: 'var(--color-info)' },
-  { id: 'wandana', displayName: 'Wandana', description: 'Recherche · Deep Research', tier: 'wandana', accentVar: 'var(--color-success)' },
-  { id: 'onyxgris', displayName: 'OnyxGris', description: 'Agent autonome', tier: 'onyxgris', accentVar: 'var(--accent)' },
-  { id: 'black-panther', displayName: 'Black Panther', description: 'Super Agent multi-agents', tier: 'black-panther', accentVar: 'var(--color-error)' },
+  { id: 'nkyel', displayName: 'Ñkyel', description: 'Routage intelligent autonome', tier: 'nkyel', accentVar: 'var(--color-info)' },
+  { id: 'nkyel-chui', displayName: 'Ñkyel Chui', description: 'Raisonnement profond & code', tier: 'nkyel-chui', accentVar: 'var(--accent)' },
+  { id: 'nkyel-radi', displayName: 'Ñkyel Radi', description: 'Rapide & concis', tier: 'nkyel-radi', accentVar: 'var(--color-success)' },
+  { id: 'nkyel-research', displayName: 'Ñkyel Research', description: 'Recherche multi-sources', tier: 'nkyel-research', accentVar: 'var(--color-error)' },
 ];
 
 const DISCLAIMER = 'Nkyel AI peut faire des erreurs. Votre discernement reste souverain.';
@@ -67,20 +68,22 @@ function canAccess(userTier: UserTier, modelTier: UserTier): boolean {
    ADD-TO-CHAT ITEMS
    ----------------------------------------------------------------------- */
 
-interface AddToChatItem {
-  id: string;
-  label: string;
-  icon: React.ReactNode;
-  isPro?: boolean;
-}
+const PLUS_ACTIONS_TOP = [
+  { id: 'camera', label: 'Caméra', icon: <Camera size={22} /> },
+  { id: 'image', label: 'Image', icon: <ImageIcon size={22} /> },
+  { id: 'file', label: 'Fichier', icon: <FolderOpen size={22} /> },
+];
 
-const ADD_TO_CHAT_ITEMS: AddToChatItem[] = [
-  { id: 'camera', label: 'Caméra', icon: <Camera size={20} /> },
-  { id: 'files', label: 'Relever un indice', icon: <FileText size={20} /> },
-  { id: 'web-search', label: 'Radar Wandana', icon: <Globe size={20} /> },
-  { id: 'project', label: 'Le Rendu (💎)', icon: <Layers size={20} />, isPro: true },
-  { id: 'tools', label: 'Extensions de Traque', icon: <Wrench size={20} /> },
-  { id: 'connectors', label: 'Coffre-Fort Souverain', icon: <Plug size={20} /> },
+const PLUS_ACTIONS_SOURCES = [
+  { id: 'recent_files', label: 'Fichiers récents', icon: <Clock size={16} /> },
+  { id: 'recent_missions', label: 'Missions récentes', icon: <Archive size={16} /> },
+  { id: 'capabilities', label: 'Capacités', icon: <Puzzle size={16} /> },
+  { id: 'google_drive', label: 'Google Drive', icon: <Database size={16} /> },
+];
+
+const PLUS_ACTIONS_CREATE = [
+  { id: 'create_image', label: 'Image', desc: 'Nano Banana / Google', icon: <ImageIcon size={16} /> },
+  { id: 'create_video', label: 'Vidéo', desc: 'Veo / Google', icon: <Video size={16} /> },
 ];
 
 /* -----------------------------------------------------------------------
@@ -155,7 +158,7 @@ export default function NkyelChatScreen({
   /* --- Local State --- */
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { isRecording, isTranscribing, transcript, startRecording, stopRecording, clearTranscript } = useAudioSTT();
-  const [selectedModel, setSelectedModel] = useState<string>('aurata');
+  const [selectedModel, setSelectedModel] = useState<string>('nkyel');
   const [text, setText] = useState('');
   const [showModelDropdown, setShowModelDropdown] = useState(false);
   const [showAddSheet, setShowAddSheet] = useState(false);
@@ -551,22 +554,15 @@ export default function NkyelChatScreen({
           {isEmpty ? (
             /* --- EMPTY STATE --- */
             <div className="flex flex-col items-center justify-center h-full px-6 text-center">
-              <Image
-                src="/nkyel-logo.png"
-                alt="Nkyel AI"
-                width={108}
-                height={108}
-                className="mb-8"
-                priority
-              />
+              {/* EMPTY STATE */}
               <h1
-                className="text-3xl font-semibold mb-2"
+                className="text-2xl font-medium mb-1 tracking-tight"
                 style={{ fontFamily: 'var(--font-heading)', color: 'var(--text-primary)' }}
               >
                 {getGreeting(userName)}
               </h1>
-              <p className="text-base" style={{ color: 'var(--text-secondary)' }}>
-                {GREETING_QUESTION}
+              <p className="text-sm font-medium" style={{ color: 'var(--text-tertiary)' }}>
+                Comment puis-je vous aider ?
               </p>
             </div>
           ) : (
@@ -588,24 +584,34 @@ export default function NkyelChatScreen({
 
                     {/* --- AI message actions --- */}
                     {msg.role === 'assistant' && !msg.isStreaming && (
-                      <div className="flex items-center gap-1 mt-3 pt-2" style={{ borderTop: '1px solid var(--border)' }}>
-                        {[
-                          { icon: <Copy size={14} />, label: 'Copier' },
-                          { icon: <Share2 size={14} />, label: 'Partager' },
-                          { icon: <Volume2 size={14} />, label: 'Lire' },
-                          { icon: <ThumbsUp size={14} />, label: "J'aime" },
-                          { icon: <ThumbsDown size={14} />, label: "Je n'aime pas" },
-                          { icon: <RotateCcw size={14} />, label: 'Relancer la Chasse' },
-                        ].map(action => (
-                          <button
-                            key={action.label}
-                            className="w-7 h-7 rounded-md flex items-center justify-center transition-colors hover:bg-[var(--accent-06)]"
-                            style={{ color: 'var(--text-tertiary)' }}
-                            title={action.label}
-                          >
-                            {action.icon}
-                          </button>
-                        ))}
+                      <div className="flex items-center justify-between mt-3 pt-2" style={{ borderTop: '1px solid var(--border)' }}>
+                        <div className="flex items-center gap-1">
+                          {[
+                            { icon: <Copy size={14} />, label: 'Copier' },
+                            { icon: <Share2 size={14} />, label: 'Partager' },
+                            { icon: <Volume2 size={14} />, label: 'Lire' },
+                            { icon: <ThumbsUp size={14} />, label: "J'aime" },
+                            { icon: <ThumbsDown size={14} />, label: "Je n'aime pas" },
+                            { icon: <RotateCcw size={14} />, label: 'Relancer la Chasse' },
+                          ].map(action => (
+                            <button
+                              key={action.label}
+                              className="w-7 h-7 rounded-md flex items-center justify-center transition-colors hover:bg-[var(--accent-06)]"
+                              style={{ color: 'var(--text-tertiary)' }}
+                              title={action.label}
+                            >
+                              {action.icon}
+                            </button>
+                          ))}
+                        </div>
+                        {process.env.NEXT_PUBLIC_REVIEWER_MODE === 'google' && (
+                          <div className="flex items-center gap-1.5 px-2 py-1 rounded-md bg-[var(--accent-06)]" title="Reviewer Transparency Mode Active">
+                            <Sparkles size={12} className="text-[var(--text-tertiary)]" />
+                            <span className="text-[9px] uppercase tracking-wider text-[var(--text-tertiary)] font-semibold">
+                              Propulsé par Google Gemini
+                            </span>
+                          </div>
+                        )}
                       </div>
                     )}
                   </div>
@@ -634,13 +640,16 @@ export default function NkyelChatScreen({
         </div>
 
         {/* --- COMPOSER --- */}
-        <div className="shrink-0 w-full max-w-3xl mx-auto px-4 pb-5 pt-1">
+        <div className="shrink-0 w-[calc(100%-32px)] sm:w-[calc(100%-48px)] max-w-3xl mx-auto pb-6 sm:pb-8 pt-2">
           <div
-            className="relative flex flex-col rounded-2xl transition-all duration-200 glass"
-            style={{ border: '1px solid var(--glass-border)' }}
+            className="relative flex flex-col rounded-[28px] transition-all duration-200 glass shadow-sm"
+            style={{ 
+              border: '1px solid var(--glass-border)',
+              minHeight: '132px'
+            }}
           >
             {/* Textarea */}
-            <div className="flex w-full px-4 pt-3 pb-1">
+            <div className="flex w-full px-4 pt-4 pb-2 flex-1">
               <textarea
                 ref={textareaRef}
                 value={text}
@@ -664,73 +673,94 @@ export default function NkyelChatScreen({
 
             {/* Bottom controls */}
             <div className="flex items-center justify-between px-3 pb-3 pt-1">
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 relative">
                 {/* + Button */}
                 <button
-                  onClick={() => setShowAddSheet(true)}
-                  className="w-8 h-8 rounded-full flex items-center justify-center transition-colors hover:bg-[var(--accent-06)]"
+                  onClick={() => setShowAddSheet(!showAddSheet)}
+                  className="w-8 h-8 rounded-full flex items-center justify-center transition-colors hover:bg-[var(--accent-06)] relative z-50"
                   style={{ color: 'var(--text-secondary)', border: '1px solid var(--border)' }}
                   title="Ajouter au chat"
                 >
-                  <Plus size={16} strokeWidth={2.5} />
+                  <Plus size={16} strokeWidth={2.5} className={`transition-transform duration-200 ${showAddSheet ? 'rotate-45' : ''}`} />
                 </button>
 
-                {/* Model Selector (Vecteur de Force) */}
-                <div className="relative" ref={dropdownRef}>
-                  <button
-                    onClick={() => setShowModelDropdown(!showModelDropdown)}
-                    className="h-8 px-3 flex items-center gap-1.5 rounded-full text-xs font-medium transition-all"
-                    style={{
-                      background: 'var(--accent-06)',
-                      color: currentModel.accentVar,
-                      border: `1.5px solid var(--accent-20)`,
-                    }}
-                  >
-                    {currentModel.displayName}
-                    <ChevronDown size={12} />
-                  </button>
-
-                  {/* Model Dropdown */}
-                  {showModelDropdown && (
+                {/* Anchored Plus Menu */}
+                {showAddSheet && (
+                  <>
+                    <div className="fixed inset-0 z-40" onClick={() => setShowAddSheet(false)} />
                     <div
-                      className="absolute bottom-10 left-0 w-64 rounded-2xl py-2 z-50 glass"
-                      style={{ border: '1px solid var(--glass-border)' }}
+                      className="absolute bottom-[calc(100%+12px)] left-0 w-[320px] max-w-[85vw] rounded-[22px] p-2 z-50 animate-in fade-in slide-in-from-bottom-2"
+                      style={{ 
+                        background: 'var(--glass-floating)', 
+                        backdropFilter: 'blur(30px) saturate(190%)',
+                        border: '1px solid var(--border-strong)', 
+                        boxShadow: 'var(--shadow-floating)',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '12px'
+                      }}
                     >
-                      <p className="px-4 py-2 text-[11px] uppercase tracking-wider" style={{ color: 'var(--text-tertiary)', fontWeight: 600 }}>
-                        Vecteur de Force
-                      </p>
-                      {MODELS.map(model => {
-                        const locked = !canAccess(userTier, model.tier);
-                        const isSelected = model.id === selectedModel;
-                        return (
+                      <div className="px-3 pt-2 flex items-center justify-between">
+                        <span className="text-sm font-bold text-[var(--text-primary)]">Ajouter à la mission</span>
+                        <button onClick={() => setShowAddSheet(false)} className="text-[var(--text-tertiary)] hover:text-[var(--text-primary)]">
+                          <X size={16} />
+                        </button>
+                      </div>
+
+                      {/* Top Action Tiles */}
+                      <div className="grid grid-cols-3 gap-2 px-2">
+                        {PLUS_ACTIONS_TOP.map(item => (
                           <button
-                            key={model.id}
-                            onClick={() => handleModelSelect(model)}
-                            className={`w-full flex items-center gap-3 px-4 py-2.5 text-left transition-colors ${locked ? 'opacity-60' : 'hover:bg-[var(--accent-06)]'}`}
+                            key={item.id}
+                            onClick={() => { onAddToChatAction?.(item.id); setShowAddSheet(false); }}
+                            className="flex flex-col items-center justify-center gap-2 p-3 rounded-[16px] transition-colors bg-[var(--surface-raised)] hover:bg-[var(--hover)] border border-[var(--border-subtle)]"
+                            style={{ color: 'var(--text-primary)' }}
                           >
-                            <div className="flex-1 min-w-0">
-                              <div className="flex items-center gap-2">
-                                <span
-                                  className="text-sm font-medium"
-                                  style={{ color: isSelected ? model.accentVar : 'var(--text-primary)' }}
-                                >
-                                  {model.displayName}
-                                </span>
-                                {locked && <Lock size={12} style={{ color: 'var(--text-tertiary)' }} />}
-                              </div>
-                              <p className="text-[11px] mt-0.5 truncate" style={{ color: 'var(--text-secondary)' }}>
-                                {model.description}
-                              </p>
-                            </div>
-                            {isSelected && (
-                              <Check size={16} style={{ color: model.accentVar }} />
-                            )}
+                            <span className="text-[var(--accent)]">{item.icon}</span>
+                            <span className="text-[11px] font-semibold">{item.label}</span>
                           </button>
-                        );
-                      })}
+                        ))}
+                      </div>
+
+                      {/* Sources & Capabilities */}
+                      <div className="flex flex-col gap-0.5 px-1">
+                        {PLUS_ACTIONS_SOURCES.map(item => (
+                          <button
+                            key={item.id}
+                            onClick={() => { onAddToChatAction?.(item.id); setShowAddSheet(false); }}
+                            className="w-full flex items-center gap-3 px-3 py-2 rounded-xl transition-colors hover:bg-[var(--hover)] text-left"
+                            style={{ color: 'var(--text-primary)' }}
+                          >
+                            <span style={{ color: 'var(--text-secondary)' }}>{item.icon}</span>
+                            <span className="text-xs font-semibold">{item.label}</span>
+                          </button>
+                        ))}
+                      </div>
+
+                      <div className="h-[1px] w-full bg-[var(--border-subtle)]" />
+
+                      {/* Explicit Creation Models */}
+                      <div className="flex flex-col gap-0.5 px-1 pb-1">
+                        <div className="px-3 py-1.5 text-[10px] uppercase font-bold tracking-wider text-[var(--text-tertiary)]">Créer</div>
+                        {PLUS_ACTIONS_CREATE.map(item => (
+                          <button
+                            key={item.id}
+                            onClick={() => { onAddToChatAction?.(item.id); setShowAddSheet(false); }}
+                            className="w-full flex items-center justify-between px-3 py-2 rounded-xl transition-colors hover:bg-[var(--hover)] text-left"
+                            style={{ color: 'var(--text-primary)' }}
+                          >
+                            <div className="flex items-center gap-3">
+                              <span style={{ color: 'var(--accent)' }}>{item.icon}</span>
+                              <span className="text-xs font-semibold">{item.label}</span>
+                            </div>
+                            <span className="text-[10px] text-[var(--text-tertiary)] bg-[var(--surface)] px-2 py-0.5 rounded border border-[var(--border)]">{item.desc}</span>
+                          </button>
+                        ))}
+                      </div>
+
                     </div>
-                  )}
-                </div>
+                  </>
+                )}
               </div>
 
               {/* Right: Mic + (Send / Live / Stop) */}
@@ -786,8 +816,8 @@ export default function NkyelChatScreen({
                     }}
                     title="Mode Live"
                   >
-                    <Headphones size={14} className="relative z-10" />
-                    <span className="text-[12px] font-semibold tracking-wide relative z-10 hidden sm:inline">Live</span>
+                    <SonarIcon width={14} height={14} className="relative z-10" />
+                    <span className="text-[12px] font-semibold tracking-wide relative z-10 hidden sm:inline">Live Flow</span>
                     <span
                       className="absolute inset-0 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
                       style={{ animation: 'pulse-luxe 2.4s ease-out infinite' }}
@@ -805,39 +835,6 @@ export default function NkyelChatScreen({
         </div>
       </main>
 
-      {/* ---------- ADD-TO-CHAT SHEET ---------- */}
-      {showAddSheet && (
-        <>
-          <div className="fixed inset-0 z-50 bg-black/40" onClick={() => setShowAddSheet(false)} />
-          <div
-            className="fixed bottom-0 left-0 right-0 z-50 rounded-t-3xl px-6 py-6 glass"
-            style={{ border: '1px solid var(--glass-border)', maxHeight: '50vh' }}
-          >
-            <div className="w-10 h-1 rounded-full mx-auto mb-5" style={{ background: 'var(--text-tertiary)' }} />
-            <p className="text-sm font-semibold mb-4" style={{ color: 'var(--text-primary)', fontFamily: 'var(--font-heading)' }}>
-              Ajouter au chat
-            </p>
-            <div className="grid grid-cols-3 gap-3">
-              {ADD_TO_CHAT_ITEMS.map(item => (
-                <button
-                  key={item.id}
-                  onClick={() => { onAddToChatAction?.(item.id); setShowAddSheet(false); }}
-                  className="flex flex-col items-center gap-2 p-4 rounded-2xl transition-colors hover:bg-[var(--accent-06)]"
-                  style={{ background: 'var(--accent-06)', color: 'var(--text-primary)' }}
-                >
-                  <span style={{ color: 'var(--text-secondary)' }}>{item.icon}</span>
-                  <span className="text-[11px] font-medium text-center">{item.label}</span>
-                  {item.isPro && (
-                    <span className="text-[9px] font-bold px-1.5 py-0.5 rounded" style={{ background: 'var(--accent-10)', color: 'var(--accent)' }}>
-                      PRO
-                    </span>
-                  )}
-                </button>
-              ))}
-            </div>
-          </div>
-        </>
-      )}
     </div>
   );
 }

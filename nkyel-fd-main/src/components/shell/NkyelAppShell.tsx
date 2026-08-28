@@ -21,6 +21,7 @@ import BetaClosedScreen from '@/components/beta/BetaClosedScreen';
 import BetaFeedbackModal from '@/components/feedback/BetaFeedbackModal';
 import ProductionFeedbackModal, { FeedbackCategory } from '@/components/feedback/ProductionFeedbackModal';
 import DesktopSettingsModal from '@/components/settings/DesktopSettingsModal';
+import PWAInstallPrompt from '@/components/pwa/PWAInstallPrompt';
 import { fetchBetaStatus, type BetaStatusResponse } from '@/lib/betaStateMachine';
 import { useSafeUser } from '@/lib/auth-client';
 import { useNeonSync } from '@/hooks/useNeonSync';
@@ -117,6 +118,7 @@ export default function NkyelAppShell({
 
       {/* Modales de Configuration et Feedback de Production */}
       <DesktopSettingsModal />
+      <PWAInstallPrompt />
 
       <ProductionFeedbackModal
         isOpen={feedbackOpen}

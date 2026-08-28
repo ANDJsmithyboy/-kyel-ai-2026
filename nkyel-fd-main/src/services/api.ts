@@ -2,8 +2,6 @@
    Service de communication avec le backend FastAPI Nkyel AI v1
    Fondateur : Daniel Jonathan ANDJ */
 
-import axios from 'axios';
-
 const BASE = process.env.NEXT_PUBLIC_API_URL || (typeof window !== 'undefined' ? '' : 'http://localhost:8000');
 
 /* -- Types ------------------------------------------ */

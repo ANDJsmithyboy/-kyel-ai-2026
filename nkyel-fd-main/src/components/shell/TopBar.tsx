@@ -15,18 +15,22 @@ import { useSidebar } from '@/hooks/useSidebar';
 import UpgradeModal from '@/components/subscription/UpgradeModal';
 import { useLanguageStore } from '@/stores/language.store';
 import { IbogaNavigationTrigger } from '@/components/brand';
+import { RenduIcon, LoxoIcon } from '@/components/icons';
+import ModelSelectorModal from '@/components/composer/ModelSelectorModal';
+import type { ModelMetadata } from '@/lib/modelRegistry';
 
 interface TopBarProps {
   onOpenCapabilities?: () => void;
 }
 
 export default function TopBar({ onOpenCapabilities }: TopBarProps) {
-  const engineId = useNkyelModel((state) => state.engineId);
-  const setEngineId = useNkyelModel((state) => state.setEngineId);
+  const engineId = useNkyelModel((state: any) => state.engineId);
+  const setEngineId = useNkyelModel((state: any) => state.setEngineId);
   const { open: openMobileSidebar } = useSidebar();
 
   const [modelDropdown, setModelDropdown] = useState(false);
   const [isUpgradeOpen, setIsUpgradeOpen] = useState(false);
+  const [isModelModalOpen, setIsModelModalOpen] = useState(false);
 
   const dropdownRef = useRef<HTMLDivElement>(null);
   const { t, uiLocale } = useLanguageStore();
@@ -62,50 +66,68 @@ export default function TopBar({ onOpenCapabilities }: TopBarProps) {
 
   const modesList = Object.values(INTELLIGENCE_MODES);
 
+  // Keyboard shortcut ⌘M / Ctrl+M for model palette
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'm') {
+        e.preventDefault();
+        setIsModelModalOpen((prev) => !prev);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
   return (
     <>
       <UpgradeModal isOpen={isUpgradeOpen} onClose={() => setIsUpgradeOpen(false)} />
+      <ModelSelectorModal
+        isOpen={isModelModalOpen}
+        onClose={() => setIsModelModalOpen(false)}
+        selectedModelId={engineId}
+        onSelectModel={(model: ModelMetadata) => {
+          // Map to known engine if applicable or keep sovereign ID
+          setEngineId(model.id);
+        }}
+      />
 
       <header className="h-12 flex items-center justify-between px-3 sm:px-4 border-b border-[var(--border-subtle)] bg-[var(--material-glass-regular)] backdrop-blur-md select-none z-30">
-        {/* Leading: Iboga Navigation Trigger (Mobile) + Wordmark + Model Selector */}
+        {/* Leading: Iboga Navigation Trigger (Mobile) + Wordmark (Desktop) + Model Selector */}
         <div className="flex items-center gap-2 sm:gap-3">
-          {/* Mobile Iboga Navigation Trigger Button */}
-          <div className="md:hidden">
+          {/* Mobile Iboga Navigation Trigger Button (No logo/wordmark on mobile) */}
+          <div className="md:hidden flex items-center">
             <IbogaNavigationTrigger
               open={false}
               onToggle={openMobileSidebar}
-              glyphSize={18}
+              glyphSize={24}
               variant="mobile"
               title="Ouvrir la navigation"
               label="Ouvrir la navigation"
             />
           </div>
 
-          {/* Product Wordmark */}
-          <div className="text-[15px] font-semibold tracking-[-0.02em] text-[var(--text-primary)]">
-            Ñkyel
-          </div>
+          <div className="hidden md:block w-[1px] h-4 bg-[var(--border-subtle)] mx-1" />
 
-          {/* Canonical Intelligence Mode Selector — Desktop Only (Header) */}
-          <div className="relative hidden md:block" ref={dropdownRef}>
+          {/* Canonical Intelligence Mode Selector — Visible on all viewports */}
+          <div className="relative flex items-center" ref={dropdownRef}>
             <button
               type="button"
               onClick={() => setModelDropdown((prev) => !prev)}
               aria-expanded={modelDropdown}
               aria-label={isFr ? "Choisir le mode d'intelligence" : "Select intelligence mode"}
-              className="flex h-8 items-center gap-1.5 sm:gap-2 rounded-xl border border-[var(--border)] bg-[var(--surface-raised)] px-2 sm:px-2.5 text-xs font-semibold text-[var(--text-primary)] shadow-xs transition-colors hover:border-[var(--accent-muted)] hover:bg-[var(--active)]"
+              className="flex h-[28px] items-center gap-1.5 rounded-lg bg-transparent px-2 text-[14px] sm:text-[13px] font-semibold text-[var(--text-primary)] sm:text-[var(--text-secondary)] transition-colors hover:bg-[var(--hover)] hover:text-[var(--text-primary)] active:scale-[0.98]"
             >
-              <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent)]" />
-              <span className="truncate max-w-[90px] sm:max-w-none">
+              <span className="truncate max-w-[120px] sm:max-w-none tracking-tight">
                 {isFr ? currentEngine.labelFr : currentEngine.labelEn}
               </span>
-              <CaretDown size={12} weight="bold" className="text-[var(--text-secondary)] opacity-70" />
+              <CaretDown size={12} className="opacity-60" />
             </button>
 
             {modelDropdown && (
               <div className="absolute left-0 top-full mt-1.5 w-72 space-y-1 rounded-2xl border border-[var(--border-strong)] bg-[var(--bg-elevated)] p-1.5 shadow-2xl z-50 animate-scale-in">
-                <div className="px-2.5 py-1 text-[10px] uppercase tracking-wider text-[var(--text-tertiary)] border-b border-[var(--border-subtle)] mb-1">
-                  {isFr ? "Mode d'intelligence" : "Intelligence Mode"}
+                <div className="px-2.5 py-1 text-[10px] uppercase tracking-wider text-[var(--text-tertiary)] border-b border-[var(--border-subtle)] mb-1 flex items-center justify-between">
+                  <span>{isFr ? "Moteurs Souverains" : "Sovereign Engines"}</span>
+                  <span className="text-[9px] font-mono text-[var(--accent)] font-semibold">ÑKYEL IA</span>
                 </div>
                 {modesList.map((mode) => {
                   const isSelected = mode.id === engineId;
@@ -144,6 +166,26 @@ export default function TopBar({ onOpenCapabilities }: TopBarProps) {
                     </button>
                   );
                 })}
+
+                {/* 500+ Model Catalog Command Trigger */}
+                <div className="pt-1 border-t border-[var(--border-subtle)] mt-1">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setModelDropdown(false);
+                      setIsModelModalOpen(true);
+                    }}
+                    className="flex w-full items-center justify-between rounded-xl px-2.5 py-2 text-left bg-[var(--accent-subtle)]/40 hover:bg-[var(--accent-subtle)] text-[var(--accent)] transition-colors"
+                  >
+                    <div className="flex items-center gap-2">
+                      <MagnifyingGlass size={14} weight="bold" />
+                      <span className="text-xs font-semibold">Catalogue +500 Modèles…</span>
+                    </div>
+                    <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-[var(--surface)] border border-[var(--border-subtle)] text-[var(--text-secondary)]">
+                      ⌘M
+                    </span>
+                  </button>
+                </div>
               </div>
             )}
           </div>
@@ -188,26 +230,15 @@ export default function TopBar({ onOpenCapabilities }: TopBarProps) {
             <span className="text-[11px] font-medium">Partager</span>
           </button>
 
-          {/* Documents & Artifacts Icon */}
+          {/* Mission Intelligence Control (Ñkyel Spark) */}
           <button
             type="button"
             onClick={onOpenCapabilities}
-            aria-label="Documents et Artefacts"
-            title="Documents et Artefacts"
-            className="flex h-8 w-8 items-center justify-center rounded-xl text-[var(--text-tertiary)] transition-colors hover:bg-[var(--hover)] hover:text-[var(--text-primary)]"
+            aria-label="Intelligence de Mission"
+            title="Ouvrir l'Intelligence de Mission"
+            className="flex h-8 w-8 items-center justify-center rounded-xl text-[var(--accent)] bg-[var(--accent)]/10 transition-colors hover:bg-[var(--accent)] hover:text-[var(--accent-fg)]"
           >
-            <FileText size={17} />
-          </button>
-
-          {/* WorkGraph / DAG Icon */}
-          <button
-            type="button"
-            onClick={onOpenCapabilities}
-            aria-label="WorkGraph DAG"
-            title="WorkGraph DAG"
-            className="flex h-8 w-8 items-center justify-center rounded-xl text-[var(--text-tertiary)] transition-colors hover:bg-[var(--hover)] hover:text-[var(--text-primary)]"
-          >
-            <ChartBar size={17} />
+            <RenduIcon width={16} height={16} />
           </button>
         </div>
       </header>

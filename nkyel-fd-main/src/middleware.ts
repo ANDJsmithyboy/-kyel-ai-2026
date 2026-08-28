@@ -25,7 +25,7 @@ const isPublicRoute = createRouteMatcher([
   '/icons(.*)',
 ]);
 
-export default clerkMiddleware(async (auth, req) => {
+export default clerkMiddleware(async (auth: any, req: any) => {
   if (!isPublicRoute(req)) {
     await auth.protect();
   }

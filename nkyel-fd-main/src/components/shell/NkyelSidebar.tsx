@@ -63,13 +63,14 @@ import {
   Trash,
   Copy,
   Desktop,
+  MagnifyingGlass,
 } from '@phosphor-icons/react';
 import { useSidebar } from '@/hooks/useSidebar';
 import { useSettingsModal } from '@/hooks/useSettingsModal';
 import { useSafeUser as useUser, useSafeClerk as useClerk } from '@/lib/auth-client';
 import { useLanguageStore } from '@/stores/language.store';
 import { useConversations, type NeonConversation } from '@/hooks/useConversations';
-import { IbogaNavigationTrigger } from '@/components/brand';
+import { IbogaNavigationTrigger, GabonOriginMark } from '@/components/brand';
 import { PantherMissionGlyph, NkyelAgentIcon } from '@/components/icons';
 
 /* ═══════════════════════════════════════════════════════
@@ -147,6 +148,7 @@ export default function NkyelSidebar() {
   const displayName = user?.fullName || user?.firstName || t('profile.defaultName') || 'Utilisateur';
   const userEmail = user?.primaryEmailAddress?.emailAddress || '';
   const userInitials = (displayName.slice(0, 2) || 'NK').toUpperCase();
+  const isSuperAdmin = user?.publicMetadata?.role === 'SUPER_ADMIN';
 
   const navItems: NavItem[] = [
     { id: 'agent',        label: t('nav.agent'),        href: '/agent',      icon: NkyelAgentIcon },
@@ -259,25 +261,13 @@ export default function NkyelSidebar() {
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
-        className="h-full flex flex-col shrink-0 select-none"
+        className={`nkyel-sidebar-container h-full flex flex-col shrink-0 select-none ${isOpen ? 'is-open' : ''}`}
         style={{
-          width: isCollapsed ? 'var(--sidebar-collapsed)' : 'var(--sidebar-width)',
+          width: isCollapsed && !isMobile ? 'var(--sidebar-collapsed)' : 'var(--sidebar-width)',
           background: 'var(--sidebar-bg)',
           borderRight: '1px solid var(--sidebar-border)',
           zIndex: 'var(--z-sidebar)',
           transition: `width var(--motion-standard) var(--ease-apple)`,
-          ...(isMobile
-            ? {
-                position: 'fixed',
-                top: 0,
-                left: 0,
-                bottom: 0,
-                transform: isOpen ? 'translateX(0)' : 'translateX(-100%)',
-                width: 'min(280px, 85vw)',
-                boxShadow: 'var(--shadow-modal)',
-                transition: `transform var(--motion-context) var(--ease-apple)`,
-              }
-            : {}),
         }}
         aria-label="Navigation principale Ñkyel"
       >
@@ -293,14 +283,46 @@ export default function NkyelSidebar() {
           }}
         >
           {isCollapsed ? (
-            <IbogaNavigationTrigger
-              open={false}
-              onToggle={toggleSidebar}
-              glyphSize={20}
-              variant="desktop"
-              title="Expand navigation"
-              label="Expand navigation"
-            />
+            <div className="hidden md:block">
+              <IbogaNavigationTrigger
+                open={false}
+                onToggle={toggleSidebar}
+                glyphSize={20}
+                variant="desktop"
+                title="Expand navigation"
+                label="Expand navigation"
+              />
+            </div>
+          ) : isMobile ? (
+            <div className="flex items-center justify-between w-full">
+              <span className="font-semibold tracking-tight text-[19px] select-none text-[var(--text-primary)]">
+                ñkyel
+              </span>
+              <div className="flex items-center gap-1 pr-1">
+                <button
+                  type="button"
+                  onClick={() => {
+                    closeMobileSidebar();
+                    setTimeout(() => {
+                      window.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', metaKey: true, bubbles: true }));
+                    }, 100);
+                  }}
+                  className="flex items-center justify-center p-2 rounded-xl text-[var(--text-tertiary)] hover:bg-[var(--hover)] hover:text-[var(--text-primary)] transition-colors"
+                  title="Recherche (⌘K)"
+                  aria-label="Recherche"
+                >
+                  <MagnifyingGlass size={20} />
+                </button>
+                <IbogaNavigationTrigger
+                  open={true}
+                  onToggle={closeMobileSidebar}
+                  glyphSize={24}
+                  variant="mobile"
+                  title="Close navigation"
+                  label="Close navigation"
+                />
+              </div>
+            </div>
           ) : (
             <>
               <Link
@@ -319,7 +341,16 @@ export default function NkyelSidebar() {
                 </span>
               </Link>
 
-              {!isMobile && (
+              <div className="flex items-center gap-0.5">
+                <button
+                  type="button"
+                  onClick={() => window.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', metaKey: true, bubbles: true }))}
+                  className="flex items-center justify-center p-1.5 rounded-lg text-[var(--text-tertiary)] hover:bg-[var(--hover)] hover:text-[var(--text-primary)] transition-colors"
+                  title="Commandes (⌘K)"
+                  aria-label="Recherche"
+                >
+                  <MagnifyingGlass size={18} />
+                </button>
                 <IbogaNavigationTrigger
                   open={true}
                   onToggle={toggleSidebar}
@@ -328,7 +359,7 @@ export default function NkyelSidebar() {
                   title="Collapse navigation"
                   label="Collapse navigation"
                 />
-              )}
+              </div>
             </>
           )}
         </div>
@@ -358,8 +389,8 @@ export default function NkyelSidebar() {
               e.currentTarget.style.background = 'var(--accent)';
             }}
           >
-            <PantherMissionGlyph size={18} className="shrink-0" />
-            {!isCollapsed && <span className="truncate">{t('nav.newMission')}</span>}
+            <PantherMissionGlyph size={26} className="shrink-0 drop-shadow-sm" />
+            {!isCollapsed && <span className="truncate font-semibold tracking-wide" style={{ fontSize: '15px' }}>{t('nav.newMission')}</span>}
           </Link>
         </div>
 
@@ -783,7 +814,8 @@ export default function NkyelSidebar() {
             <div
               className="absolute bottom-full left-2 right-2 mb-2 animate-in fade-in slide-in-from-bottom-2 duration-150"
               style={{
-                width: isCollapsed ? 260 : 'auto',
+                width: isCollapsed ? 260 : 'calc(100% - 16px)',
+                maxWidth: 360,
                 minWidth: 250,
                 padding: '10px',
                 borderRadius: '16px',
@@ -833,18 +865,25 @@ export default function NkyelSidebar() {
                 <CaretDown size={14} className="text-[var(--text-tertiary)] shrink-0" />
               </div>
 
-              {/* Tier Row: "Free" / "Pro" + "Upgrade" pill */}
+              {/* Account Metadata Row */}
               <div className="flex items-center justify-between px-2.5 py-2.5 my-1 rounded-xl bg-[var(--control-bg)] border border-[var(--border-subtle)]">
-                <span className="text-xs font-semibold text-[var(--text-primary)]">
-                  {t('profile.free')}
-                </span>
-                <Link
-                  href="/settings?tab=subscription"
-                  onClick={() => setProfileMenuOpen(false)}
-                  className="px-3 py-1 rounded-full bg-[var(--accent)] text-[var(--accent-fg)] font-semibold text-xs hover:bg-[var(--accent-hover)] transition-all shadow-sm active:scale-95 touch-manipulation"
-                >
-                  {t('profile.upgrade')}
-                </Link>
+                {isSuperAdmin ? (
+                  <>
+                    <div className="flex items-center gap-1.5 font-semibold text-xs text-[var(--accent)]">
+                      <span className="text-[14px]">∞</span>
+                      <span>Mode God</span>
+                    </div>
+                    <span className="text-[10px] text-[var(--text-tertiary)] uppercase tracking-wider font-semibold">
+                      Créateur de Ñkyel
+                    </span>
+                  </>
+                ) : (
+                  <>
+                    <span className="text-xs font-semibold text-[var(--text-primary)]">
+                      Free <span className="text-[var(--text-tertiary)] font-normal px-1">·</span> Accès bêta
+                    </span>
+                  </>
+                )}
               </div>
 
               {/* Credits Row */}
@@ -909,6 +948,13 @@ export default function NkyelSidebar() {
                     <span className="text-[11px] text-[var(--text-disabled)] font-mono">↗</span>
                   </Link>
                 ))}
+              </div>
+
+              {/* Separator */}
+              <div style={{ height: 1, background: 'var(--border-subtle)', margin: '6px 0' }} />
+
+              <div className="flex justify-center py-1.5">
+                <GabonOriginMark />
               </div>
 
               {/* Separator */}

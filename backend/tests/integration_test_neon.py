@@ -83,7 +83,7 @@ from db.models import (
     AuditLog,
 )
 
-DATABASE_URL = "postgresql+asyncpg://neondb_owner:npg_U6TH4chXgAfj@ep-misty-breeze-axsg7xei.c-4.us-east-2.aws.neon.tech/neondb?ssl=require"
+DATABASE_URL = os.getenv("DATABASE_URL", "postgresql+asyncpg://neondb_owner:password@ep-misty-breeze-axsg7xei.c-4.us-east-2.aws.neon.tech/neondb?ssl=require")
 
 engine = create_async_engine(
     DATABASE_URL,

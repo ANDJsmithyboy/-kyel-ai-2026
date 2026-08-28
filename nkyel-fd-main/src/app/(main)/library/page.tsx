@@ -234,12 +234,12 @@ export default function LibraryPage() {
               >
                 <Books size={18} weight="bold" />
               </div>
-              <h1 className="text-xl font-bold tracking-tight" style={{ color: 'var(--text-primary)' }}>
-                Créations
+              <h1 className="text-xl font-bold tracking-tight text-[var(--text-primary)]">
+                Sanctuaire
               </h1>
             </div>
-            <p className="text-xs mt-1" style={{ color: 'var(--text-secondary)' }}>
-              Tous les livrables générés au fil de vos missions (documents, présentations, code, applications, médias).
+            <p className="text-xs mt-1 text-[var(--text-secondary)]">
+              Espace sécurisé de connaissance et des livrables générés au fil de vos missions (documents, présentations, code, applications, médias).
             </p>
           </div>
 

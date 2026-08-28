@@ -1,5 +1,5 @@
 {
-  "name": "Ñkyel AI — Sovereign Global Intelligence",
+  "name": "Ñkyel",
   "short_name": "Ñkyel",
   "description": "L'assistant IA souverain le plus avancé d'Afrique et d'Europe. Raisonnement profond, code, analyse et multi-agents.",
   "start_url": "/",
@@ -9,7 +9,7 @@
   "theme_color": "#D5AE57",
   "orientation": "any",
   "scope": "/",
-  "lang": "fr",
+  "lang": "en",
   "dir": "ltr",
   "categories": ["productivity", "utilities", "business"],
   "icons": [
@@ -41,6 +41,11 @@
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
+    },
+    {
+      "src": "/apple-touch-icon-180x180.png",
+      "sizes": "180x180",
+      "type": "image/png"
     },
     {
       "src": "/apple-touch-icon.png",

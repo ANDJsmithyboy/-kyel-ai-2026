@@ -68,6 +68,8 @@
     letter-spacing: var(--tracking-snug);
     min-height: 100dvh;
     overflow-x: hidden;
+    overscroll-behavior-y: none;
+    -webkit-tap-highlight-color: transparent;
   }
 }
 
@@ -1378,5 +1380,24 @@ html[data-density="compact"] .nkyel-composer-toolbar { min-height: 30px; }
 .nkyel-manus-sidebar {
   font-family: var(--font-sans);
   letter-spacing: var(--tracking-snug);
+}
+
+
+/* Mobile Sidebar Overlay */
+@media (max-width: 767px) {
+  .nkyel-sidebar-container {
+    position: fixed !important;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: min(320px, 85vw) !important;
+    transform: translateX(-100%);
+    box-shadow: var(--shadow-modal);
+    z-index: var(--z-overlay);
+    transition: transform var(--motion-context) var(--ease-apple) !important;
+  }
+  .nkyel-sidebar-container.is-open {
+    transform: translateX(0);
+  }
 }
 

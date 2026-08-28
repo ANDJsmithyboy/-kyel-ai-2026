@@ -146,26 +146,22 @@ export default function ScheduledPage() {
               >
                 <CalendarCheck size={18} weight="bold" />
               </div>
-              <h1 className="text-xl font-bold tracking-tight" style={{ color: 'var(--text-primary)' }}>
-                Automatisations
+              <h1 className="text-xl font-bold tracking-tight text-[var(--text-primary)]">
+                Programmes
               </h1>
             </div>
-            <p className="text-xs mt-1" style={{ color: 'var(--text-secondary)' }}>
-              Laissez votre Agent Ñkyel exécuter des veilles, des rapports et des processus récurrents en toute autonomie.
+            <p className="text-xs mt-1 text-[var(--text-secondary)]">
+              Missions autonomes récurrentes exécutées par vos Agents Ñkyel · Fuseau : Libreville (UTC+1).
             </p>
           </div>
 
           <button
             type="button"
             onClick={() => setIsCreateOpen(true)}
-            className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold shadow-sm transition-all"
-            style={{
-              background: 'var(--accent)',
-              color: 'var(--accent-fg)',
-            }}
+            className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold shadow-sm transition-all bg-[var(--accent)] text-[var(--accent-fg)] hover:brightness-110 active:scale-95"
           >
             <Plus size={14} weight="bold" />
-            <span>Nouvelle automatisation</span>
+            <span>Nouveau Programme</span>
           </button>
         </div>
       </div>

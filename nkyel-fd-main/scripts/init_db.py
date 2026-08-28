@@ -8,7 +8,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), "..", "backend"))
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import create_async_engine
 
-DATABASE_URL = "postgresql+asyncpg://neondb_owner:npg_HKkCZuxn2j0O@ep-shy-firefly-abitziup-pooler.eu-west-2.aws.neon.tech/neondb"
+DATABASE_URL = os.getenv("DATABASE_URL", "postgresql+asyncpg://neondb_owner:password@ep-shy-firefly-abitziup-pooler.eu-west-2.aws.neon.tech/neondb")
 
 SCHEMA = """
 -- Extension UUID

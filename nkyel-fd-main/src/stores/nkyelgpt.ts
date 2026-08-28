@@ -91,7 +91,7 @@ const defaults: Omit<NkyelState, 'consumeTokens' | 'creditTokens' | 'setPlan' | 
   thinkingMessage: '',
 };
 
-export const useNkyelStore = create<NkyelState>((set, get) => ({
+export const useNkyelStore = create<NkyelState>((set: any, get: any) => ({
   ...defaults,
   ...loadPersisted(),
 

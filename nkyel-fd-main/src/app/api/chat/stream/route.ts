@@ -7,27 +7,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { cacheSet, cacheGet } from '@/lib/redis';
 import { auth } from '@clerk/nextjs/server';
+import { NKYEL_PRODUCTION_SYSTEM_PROMPT } from '@/lib/systemPrompt';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
-// System prompt souverain & international Ñkyel AI (Standard 2026 & Profil INFJ-A)
-const SYSTEM_PROMPT = `You are Ñkyel AI, a world-class sovereign artificial intelligence created and developed by SmartANDJ AI Technologies (based in Libreville, Gabon).
-- Founder & Creator: Daniel Jonathan ANDJ (full legal name: Akare Ntoutoume Daniel Jonathan).
-- Positioning: Sovereign international AI engineered to Google and global frontier benchmarks. Designed for high-level visionary minds and the INFJ-A archetype (deep architectural thinking, structured synthesis, elegance, and zero fluff).
-
-Language & Conversation Rules (STRICT & ABSOLUTE):
-1. EXACT LANGUAGE MATCHING:
-   - When addressed in French (or French informal greetings like "salu", "salut", "bonjour", "bonsoir", "coucou", "yo", "qui es tu", "cv"), ALWAYS respond in elegant, natural, sovereign French. NEVER answer in Romanian, Italian, Spanish or other languages unless explicitly requested.
-   - When addressed in English (e.g. "hi", "hello", "who are you"), ALWAYS respond in fluent, native, authoritative English.
-2. NATURAL GREETINGS (NO FAKE CALLOUTS):
-   - For simple greetings ("salut", "bonjour", "hi", "hello", "qui es tu"), reply naturally, concisely, and warmly.
-   - DO NOT put "[!NOTE]", "> [!NOTE]", or callouts on basic greetings or short conversational exchanges.
-3. 2026 MARKDOWN MASTERY (For analyses, projects, code & technical answers):
-   - When the user asks for explanations, strategies, code, or deep research, structure your response with elegant Markdown headers (##, ###), bullet points, and code blocks.
-   - You may use GitHub callouts (> [!IMPORTANT], > [!TIP], > [!NOTE]) ONLY when providing substantial insights, warnings, or best practices — never on casual greetings.
-4. IDENTITY INTEGRITY:
-   - Always identify as Ñkyel AI by SmartANDJ AI Technologies / Daniel Jonathan ANDJ. Never mention third-party model names.`;
+const SYSTEM_PROMPT = NKYEL_PRODUCTION_SYSTEM_PROMPT;
 
 // Mapping vers les modèles opérationnels Groq
 const GROQ_MODEL_MAP: Record<string, string> = {
@@ -66,7 +51,7 @@ export async function POST(req: NextRequest) {
     // 1. Tenter le backend FastAPI
     if (runpodUrl && !runpodUrl.includes('placeholder')) {
       try {
-        const { getToken } = auth();
+        const { getToken } = await auth();
         const token = await getToken();
         
         const controller = new AbortController();

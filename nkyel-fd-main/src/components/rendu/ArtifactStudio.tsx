@@ -51,6 +51,8 @@ import MCPAppRunner from '@/components/protocols/MCPAppRunner';
 import type { NkyelRendu, RenduType } from '@/lib/models';
 import { useRouter } from 'next/navigation';
 
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+
 const TYPE_ICONS: Record<RenduType, React.ReactNode> = {
   markdown: <FileText size={18} className="text-[var(--accent)]" />,
   document: <FileText size={18} className="text-[var(--accent)]" />,
@@ -189,7 +191,7 @@ export default function ArtifactStudio() {
     if (!activeArtifact) return;
     setMediaActionStatus('Création d’une variation en cours via FLUX...');
     try {
-      const resp = await fetch('http://localhost:8000/api/v1/media/generate', {
+      const resp = await fetch(`${API_BASE}/api/v1/media/generate`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -227,7 +229,7 @@ export default function ArtifactStudio() {
     if (!activeArtifact) return;
     setMediaActionStatus('Transformation de l’image en vidéo 5s (Wan2.1)...');
     try {
-      const resp = await fetch('http://localhost:8000/api/v1/media/video', {
+      const resp = await fetch(`${API_BASE}/api/v1/media/video`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -267,7 +269,7 @@ export default function ArtifactStudio() {
     const topic = activeArtifact?.title || 'Livrable Stratégique';
     setMediaActionStatus('Génération du kit réseaux sociaux...');
     try {
-      const resp = await fetch('http://localhost:8000/api/v1/media/social-kit', {
+      const resp = await fetch(`${API_BASE}/api/v1/media/social-kit`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

@@ -37,6 +37,8 @@ import {
 } from '@phosphor-icons/react';
 import { useRenduPanel } from '@/hooks/useRenduPanel';
 
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+
 interface ResearchSource {
   title: string;
   url: string;
@@ -84,7 +86,7 @@ export default function WideResearchStudio() {
     setReportResult(null);
 
     try {
-      const resp = await fetch('http://localhost:8000/api/v1/wide-research/start', {
+      const resp = await fetch(`${API_BASE}/api/v1/wide-research/start`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -111,7 +113,7 @@ export default function WideResearchStudio() {
       eventSourceRef.current.close();
     }
 
-    const es = new EventSource(`http://localhost:8000/api/v1/wide-research/stream/${jId}`);
+    const es = new EventSource(`${API_BASE}/api/v1/wide-research/stream/${jId}`);
     eventSourceRef.current = es;
 
     es.addEventListener('search.query_created', (e: any) => {
@@ -187,7 +189,7 @@ export default function WideResearchStudio() {
   const handleControlAction = async (action: 'pause' | 'resume' | 'stop') => {
     if (!jobId) return;
     try {
-      await fetch('http://localhost:8000/api/v1/wide-research/control', {
+      await fetch(`${API_BASE}/api/v1/wide-research/control`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ job_id: jobId, action }),

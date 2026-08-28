@@ -97,10 +97,10 @@ const initialState = {
 };
 
 // -- Store ------------------------------------------
-export const useAgentStore = create<AgentState>((set) => ({
+export const useAgentStore = create<AgentState>((set: any) => ({
   ...initialState,
 
-  startSession: (sessionId, threadId) =>
+  startSession: (sessionId: string, threadId: string) =>
     set({
       ...initialState,
       sessionId,
@@ -108,38 +108,38 @@ export const useAgentStore = create<AgentState>((set) => ({
       phase: 'planning',
     }),
 
-  setPhase: (phase) => set({ phase }),
-  setMode: (mode) => set({ mode }),
+  setPhase: (phase: AgentPhase) => set({ phase }),
+  setMode: (mode: AgentMode) => set({ mode }),
 
-  addTask: (task) =>
-    set((s) => ({ tasks: [...s.tasks, task] })),
+  addTask: (task: AgentTask) =>
+    set((s: AgentState) => ({ tasks: [...s.tasks, task] })),
 
-  updateTask: (id, updates) =>
-    set((s) => ({
-      tasks: s.tasks.map((t) =>
+  updateTask: (id: string, updates: Partial<AgentTask>) =>
+    set((s: AgentState) => ({
+      tasks: s.tasks.map((t: AgentTask) =>
         t.id === id ? { ...t, ...updates } : t
       ),
     })),
 
-  addArtifact: (artifact) =>
-    set((s) => ({ artifacts: [...s.artifacts, artifact] })),
+  addArtifact: (artifact: AgentArtifact) =>
+    set((s: AgentState) => ({ artifacts: [...s.artifacts, artifact] })),
 
-  addFile: (file) =>
-    set((s) => ({ files: [...s.files, file] })),
+  addFile: (file: AgentFile) =>
+    set((s: AgentState) => ({ files: [...s.files, file] })),
 
-  appendTerminalLine: (line) =>
-    set((s) => ({
+  appendTerminalLine: (line: string) =>
+    set((s: AgentState) => ({
       terminalLines: [...s.terminalLines.slice(-200), line],
     })),
 
-  setCurrentUrl: (url) => set({ currentUrl: url }),
-  setCurrentFrame: (frame) => set({ currentFrame: frame }),
-  setFps: (fps) => set({ fps }),
+  setCurrentUrl: (url: string) => set({ currentUrl: url }),
+  setCurrentFrame: (frame: string) => set({ currentFrame: frame }),
+  setFps: (fps: number) => set({ fps }),
 
-  appendStreamedText: (text) =>
-    set((s) => ({ streamedText: s.streamedText + text })),
+  appendStreamedText: (text: string) =>
+    set((s: AgentState) => ({ streamedText: s.streamedText + text })),
 
-  setError: (error) => set({ error, phase: error ? 'error' : 'idle' }),
+  setError: (error: string | null) => set({ error, phase: error ? 'error' : 'idle' }),
 
   reset: () => set(initialState),
 }));

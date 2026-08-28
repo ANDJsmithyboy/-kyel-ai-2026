@@ -726,7 +726,7 @@ interface ProtocolStoreState {
   cancelPaymentMandate: (mandateId: string, reason: string) => void;
 }
 
-export const useProtocolStore = create<ProtocolStoreState>((set, get) => ({
+export const useProtocolStore = create<ProtocolStoreState>((set: any, get: any) => ({
   mcpServers: INITIAL_MCP_SERVERS,
   skills: INITIAL_SKILLS,
   a2aAgents: INITIAL_A2A_AGENTS,
@@ -760,15 +760,15 @@ export const useProtocolStore = create<ProtocolStoreState>((set, get) => ({
   activePaymentMandate: null,
   checkoutSession: null,
 
-  addMCPServer: (server) => {
-    set((state) => ({
+  addMCPServer: (server: MCPServerConfig) => {
+    set((state: ProtocolStoreState) => ({
       mcpServers: [...state.mcpServers, server],
     }));
     protocolEventBus.emit('mcp.server.connected', 'mcp', `Nouveau serveur MCP connecté : ${server.name}`, { serverId: server.id });
   },
 
-  toggleMCPTool: (serverId, toolName) => {
-    set((state) => ({
+  toggleMCPTool: (serverId: string, toolName: string) => {
+    set((state: ProtocolStoreState) => ({
       mcpServers: state.mcpServers.map((s) => {
         if (s.id !== serverId) return s;
         return {
@@ -779,8 +779,8 @@ export const useProtocolStore = create<ProtocolStoreState>((set, get) => ({
     }));
   },
 
-  setMCPToolApproval: (serverId, toolName, requiresApproval) => {
-    set((state) => ({
+  setMCPToolApproval: (serverId: string, toolName: string, requiresApproval: boolean) => {
+    set((state: ProtocolStoreState) => ({
       mcpServers: state.mcpServers.map((s) => {
         if (s.id !== serverId) return s;
         return {
@@ -791,15 +791,15 @@ export const useProtocolStore = create<ProtocolStoreState>((set, get) => ({
     }));
   },
 
-  addSkill: (skill) => {
-    set((state) => ({
+  addSkill: (skill: NkyelSkill) => {
+    set((state: ProtocolStoreState) => ({
       skills: [...state.skills, skill],
     }));
     protocolEventBus.emit('skill.discovered', 'skill', `Nouveau Skill découvert : ${skill.name}`, { skillId: skill.id });
   },
 
-  toggleSkillStatus: (skillId) => {
-    set((state) => ({
+  toggleSkillStatus: (skillId: string) => {
+    set((state: ProtocolStoreState) => ({
       skills: state.skills.map((sk) => {
         if (sk.id !== skillId) return sk;
         return { ...sk, status: sk.status === 'active' ? 'disabled' : 'active' };
@@ -807,8 +807,8 @@ export const useProtocolStore = create<ProtocolStoreState>((set, get) => ({
     }));
   },
 
-  testSkillLive: async (skillId, inputPayload) => {
-    const skill = get().skills.find((s) => s.id === skillId);
+  testSkillLive: async (skillId: string, inputPayload: string) => {
+    const skill = get().skills.find((s: NkyelSkill) => s.id === skillId);
     if (!skill) throw new Error('Skill introuvable');
 
     protocolEventBus.emit('skill.loaded', 'skill', `Chargement du Skill : ${skill.name}`, { skillId });
@@ -820,7 +820,7 @@ export const useProtocolStore = create<ProtocolStoreState>((set, get) => ({
 
     protocolEventBus.emit('skill.executed', 'skill', `Skill exécuté avec succès : ${skill.name}`, { skillId, output }, 'success', latencyMs);
 
-    set((state) => ({
+    set((state: ProtocolStoreState) => ({
       skills: state.skills.map((s) =>
         s.id === skillId ? { ...s, usageCount: s.usageCount + 1, lastUsedAt: new Date().toISOString() } : s
       ),
@@ -829,8 +829,8 @@ export const useProtocolStore = create<ProtocolStoreState>((set, get) => ({
     return { output, latencyMs };
   },
 
-  delegateA2ATask: async (targetAgentId, taskTitle, goal) => {
-    const targetAgent = get().a2aAgents.find((a) => a.id === targetAgentId);
+  delegateA2ATask: async (targetAgentId: string, taskTitle: string, goal: string) => {
+    const targetAgent = get().a2aAgents.find((a: A2AAgentCard) => a.id === targetAgentId);
     const delegationId = `del_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`;
 
     const initialMsg: A2AMessage = {
@@ -860,7 +860,7 @@ export const useProtocolStore = create<ProtocolStoreState>((set, get) => ({
       artifactsReceived: [],
     };
 
-    set((state) => ({
+    set((state: ProtocolStoreState) => ({
       delegations: [newDelegation, ...state.delegations],
       activeDelegationId: delegationId,
     }));
@@ -884,8 +884,8 @@ export const useProtocolStore = create<ProtocolStoreState>((set, get) => ({
     return newDelegation;
   },
 
-  sendA2AMessage: (delegationId, content, type = 'progress_update') => {
-    set((state) => ({
+  sendA2AMessage: (delegationId: string, content: string, type: A2AMessage['type'] = 'progress_update') => {
+    set((state: ProtocolStoreState) => ({
       delegations: state.delegations.map((del) => {
         if (del.id !== delegationId) return del;
         const msg: A2AMessage = {
@@ -911,7 +911,7 @@ export const useProtocolStore = create<ProtocolStoreState>((set, get) => ({
     protocolEventBus.emit('a2a.message.received', 'a2a', `Message A2A reçu pour ${delegationId}: ${content.slice(0, 45)}...`, { delegationId, content });
   },
 
-  requestApproval: (request) => {
+  requestApproval: (request: AGUIApprovalRequest) => {
     set({ activeApprovalRequest: request });
     protocolEventBus.emit(
       'agui.approval.required',
@@ -922,7 +922,7 @@ export const useProtocolStore = create<ProtocolStoreState>((set, get) => ({
     );
   },
 
-  resolveApproval: (action, constraint) => {
+  resolveApproval: (action: 'accept' | 'reject' | 'modify', constraint?: string) => {
     const active = get().activeApprovalRequest;
     if (!active) return;
 
@@ -936,13 +936,13 @@ export const useProtocolStore = create<ProtocolStoreState>((set, get) => ({
     );
   },
 
-  pushStreamEvent: (event) => {
-    set((state) => ({
+  pushStreamEvent: (event: AGUIStreamEvent) => {
+    set((state: ProtocolStoreState) => ({
       streamEvents: [event, ...state.streamEvents.slice(0, 80)],
     }));
   },
 
-  setMissionProgress: (isRunning, progress, stepLabel) => {
+  setMissionProgress: (isRunning: boolean, progress: number, stepLabel: string) => {
     set({
       isMissionRunning: isRunning,
       missionProgress: progress,
@@ -950,14 +950,14 @@ export const useProtocolStore = create<ProtocolStoreState>((set, get) => ({
     });
   },
 
-  renderA2UISurface: (spec) => {
-    set((state) => ({
+  renderA2UISurface: (spec: A2UISurfaceSpec) => {
+    set((state: ProtocolStoreState) => ({
       activeA2UISurfaces: [spec, ...state.activeA2UISurfaces.filter((s) => s.id !== spec.id)],
     }));
     protocolEventBus.emit('a2ui.surface.created', 'a2ui', `Surface A2UI déclarative générée : ${spec.title}`, { surfaceId: spec.id, type: spec.componentType });
   },
 
-  openMCPApp: (app) => {
+  openMCPApp: (app: MCPAppSpec) => {
     set({ activeMCPApp: app });
     protocolEventBus.emit('mcp.app.rendered', 'mcp', `MCP App interactive affichée : ${app.title}`, { appId: app.id });
   },
@@ -966,7 +966,7 @@ export const useProtocolStore = create<ProtocolStoreState>((set, get) => ({
     set({ activeMCPApp: null });
   },
 
-  requestPaymentMandate: (mandateData) => {
+  requestPaymentMandate: (mandateData: Omit<AP2PaymentMandate, 'id' | 'status' | 'requestedAt'>) => {
     const mandate: AP2PaymentMandate = {
       ...mandateData,
       id: `mandate_${Date.now()}`,
@@ -980,8 +980,8 @@ export const useProtocolStore = create<ProtocolStoreState>((set, get) => ({
     protocolEventBus.emit('ap2.mandate.requested', 'ap2', `Intention de paiement AP2 requise : ${mandate.amount} ${mandate.currency} vers ${mandate.merchantName}`, { mandateId: mandate.id }, 'warning');
   },
 
-  approvePaymentMandate: (mandateId) => {
-    set((state) => {
+  approvePaymentMandate: (mandateId: string) => {
+    set((state: ProtocolStoreState) => {
       if (state.activePaymentMandate?.id !== mandateId) return state;
       return {
         activePaymentMandate: {
@@ -996,8 +996,8 @@ export const useProtocolStore = create<ProtocolStoreState>((set, get) => ({
     protocolEventBus.emit('ap2.mandate.approved', 'ap2', `Mandat AP2 approuvé avec signature humaine`, { mandateId }, 'success');
   },
 
-  cancelPaymentMandate: (mandateId, reason) => {
-    set((state) => {
+  cancelPaymentMandate: (mandateId: string, reason: string) => {
+    set((state: ProtocolStoreState) => {
       if (state.activePaymentMandate?.id !== mandateId) return state;
       return {
         activePaymentMandate: {

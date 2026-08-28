@@ -22,7 +22,7 @@ export interface PantherMissionGlyphProps extends React.SVGProps<SVGSVGElement> 
 }
 
 export const PantherMissionGlyph = React.forwardRef<SVGSVGElement, PantherMissionGlyphProps>(
-  ({ size = 18, className = '', style, ...props }, ref) => {
+  ({ size = 24, className = '', style, ...props }, ref) => {
     return (
       <svg
         ref={ref}
