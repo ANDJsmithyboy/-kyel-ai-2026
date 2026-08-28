@@ -91,7 +91,7 @@ export default function TopBar({ onOpenCapabilities }: TopBarProps) {
         }}
       />
 
-      <header className="h-12 flex items-center justify-between px-3 sm:px-4 border-b border-[var(--border-subtle)] bg-[var(--material-glass-regular)] backdrop-blur-md select-none z-30">
+      <header className="relative h-12 flex items-center justify-between px-3 sm:px-4 border-b border-[var(--border-subtle)] bg-[var(--material-glass-regular)] backdrop-blur-md select-none z-50">
         {/* Leading: Iboga Navigation Trigger (Mobile) + Wordmark (Desktop) + Model Selector */}
         <div className="flex items-center gap-2 sm:gap-3">
           {/* Mobile Iboga Navigation Trigger Button (No logo/wordmark on mobile) */}
@@ -124,7 +124,7 @@ export default function TopBar({ onOpenCapabilities }: TopBarProps) {
             </button>
 
             {modelDropdown && (
-              <div className="absolute left-0 top-full mt-1.5 w-72 space-y-1 rounded-2xl border border-[var(--border-strong)] bg-[var(--bg-elevated)] p-1.5 shadow-2xl z-50 animate-scale-in">
+              <div className="absolute left-0 top-full mt-1.5 w-72 space-y-1 rounded-2xl border border-[var(--border-strong)] bg-[var(--bg-elevated)] p-1.5 shadow-[0_20px_50px_rgba(0,0,0,0.7)] z-[150] animate-scale-in">
                 <div className="px-2.5 py-1 text-[10px] uppercase tracking-wider text-[var(--text-tertiary)] border-b border-[var(--border-subtle)] mb-1 flex items-center justify-between">
                   <span>{isFr ? "Moteurs Souverains" : "Sovereign Engines"}</span>
                   <span className="text-[9px] font-mono text-[var(--accent)] font-semibold">ÑKYEL IA</span>
