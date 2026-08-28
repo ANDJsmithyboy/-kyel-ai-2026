@@ -50,6 +50,7 @@ import {
 import { useWorkspaceLayout } from '@/hooks/useWorkspaceLayout';
 import { useNkyelModel, getIntelligenceMode, type IntelligenceModeId } from '@/hooks/useNkyelModel';
 import { useLanguageStore } from '@/stores/language.store';
+import { PantherMissionGlyph } from '@/components/icons';
 import RightContextInspector from '@/components/inspector/RightContextInspector';
 import Surface from '@/components/ui/Surface';
 import TierPicker from '@/components/chat/TierPicker';
@@ -415,7 +416,81 @@ export default function AdaptiveChatWorkspace({
             >
               {/* Centered Reading Column Container */}
               <div className="max-w-[780px] mx-auto w-full space-y-7 pb-36">
-                {messages.map((msg) => {
+                {messages.length === 0 ? (
+                  <div className="flex flex-col items-center justify-center min-h-[50vh] text-center px-4 pt-8 select-none animate-in fade-in duration-300">
+                    {/* Apple Frosted Brand Emblem */}
+                    <div className="w-13 h-13 p-3.5 rounded-3xl bg-[var(--surface-raised)] border border-[var(--border-strong)] flex items-center justify-center text-[var(--accent)] shadow-xl mb-4 backdrop-blur-xl">
+                      <PantherMissionGlyph size={26} />
+                    </div>
+
+                    <h2 className="text-2xl sm:text-[28px] font-semibold tracking-tight text-[var(--text-primary)]">
+                      {isFr ? "Que souhaitez-vous accomplir ?" : "What would you like to accomplish?"}
+                    </h2>
+                    <p className="text-xs sm:text-sm text-[var(--text-tertiary)] mt-1.5 max-w-md leading-relaxed">
+                      {isFr
+                        ? "Transformez votre intention en travail observable, structuré et exécutable."
+                        : "Turn your intention into observable, structured, and executable work."}
+                    </p>
+
+                    {/* Suggestion Starter Cards (Apple Squircles) */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 w-full max-w-xl mt-8 text-left">
+                      {[
+                        {
+                          icon: Globe,
+                          title: isFr ? "Recherche & Synthèse" : "Deep Research",
+                          prompt: isFr ? "Effectue une recherche approfondie et documentée sur : " : "Perform deep research on: ",
+                          engine: "Ñkyel Research · Tavily & Grounding",
+                        },
+                        {
+                          icon: Cpu,
+                          title: isFr ? "Architecture & Code" : "Engineering & Code",
+                          prompt: isFr ? "Développe et déploie un composant Next.js moderne pour : " : "Build and deploy a modern Next.js component for: ",
+                          engine: "Ñkyel Code · Vercel Labs fx",
+                        },
+                        {
+                          icon: Table,
+                          title: isFr ? "Analyse de Données" : "Data Analysis",
+                          prompt: isFr ? "Analyse ces données chiffrées et dresse un tableau avec graphiques pour : " : "Analyze these data points and generate a table with charts for: ",
+                          engine: "Ñkyel Data · Python Sheets",
+                        },
+                        {
+                          icon: FileText,
+                          title: isFr ? "Rapport & Document" : "Formal Document",
+                          prompt: isFr ? "Rédige un document officiel et structuré sur : " : "Draft a formal structured document on: ",
+                          engine: "Ñkyel Documents · PDF & Docs",
+                        },
+                      ].map((card, idx) => {
+                        const CardIcon = card.icon;
+                        return (
+                          <button
+                            key={idx}
+                            type="button"
+                            onClick={() => {
+                              setInputText(card.prompt);
+                              textareaRef.current?.focus();
+                            }}
+                            className="p-3.5 rounded-2xl bg-[var(--surface-raised)] hover:bg-[var(--hover)] border border-[var(--border)] hover:border-[var(--accent)]/40 text-left transition-all duration-150 group shadow-xs active:scale-[0.99]"
+                          >
+                            <div className="flex items-center gap-2.5">
+                              <div className="w-8 h-8 rounded-xl bg-[var(--accent-subtle)] border border-[var(--accent-muted)] flex items-center justify-center text-[var(--accent)] shrink-0">
+                                <CardIcon size={16} />
+                              </div>
+                              <div className="min-w-0 flex-1">
+                                <p className="font-semibold text-xs text-[var(--text-primary)] group-hover:text-[var(--accent)] transition-colors">
+                                  {card.title}
+                                </p>
+                                <p className="text-[10.5px] text-[var(--text-tertiary)] truncate mt-0.5">
+                                  {card.engine}
+                                </p>
+                              </div>
+                            </div>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                ) : (
+                  messages.map((msg) => {
                   const isUser = msg.role === 'user';
                   return (
                     <div
@@ -473,7 +548,8 @@ export default function AdaptiveChatWorkspace({
                       )}
                     </div>
                   );
-                })}
+                })
+              )}
               </div>
             </div>
 
