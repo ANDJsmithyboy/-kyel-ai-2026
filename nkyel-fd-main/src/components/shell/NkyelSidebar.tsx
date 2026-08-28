@@ -296,7 +296,7 @@ export default function NkyelSidebar() {
           ) : isMobile ? (
             <div className="flex items-center justify-between w-full">
               <span className="font-semibold tracking-tight text-[19px] select-none text-[var(--text-primary)]">
-                ñkyel
+                nkyel
               </span>
               <div className="flex items-center gap-1 pr-1">
                 <button
@@ -337,7 +337,7 @@ export default function NkyelSidebar() {
                     letterSpacing: '-0.025em',
                   }}
                 >
-                  Ñkyel
+                  nkyel
                 </span>
               </Link>
 
