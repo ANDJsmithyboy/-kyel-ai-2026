@@ -19,7 +19,7 @@ from sqlalchemy import select
 from services.groq_service import stream_groq
 from services.qdrant_service import query_qdrant, format_loxo_context
 
-router = APIRouter(prefix="/v1", tags=["Chat v1"])
+router = APIRouter(tags=["Chat v1"])
 
 
 class ChatMessage(BaseModel):

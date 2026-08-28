@@ -39,21 +39,23 @@ export function useAgentSSE() {
     const store = useAgentStore.getState();
     store.setPhase('executing');
 
-    const searchParams = new URLSearchParams({
-      prompt: params.prompt,
-      thread_id: params.threadId,
-      agent_name: params.agentName ?? 'lead_agent',
-    });
-
     const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL ?? '';
-    const url = `${backendUrl}/api/agent/stream/${params.sessionId}?${searchParams}`;
+    const url = `${backendUrl}/api/agent/stream`;
 
     try {
       const response = await fetch(url, {
+        method: 'POST',
         signal: controller.signal,
         headers: {
-          Accept: 'text/event-stream',
+          'Accept': 'text/event-stream',
+          'Content-Type': 'application/json',
         },
+        body: JSON.stringify({
+          conversation_id: params.sessionId,
+          message: params.prompt,
+          model: params.agentName ?? 'lead_agent',
+          plan_mode: false,
+        }),
       });
 
       if (!response.ok) {

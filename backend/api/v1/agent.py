@@ -8,7 +8,7 @@ Fondateur : Daniel Jonathan ANDJ
 import json
 from typing import AsyncGenerator, Optional
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, WebSocket, WebSocketDisconnect
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, Field
 
@@ -23,7 +23,7 @@ from core.database import (
 )
 from services.deerflow_service import stream_deerflow
 
-router = APIRouter(prefix="/v1", tags=["Agent v1"])
+router = APIRouter(tags=["Agent v1"])
 
 
 class AgentRunRequest(BaseModel):
@@ -141,3 +141,24 @@ async def agent_run(
             "X-Accel-Buffering": "no",
         },
     )
+
+@router.websocket("/ws/browser/{session_id}")
+async def websocket_agent_browser(websocket: WebSocket, session_id: str):
+    """
+    Mock WebSocket endpoint for streaming CDP frames (Agent Browser).
+    Currently accepts connection to prevent frontend errors.
+    """
+    await websocket.accept()
+    try:
+        while True:
+            # Maintain connection open. Could send heartbeat or placeholder frames here.
+            # We wait for messages from the frontend (e.g. pings)
+            data = await websocket.receive_text()
+            if data == "ping":
+                await websocket.send_text("pong")
+    except WebSocketDisconnect:
+        # Connection closed by frontend
+        pass
+    except Exception as e:
+        # Avoid crashing on unexpected disconnects
+        pass

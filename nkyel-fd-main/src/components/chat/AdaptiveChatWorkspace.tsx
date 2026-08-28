@@ -614,80 +614,8 @@ export default function AdaptiveChatWorkspace({
                         <Monitor size={14} />
                         <span className="font-medium text-[11px]">{isFr ? 'Bureau' : 'Computer'}</span>
                       </button>
-                          </button>
 
-                          <button
-                            type="button"
-                            onClick={() => handleActionSelect('research')}
-                            className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl hover:bg-[var(--hover)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] text-start transition-colors"
-                          >
-                            <Globe size={16} className="text-emerald-400 shrink-0" />
-                            <div className="flex-1 min-w-0">
-                              <p className="font-medium text-xs text-[var(--text-primary)]">{isFr ? 'Recherche approfondie' : 'Deep Research'}</p>
-                              <p className="text-[10px] text-[var(--text-tertiary)] truncate">{isFr ? 'Veille et sources en direct' : 'Live web grounding & citations'}</p>
-                            </div>
-                          </button>
 
-                          <button
-                            type="button"
-                            onClick={() => handleActionSelect('connections')}
-                            className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl hover:bg-[var(--hover)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] text-start transition-colors"
-                          >
-                            <PlugsConnected size={16} className="text-amber-400 shrink-0" />
-                            <div className="flex-1 min-w-0">
-                              <p className="font-medium text-xs text-[var(--text-primary)]">{isFr ? 'Connecteurs & MCP' : 'Connectors & MCP'}</p>
-                              <p className="text-[10px] text-[var(--text-tertiary)] truncate">{isFr ? 'Google Workspace, GitHub, Slack' : 'Google Workspace, GitHub, Slack'}</p>
-                            </div>
-                          </button>
-
-                          <div className="h-px bg-[var(--border-subtle)] my-1" />
-
-                          <button
-                            type="button"
-                            onClick={() => handleActionSelect('image')}
-                            className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl hover:bg-[var(--hover)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] text-start transition-colors"
-                          >
-                            <Eye size={16} className="text-purple-400 shrink-0" />
-                            <span className="font-medium text-xs text-[var(--text-primary)]">{isFr ? 'Générer une image' : 'Generate image'}</span>
-                          </button>
-
-                          <button
-                            type="button"
-                            onClick={() => handleActionSelect('document')}
-                            className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl hover:bg-[var(--hover)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] text-start transition-colors"
-                          >
-                            <FileText size={16} className="text-blue-400 shrink-0" />
-                            <span className="font-medium text-xs text-[var(--text-primary)]">{isFr ? 'Rédiger un document' : 'Write document'}</span>
-                          </button>
-
-                          <button
-                            type="button"
-                            onClick={() => handleActionSelect('slides')}
-                            className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl hover:bg-[var(--hover)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] text-start transition-colors"
-                          >
-                            <Presentation size={16} className="text-amber-300 shrink-0" />
-                            <span className="font-medium text-xs text-[var(--text-primary)]">{isFr ? 'Créer des diapositives' : 'Create slides'}</span>
-                          </button>
-
-                          <button
-                            type="button"
-                            onClick={() => handleActionSelect('spreadsheet')}
-                            className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl hover:bg-[var(--hover)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] text-start transition-colors"
-                          >
-                            <Table size={16} className="text-emerald-400 shrink-0" />
-                            <span className="font-medium text-xs text-[var(--text-primary)]">{isFr ? 'Tableur & analyse de données' : 'Data & spreadsheet'}</span>
-                          </button>
-
-                          <button
-                            type="button"
-                            onClick={() => handleActionSelect('artifacts')}
-                            className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl hover:bg-[var(--hover)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] text-start transition-colors"
-                          >
-                            <Cpu size={16} className="text-cyan-400 shrink-0" />
-                            <span className="font-medium text-xs text-[var(--text-primary)]">{isFr ? "Ouvrir l'inspecteur d'artefacts" : 'Open artifact inspector'}</span>
-                          </button>
-                        </div>
-                      )}
                     </div>
 
                     {/* Right Cluster: Commands / Mic / Send / Stop */}

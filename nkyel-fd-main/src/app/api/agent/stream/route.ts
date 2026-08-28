@@ -7,7 +7,7 @@ export async function POST(req: NextRequest) {
     const authHeader = req.headers.get('authorization');
     const body = await req.json();
 
-    const response = await fetch(`${FASTAPI_URL}/v1/agent/run`, {
+    const response = await fetch(`${FASTAPI_URL}/api/v1/agent/run`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

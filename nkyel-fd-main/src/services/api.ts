@@ -177,7 +177,7 @@ export async function streamAgent(
   signal?: AbortSignal,
 ) {
   try {
-    const res = await fetch(`${BASE}/v1/agent/run`, {
+    const res = await fetch(`${BASE}/api/v1/agent/run`, {
       method: 'POST',
       headers: getHeaders(token),
       body: JSON.stringify({

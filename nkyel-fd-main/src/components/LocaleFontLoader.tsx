@@ -30,12 +30,12 @@ export default function LocaleFontLoader() {
     const fontToLoad = scriptMap[uiLocale];
     
     if (fontToLoad) {
-      const linkId = \`font-\${uiLocale}\`;
+      const linkId = `font-${uiLocale}`;
       if (!document.getElementById(linkId)) {
         const link = document.createElement('link');
         link.id = linkId;
         link.rel = 'stylesheet';
-        link.href = \`https://fonts.googleapis.com/css2?family=\${fontToLoad}&display=swap\`;
+        link.href = `https://fonts.googleapis.com/css2?family=${fontToLoad}&display=swap`;
         document.head.appendChild(link);
       }
     }

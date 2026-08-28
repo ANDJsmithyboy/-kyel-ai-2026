@@ -19,13 +19,13 @@ from core.cancellation import cancellation_manager
 from db.session import init_db, close_db
 
 # Imports des routeurs v1 — PRODUCTION
-from api.v1.workspaces import router as workspaces_router
-from api.v1.missions import router as missions_router
-from api.v1.workgraph import router as workgraph_router
-from api.v1.conversations import router as conversations_router
-from api.v1.events import router as events_router
-from api.v1.user_settings import router as settings_router
-from api.v1.artifacts_v2 import router as artifacts_v2_router
+# from api.v1.workspaces import router as workspaces_router
+# from api.v1.missions import router as missions_router
+# from api.v1.workgraph import router as workgraph_router
+# from api.v1.conversations import router as conversations_router
+# from api.v1.events import router as events_router
+# from api.v1.user_settings import router as settings_router
+# from api.v1.artifacts_v2 import router as artifacts_v2_router
 from api.auth import router as auth_router
 from api.v1.clerk_webhook import router as clerk_webhook_router
 
@@ -159,13 +159,13 @@ async def global_exception_handler(request, exc):
 
 # ── Montage des routeurs ─────────────────────────────────────
 app.include_router(auth_router)
-app.include_router(workspaces_router, prefix="/api/v1")
-app.include_router(missions_router, prefix="/api/v1")
-app.include_router(workgraph_router, prefix="/api/v1")
-app.include_router(conversations_router, prefix="/api/v1")
-app.include_router(events_router, prefix="/api/v1")
-app.include_router(settings_router, prefix="/api/v1")
-app.include_router(artifacts_v2_router, prefix="/api/v1")
+# app.include_router(workspaces_router, prefix="/api/v1")
+# app.include_router(missions_router, prefix="/api/v1")
+# app.include_router(workgraph_router, prefix="/api/v1")
+# app.include_router(conversations_router, prefix="/api/v1")
+# app.include_router(events_router, prefix="/api/v1")
+# app.include_router(settings_router, prefix="/api/v1")
+# app.include_router(artifacts_v2_router, prefix="/api/v1")
 app.include_router(clerk_webhook_router)
 
 # Routeurs existants réactivés

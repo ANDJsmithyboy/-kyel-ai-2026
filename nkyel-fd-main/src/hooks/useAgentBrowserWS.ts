@@ -21,7 +21,7 @@ export function useAgentBrowserWS(sessionId: string | null) {
     const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL ?? '';
     const wsProtocol = backendUrl.startsWith('https') ? 'wss' : 'ws';
     const host = backendUrl.replace(/^https?:\/\//, '');
-    const url = `${wsProtocol}://${host}/ws/agent/browser/${sessionId}`;
+    const url = `${wsProtocol}://${host}/api/v1/ws/browser/${sessionId}`;
 
     const ws = new WebSocket(url);
     ws.binaryType = 'arraybuffer';
