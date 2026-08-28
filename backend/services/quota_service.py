@@ -56,6 +56,28 @@ SPECIAL_USER_LIMITS: Dict[str, Dict[str, Any]] = {
         "max_deep_research_per_day": 25,
     },
     # Fondateur : Daniel Jonathan ANDJ (Mode God Illimité)
+    "jonathanakarentoutoume@gmail.com": {
+        "tier_name": "CREATOR_GOD_MODE",
+        "badge_label": "Mode God · Créateur",
+        "max_messages_per_day": 999999,
+        "max_image_generations_per_user": 999999,
+        "max_video_generations_per_user": 999999,
+        "max_pdf_ia_requests_per_month": 999999,
+        "max_concurrent_missions": 999,
+        "max_missions_per_day": 999999,
+        "max_deep_research_per_day": 999999,
+    },
+    "smartandjiatechnologies@gmail.com": {
+        "tier_name": "CREATOR_GOD_MODE",
+        "badge_label": "Mode God · Organisation",
+        "max_messages_per_day": 999999,
+        "max_image_generations_per_user": 999999,
+        "max_video_generations_per_user": 999999,
+        "max_pdf_ia_requests_per_month": 999999,
+        "max_concurrent_missions": 999,
+        "max_missions_per_day": 999999,
+        "max_deep_research_per_day": 999999,
+    },
     "danieldouba20@gmail.com": {
         "tier_name": "CREATOR_GOD_MODE",
         "badge_label": "Mode God · Créateur",

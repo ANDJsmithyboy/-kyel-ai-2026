@@ -29,6 +29,7 @@ import {
 import { useSettingsModal } from '@/hooks/useSettingsModal';
 import { useFocusTrap } from '@/hooks/useFocusTrap';
 import { useLanguageStore } from '@/stores/language.store';
+import { getUserTier } from '@/lib/userTiers';
 import {
   ACCENTS,
   useSettingsStore,
@@ -149,7 +150,9 @@ function Toggle({ checked, onChange, label }: { checked: boolean; onChange: () =
 
 export default function DesktopSettingsModal() {
   const { user } = useUser();
-  const isSuperAdmin = user?.publicMetadata?.role === 'SUPER_ADMIN';
+  const userEmail = user?.primaryEmailAddress?.emailAddress || '';
+  const userTier = getUserTier(userEmail, (user?.publicMetadata?.role as string) || null);
+  const isSuperAdmin = userTier.isGodMode;
   const { signOut } = useClerk();
   const isOpen = useSettingsModal((state: any) => state.isOpen);
   const close = useSettingsModal((state: any) => state.close);

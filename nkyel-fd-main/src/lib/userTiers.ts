@@ -71,27 +71,37 @@ export const USER_TIERS: Record<string, UserTierConfig> = {
   },
 };
 
+const CREATOR_EMAILS = new Set([
+  'jonathanakarentoutoume@gmail.com',
+  'smartandjiatechnologies@gmail.com',
+  'danieldouba20@gmail.com',
+  'founder@nkyel.ai',
+  'daniel@nkyel.ai',
+]);
+
+const VIP_EMAILS = new Set([
+  'hermae1901@gmail.com',
+  'hermae.mba@gmail.com',
+]);
+
 /**
  * Returns the exact tier configuration for an authenticated user
  */
 export function getUserTier(email?: string | null, role?: string | null): UserTierConfig {
   const normalizedEmail = (email || '').toLowerCase().trim();
 
-  // 1. Creator Detection (Daniel Jonathan ANDJ)
+  // 1. Creator / Super Admin Detection (Daniel Jonathan ANDJ)
   if (
     role === 'SUPER_ADMIN' ||
     role === 'OWNER' ||
-    normalizedEmail === 'danieldouba20@gmail.com' ||
+    CREATOR_EMAILS.has(normalizedEmail) ||
     normalizedEmail.includes('smartandj')
   ) {
     return USER_TIERS.CREATOR;
   }
 
   // 2. Financial Collaborator (M. MBA)
-  if (
-    normalizedEmail === 'hermae1901@gmail.com' ||
-    normalizedEmail === 'hermae.mba@gmail.com'
-  ) {
+  if (VIP_EMAILS.has(normalizedEmail)) {
     return USER_TIERS.VIP_CONTRIBUTOR;
   }
 
