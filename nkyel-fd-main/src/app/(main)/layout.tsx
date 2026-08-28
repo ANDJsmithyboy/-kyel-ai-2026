@@ -6,8 +6,13 @@
  */
 
 import type { ReactNode } from 'react';
-import NkyelAppShell from '@/components/shell/NkyelAppShell';
 
 export default function MainLayout({ children }: { children: ReactNode }) {
-  return <NkyelAppShell>{children}</NkyelAppShell>;
+  // Le nouveau design Lite (max-w-md) gère son propre layout dans NkyelLiteShell
+  // On fournit juste le fond noir absolu pour le reste de l'écran (bords sur desktop).
+  return (
+    <div className="min-h-screen bg-[#05070E]">
+      {children}
+    </div>
+  );
 }

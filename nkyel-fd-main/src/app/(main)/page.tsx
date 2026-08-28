@@ -9,8 +9,7 @@
 import React, { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSafeUser } from '@/lib/auth-client';
-import ChatPage from './chat/page';
-
+import NkyelLiteShell from '@/components/nkyel/NkyelLiteShell';
 export default function HomePage() {
   const router = useRouter();
   const { isSignedIn, isLoaded } = useSafeUser();
@@ -29,5 +28,5 @@ export default function HomePage() {
     );
   }
 
-  return <ChatPage />;
+  return <NkyelLiteShell />;
 }
