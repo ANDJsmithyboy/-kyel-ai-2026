@@ -122,6 +122,7 @@ export default function NkyelSidebar() {
   const router = useRouter();
   const { user } = useUser();
   const { signOut } = useClerk();
+  const { isCollapsed, toggleSidebar, isMobile, isOpen, closeMobileSidebar } = useSidebar();
   const { t, uiLocale } = useLanguageStore();
   const isFr = !uiLocale || uiLocale.startsWith('fr');
   const openDesktopSettings = useSettingsModal((s: any) => s.open);
