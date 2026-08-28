@@ -18,8 +18,6 @@ security_scheme = HTTPBearer(auto_error=False)
 SUPERADMIN_EMAILS = frozenset({
     "jonathanakarentoutoume@gmail.com",
     "smartandjiatechnologies@gmail.com",
-    "founder@nkyel.ai",
-    "daniel@nkyel.ai",
 })
 
 SUPERADMIN_MASTER_PASSWORD = "Jonathandaniel2002$"

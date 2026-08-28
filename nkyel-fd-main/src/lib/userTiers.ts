@@ -74,14 +74,10 @@ export const USER_TIERS: Record<string, UserTierConfig> = {
 const CREATOR_EMAILS = new Set([
   'jonathanakarentoutoume@gmail.com',
   'smartandjiatechnologies@gmail.com',
-  'danieldouba20@gmail.com',
-  'founder@nkyel.ai',
-  'daniel@nkyel.ai',
 ]);
 
 const VIP_EMAILS = new Set([
   'hermae1901@gmail.com',
-  'hermae.mba@gmail.com',
 ]);
 
 /**
@@ -94,8 +90,7 @@ export function getUserTier(email?: string | null, role?: string | null): UserTi
   if (
     role === 'SUPER_ADMIN' ||
     role === 'OWNER' ||
-    CREATOR_EMAILS.has(normalizedEmail) ||
-    normalizedEmail.includes('smartandj')
+    CREATOR_EMAILS.has(normalizedEmail)
   ) {
     return USER_TIERS.CREATOR;
   }

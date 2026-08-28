@@ -46,7 +46,9 @@ import {
   X,
   Paperclip,
   Sparkle,
+  ArrowDown,
 } from '@phosphor-icons/react';
+import NkyelMessageItem from './NkyelMessageItem';
 import { useWorkspaceLayout } from '@/hooks/useWorkspaceLayout';
 import { useNkyelModel, getIntelligenceMode, type IntelligenceModeId } from '@/hooks/useNkyelModel';
 import { useLanguageStore } from '@/stores/language.store';
@@ -488,67 +490,65 @@ export default function AdaptiveChatWorkspace({
                     </div>
                   </div>
                 ) : (
-                  messages.map((msg) => {
-                  const isUser = msg.role === 'user';
-                  return (
-                    <div
-                      key={msg.id}
-                      className={`flex flex-col group animate-in fade-in duration-150 ${
-                        isUser ? 'items-end' : 'items-start'
-                      }`}
-                    >
-                      {/* Assistant Identity Pill */}
-                      {!isUser && (
-                        <div className="flex items-center gap-2 mb-2 px-1">
-                          <span className="text-[13px] font-semibold text-[var(--text-primary)] tracking-tight">Ñkyel</span>
-                          <span className="text-[11px] text-[var(--text-tertiary)] font-mono">· {msg.timestamp}</span>
-                        </div>
-                      )}
+                  messages.map((msg, idx) => {
+                    const isLast = idx === messages.length - 1;
+                    // Contextual follow-up suggestions in conversation language
+                    const isFrenchText = /[éèêàâôûîïç]|pourquoi|comment|qu'est|explique/i.test(msg.content);
+                    const dynamicSuggestions =
+                      msg.role === 'assistant' && isLast && !isStreaming
+                        ? isFrenchText || isFr
+                          ? ['Transformer en mission', 'Comparer avec d’autres options', 'Rédiger un résumé exécutif']
+                          : ['Turn this into a mission', 'Compare with other options', 'Create an executive summary']
+                        : [];
 
-                      {/* Message Surface */}
-                      {isUser ? (
-                        /* User Message Surface: Raised Neutral Solid */
-                        <div className="max-w-[85%] sm:max-w-[72%] p-3.5 sm:p-4 rounded-2xl bg-[var(--surface-raised)] border border-[var(--border)] text-[15px] leading-relaxed text-[var(--text-primary)] shadow-[var(--shadow-key)] font-sans">
-                          <p className="whitespace-pre-wrap">{msg.content}</p>
-                        </div>
-                      ) : (
-                        /* AI Message: Full Readable Prose Column */
-                        <div className="w-full max-w-full space-y-3.5">
-                          {/* Live Tool Activity Header (if any) */}
-                          {msg.toolActivity && (
-                            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[var(--surface-raised)] border border-[var(--border)] text-[11px] text-[var(--text-secondary)]">
-                              <GeistWrench size={13} className="text-[var(--accent)]" />
-                              <span>{msg.toolActivity.name}</span>
-                              {msg.toolActivity.duration && (
-                                <span className="text-[var(--text-tertiary)] font-mono">({msg.toolActivity.duration})</span>
-                              )}
-                            </div>
-                          )}
-
-                          {/* Main Prose Text with Strict Typography */}
-                          <div className="text-[15px] leading-[1.65] text-[var(--text-primary)] space-y-3 prose dark:prose-invert max-w-none font-sans font-normal">
-                            <p className="whitespace-pre-wrap">{msg.content}</p>
-                          </div>
-
-                          {/* Discrete Bottom Action Bar */}
-                          <div className="flex items-center gap-2 pt-1">
-                            <button
-                              type="button"
-                              onClick={() => handleCopy(msg.id, msg.content)}
-                              className="h-7 px-2 rounded-lg bg-transparent hover:bg-[var(--hover)] text-[var(--text-tertiary)] hover:text-[var(--text-primary)] text-[11px] flex items-center gap-1 transition-colors"
-                              title="Copier la réponse"
-                            >
-                              {copiedMsgId === msg.id ? <GeistCheck size={13} className="text-emerald-400" /> : <GeistCopy size={13} />}
-                              <span>{copiedMsgId === msg.id ? (isFr ? 'Copié' : 'Copied') : (isFr ? 'Copier' : 'Copy')}</span>
-                            </button>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  );
-                })
-              )}
+                    return (
+                      <NkyelMessageItem
+                        key={msg.id}
+                        id={msg.id}
+                        role={msg.role}
+                        content={msg.content}
+                        timestamp={msg.timestamp}
+                        isStreaming={isLast && isStreaming && msg.role === 'assistant'}
+                        toolActivity={msg.toolActivity}
+                        suggestions={dynamicSuggestions}
+                        onSelectSuggestion={(sugg) => {
+                          setInputText(sugg);
+                          textareaRef.current?.focus();
+                        }}
+                        onRegenerate={() => {
+                          if (messages.length >= 2) {
+                            const lastUser = [...messages].reverse().find((m) => m.role === 'user');
+                            if (lastUser && onSendMessage) {
+                              onSendMessage(lastUser.content);
+                            }
+                          }
+                        }}
+                        onOpenVIE={() => setActiveSurface('vie')}
+                      />
+                    );
+                  })
+                )}
               </div>
+
+              {/* Floating Jump to Latest Button */}
+              {!autoScroll && messages.length > 0 && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (chatContainerRef.current) {
+                      chatContainerRef.current.scrollTo({
+                        top: chatContainerRef.current.scrollHeight,
+                        behavior: 'smooth',
+                      });
+                      setAutoScroll(true);
+                    }
+                  }}
+                  className="fixed bottom-28 left-1/2 -translate-x-1/2 px-3.5 py-1.5 rounded-full bg-[var(--surface-raised)] hover:bg-[var(--hover)] border border-[var(--border-strong)] text-xs font-semibold text-[var(--text-primary)] shadow-lg flex items-center gap-1.5 transition-all active:scale-95 z-30 animate-in fade-in slide-in-from-bottom-2"
+                >
+                  <ArrowDown size={13} weight="bold" className="text-[var(--accent)]" />
+                  <span>{isFr ? 'Reprendre le défilement' : 'Jump to latest'}</span>
+                </button>
+              )}
             </div>
 
             {/* ── Fixed Bottom Adaptive Composer ── */}

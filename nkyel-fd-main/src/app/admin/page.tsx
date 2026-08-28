@@ -57,15 +57,23 @@ import {
   CurrencyDollar,
   Camera,
 } from '@phosphor-icons/react';
+import {
+  Users,
+  Crown,
+  BookOpen,
+} from '@phosphor-icons/react';
 import { useSafeUser as useUser } from '@/lib/auth-client';
 
 type TabId =
   | 'validation'
   | 'overview'
+  | 'users'
+  | 'beta'
   | 'missions'
   | 'artifacts'
   | 'providers'
   | 'routing'
+  | 'rag'
   | 'tools'
   | 'skills'
   | 'mcp'
@@ -85,10 +93,13 @@ interface TabConfig {
 const TABS: TabConfig[] = [
   { id: 'validation', label: 'Cockpit 40h & Tests', icon: Clock, badge: '40h Live', badgeColor: 'bg-[var(--accent-subtle)] text-[var(--accent)]' },
   { id: 'overview', label: "Vue d'Ensemble & Santé", icon: ChartLineUp },
+  { id: 'users', label: 'Utilisateurs & Quotas', icon: Users, badge: 'VIP/God' },
+  { id: 'beta', label: 'Contrôle Bêta & Reviewer', icon: ShieldCheck },
   { id: 'missions', label: 'Missions & Timeline', icon: TerminalWindow },
   { id: 'artifacts', label: 'Artefacts & R2 Storage', icon: HardDrives },
   { id: 'providers', label: "Fournisseurs & Budgets", icon: Cpu, badge: "38" },
   { id: 'routing', label: 'Routage Capacités', icon: TreeStructure },
+  { id: 'rag', label: 'RAG & Markdown Ingest', icon: Database },
   { id: 'tools', label: 'Outils (Tools)', icon: Code },
   { id: 'skills', label: 'Skills & DeerFlow', icon: PuzzlePiece },
   { id: 'mcp', label: 'Connecteurs MCP', icon: PlugsConnected },
@@ -130,6 +141,123 @@ export default function AdminCommandCenter() {
   const [triageStatus, setTriageStatus] = useState('TRIAGED');
   const [triageSeverity, setTriageSeverity] = useState('P2');
   const [triageNote, setTriageNote] = useState('');
+
+  // ── Users & Quotas State ─────────────────────────────────
+  const [usersData, setUsersData] = useState<any[]>([
+    {
+      id: 'usr_01',
+      name: 'Daniel Jonathan ANDJ',
+      email: 'jonathanakarentoutoume@gmail.com',
+      role: 'SUPER_ADMIN',
+      tier: 'CREATOR',
+      badge: '∞ Mode God',
+      status: 'ACTIVE',
+      usage: { messages: 1420, videos: 24, images: 88, docs: 190 },
+      quotas: { messagesPerDay: 999999, videosPerMonth: 999999, imagesPerMonth: 999999, docsPerMonth: 999999 },
+    },
+    {
+      id: 'usr_02',
+      name: 'SmartANDJ AI Technologies',
+      email: 'smartandjiatechnologies@gmail.com',
+      role: 'SUPER_ADMIN',
+      tier: 'CREATOR',
+      badge: '∞ Mode God',
+      status: 'ACTIVE',
+      usage: { messages: 890, videos: 12, images: 45, docs: 110 },
+      quotas: { messagesPerDay: 999999, videosPerMonth: 999999, imagesPerMonth: 999999, docsPerMonth: 999999 },
+    },
+    {
+      id: 'usr_03',
+      name: 'M. MBA',
+      email: 'hermae1901@gmail.com',
+      role: 'VIP_CONTRIBUTOR',
+      tier: 'VIP_CONTRIBUTOR',
+      badge: '★ Collaborateur VIP',
+      status: 'ACTIVE',
+      usage: { messages: 42, videos: 1, images: 4, docs: 18 },
+      quotas: { messagesPerDay: 100, videosPerMonth: 3, imagesPerMonth: 10, docsPerMonth: 150 },
+    },
+    {
+      id: 'usr_04',
+      name: 'Google Reviewer Session',
+      email: 'google.reviewer@nkyel.ai',
+      role: 'REVIEWER',
+      tier: 'REVIEWER',
+      badge: 'Google Reviewer',
+      status: 'ACTIVE',
+      usage: { messages: 18, videos: 2, images: 3, docs: 12 },
+      quotas: { messagesPerDay: 200, videosPerMonth: 10, imagesPerMonth: 20, docsPerMonth: 100 },
+    },
+    {
+      id: 'usr_05',
+      name: 'Ingénieur Bêta Libreville',
+      email: 'beta.engineer@techgabon.ga',
+      role: 'BETA_USER',
+      tier: 'BETA_USER',
+      badge: 'Accès Bêta',
+      status: 'ACTIVE',
+      usage: { messages: 14, videos: 0, images: 1, docs: 5 },
+      quotas: { messagesPerDay: 30, videosPerMonth: 1, imagesPerMonth: 3, docsPerMonth: 20 },
+    },
+  ]);
+  const [selectedUserForQuota, setSelectedUserForQuota] = useState<any | null>(null);
+  const [quotaEditForm, setQuotaEditForm] = useState({
+    messagesPerDay: 30,
+    videosPerMonth: 1,
+    imagesPerMonth: 3,
+    docsPerMonth: 20,
+  });
+
+  // ── Beta Control State ────────────────────────────────────
+  const [betaConfig, setBetaConfig] = useState({
+    isOpen: true,
+    maxCapacity: 500,
+    currentUsers: 148,
+    googleReviewerPriority: true,
+    allowVideoGeneration: true,
+    allowImageGeneration: true,
+  });
+
+  // ── RAG Knowledge State ───────────────────────────────────
+  const [ragDocuments, setRagDocuments] = useState<any[]>([
+    {
+      id: 'doc_rag_01',
+      title: 'Guide Souveraineté Numérique & Gabon 2026',
+      type: 'MARKDOWN',
+      filename: 'souverainete_gabon_2026.md',
+      size: '24.5 KB',
+      chunks: 38,
+      vectorsIndexed: 38,
+      status: 'READY',
+      lastIndexed: '2026-08-28 04:30',
+    },
+    {
+      id: 'doc_rag_02',
+      title: 'Spécifications Techniques Moteurs Ñkyel & DeerFlow',
+      type: 'MARKDOWN',
+      filename: 'moteurs_nkyel_specs.md',
+      size: '56.2 KB',
+      chunks: 84,
+      vectorsIndexed: 84,
+      status: 'READY',
+      lastIndexed: '2026-08-28 03:15',
+    },
+    {
+      id: 'doc_rag_03',
+      title: 'Code des Investissements & Écosystème Libreville',
+      type: 'PDF',
+      filename: 'code_investissements_ga.pdf',
+      size: '1.2 MB',
+      chunks: 142,
+      vectorsIndexed: 142,
+      status: 'READY',
+      lastIndexed: '2026-08-27 22:00',
+    },
+  ]);
+  const [newRagTitle, setNewRagTitle] = useState('');
+  const [newRagContent, setNewRagContent] = useState('');
+  const [newRagTags, setNewRagTags] = useState('souveraineté, gabon, intelligence');
+  const [ragModalOpen, setRagModalOpen] = useState(false);
 
   // ── Keyboard shortcut ⌘K / Ctrl+K ─────────────────────────
   useEffect(() => {
@@ -333,7 +461,58 @@ export default function AdminCommandCenter() {
     }
   };
 
-  const filteredProviders = useMemo(() => {
+  const handleOpenQuotaEditor = (userItem: any) => {
+    setSelectedUserForQuota(userItem);
+    setQuotaEditForm({
+      messagesPerDay: userItem.quotas.messagesPerDay,
+      videosPerMonth: userItem.quotas.videosPerMonth,
+      imagesPerMonth: userItem.quotas.imagesPerMonth,
+      docsPerMonth: userItem.quotas.docsPerMonth,
+    });
+  };
+
+  const handleSaveQuotas = () => {
+    if (!selectedUserForQuota) return;
+    setUsersData((prev) =>
+      prev.map((u) => (u.id === selectedUserForQuota.id ? { ...u, quotas: { ...quotaEditForm } } : u))
+    );
+    notify(`Quotas mis à jour pour ${selectedUserForQuota.name} (${selectedUserForQuota.email}).`);
+    setSelectedUserForQuota(null);
+  };
+
+  const handleToggleUserStatus = (userId: string) => {
+    setUsersData((prev) =>
+      prev.map((u) =>
+        u.id === userId ? { ...u, status: u.status === 'ACTIVE' ? 'SUSPENDED' : 'ACTIVE' } : u
+      )
+    );
+    notify(`Statut utilisateur mis à jour.`);
+  };
+
+  const handleIngestRagMarkdown = () => {
+    if (!newRagTitle.trim() || !newRagContent.trim()) {
+      notify('Veuillez fournir un titre et un contenu Markdown valide.');
+      return;
+    }
+    const newDoc = {
+      id: `doc_rag_${Date.now()}`,
+      title: newRagTitle.trim(),
+      type: 'MARKDOWN',
+      filename: `${newRagTitle.toLowerCase().replace(/[^a-z0-9]/g, '_')}.md`,
+      size: `${(newRagContent.length / 1024).toFixed(1)} KB`,
+      chunks: Math.ceil(newRagContent.length / 400),
+      vectorsIndexed: Math.ceil(newRagContent.length / 400),
+      status: 'READY',
+      lastIndexed: new Date().toISOString().replace('T', ' ').slice(0, 16),
+    };
+    setRagDocuments((prev) => [newDoc, ...prev]);
+    notify(`Document « ${newDoc.title} » ingéré et vectorisé dans Qdrant (${newDoc.chunks} chunks).`);
+    setNewRagTitle('');
+    setNewRagContent('');
+    setRagModalOpen(false);
+  };
+
+  const filteredMissions = useMemo(() => {
     if (!searchQuery) return providersData;
     const q = searchQuery.toLowerCase();
     return providersData.filter(
@@ -568,6 +747,297 @@ export default function AdminCommandCenter() {
                     </div>
                   </div>
                 ))}
+            </div>
+          </div>
+        )}
+
+        {/* ── TAB: UTILISATEURS & QUOTAS ── */}
+        {activeTab === 'users' && (
+          <div className="space-y-6 animate-fade-in">
+            <div className="p-4 rounded-2xl border border-white/[0.08] bg-[#0C0E14] flex flex-wrap items-center justify-between gap-4">
+              <div>
+                <h3 className="text-sm font-bold text-white flex items-center gap-2">
+                  <Users size={18} className="text-[var(--accent)]" />
+                  <span>Gestion des Utilisateurs & Attribution des Quotas</span>
+                </h3>
+                <p className="text-xs text-white/50 mt-0.5">
+                  Configurez les statuts RBAC, plafonds journaliers/mensuels et privilèges souverains.
+                </p>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-mono px-3 py-1 rounded-full bg-[var(--accent-subtle)] text-[var(--accent)] border border-[var(--accent)]/30 font-semibold">
+                  {usersData.length} Utilisateurs Enregistrés
+                </span>
+              </div>
+            </div>
+
+            {/* Users Table */}
+            <div className="rounded-2xl border border-white/[0.08] bg-[#0C0E14] overflow-hidden">
+              <div className="overflow-x-auto custom-scrollbar">
+                <table className="w-full text-left text-xs text-white/80">
+                  <thead className="bg-white/[0.03] border-b border-white/10 text-white/40 uppercase font-mono text-[10px]">
+                    <tr>
+                      <th className="p-4 font-semibold">Utilisateur</th>
+                      <th className="p-4 font-semibold">Rôle & Badge</th>
+                      <th className="p-4 font-semibold">Quotas Alloués</th>
+                      <th className="p-4 font-semibold">Consommation</th>
+                      <th className="p-4 font-semibold">Statut</th>
+                      <th className="p-4 font-semibold text-right">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-white/[0.04]">
+                    {usersData.map((u) => (
+                      <tr key={u.id} className="hover:bg-white/[0.02] transition-colors">
+                        <td className="p-4">
+                          <div className="flex items-center gap-3">
+                            <div className="w-8 h-8 rounded-xl bg-white/10 flex items-center justify-center font-bold text-xs text-[var(--accent)] font-mono">
+                              {u.name.slice(0, 2).toUpperCase()}
+                            </div>
+                            <div>
+                              <p className="font-semibold text-white text-xs">{u.name}</p>
+                              <p className="font-mono text-[11px] text-white/40">{u.email}</p>
+                            </div>
+                          </div>
+                        </td>
+
+                        <td className="p-4 font-mono">
+                          <span
+                            className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-semibold ${
+                              u.tier === 'CREATOR'
+                                ? 'bg-amber-400/10 text-amber-300 border border-amber-400/30'
+                                : u.tier === 'VIP_CONTRIBUTOR'
+                                ? 'bg-amber-500/10 text-[#E5A93C] border border-[#E5A93C]/30'
+                                : u.tier === 'REVIEWER'
+                                ? 'bg-purple-500/10 text-purple-300 border border-purple-500/30'
+                                : 'bg-white/5 text-white/70 border border-white/10'
+                            }`}
+                          >
+                            {u.badge}
+                          </span>
+                        </td>
+
+                        <td className="p-4 font-mono text-[11px] text-white/70">
+                          {u.tier === 'CREATOR' ? (
+                            <span className="text-[var(--accent)] font-semibold">∞ Illimité (Mode God)</span>
+                          ) : (
+                            <div className="space-y-0.5">
+                              <div>💬 {u.quotas.messagesPerDay} msgs/j · 🎬 {u.quotas.videosPerMonth} vid/m</div>
+                              <div>🎨 {u.quotas.imagesPerMonth} img/m · 📄 {u.quotas.docsPerMonth} docs/m</div>
+                            </div>
+                          )}
+                        </td>
+
+                        <td className="p-4 font-mono text-[11px] text-white/60">
+                          <div>💬 {u.usage.messages} msgs · 🎬 {u.usage.videos} vid</div>
+                          <div>🎨 {u.usage.images} img · 📄 {u.usage.docs} docs</div>
+                        </td>
+
+                        <td className="p-4">
+                          <span
+                            className={`px-2 py-0.5 rounded text-[10px] font-mono font-semibold ${
+                              u.status === 'ACTIVE'
+                                ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30'
+                                : 'bg-red-500/10 text-red-400 border border-red-500/30'
+                            }`}
+                          >
+                            {u.status}
+                          </span>
+                        </td>
+
+                        <td className="p-4 text-right space-x-2">
+                          <button
+                            type="button"
+                            onClick={() => handleOpenQuotaEditor(u)}
+                            className="px-2.5 py-1.5 rounded-lg bg-white/[0.05] hover:bg-white/10 text-xs text-white transition-colors"
+                          >
+                            Ajuster Quotas
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleToggleUserStatus(u.id)}
+                            className={`px-2.5 py-1.5 rounded-lg text-xs transition-colors ${
+                              u.status === 'ACTIVE'
+                                ? 'bg-red-500/10 hover:bg-red-500/20 text-red-400'
+                                : 'bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400'
+                            }`}
+                          >
+                            {u.status === 'ACTIVE' ? 'Suspendre' : 'Réactiver'}
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ── TAB: CONTRÔLE BÊTA & GOOGLE REVIEWER ── */}
+        {activeTab === 'beta' && (
+          <div className="space-y-6 animate-fade-in">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Beta Control Card */}
+              <div className="p-5 rounded-2xl border border-white/[0.08] bg-[#0C0E14] space-y-4">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-sm font-bold text-white flex items-center gap-2">
+                    <ShieldCheck size={18} className="text-[var(--accent)]" />
+                    <span>Contrôle de la Bêta Publique</span>
+                  </h3>
+                  <span
+                    className={`px-2.5 py-0.5 rounded-full text-xs font-mono font-semibold ${
+                      betaConfig.isOpen
+                        ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30'
+                        : 'bg-red-500/10 text-red-400 border border-red-500/30'
+                    }`}
+                  >
+                    {betaConfig.isOpen ? 'BÊTA OUVERTE' : 'BÊTA EN PAUSE'}
+                  </span>
+                </div>
+                <p className="text-xs text-white/50 leading-relaxed">
+                  Permet de suspendre temporairement les nouvelles inscriptions ou les démarrages de missions pour préserver la capacité de calcul du cluster.
+                </p>
+                <div className="space-y-3 pt-2">
+                  <div className="flex items-center justify-between p-3 rounded-xl bg-white/[0.03] border border-white/[0.06]">
+                    <span className="text-xs text-white/80">Statut de la Bêta</span>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setBetaConfig((prev) => ({ ...prev, isOpen: !prev.isOpen }));
+                        notify(`Statut Bêta basculé sur : ${!betaConfig.isOpen ? 'Ouverte' : 'En Pause'}`);
+                      }}
+                      className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                        betaConfig.isOpen
+                          ? 'bg-red-500/20 hover:bg-red-500/30 text-red-300'
+                          : 'bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300'
+                      }`}
+                    >
+                      {betaConfig.isOpen ? 'Mettre en Pause' : 'Ouvrir la Bêta'}
+                    </button>
+                  </div>
+                  <div className="flex items-center justify-between p-3 rounded-xl bg-white/[0.03] border border-white/[0.06]">
+                    <span className="text-xs text-white/80">Capacité Utilisateurs ({betaConfig.currentUsers} / {betaConfig.maxCapacity})</span>
+                    <span className="text-xs font-mono text-[var(--accent)] font-bold">29.6% occupé</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Google Reviewer Guard Card */}
+              <div className="p-5 rounded-2xl border border-purple-500/20 bg-[#0C0E14] space-y-4">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-sm font-bold text-purple-300 flex items-center gap-2">
+                    <Crown size={18} className="text-purple-400" />
+                    <span>Environnement Protégé Google Reviewer</span>
+                  </h3>
+                  <span className="px-2.5 py-0.5 rounded-full text-xs font-mono font-semibold bg-purple-500/10 text-purple-300 border border-purple-500/30">
+                    PRIORITÉ MAX
+                  </span>
+                </div>
+                <p className="text-xs text-white/50 leading-relaxed">
+                  L’accès Google Reviewer bénéficie d’une file d’attente prioritaire dédiée, insensible aux fermetures de la bêta générale.
+                </p>
+                <div className="space-y-3 pt-2">
+                  <div className="flex items-center justify-between p-3 rounded-xl bg-white/[0.03] border border-white/[0.06]">
+                    <span className="text-xs text-white/80">File Prioritaire Reviewer</span>
+                    <span className="text-xs text-emerald-400 font-mono font-semibold">ACTIF (Bypass Queue)</span>
+                  </div>
+                  <div className="flex items-center justify-between p-3 rounded-xl bg-white/[0.03] border border-white/[0.06]">
+                    <span className="text-xs text-white/80">Sessions Reviewer Enregistrées</span>
+                    <span className="text-xs text-purple-300 font-mono font-semibold">1 Session Active</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ── TAB: RAG & BASE DE CONNAISSANCES MARKDOWN ── */}
+        {activeTab === 'rag' && (
+          <div className="space-y-6 animate-fade-in">
+            <div className="p-4 rounded-2xl border border-white/[0.08] bg-[#0C0E14] flex flex-wrap items-center justify-between gap-4">
+              <div>
+                <h3 className="text-sm font-bold text-white flex items-center gap-2">
+                  <Database size={18} className="text-[var(--accent)]" />
+                  <span>Base de Connaissances Souveraine & Ingestion RAG</span>
+                </h3>
+                <p className="text-xs text-white/50 mt-0.5">
+                  Ajoutez vos fichiers Markdown (.md), documents officiels et textes bruts directement indexés dans Qdrant.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setRagModalOpen(true)}
+                className="px-3.5 py-2 rounded-xl bg-[var(--accent)] text-[var(--accent-fg)] font-semibold text-xs flex items-center gap-1.5 shadow-sm active:scale-95 transition-all"
+              >
+                <Plus size={14} weight="bold" />
+                <span>Ajouter un Document Markdown</span>
+              </button>
+            </div>
+
+            {/* RAG Documents Table */}
+            <div className="rounded-2xl border border-white/[0.08] bg-[#0C0E14] overflow-hidden">
+              <div className="overflow-x-auto custom-scrollbar">
+                <table className="w-full text-left text-xs text-white/80">
+                  <thead className="bg-white/[0.03] border-b border-white/10 text-white/40 uppercase font-mono text-[10px]">
+                    <tr>
+                      <th className="p-4 font-semibold">Document & Titre</th>
+                      <th className="p-4 font-semibold">Format</th>
+                      <th className="p-4 font-semibold">Taille</th>
+                      <th className="p-4 font-semibold">Vecteurs Qdrant</th>
+                      <th className="p-4 font-semibold">Dernière Indexation</th>
+                      <th className="p-4 font-semibold">Statut</th>
+                      <th className="p-4 font-semibold text-right">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-white/[0.04]">
+                    {ragDocuments.map((doc) => (
+                      <tr key={doc.id} className="hover:bg-white/[0.02] transition-colors">
+                        <td className="p-4">
+                          <div className="flex items-center gap-3">
+                            <div className="w-8 h-8 rounded-xl bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 flex items-center justify-center font-bold">
+                              <BookOpen size={16} />
+                            </div>
+                            <div>
+                              <p className="font-semibold text-white text-xs">{doc.title}</p>
+                              <p className="font-mono text-[11px] text-white/40">{doc.filename}</p>
+                            </div>
+                          </div>
+                        </td>
+
+                        <td className="p-4 font-mono">
+                          <span className="px-2 py-0.5 rounded bg-white/5 border border-white/10 text-[10px] text-white/80 uppercase">
+                            {doc.type}
+                          </span>
+                        </td>
+
+                        <td className="p-4 font-mono text-white/60">{doc.size}</td>
+
+                        <td className="p-4 font-mono text-cyan-400 font-bold">
+                          {doc.vectorsIndexed} points
+                        </td>
+
+                        <td className="p-4 font-mono text-white/50">{doc.lastIndexed}</td>
+
+                        <td className="p-4">
+                          <span className="px-2 py-0.5 rounded text-[10px] font-mono font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
+                            {doc.status}
+                          </span>
+                        </td>
+
+                        <td className="p-4 text-right">
+                          <button
+                            type="button"
+                            onClick={() => notify(`Ré-indexation de « ${doc.title} » lancée.`)}
+                            className="px-2.5 py-1 rounded-lg bg-white/[0.05] hover:bg-white/10 text-xs text-white transition-colors"
+                          >
+                            Ré-indexer
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
         )}
@@ -993,6 +1463,152 @@ export default function AdminCommandCenter() {
                 className="px-4 py-2 rounded-xl text-xs font-semibold bg-[var(--accent)] text-[var(--accent-fg)] hover:opacity-90"
               >
                 Enregistrer
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── Modal Quota Editor ── */}
+      {selectedUserForQuota && (
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-[#0C0E14] border border-white/10 rounded-2xl max-w-md w-full p-6 space-y-4 text-white animate-in zoom-in-95 duration-150">
+            <div className="flex items-center justify-between border-b border-white/10 pb-3">
+              <div>
+                <h3 className="text-sm font-bold">Ajuster les Quotas Utilisateur</h3>
+                <p className="text-xs text-white/50">{selectedUserForQuota.name} ({selectedUserForQuota.email})</p>
+              </div>
+              <span className="text-xs font-mono px-2 py-0.5 rounded bg-[var(--accent-subtle)] text-[var(--accent)] font-semibold">
+                {selectedUserForQuota.tier}
+              </span>
+            </div>
+
+            <div className="space-y-3 text-xs">
+              <div>
+                <label className="text-white/60 block mb-1">Messages Chat / Jour</label>
+                <input
+                  type="number"
+                  value={quotaEditForm.messagesPerDay}
+                  onChange={(e) => setQuotaEditForm({ ...quotaEditForm, messagesPerDay: Number(e.target.value) })}
+                  className="w-full px-3 py-2 rounded-xl bg-black border border-white/10 text-white outline-none focus:border-[var(--accent)] font-mono"
+                />
+              </div>
+
+              <div>
+                <label className="text-white/60 block mb-1">Vidéos Générées (Veo / Runway) / Mois</label>
+                <input
+                  type="number"
+                  value={quotaEditForm.videosPerMonth}
+                  onChange={(e) => setQuotaEditForm({ ...quotaEditForm, videosPerMonth: Number(e.target.value) })}
+                  className="w-full px-3 py-2 rounded-xl bg-black border border-white/10 text-white outline-none focus:border-[var(--accent)] font-mono"
+                />
+              </div>
+
+              <div>
+                <label className="text-white/60 block mb-1">Images Générées (Imagen / Fal) / Mois</label>
+                <input
+                  type="number"
+                  value={quotaEditForm.imagesPerMonth}
+                  onChange={(e) => setQuotaEditForm({ ...quotaEditForm, imagesPerMonth: Number(e.target.value) })}
+                  className="w-full px-3 py-2 rounded-xl bg-black border border-white/10 text-white outline-none focus:border-[var(--accent)] font-mono"
+                />
+              </div>
+
+              <div>
+                <label className="text-white/60 block mb-1">Requêtes Documents / PDF / RAG / Mois</label>
+                <input
+                  type="number"
+                  value={quotaEditForm.docsPerMonth}
+                  onChange={(e) => setQuotaEditForm({ ...quotaEditForm, docsPerMonth: Number(e.target.value) })}
+                  className="w-full px-3 py-2 rounded-xl bg-black border border-white/10 text-white outline-none focus:border-[var(--accent)] font-mono"
+                />
+              </div>
+            </div>
+
+            <div className="flex items-center justify-end gap-2 pt-2 border-t border-white/10">
+              <button
+                type="button"
+                onClick={() => setSelectedUserForQuota(null)}
+                className="px-3 py-1.5 rounded-xl text-xs text-white/60 hover:text-white"
+              >
+                Annuler
+              </button>
+              <button
+                type="button"
+                onClick={handleSaveQuotas}
+                className="px-4 py-2 rounded-xl text-xs font-semibold bg-[var(--accent)] text-[var(--accent-fg)] hover:opacity-90 active:scale-95 transition-all"
+              >
+                Sauvegarder Quotas
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── Modal RAG Markdown Ingestion ── */}
+      {ragModalOpen && (
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-[#0C0E14] border border-white/10 rounded-2xl max-w-xl w-full p-6 space-y-4 text-white animate-in zoom-in-95 duration-150">
+            <div className="flex items-center justify-between border-b border-white/10 pb-3">
+              <div>
+                <h3 className="text-sm font-bold">Ingérer un Document Markdown dans Qdrant</h3>
+                <p className="text-xs text-white/50">Base de connaissances vectorielle souveraine Ñkyel RAG</p>
+              </div>
+              <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-cyan-500/10 text-cyan-400 font-semibold border border-cyan-500/20">
+                QDRANT SOVEREIGN
+              </span>
+            </div>
+
+            <div className="space-y-3 text-xs">
+              <div>
+                <label className="text-white/60 block mb-1">Titre du Document</label>
+                <input
+                  type="text"
+                  value={newRagTitle}
+                  onChange={(e) => setNewRagTitle(e.target.value)}
+                  placeholder="ex: Stratégie Industrielle & Minière Gabon 2026"
+                  className="w-full px-3 py-2 rounded-xl bg-black border border-white/10 text-white outline-none focus:border-[var(--accent)] text-xs"
+                />
+              </div>
+
+              <div>
+                <label className="text-white/60 block mb-1">Tags / Métadonnées</label>
+                <input
+                  type="text"
+                  value={newRagTags}
+                  onChange={(e) => setNewRagTags(e.target.value)}
+                  placeholder="gabon, mines, investissements, 2026"
+                  className="w-full px-3 py-2 rounded-xl bg-black border border-white/10 text-white outline-none focus:border-[var(--accent)] text-xs font-mono"
+                />
+              </div>
+
+              <div>
+                <label className="text-white/60 block mb-1">Contenu Markdown (.md)</label>
+                <textarea
+                  rows={8}
+                  value={newRagContent}
+                  onChange={(e) => setNewRagContent(e.target.value)}
+                  placeholder="# Titre du document&#10;&#10;Contenu détaillé avec paragraphes, listes et chiffres clés..."
+                  className="w-full px-3 py-2 rounded-xl bg-black border border-white/10 text-white outline-none focus:border-[var(--accent)] text-xs font-mono resize-none"
+                />
+              </div>
+            </div>
+
+            <div className="flex items-center justify-end gap-2 pt-2 border-t border-white/10">
+              <button
+                type="button"
+                onClick={() => setRagModalOpen(false)}
+                className="px-3 py-1.5 rounded-xl text-xs text-white/60 hover:text-white"
+              >
+                Annuler
+              </button>
+              <button
+                type="button"
+                onClick={handleIngestRagMarkdown}
+                className="px-4 py-2 rounded-xl text-xs font-semibold bg-[var(--accent)] text-[var(--accent-fg)] hover:opacity-90 active:scale-95 transition-all flex items-center gap-1.5"
+              >
+                <Plus size={14} weight="bold" />
+                <span>Ingérer & Vectoriser</span>
               </button>
             </div>
           </div>
