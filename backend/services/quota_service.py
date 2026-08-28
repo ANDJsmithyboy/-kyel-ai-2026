@@ -41,6 +41,35 @@ BETA_DEFAULT_LIMITS = {
 }
 
 
+# ── Configuration Spéciale Collaborateur & VIP ────────────────
+SPECIAL_USER_LIMITS: Dict[str, Dict[str, Any]] = {
+    # M. MBA (Collaborateur Partenaire Financier)
+    "hermae1901@gmail.com": {
+        "tier_name": "VIP_CONTRIBUTOR",
+        "badge_label": "Collaborateur Partenaire (M. MBA)",
+        "max_messages_per_day": 100,
+        "max_image_generations_per_user": 10,
+        "max_video_generations_per_user": 3,
+        "max_pdf_ia_requests_per_month": 150,
+        "max_concurrent_missions": 3,
+        "max_missions_per_day": 50,
+        "max_deep_research_per_day": 25,
+    },
+    # Fondateur : Daniel Jonathan ANDJ (Mode God Illimité)
+    "danieldouba20@gmail.com": {
+        "tier_name": "CREATOR_GOD_MODE",
+        "badge_label": "Mode God · Créateur",
+        "max_messages_per_day": 999999,
+        "max_image_generations_per_user": 999999,
+        "max_video_generations_per_user": 999999,
+        "max_pdf_ia_requests_per_month": 999999,
+        "max_concurrent_missions": 999,
+        "max_missions_per_day": 999999,
+        "max_deep_research_per_day": 999999,
+    },
+}
+
+
 @dataclass
 class QuotaReservation:
     reservation_id: str
@@ -59,6 +88,17 @@ class QuotaService:
     _RESERVATIONS: Dict[str, QuotaReservation] = {}
 
     @classmethod
+    def get_user_limits(cls, user_id: str) -> Dict[str, Any]:
+        """Retourne les limites effectives de l'utilisateur (avec gestion VIP/Créateur)."""
+        normalized = (user_id or "").lower().strip()
+        if normalized in SPECIAL_USER_LIMITS:
+            custom = SPECIAL_USER_LIMITS[normalized]
+            limits = dict(BETA_DEFAULT_LIMITS)
+            limits.update(custom)
+            return limits
+        return BETA_DEFAULT_LIMITS
+
+    @classmethod
     def get_or_create_user_usage(cls, user_id: str) -> Dict[str, Any]:
         if user_id not in cls._USER_USAGE:
             cls._USER_USAGE[user_id] = {
@@ -75,26 +115,27 @@ class QuotaService:
     def check_quota(cls, user_id: str, resource_type: str, requested_amount: int = 1) -> Tuple[bool, str]:
         """Vérifie si l'utilisateur est éligible pour la ressource demandée."""
         usage = cls.get_or_create_user_usage(user_id)
+        limits = cls.get_user_limits(user_id)
 
         if resource_type == "image":
-            remaining = BETA_DEFAULT_LIMITS["max_image_generations_per_user"] - usage["images_used"]
+            remaining = limits["max_image_generations_per_user"] - usage["images_used"]
             if remaining < requested_amount:
-                return False, f"Plafond d'images atteint ({usage['images_used']}/{BETA_DEFAULT_LIMITS['max_image_generations_per_user']})."
+                return False, f"Plafond d'images atteint ({usage['images_used']}/{limits['max_image_generations_per_user']})."
 
         elif resource_type == "video":
-            remaining = BETA_DEFAULT_LIMITS["max_video_generations_per_user"] - usage["videos_used"]
+            remaining = limits["max_video_generations_per_user"] - usage["videos_used"]
             if remaining < requested_amount:
-                return False, f"Plafond vidéo Beta atteint ({usage['videos_used']}/{BETA_DEFAULT_LIMITS['max_video_generations_per_user']})."
+                return False, f"Plafond vidéo atteint ({usage['videos_used']}/{limits['max_video_generations_per_user']})."
 
         elif resource_type == "mission":
-            if usage["active_missions"] >= BETA_DEFAULT_LIMITS["max_concurrent_missions"]:
+            if usage["active_missions"] >= limits["max_concurrent_missions"]:
                 return False, "Une mission est déjà en cours d'exécution dans votre workspace."
-            if usage["missions_today"] >= BETA_DEFAULT_LIMITS["max_missions_per_day"]:
-                return False, f"Plafond quotidien de missions atteint ({BETA_DEFAULT_LIMITS['max_missions_per_day']} max/jour)."
+            if usage["missions_today"] >= limits["max_missions_per_day"]:
+                return False, f"Plafond quotidien de missions atteint ({limits['max_missions_per_day']} max/jour)."
 
         elif resource_type == "research":
-            if usage["research_today"] >= BETA_DEFAULT_LIMITS["max_deep_research_per_day"]:
-                return False, f"Plafond de recherche approfondie atteint ({BETA_DEFAULT_LIMITS['max_deep_research_per_day']}/jour)."
+            if usage["research_today"] >= limits["max_deep_research_per_day"]:
+                return False, f"Plafond de recherche approfondie atteint ({limits['max_deep_research_per_day']}/jour)."
 
         return True, "Quota disponible"
 

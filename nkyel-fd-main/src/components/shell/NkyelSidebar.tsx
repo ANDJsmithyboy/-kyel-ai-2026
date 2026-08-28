@@ -72,6 +72,7 @@ import { useLanguageStore } from '@/stores/language.store';
 import { useConversations, type NeonConversation } from '@/hooks/useConversations';
 import { IbogaNavigationTrigger, GabonOriginMark } from '@/components/brand';
 import { PantherMissionGlyph, NkyelAgentIcon } from '@/components/icons';
+import { getUserTier } from '@/lib/userTiers';
 
 /* ═══════════════════════════════════════════════════════
    NAV CONFIGURATION — P0 Canonical Order
@@ -150,6 +151,7 @@ export default function NkyelSidebar() {
   const userEmail = user?.primaryEmailAddress?.emailAddress || '';
   const userInitials = (displayName.slice(0, 2) || 'NK').toUpperCase();
   const isSuperAdmin = user?.publicMetadata?.role === 'SUPER_ADMIN';
+  const userTier = getUserTier(userEmail, (user?.publicMetadata?.role as string) || null);
 
   const navItems: NavItem[] = [
     { id: 'agent',        label: t('nav.agent'),        href: '/agent',      icon: Robot },
@@ -868,7 +870,7 @@ export default function NkyelSidebar() {
 
               {/* Account Metadata Row */}
               <div className="flex items-center justify-between px-2.5 py-2.5 my-1 rounded-xl bg-[var(--control-bg)] border border-[var(--border-subtle)]">
-                {isSuperAdmin ? (
+                {userTier.tierId === 'CREATOR' ? (
                   <>
                     <div className="flex items-center gap-1.5 font-semibold text-xs text-[var(--accent)]">
                       <span className="text-[14px]">∞</span>
@@ -876,6 +878,16 @@ export default function NkyelSidebar() {
                     </div>
                     <span className="text-[10px] text-[var(--text-tertiary)] uppercase tracking-wider font-semibold">
                       {isFr ? "Créateur de Ñkyel" : "Creator of Ñkyel"}
+                    </span>
+                  </>
+                ) : userTier.tierId === 'VIP_CONTRIBUTOR' ? (
+                  <>
+                    <div className="flex items-center gap-1.5 font-semibold text-xs text-[#E5A93C]">
+                      <span className="text-[13px]">★</span>
+                      <span>{isFr ? "Collaborateur VIP" : "VIP Contributor"}</span>
+                    </div>
+                    <span className="text-[10px] text-[var(--text-tertiary)] uppercase tracking-wider font-semibold">
+                      {isFr ? "Partenaire (M. MBA)" : "Partner (M. MBA)"}
                     </span>
                   </>
                 ) : (
