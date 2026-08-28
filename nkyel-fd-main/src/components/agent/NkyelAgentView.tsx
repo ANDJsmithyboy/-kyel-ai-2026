@@ -1,24 +1,25 @@
 /**
- * Ñkyel AI · NkyelAgentView — Personal Agent Experience
+ * Ñkyel AI · NkyelAgentView — Sovereign Personal Agent Hub (Apple × Manus Level)
  * SmartANDJ AI Technologies · Founder: Daniel Jonathan ANDJ
  *
- * Calm, sovereign agent workspace with progressive disclosure:
- * - "This is your Ñkyel Agent. Ready to work."
- * - Integrated live mission view & VIE metrics
- * - Natural language primary composer
- * - Personalization drawer (Style, Language, Memory, Connected Tools)
+ * Architecture & Style :
+ * - Manus-grade autonomous directive composer & capability deck
+ * - Apple-level restraint, glassmorphism, and responsive layout
+ * - Real-time tool status (MCP, Grounding, Sandbox, Memory)
+ * - Multi-language reactive support via useLanguageStore
  */
 
 'use client';
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
+  Robot,
   Sparkle,
-  PaperPlaneRight,
+  PaperPlaneTilt,
   Microphone,
-  Paperclip,
-  Graph,
+  Plus,
   SlidersHorizontal,
   FileText,
   CheckCircle,
@@ -30,337 +31,369 @@ import {
   ShieldCheck,
   HardDrives,
   Cpu,
-  Robot,
+  Terminal,
+  Clock,
+  Graph,
+  Check,
 } from '@phosphor-icons/react';
-import { NkyelAgentIcon } from '@/components/icons';
+import { useLanguageStore } from '@/stores/language.store';
+import { useNkyelModel } from '@/hooks/useNkyelModel';
 
-interface ActiveMissionState {
-  isActive: boolean;
-  objective: string;
-  currentTask: string;
-  activeAgentsCount: number;
-  sourcesCount: number;
-  evidenceCount: number;
+interface RecentDispatch {
+  id: string;
+  title: string;
+  category: string;
+  timestamp: string;
+  duration: string;
+  status: 'completed' | 'running' | 'ready';
   artifactsCount: number;
+  sourcesCount: number;
 }
+
+const RECENT_DISPATCHES: RecentDispatch[] = [
+  {
+    id: 'disp_01',
+    title: 'Analyse Économique & Transition Énergétique Gabon 2026',
+    category: 'Deep Research & Financial Modeling',
+    timestamp: 'Aujourd’hui à 11:20',
+    duration: '4m 12s',
+    status: 'completed',
+    artifactsCount: 3,
+    sourcesCount: 18,
+  },
+  {
+    id: 'disp_02',
+    title: 'Architecture & Implémentation Système de Feedback Sentry/Neon',
+    category: 'Software Engineering',
+    timestamp: 'Hier à 16:45',
+    duration: '2m 30s',
+    status: 'completed',
+    artifactsCount: 2,
+    sourcesCount: 8,
+  },
+  {
+    id: 'disp_03',
+    title: 'Recherche Réglementaire & Code des Investissements CEMAC',
+    category: 'Legal & Executive Briefing',
+    timestamp: '26 Août 2026',
+    duration: '6m 05s',
+    status: 'completed',
+    artifactsCount: 4,
+    sourcesCount: 24,
+  },
+];
 
 export default function NkyelAgentView() {
   const router = useRouter();
+  const { t, uiLocale } = useLanguageStore();
+  const isFr = !uiLocale || uiLocale.startsWith('fr');
+
+  const { engineId, setEngineId } = useNkyelModel();
+
   const [prompt, setPrompt] = useState('');
-  const [isPersonalizing, setIsPersonalizing] = useState(false);
+  const [isConfigOpen, setIsConfigOpen] = useState(false);
+  const [workingStyle, setWorkingStyle] = useState<'analytical' | 'executive' | 'code' | 'creative'>('analytical');
+  const [selectedTools, setSelectedTools] = useState<string[]>(['mcp_brave', 'mcp_fs', 'sandbox_py', 'memory']);
 
-  // Agent configuration state (Personalization)
-  const [agentName, setAgentName] = useState('Ñkyel');
-  const [workingStyle, setWorkingStyle] = useState<'analytical' | 'creative' | 'executive'>('analytical');
-  const [agentLanguage, setAgentLanguage] = useState<'fr' | 'en' | 'fang'>('fr');
-  const [memoryEnabled, setMemoryEnabled] = useState(true);
-
-  // Live mission state (driven by real agent missions)
-  const [missionState, setMissionState] = useState<ActiveMissionState>({
-    isActive: false,
-    objective: '',
-    currentTask: '',
-    activeAgentsCount: 0,
-    sourcesCount: 0,
-    evidenceCount: 0,
-    artifactsCount: 0,
-  });
-
-  const handleLaunchMission = (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleLaunchMission = (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
     if (!prompt.trim()) return;
     router.push(`/chat?prompt=${encodeURIComponent(prompt.trim())}`);
   };
 
+  const handleQuickDirective = (directive: string) => {
+    router.push(`/chat?prompt=${encodeURIComponent(directive)}`);
+  };
+
+  const toggleTool = (toolId: string) => {
+    setSelectedTools((prev) =>
+      prev.includes(toolId) ? prev.filter((id) => id !== toolId) : [...prev, toolId]
+    );
+  };
+
   return (
     <div className="flex-1 flex flex-col h-full overflow-hidden" style={{ background: 'var(--material-canvas)' }}>
-      {/* ═══════════════════════════════════════════════════
-         MAIN CALM WORKSPACE
-         ═══════════════════════════════════════════════════ */}
-      <div className="flex-1 overflow-y-auto p-6 flex flex-col justify-between max-w-4xl mx-auto w-full">
-        {/* Agent Header & Personalization button */}
-        <div className="flex items-center justify-between pt-2">
-          <div className="flex items-center gap-3">
-            <div
-              className="w-10 h-10 rounded-2xl flex items-center justify-center font-bold text-sm shadow-sm"
-              style={{
-                background: 'var(--accent-subtle)',
-                color: 'var(--accent)',
-                border: '1px solid var(--accent-muted)',
-              }}
-            >
-              <Robot size={20} weight="bold" className="text-[var(--accent)]" />
+      {/* ── Scrollable Agent Stage ── */}
+      <div className="flex-1 overflow-y-auto overflow-x-hidden custom-scrollbar px-4 sm:px-8 py-6 max-w-5xl mx-auto w-full space-y-7 pb-28">
+        
+        {/* ── Header: Agent Identity & Status ── */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-2 border-b border-[var(--border-subtle)] pb-5">
+          <div className="flex items-center gap-3.5">
+            <div className="w-12 h-12 rounded-2xl bg-[var(--surface-raised)] border border-[var(--accent)]/30 flex items-center justify-center text-[var(--accent)] shadow-sm">
+              <Robot size={26} weight="bold" />
             </div>
             <div>
-              <div className="flex items-center gap-2">
-                <h1 className="text-lg font-bold tracking-tight" style={{ color: 'var(--text-primary)' }}>
-                  Mon agent
+              <div className="flex items-center gap-2.5">
+                <h1 className="text-xl sm:text-2xl font-semibold tracking-tight text-[var(--text-primary)]">
+                  {t('agent.myAgent') || 'My Agent'}
                 </h1>
-                <span
-                  className="text-[10px] font-mono px-2 py-0.5 rounded-full font-semibold"
-                  style={{
-                    background: 'rgba(34, 197, 94, 0.12)',
-                    color: 'var(--success, #22c55e)',
-                    border: '1px solid rgba(34, 197, 94, 0.25)',
-                  }}
-                >
-                  Prêt
+                <span className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/25">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                  <span>{isFr ? 'Prêt à agir' : 'Ready to work'}</span>
                 </span>
               </div>
-              <p className="text-xs" style={{ color: 'var(--text-tertiary)' }}>
-                Votre agent persistant pour les missions complexes.
+              <p className="text-xs text-[var(--text-secondary)] mt-0.5">
+                {isFr
+                  ? 'Agent autonome persistant avec mémoire souveraine et exécution en bac à sable.'
+                  : 'Persistent autonomous agent with sovereign memory and sandboxed tool execution.'}
               </p>
             </div>
           </div>
 
-          <button
-            type="button"
-            onClick={() => setIsPersonalizing(!isPersonalizing)}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium transition-colors"
-            style={{
-              background: isPersonalizing ? 'var(--surface-raised)' : 'var(--surface)',
-              color: isPersonalizing ? 'var(--text-primary)' : 'var(--text-secondary)',
-              border: '1px solid var(--border-subtle)',
-            }}
-          >
-            <SlidersHorizontal size={14} />
-            <span>Personnaliser</span>
-          </button>
-        </div>
-
-        {/* Center: Live Mission State or Calm Prompt Cards */}
-        <div className="my-auto py-8 space-y-6">
-          {missionState.isActive ? (
-            /* Live Mission Execution Banner (VIE Integration) */
-            <div
-              className="p-6 rounded-3xl relative overflow-hidden"
-              style={{
-                background: 'var(--surface-raised)',
-                border: '1px solid var(--border-strong)',
-                boxShadow: 'var(--shadow-key)',
-              }}
-            >
-              {/* Header */}
-              <div className="flex items-center justify-between pb-4 border-b" style={{ borderColor: 'var(--border-subtle)' }}>
-                <div className="flex items-center gap-2">
-                  <span className="w-2.5 h-2.5 rounded-full animate-pulse" style={{ background: 'var(--accent)' }} />
-                  <span className="text-xs font-bold uppercase tracking-wider" style={{ color: 'var(--accent)' }}>
-                    Mission en cours d&apos;exécution
-                  </span>
-                </div>
-
+          {/* Quick Engine & Tuning Toggle */}
+          <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1 p-1 rounded-xl bg-[var(--surface-raised)] border border-[var(--border)] text-xs">
+              {[
+                { id: 'auto', label: 'Auto' },
+                { id: 'fast', label: isFr ? 'Rapide' : 'Fast' },
+                { id: 'deep', label: isFr ? 'Profond' : 'Deep' },
+                { id: 'research', label: isFr ? 'Recherche' : 'Research' },
+              ].map((m) => (
                 <button
+                  key={m.id}
                   type="button"
-                  onClick={() => router.push('/workspace')}
-                  className="flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-semibold transition-all shadow-sm"
-                  style={{
-                    background: 'var(--accent)',
-                    color: 'var(--accent-fg)',
-                  }}
+                  onClick={() => setEngineId(m.id as any)}
+                  className={`px-3 py-1 rounded-lg font-medium transition-all ${
+                    engineId === m.id
+                      ? 'bg-[var(--surface)] text-[var(--text-primary)] shadow-xs font-semibold'
+                      : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
+                  }`}
                 >
-                  <Graph size={14} weight="bold" />
-                  <span>Ouvrir le WorkGraph</span>
+                  {m.label}
                 </button>
-              </div>
-
-              {/* Mission Objective */}
-              <div className="pt-4 pb-2">
-                <h3 className="text-base font-bold" style={{ color: 'var(--text-primary)' }}>
-                  {missionState.objective}
-                </h3>
-                <p className="text-xs mt-1" style={{ color: 'var(--text-secondary)' }}>
-                  {missionState.currentTask}
-                </p>
-              </div>
-
-              {/* Metrics Row (No chain-of-thought jargon) */}
-              <div className="grid grid-cols-4 gap-3 pt-4 mt-2 border-t" style={{ borderColor: 'var(--border-subtle)' }}>
-                <div className="text-center">
-                  <span className="block text-base font-bold font-mono" style={{ color: 'var(--text-primary)' }}>
-                    {missionState.activeAgentsCount}
-                  </span>
-                  <span className="text-[11px]" style={{ color: 'var(--text-tertiary)' }}>
-                    Agents actifs
-                  </span>
-                </div>
-
-                <div className="text-center">
-                  <span className="block text-base font-bold font-mono" style={{ color: 'var(--accent)' }}>
-                    {missionState.sourcesCount}
-                  </span>
-                  <span className="text-[11px]" style={{ color: 'var(--text-tertiary)' }}>
-                    Sources certifiées
-                  </span>
-                </div>
-
-                <div className="text-center">
-                  <span className="block text-base font-bold font-mono" style={{ color: 'var(--success, #22c55e)' }}>
-                    {missionState.evidenceCount}
-                  </span>
-                  <span className="text-[11px]" style={{ color: 'var(--text-tertiary)' }}>
-                    Preuves validées
-                  </span>
-                </div>
-
-                <div className="text-center">
-                  <span className="block text-base font-bold font-mono" style={{ color: 'var(--text-primary)' }}>
-                    {missionState.artifactsCount}
-                  </span>
-                  <span className="text-[11px]" style={{ color: 'var(--text-tertiary)' }}>
-                    Livrables générés
-                  </span>
-                </div>
-              </div>
+              ))}
             </div>
-          ) : (
-            /* Calm Initial State */
-            <div className="text-center space-y-3">
-              <h2 className="text-2xl font-bold tracking-tight" style={{ color: 'var(--text-primary)' }}>
-                Que souhaitez-vous accomplir aujourd&apos;hui ?
-              </h2>
-              <p className="text-xs max-w-md mx-auto leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
-                Votre agent peut rechercher, modéliser, planifier, utiliser vos intégrations connectées et produire des livrables de haute précision.
-              </p>
-            </div>
-          )}
 
-          {/* Progressive Personalization Drawer (when toggled) */}
-          {isPersonalizing && (
-            <div
-              className="p-5 rounded-2xl space-y-4 animate-in fade-in zoom-in-95 duration-150"
-              style={{
-                background: 'var(--surface-raised)',
-                border: '1px solid var(--border-strong)',
-              }}
+            <button
+              type="button"
+              onClick={() => setIsConfigOpen(!isConfigOpen)}
+              className={`p-2 rounded-xl border text-xs font-medium transition-all ${
+                isConfigOpen
+                  ? 'bg-[var(--surface-raised)] border-[var(--accent)] text-[var(--accent)] shadow-xs'
+                  : 'bg-[var(--surface-raised)] border-[var(--border)] text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
+              }`}
+              title={isFr ? 'Configurer les paramètres' : 'Configure parameters'}
             >
-              <h3 className="text-xs font-bold uppercase tracking-wider" style={{ color: 'var(--text-tertiary)' }}>
-                Préférences de Travail de l&apos;Agent
-              </h3>
-
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
-                <div>
-                  <label className="block mb-1 font-medium" style={{ color: 'var(--text-secondary)' }}>
-                    Nom personnalisé
-                  </label>
-                  <input
-                    type="text"
-                    value={agentName}
-                    onChange={(e) => setAgentName(e.target.value)}
-                    className="w-full px-3 py-1.5 rounded-xl border outline-none text-xs"
-                    style={{
-                      background: 'var(--surface)',
-                      borderColor: 'var(--border-subtle)',
-                      color: 'var(--text-primary)',
-                    }}
-                  />
-                </div>
-
-                <div>
-                  <label className="block mb-1 font-medium" style={{ color: 'var(--text-secondary)' }}>
-                    Style d&apos;analyse
-                  </label>
-                  <select
-                    value={workingStyle}
-                    onChange={(e: any) => setWorkingStyle(e.target.value)}
-                    className="w-full px-3 py-1.5 rounded-xl border outline-none text-xs"
-                    style={{
-                      background: 'var(--surface)',
-                      borderColor: 'var(--border-subtle)',
-                      color: 'var(--text-primary)',
-                    }}
-                  >
-                    <option value="analytical">Analytique & Rigoureux</option>
-                    <option value="executive">Synthétique Exécutif</option>
-                    <option value="creative">Créatif & Visuel</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block mb-1 font-medium" style={{ color: 'var(--text-secondary)' }}>
-                    Langue principale
-                  </label>
-                  <select
-                    value={agentLanguage}
-                    onChange={(e: any) => setAgentLanguage(e.target.value)}
-                    className="w-full px-3 py-1.5 rounded-xl border outline-none text-xs"
-                    style={{
-                      background: 'var(--surface)',
-                      borderColor: 'var(--border-subtle)',
-                      color: 'var(--text-primary)',
-                    }}
-                  >
-                    <option value="fr">Français</option>
-                    <option value="en">English</option>
-                    <option value="fang">Fang (Souverain)</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-          )}
+              <SlidersHorizontal size={16} />
+            </button>
+          </div>
         </div>
 
-        {/* ═══════════════════════════════════════════════════
-           PRIMARY COMPOSER (Refined Material Box)
-           ═══════════════════════════════════════════════════ */}
-        <form onSubmit={handleLaunchMission} className="relative w-full">
-          <div
-            className="rounded-2xl p-2 transition-all shadow-lg"
-            style={{
-              background: 'var(--surface-raised)',
-              border: '1px solid var(--border-strong)',
-            }}
+        {/* ── Optional Agent Tuning Drawer (Apple Restraint) ── */}
+        <AnimatePresence>
+          {isConfigOpen && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              className="overflow-hidden p-5 rounded-3xl bg-[var(--surface-raised)] border border-[var(--border-strong)] space-y-4 shadow-sm"
+            >
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-semibold uppercase tracking-wider text-[var(--text-tertiary)]">
+                  {isFr ? 'Configuration du Comportement & Outils' : 'Behavior & Tool Capabilities'}
+                </span>
+                <span className="text-[11px] font-mono text-emerald-400 flex items-center gap-1">
+                  <ShieldCheck size={14} weight="fill" />
+                  <span>{isFr ? 'Zéro-Fuite Garanti' : 'Zero-Leakage Certified'}</span>
+                </span>
+              </div>
+
+              {/* Working Style Pills */}
+              <div className="space-y-1.5">
+                <label className="text-xs font-medium text-[var(--text-secondary)]">
+                  {isFr ? 'Style d’Analyse & de Restitution' : 'Working Persona & Tone'}
+                </label>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                  {[
+                    { id: 'analytical', label: isFr ? 'Architecte Exécutif' : 'Executive Architect', desc: isFr ? 'Synthèses rigoureuses & décisives' : 'Rigorous & decisive synthesis' },
+                    { id: 'code', label: isFr ? 'Ingénieur Logiciel' : 'Software Engineer', desc: isFr ? 'Code modulaire & TypeScript strict' : 'Modular code & strict TypeScript' },
+                    { id: 'executive', label: isFr ? 'Analyste Financier' : 'Financial Analyst', desc: isFr ? 'Modélisation DCF & ratios chiffrés' : 'DCF modeling & key ratios' },
+                    { id: 'creative', label: isFr ? 'Concepteur Graphique' : 'Creative Director', desc: isFr ? 'Présentations & design soigné' : 'Decks & high visual polish' },
+                  ].map((style) => (
+                    <button
+                      key={style.id}
+                      type="button"
+                      onClick={() => setWorkingStyle(style.id as any)}
+                      className={`p-3 rounded-2xl border text-left transition-all ${
+                        workingStyle === style.id
+                          ? 'bg-[var(--control-bg)] border-[var(--accent)] text-[var(--text-primary)] shadow-xs'
+                          : 'bg-[var(--surface)] border-[var(--border-subtle)] text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
+                      }`}
+                    >
+                      <div className="font-semibold text-xs text-[var(--text-primary)]">{style.label}</div>
+                      <div className="text-[11px] text-[var(--text-tertiary)] mt-0.5 leading-tight">{style.desc}</div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Active Tools Grid */}
+              <div className="space-y-1.5 pt-2 border-t border-[var(--border-subtle)]">
+                <label className="text-xs font-medium text-[var(--text-secondary)]">
+                  {isFr ? 'Outils Autonomes Connectés' : 'Connected Autonomous Tools'}
+                </label>
+                <div className="flex flex-wrap gap-2">
+                  {[
+                    { id: 'mcp_brave', label: 'Brave Search MCP', icon: Globe },
+                    { id: 'mcp_fs', label: 'Filesystem Sandbox', icon: HardDrives },
+                    { id: 'sandbox_py', label: 'Python 3.12 Runtime', icon: Terminal },
+                    { id: 'memory', label: 'Sovereign Memory', icon: Brain },
+                    { id: 'google_ws', label: 'Google Workspace', icon: Cpu },
+                  ].map((tool) => {
+                    const Icon = tool.icon;
+                    const isEnabled = selectedTools.includes(tool.id);
+                    return (
+                      <button
+                        key={tool.id}
+                        type="button"
+                        onClick={() => toggleTool(tool.id)}
+                        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium transition-all ${
+                          isEnabled
+                            ? 'bg-[var(--control-bg)] border border-[var(--accent)]/40 text-[var(--text-primary)]'
+                            : 'bg-[var(--surface)] border border-[var(--border-subtle)] text-[var(--text-disabled)] opacity-60'
+                        }`}
+                      >
+                        <Icon size={14} className={isEnabled ? 'text-[var(--accent)]' : ''} />
+                        <span>{tool.label}</span>
+                        {isEnabled && <Check size={12} weight="bold" className="text-emerald-400 ml-0.5" />}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* ── Main Directive Composer (Manus × Apple Floating Glass) ── */}
+        <div className="space-y-3">
+          <form
+            onSubmit={handleLaunchMission}
+            className="p-3.5 sm:p-4 rounded-[28px] bg-[var(--surface-raised)] border border-[var(--border-strong)] shadow-[var(--shadow-key)] space-y-3 focus-within:border-[var(--accent)] focus-within:ring-1 focus-within:ring-[var(--accent)] transition-all"
           >
             <textarea
-              rows={3}
               value={prompt}
               onChange={(e) => setPrompt(e.target.value)}
               onKeyDown={(e) => {
-                if (e.key === 'Enter' && !e.shiftKey) {
+                if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
                   e.preventDefault();
-                  handleLaunchMission(e);
+                  handleLaunchMission();
                 }
               }}
-              placeholder="Assignez une nouvelle mission à votre agent (ex: Analysez mes fichiers Drive et préparez un diaporama exécutif)..."
-              className="w-full bg-transparent px-3 py-2 text-xs outline-none resize-none leading-relaxed"
-              style={{ color: 'var(--text-primary)' }}
+              rows={3}
+              placeholder={t('agent.directivePlaceholder') || 'Give a complex mission directive to your agent...'}
+              className="w-full bg-transparent border-0 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] outline-none resize-none px-1 leading-relaxed"
             />
 
-            <div className="flex items-center justify-between pt-2 px-2 border-t" style={{ borderColor: 'var(--border-subtle)' }}>
-              <div className="flex items-center gap-1.5">
+            <div className="flex items-center justify-between pt-2 border-t border-[var(--border-subtle)]">
+              <div className="flex items-center gap-1 text-[var(--text-tertiary)]">
                 <button
                   type="button"
-                  className="p-1.5 rounded-lg transition-colors"
-                  style={{ color: 'var(--text-tertiary)' }}
-                  title="Joindre un document"
+                  className="w-8 h-8 rounded-full flex items-center justify-center hover:bg-[var(--hover)] hover:text-[var(--text-primary)] transition-colors"
+                  title="Attach file or dataset"
                 >
-                  <Paperclip size={16} />
+                  <Plus size={16} weight="bold" />
                 </button>
                 <button
                   type="button"
-                  className="p-1.5 rounded-lg transition-colors"
-                  style={{ color: 'var(--text-tertiary)' }}
-                  title="Enregistrement vocal"
+                  className="w-8 h-8 rounded-full flex items-center justify-center hover:bg-[var(--hover)] hover:text-[var(--text-primary)] transition-colors"
+                  title="Voice directive"
                 >
                   <Microphone size={16} />
                 </button>
+                <span className="text-[11px] font-mono ml-2 hidden sm:inline text-[var(--text-disabled)]">
+                  ⌘ + Enter
+                </span>
               </div>
 
               <button
                 type="submit"
                 disabled={!prompt.trim()}
-                className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all"
-                style={{
-                  background: prompt.trim() ? 'var(--accent)' : 'var(--surface)',
-                  color: prompt.trim() ? 'var(--accent-fg)' : 'var(--text-disabled)',
-                  cursor: prompt.trim() ? 'pointer' : 'not-allowed',
-                }}
+                className="flex items-center gap-1.5 px-4 py-2 rounded-2xl bg-[var(--accent)] text-[var(--accent-fg)] text-xs font-semibold shadow-xs disabled:opacity-40 disabled:cursor-not-allowed hover:brightness-105 active:scale-95 transition-all touch-manipulation"
               >
-                <span>Démarrer la mission</span>
-                <ArrowRight size={13} weight="bold" />
+                <span>{t('agent.launchMission') || 'Execute Directive'}</span>
+                <PaperPlaneTilt size={14} weight="bold" />
               </button>
             </div>
+          </form>
+
+          {/* Capability Quick Starters */}
+          <div className="flex flex-wrap items-center gap-2">
+            {[
+              { label: isFr ? 'Modélisation DCF & Tableaux' : 'DCF Modeling & Tables', query: isFr ? 'Conçois une modélisation financière DCF avec VAN et TRI pour un projet d’infrastructure.' : 'Build a DCF financial model with NPV and IRR for an infrastructure project.' },
+              { label: isFr ? 'Synthèse Juridique CEMAC' : 'Legal & Regulatory Briefing', query: isFr ? 'Rédige une synthèse exécutive des règles d’investissement CEMAC et garanties de change.' : 'Draft an executive briefing on CEMAC investment regulations and FX guarantees.' },
+              { label: isFr ? 'Architecture TypeScript' : 'Clean TypeScript Architecture', query: isFr ? 'Structure une architecture Next.js / TypeScript modulaire avec état réactif.' : 'Structure a modular Next.js / TypeScript architecture with reactive state.' },
+              { label: isFr ? 'Générer Présentation PPTX' : 'Generate Presentation Deck', query: isFr ? 'Génère une présentation exécutive de 12 diapositives sur la transition énergétique.' : 'Generate a 12-slide executive presentation deck on energy transition.' },
+            ].map((starter, idx) => (
+              <button
+                key={idx}
+                type="button"
+                onClick={() => handleQuickDirective(starter.query)}
+                className="px-3.5 py-1.5 rounded-full bg-[var(--surface)] hover:bg-[var(--surface-raised)] border border-[var(--border-subtle)] hover:border-[var(--accent-muted)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] text-xs font-medium transition-all active:scale-98"
+              >
+                {starter.label}
+              </button>
+            ))}
           </div>
-        </form>
+        </div>
+
+        {/* ── Recent Dispatches & Mission History ── */}
+        <div className="space-y-3 pt-4">
+          <div className="flex items-center justify-between">
+            <h3 className="text-sm font-semibold text-[var(--text-primary)] tracking-tight">
+              {t('agent.recentDispatches') || 'Recent Agent Dispatches'}
+            </h3>
+            <span className="text-xs text-[var(--text-tertiary)] font-mono">
+              {RECENT_DISPATCHES.length} {isFr ? 'missions archivées' : 'archived missions'}
+            </span>
+          </div>
+
+          <div className="space-y-2.5">
+            {RECENT_DISPATCHES.map((dispatch) => (
+              <div
+                key={dispatch.id}
+                role="button"
+                tabIndex={0}
+                onClick={() => router.push('/chat')}
+                className="p-4 rounded-2xl bg-[var(--surface-raised)] hover:bg-[var(--hover)] border border-[var(--border)] hover:border-[var(--accent-muted)] transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-3 cursor-pointer group shadow-xs active:scale-[0.99]"
+              >
+                <div className="space-y-1 min-w-0">
+                  <div className="flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-emerald-400" />
+                    <h4 className="font-semibold text-sm text-[var(--text-primary)] group-hover:text-[var(--accent)] transition-colors truncate">
+                      {dispatch.title}
+                    </h4>
+                  </div>
+                  <div className="flex items-center gap-3 text-xs text-[var(--text-tertiary)]">
+                    <span>{dispatch.category}</span>
+                    <span>·</span>
+                    <span className="flex items-center gap-1 font-mono">
+                      <Clock size={12} />
+                      {dispatch.duration}
+                    </span>
+                    <span>·</span>
+                    <span>{dispatch.timestamp}</span>
+                  </div>
+                </div>
+
+                <div className="shrink-0 flex items-center gap-3">
+                  <div className="text-right hidden sm:block">
+                    <span className="text-xs font-mono text-[var(--text-secondary)] block">
+                      {dispatch.artifactsCount} {isFr ? 'artefacts' : 'artifacts'}
+                    </span>
+                    <span className="text-[11px] font-mono text-[var(--text-tertiary)] block">
+                      {dispatch.sourcesCount} {isFr ? 'sources' : 'sources'}
+                    </span>
+                  </div>
+                  <div className="w-8 h-8 rounded-xl bg-[var(--control-bg)] border border-[var(--border-subtle)] flex items-center justify-center text-[var(--text-tertiary)] group-hover:text-[var(--text-primary)] group-hover:border-[var(--accent-muted)] transition-colors">
+                    <ArrowRight size={14} />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
       </div>
     </div>
   );

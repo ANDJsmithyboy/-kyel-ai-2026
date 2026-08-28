@@ -1,10 +1,9 @@
 /**
- * Ñkyel AI · Universal Artifacts Library
+ * Ñkyel AI · Sanctuary & Universal Creative Artifact Vault (Apple × Manus Level)
  * SmartANDJ AI Technologies · Founder: Daniel Jonathan ANDJ
  *
- * Route: /library
- * The Canonical Creative & Executive Artifact Library.
- * One Artifact — One ID across Chat, Library, WorkGraph, and VIE.
+ * Route: /library & /sanctuary
+ * Canonical One-Artifact-One-ID Creative Vault across Chat, WorkGraph, and VIE.
  */
 
 'use client';
@@ -21,16 +20,18 @@ import {
   Table,
   Image as ImageIcon,
   VideoCamera,
-  Code,
   DownloadSimple,
   ShareNetwork,
   Eye,
-  DotsThreeVertical,
-  FolderSimple,
+  ShieldCheck,
   Sparkle,
   CalendarBlank,
+  HardDrives,
+  Graph,
+  ArrowSquareOut,
 } from '@phosphor-icons/react';
 import { useRenduPanel } from '@/hooks/useRenduPanel';
+import { useLanguageStore } from '@/stores/language.store';
 
 export type ArtifactType =
   | 'slide'
@@ -132,24 +133,26 @@ const CANONICAL_ARTIFACTS: LibraryArtifact[] = [
   },
 ];
 
-const FILTER_TABS: Array<{ id: string; label: string; icon: React.ComponentType<any> }> = [
-  { id: 'all', label: 'Tous les livrables', icon: Books },
-  { id: 'slide', label: 'Diaporamas', icon: Presentation },
-  { id: 'document', label: 'Documents & Rapports', icon: FileText },
-  { id: 'spreadsheet', label: 'Tableaux & Finance', icon: Table },
-  { id: 'website', label: 'Sites Web & Apps', icon: Browsers },
-  { id: 'image', label: 'Images & Visuels', icon: ImageIcon },
-  { id: 'video', label: 'Vidéos & Clips', icon: VideoCamera },
-];
-
 export default function LibraryPage() {
-  const [artifacts, setArtifacts] = useState<LibraryArtifact[]>(CANONICAL_ARTIFACTS);
+  const { t, uiLocale } = useLanguageStore();
+  const isFr = !uiLocale || uiLocale.startsWith('fr');
+
+  const [artifacts] = useState<LibraryArtifact[]>(CANONICAL_ARTIFACTS);
   const [activeFilter, setActiveFilter] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
-  const [groupBy, setGroupBy] = useState<'mission' | 'project' | 'date'>('mission');
 
   const { openRendu } = useRenduPanel();
+
+  const filterTabs = [
+    { id: 'all', label: t('sanctuary.all') || 'All Artifacts', icon: Books },
+    { id: 'slide', label: t('sanctuary.slides') || 'Presentations', icon: Presentation },
+    { id: 'document', label: t('sanctuary.docs') || 'Documents', icon: FileText },
+    { id: 'spreadsheet', label: t('sanctuary.spreadsheets') || 'Spreadsheets', icon: Table },
+    { id: 'website', label: isFr ? 'Sites & Web' : 'Web & Apps', icon: Browsers },
+    { id: 'image', label: t('sanctuary.media') || 'Media & Visuals', icon: ImageIcon },
+    { id: 'video', label: isFr ? 'Vidéos & Clips' : 'Videos', icon: VideoCamera },
+  ];
 
   // Filtered artifacts
   const filtered = useMemo(() => {
@@ -164,27 +167,7 @@ export default function LibraryPage() {
     });
   }, [artifacts, activeFilter, searchQuery]);
 
-  // Grouped artifacts
-  const groupedData = useMemo(() => {
-    const map = new Map<string, LibraryArtifact[]>();
-
-    filtered.forEach((item) => {
-      let key = item.missionTitle;
-      if (groupBy === 'project') key = item.projectName || 'Sans projet';
-      if (groupBy === 'date') key = item.createdAtHuman.split(' à ')[0];
-
-      if (!map.has(key)) map.set(key, []);
-      map.get(key)!.push(item);
-    });
-
-    return Array.from(map.entries()).map(([groupTitle, items]) => ({
-      groupTitle,
-      items,
-    }));
-  }, [filtered, groupBy]);
-
   const handleOpenArtifact = (item: LibraryArtifact) => {
-    // Canonical One-Artifact-One-ID bridge
     openRendu({
       id: item.id,
       title: item.title,
@@ -197,357 +180,270 @@ export default function LibraryPage() {
   const getFormatBadge = (type: ArtifactType) => {
     switch (type) {
       case 'slide':
-        return { label: 'PPTX / SLIDES', color: 'var(--accent)', icon: Presentation };
+        return { label: 'PPTX / DECK', icon: Presentation, color: 'var(--accent)' };
       case 'document':
-        return { label: 'PDF / DOC', color: '#6F9485', icon: FileText };
+        return { label: 'PDF / DOC', icon: FileText, color: '#3B82F6' };
       case 'spreadsheet':
-        return { label: 'XLSX / SHEET', color: '#5BA3B5', icon: Table };
+        return { label: 'XLSX / SHEET', icon: Table, color: '#10B981' };
       case 'website':
-        return { label: 'WEB APP', color: '#665F9E', icon: Browsers };
+        return { label: 'HTML / APP', icon: Browsers, color: '#8B5CF6' };
       case 'image':
-        return { label: 'FLUX PNG', color: '#CF72A8', icon: ImageIcon };
+        return { label: 'IMAGE / PNG', icon: ImageIcon, color: '#EC4899' };
       case 'video':
-        return { label: 'WAN2.1 MP4', color: '#E06D53', icon: VideoCamera };
+        return { label: 'VIDEO / MP4', icon: VideoCamera, color: '#F59E0B' };
       default:
-        return { label: 'CODE', color: '#9199A8', icon: Code };
+        return { label: 'ARTIFACT', icon: HardDrives, color: 'var(--text-secondary)' };
     }
   };
 
   return (
-    <div className="flex-1 flex flex-col h-full overflow-hidden" style={{ background: 'var(--material-canvas)' }}>
-      {/* ═══════════════════════════════════════════════════
-         HEADER
-         ═══════════════════════════════════════════════════ */}
-      <div
-        className="shrink-0 p-6"
-        style={{
-          borderBottom: '1px solid var(--border-subtle)',
-          background: 'var(--surface-raised)',
-        }}
-      >
-        <div className="max-w-6xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div>
-            <div className="flex items-center gap-2.5">
-              <div
-                className="w-8 h-8 rounded-xl flex items-center justify-center"
-                style={{ background: 'var(--accent-subtle)', color: 'var(--accent)' }}
-              >
-                <Books size={18} weight="bold" />
-              </div>
-              <h1 className="text-xl font-bold tracking-tight text-[var(--text-primary)]">
-                Sanctuaire
-              </h1>
+    <div className="flex-1 flex flex-col h-full overflow-hidden select-none" style={{ background: 'var(--material-canvas)' }}>
+      {/* ── Scrollable Stage ── */}
+      <div className="flex-1 overflow-y-auto overflow-x-hidden custom-scrollbar px-4 sm:px-8 py-6 max-w-6xl mx-auto w-full space-y-6 pb-28">
+        
+        {/* ── Header: Sanctuary Identity ── */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-2 border-b border-[var(--border-subtle)] pb-5">
+          <div className="flex items-center gap-3.5">
+            <div className="w-12 h-12 rounded-2xl bg-[var(--surface-raised)] border border-[var(--accent)]/30 flex items-center justify-center text-[var(--accent)] shadow-sm">
+              <Books size={26} weight="bold" />
             </div>
-            <p className="text-xs mt-1 text-[var(--text-secondary)]">
-              Espace sécurisé de connaissance et des livrables générés au fil de vos missions (documents, présentations, code, applications, médias).
-            </p>
+            <div>
+              <div className="flex items-center gap-2.5">
+                <h1 className="text-xl sm:text-2xl font-semibold tracking-tight text-[var(--text-primary)]">
+                  {t('sanctuary.heading') || 'Sanctuary'}
+                </h1>
+                <span className="text-[10px] font-mono px-2 py-0.5 rounded-full font-semibold bg-[var(--accent-subtle)] text-[var(--accent)] border border-[var(--accent)]/30">
+                  {artifacts.length} {isFr ? 'Artefacts' : 'Artifacts'}
+                </span>
+              </div>
+              <p className="text-xs text-[var(--text-secondary)] mt-0.5">
+                {t('sanctuary.subheading') || 'Canonical Sovereign Artifact Vault & Creative Archive.'}
+              </p>
+            </div>
           </div>
 
-          {/* Search & View Mode Toggles */}
-          <div className="flex items-center gap-3">
-            <div className="relative w-64">
-              <MagnifyingGlass size={14} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: 'var(--text-tertiary)' }} />
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Rechercher par titre, mission..."
-                className="w-full pl-8 pr-3 py-1.5 rounded-xl border outline-none text-xs"
-                style={{
-                  background: 'var(--surface)',
-                  borderColor: 'var(--border-subtle)',
-                  color: 'var(--text-primary)',
-                }}
-              />
-            </div>
-
-            <div
-              className="flex items-center p-0.5 rounded-xl border"
-              style={{ background: 'var(--surface)', borderColor: 'var(--border-subtle)' }}
-            >
-              <button
-                type="button"
-                onClick={() => setViewMode('grid')}
-                className="p-1.5 rounded-lg transition-colors"
-                style={{
-                  background: viewMode === 'grid' ? 'var(--surface-raised)' : 'transparent',
-                  color: viewMode === 'grid' ? 'var(--text-primary)' : 'var(--text-tertiary)',
-                }}
-                title="Affichage Grille"
-              >
-                <SquaresFour size={15} />
-              </button>
-              <button
-                type="button"
-                onClick={() => setViewMode('list')}
-                className="p-1.5 rounded-lg transition-colors"
-                style={{
-                  background: viewMode === 'list' ? 'var(--surface-raised)' : 'transparent',
-                  color: viewMode === 'list' ? 'var(--text-primary)' : 'var(--text-tertiary)',
-                }}
-                title="Affichage Liste"
-              >
-                <ListDashes size={15} />
-              </button>
-            </div>
+          {/* Zero Knowledge Sovereign Vault Ribbon */}
+          <div className="flex items-center gap-2 px-3 py-1.5 rounded-2xl bg-[var(--surface-raised)] border border-[var(--border)] text-xs text-[var(--text-secondary)] shadow-xs">
+            <ShieldCheck size={16} weight="fill" className="text-emerald-400 shrink-0" />
+            <span className="text-[11px] font-medium truncate">
+              {isFr ? 'Coffre Zéro-Connaissance Chiffré' : 'Zero-Knowledge Encrypted Vault'}
+            </span>
           </div>
         </div>
-      </div>
 
-      {/* ═══════════════════════════════════════════════════
-         FILTER TABS & GROUPING SELECTOR
-         ═══════════════════════════════════════════════════ */}
-      <div
-        className="shrink-0 px-6 py-2.5"
-        style={{
-          borderBottom: '1px solid var(--border-subtle)',
-          background: 'var(--surface)',
-        }}
-      >
-        <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3">
-          {/* Format Filters */}
-          <div className="flex items-center gap-1.5 overflow-x-auto w-full sm:w-auto no-scrollbar">
-            {FILTER_TABS.map((tab) => {
-              const Icon = tab.icon;
-              const isActive = activeFilter === tab.id;
+        {/* ── Search Bar & View Mode Switcher ── */}
+        <div className="flex items-center gap-3">
+          <div className="relative flex-1">
+            <MagnifyingGlass
+              size={18}
+              className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--text-tertiary)] pointer-events-none"
+            />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder={t('sanctuary.searchPlaceholder') || 'Search artifacts, decks, documents, models...'}
+              className="w-full h-11 pl-10 pr-4 rounded-2xl border border-[var(--border)] bg-[var(--surface-raised)] text-xs sm:text-sm text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] transition-all"
+            />
+          </div>
+
+          <div className="flex items-center gap-1 p-1 rounded-2xl bg-[var(--surface-raised)] border border-[var(--border)]">
+            <button
+              type="button"
+              onClick={() => setViewMode('grid')}
+              className={`p-2 rounded-xl transition-all ${
+                viewMode === 'grid'
+                  ? 'bg-[var(--surface)] text-[var(--text-primary)] shadow-xs'
+                  : 'text-[var(--text-tertiary)] hover:text-[var(--text-primary)]'
+              }`}
+              title="Grid view"
+            >
+              <SquaresFour size={17} />
+            </button>
+            <button
+              type="button"
+              onClick={() => setViewMode('list')}
+              className={`p-2 rounded-xl transition-all ${
+                viewMode === 'list'
+                  ? 'bg-[var(--surface)] text-[var(--text-primary)] shadow-xs'
+                  : 'text-[var(--text-tertiary)] hover:text-[var(--text-primary)]'
+              }`}
+              title="List view"
+            >
+              <ListDashes size={17} />
+            </button>
+          </div>
+        </div>
+
+        {/* ── Horizontally Scrollable Category Tabs ── */}
+        <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-none pb-1">
+          {filterTabs.map((tab) => {
+            const Icon = tab.icon;
+            const isActive = activeFilter === tab.id;
+            return (
+              <button
+                key={tab.id}
+                type="button"
+                onClick={() => setActiveFilter(tab.id)}
+                className={`flex items-center gap-2 px-3.5 py-2 rounded-2xl text-xs font-medium whitespace-nowrap transition-all touch-manipulation min-h-[38px] ${
+                  isActive
+                    ? 'bg-[var(--surface-raised)] text-[var(--text-primary)] border border-[var(--border-strong)] font-semibold shadow-xs'
+                    : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--hover)] border border-transparent'
+                }`}
+              >
+                <Icon size={16} weight={isActive ? 'fill' : 'regular'} className={isActive ? 'text-[var(--accent)]' : ''} />
+                <span>{tab.label}</span>
+              </button>
+            );
+          })}
+        </div>
+
+        {/* ── Artifact Cards Grid / List View ── */}
+        {filtered.length === 0 ? (
+          <div className="p-12 text-center rounded-3xl bg-[var(--surface-raised)] border border-[var(--border-subtle)] space-y-2">
+            <Books size={32} className="mx-auto text-[var(--text-disabled)]" />
+            <p className="text-sm font-semibold text-[var(--text-primary)]">
+              {isFr ? 'Aucun artefact ne correspond à votre recherche.' : 'No artifacts found matching your query.'}
+            </p>
+            <p className="text-xs text-[var(--text-secondary)]">
+              {isFr ? 'Lancez une directive avec l’agent pour générer de nouveaux livrables.' : 'Dispatch a directive to the agent to generate new deliverables.'}
+            </p>
+          </div>
+        ) : viewMode === 'grid' ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {filtered.map((item) => {
+              const badge = getFormatBadge(item.type);
+              const FormatIcon = badge.icon;
+
               return (
-                <button
-                  key={tab.id}
-                  type="button"
-                  onClick={() => setActiveFilter(tab.id)}
-                  className="flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-medium whitespace-nowrap transition-colors"
-                  style={{
-                    background: isActive ? 'var(--accent-subtle)' : 'transparent',
-                    color: isActive ? 'var(--accent)' : 'var(--text-secondary)',
-                    border: isActive ? '1px solid var(--accent-muted)' : '1px solid transparent',
-                  }}
+                <div
+                  key={item.id}
+                  role="button"
+                  tabIndex={0}
+                  onClick={() => handleOpenArtifact(item)}
+                  className="group relative p-5 rounded-3xl bg-[var(--surface-raised)] hover:bg-[var(--hover)] border border-[var(--border)] hover:border-[var(--accent-muted)] transition-all flex flex-col justify-between cursor-pointer shadow-xs active:scale-[0.99] touch-manipulation min-h-[220px]"
                 >
-                  <Icon size={13} />
-                  <span>{tab.label}</span>
-                </button>
+                  <div className="space-y-3">
+                    {/* Top Format Pill & Time */}
+                    <div className="flex items-center justify-between">
+                      <span
+                        className="flex items-center gap-1.5 px-2.5 py-1 rounded-xl text-[10px] font-mono font-bold tracking-wide border"
+                        style={{
+                          background: 'var(--control-bg)',
+                          borderColor: 'var(--border-subtle)',
+                          color: badge.color,
+                        }}
+                      >
+                        <FormatIcon size={13} weight="bold" />
+                        <span>{badge.label}</span>
+                      </span>
+
+                      <span className="text-[11px] text-[var(--text-tertiary)] font-mono">
+                        {item.size}
+                      </span>
+                    </div>
+
+                    {/* Title & Preview Snippet */}
+                    <div>
+                      <h3 className="font-semibold text-sm sm:text-[15px] text-[var(--text-primary)] group-hover:text-[var(--accent)] transition-colors leading-snug line-clamp-2">
+                        {item.title}
+                      </h3>
+                      {item.previewSnippet && (
+                        <p className="text-xs text-[var(--text-secondary)] mt-1.5 line-clamp-2 leading-relaxed">
+                          {item.previewSnippet}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Bottom Metadata & Actions */}
+                  <div className="pt-4 border-t border-[var(--border-subtle)] flex items-center justify-between text-xs text-[var(--text-tertiary)]">
+                    <span className="truncate max-w-[160px]">{item.missionTitle}</span>
+
+                    <div className="flex items-center gap-1 shrink-0">
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleOpenArtifact(item);
+                        }}
+                        className="w-8 h-8 rounded-xl bg-[var(--control-bg)] hover:bg-[var(--active)] flex items-center justify-center text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
+                        title={t('sanctuary.open') || 'Open'}
+                      >
+                        <Eye size={15} />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          window.open(item.url, '_blank');
+                        }}
+                        className="w-8 h-8 rounded-xl bg-[var(--control-bg)] hover:bg-[var(--active)] flex items-center justify-center text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
+                        title={t('sanctuary.download') || 'Download'}
+                      >
+                        <DownloadSimple size={15} />
+                      </button>
+                    </div>
+                  </div>
+                </div>
               );
             })}
           </div>
+        ) : (
+          /* List Mode */
+          <div className="space-y-2.5">
+            {filtered.map((item) => {
+              const badge = getFormatBadge(item.type);
+              const FormatIcon = badge.icon;
 
-          {/* Group By selector */}
-          <div className="flex items-center gap-2 text-xs" style={{ color: 'var(--text-tertiary)' }}>
-            <span>Grouper par :</span>
-            <select
-              value={groupBy}
-              onChange={(e: any) => setGroupBy(e.target.value)}
-              className="px-2 py-1 rounded-lg border outline-none text-xs"
-              style={{
-                background: 'var(--surface-raised)',
-                borderColor: 'var(--border-subtle)',
-                color: 'var(--text-primary)',
-              }}
-            >
-              <option value="mission">Mission</option>
-              <option value="project">Projet</option>
-              <option value="date">Date</option>
-            </select>
-          </div>
-        </div>
-      </div>
+              return (
+                <div
+                  key={item.id}
+                  role="button"
+                  tabIndex={0}
+                  onClick={() => handleOpenArtifact(item)}
+                  className="p-4 rounded-2xl bg-[var(--surface-raised)] hover:bg-[var(--hover)] border border-[var(--border)] hover:border-[var(--accent-muted)] transition-all flex items-center justify-between gap-4 cursor-pointer group shadow-xs active:scale-[0.99] touch-manipulation"
+                >
+                  <div className="flex items-center gap-3.5 min-w-0">
+                    <div
+                      className="w-10 h-10 rounded-2xl flex items-center justify-center shrink-0 border border-[var(--border-subtle)]"
+                      style={{ background: 'var(--control-bg)', color: badge.color }}
+                    >
+                      <FormatIcon size={20} />
+                    </div>
+                    <div className="min-w-0">
+                      <h3 className="font-semibold text-sm text-[var(--text-primary)] group-hover:text-[var(--accent)] transition-colors truncate">
+                        {item.title}
+                      </h3>
+                      <div className="flex items-center gap-2 text-xs text-[var(--text-tertiary)] mt-0.5">
+                        <span className="font-mono">{badge.label}</span>
+                        <span>·</span>
+                        <span>{item.missionTitle}</span>
+                        <span>·</span>
+                        <span className="font-mono">{item.size}</span>
+                      </div>
+                    </div>
+                  </div>
 
-      {/* ═══════════════════════════════════════════════════
-         ARTIFACTS STREAM (GRID / LIST)
-         ═══════════════════════════════════════════════════ */}
-      <div className="flex-1 overflow-y-auto p-6 scrollbar-thin">
-        <div className="max-w-6xl mx-auto space-y-8">
-          {groupedData.length > 0 ? (
-            groupedData.map(({ groupTitle, items }) => (
-              <div key={groupTitle} className="space-y-3">
-                {/* Group Heading */}
-                <div className="flex items-center gap-2 pb-1 border-b" style={{ borderColor: 'var(--border-subtle)' }}>
-                  <FolderSimple size={15} style={{ color: 'var(--accent)' }} />
-                  <h3 className="text-xs font-bold uppercase tracking-wider" style={{ color: 'var(--text-primary)' }}>
-                    {groupTitle}
-                  </h3>
-                  <span className="text-[11px] font-mono" style={{ color: 'var(--text-tertiary)' }}>
-                    ({items.length} livrables)
-                  </span>
+                  <div className="shrink-0 flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleOpenArtifact(item);
+                      }}
+                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[var(--control-bg)] hover:bg-[var(--active)] text-xs font-semibold text-[var(--text-primary)] transition-colors"
+                    >
+                      <Eye size={14} />
+                      <span>{t('sanctuary.open') || 'Open'}</span>
+                    </button>
+                  </div>
                 </div>
+              );
+            })}
+          </div>
+        )}
 
-                {/* Grid View */}
-                {viewMode === 'grid' ? (
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {items.map((item) => {
-                      const badge = getFormatBadge(item.type);
-                      const Icon = badge.icon;
-
-                      return (
-                        <div
-                          key={item.id}
-                          onClick={() => handleOpenArtifact(item)}
-                          className="group rounded-2xl p-4 flex flex-col justify-between cursor-pointer transition-all"
-                          style={{
-                            background: 'var(--surface-raised)',
-                            border: '1px solid var(--border-subtle)',
-                            boxShadow: 'var(--shadow-key)',
-                          }}
-                          onMouseEnter={(e: any) => {
-                            e.currentTarget.style.borderColor = 'var(--accent-muted)';
-                            e.currentTarget.style.transform = 'translateY(-1px)';
-                          }}
-                          onMouseLeave={(e: any) => {
-                            e.currentTarget.style.borderColor = 'var(--border-subtle)';
-                            e.currentTarget.style.transform = 'translateY(0)';
-                          }}
-                        >
-                          <div>
-                            {/* Format badge + page/duration */}
-                            <div className="flex items-center justify-between gap-2 mb-3">
-                              <span
-                                className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-md flex items-center gap-1"
-                                style={{
-                                  background: `${badge.color}15`,
-                                  color: badge.color,
-                                  border: `1px solid ${badge.color}35`,
-                                }}
-                              >
-                                <Icon size={12} />
-                                <span>{badge.label}</span>
-                              </span>
-
-                              {item.pageCount && (
-                                <span className="text-[10px]" style={{ color: 'var(--text-tertiary)' }}>
-                                  {item.pageCount} pages
-                                </span>
-                              )}
-                              {item.duration && (
-                                <span className="text-[10px]" style={{ color: 'var(--text-tertiary)' }}>
-                                  {item.duration}
-                                </span>
-                              )}
-                            </div>
-
-                            {/* Title */}
-                            <h4 className="font-bold text-xs leading-snug mb-1" style={{ color: 'var(--text-primary)' }}>
-                              {item.title}
-                            </h4>
-
-                            {/* Snippet Preview */}
-                            {item.previewSnippet && (
-                              <p className="text-[11px] line-clamp-2 leading-relaxed mb-3" style={{ color: 'var(--text-secondary)' }}>
-                                {item.previewSnippet}
-                              </p>
-                            )}
-                          </div>
-
-                          {/* Footer metadata & Open action */}
-                          <div className="flex items-center justify-between pt-3 mt-auto border-t" style={{ borderColor: 'var(--border-subtle)' }}>
-                            <span className="text-[10px]" style={{ color: 'var(--text-tertiary)' }}>
-                              {item.size} • {item.createdAtHuman}
-                            </span>
-
-                            <button
-                              type="button"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleOpenArtifact(item);
-                              }}
-                              className="flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold transition-colors"
-                              style={{
-                                background: 'var(--surface)',
-                                color: 'var(--accent)',
-                                border: '1px solid var(--border-subtle)',
-                              }}
-                            >
-                              <Eye size={13} />
-                              <span>Ouvrir</span>
-                            </button>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                ) : (
-                  /* List View */
-                  <div className="space-y-1.5">
-                    {items.map((item) => {
-                      const badge = getFormatBadge(item.type);
-                      const Icon = badge.icon;
-
-                      return (
-                        <div
-                          key={item.id}
-                          onClick={() => handleOpenArtifact(item)}
-                          className="p-3 rounded-xl flex items-center justify-between gap-4 cursor-pointer transition-all"
-                          style={{
-                            background: 'var(--surface-raised)',
-                            border: '1px solid var(--border-subtle)',
-                          }}
-                          onMouseEnter={(e: any) => {
-                            e.currentTarget.style.borderColor = 'var(--border-strong)';
-                          }}
-                          onMouseLeave={(e: any) => {
-                            e.currentTarget.style.borderColor = 'var(--border-subtle)';
-                          }}
-                        >
-                          <div className="flex items-center gap-3 min-w-0">
-                            <div
-                              className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0"
-                              style={{
-                                background: `${badge.color}15`,
-                                color: badge.color,
-                                border: `1px solid ${badge.color}35`,
-                              }}
-                            >
-                              <Icon size={16} />
-                            </div>
-
-                            <div className="min-w-0">
-                              <h4 className="font-semibold text-xs truncate" style={{ color: 'var(--text-primary)' }}>
-                                {item.title}
-                              </h4>
-                              <p className="text-[10px]" style={{ color: 'var(--text-tertiary)' }}>
-                                {item.missionTitle} • {item.size} • {item.createdAtHuman}
-                              </p>
-                            </div>
-                          </div>
-
-                          <button
-                            type="button"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleOpenArtifact(item);
-                            }}
-                            className="px-3 py-1 rounded-lg text-xs font-semibold shrink-0"
-                            style={{
-                              background: 'var(--surface)',
-                              color: 'var(--text-primary)',
-                              border: '1px solid var(--border-subtle)',
-                            }}
-                          >
-                            Consulter
-                          </button>
-                        </div>
-                      );
-                    })}
-                  </div>
-                )}
-              </div>
-            ))
-          ) : (
-            /* Empty state */
-            <div
-              className="p-12 text-center rounded-3xl space-y-2"
-              style={{
-                background: 'var(--surface-raised)',
-                border: '1px dashed var(--border-strong)',
-              }}
-            >
-              <Books size={24} className="mx-auto" style={{ color: 'var(--text-tertiary)' }} />
-              <h3 className="text-sm font-bold" style={{ color: 'var(--text-primary)' }}>
-                Aucun livrable ne correspond à votre recherche
-              </h3>
-              <p className="text-xs" style={{ color: 'var(--text-secondary)' }}>
-                Lancez une mission pour générer des présentations, documents, feuilles de calcul ou visuels.
-              </p>
-            </div>
-          )}
-        </div>
       </div>
     </div>
   );
