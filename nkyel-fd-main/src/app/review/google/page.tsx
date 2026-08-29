@@ -11,7 +11,8 @@ export default function GoogleReviewWorkspace() {
   useEffect(() => {
     async function checkAuth() {
       try {
-        const res = await fetch(`http://localhost:8080/api/v1/review/status`, {
+        const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
+        const res = await fetch(`${baseUrl}/api/v1/review/status`, {
           // credentials: 'include' is critical to send the HttpOnly cookie
           credentials: 'include' 
         });

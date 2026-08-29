@@ -13,7 +13,8 @@ export default function GoogleReviewTokenPage() {
   useEffect(() => {
     async function verifyToken() {
       try {
-        const res = await fetch(`http://localhost:8080/api/v1/review/auth/${token}`, {
+        const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+        const res = await fetch(`${baseUrl}/api/v1/review/auth/${token}`, {
           method: 'POST',
         });
         
