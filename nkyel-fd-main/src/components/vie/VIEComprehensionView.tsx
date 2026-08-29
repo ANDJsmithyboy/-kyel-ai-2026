@@ -1,15 +1,3 @@
-/**
- * Ñkyel AI — VIE Comprehension & Control View
- * SmartANDJ AI Technologies · Founder: Daniel Jonathan ANDJ
- *
- * Answers: "What do I need to understand, verify, modify or approve?"
- * - Mission Intent & Current State
- * - World Model (Entities, Relations, Verified Facts vs Assumptions)
- * - Evidence Grounding & Cross-Checking
- * - Human-in-the-Graph Arbitrage & Pending Approvals
- * - Universal Artifacts Lineage
- */
-
 'use client';
 
 import React, { useState } from 'react';
@@ -30,6 +18,10 @@ import {
   X,
   Play,
   Pause,
+  Eye,
+  Target,
+  Lightning,
+  MagnifyingGlass
 } from '@phosphor-icons/react';
 import { useLanguageStore } from '@/stores/language.store';
 import { useWorkGraphStore } from '@/lib/nkyel/work-graph-store';
@@ -57,10 +49,12 @@ export default function VIEComprehensionView({
   } | null>(null);
 
   // Derive world model summary from graph nodes
-  const goals = nodes.filter((n: any) => n.type === 'goal');
-  const facts = nodes.filter((n: any) => n.type === 'evidence' || n.type === 'source');
+  const sources = nodes.filter((n: any) => n.type === 'source');
+  const goals = nodes.filter((n: any) => n.type === 'goal' || n.type === 'objective' || n.type === 'intent' || n.type === 'plan');
+  const executionNodes = nodes.filter((n: any) => n.type === 'agent' || n.type === 'task' || n.type === 'tool');
+  const activeAgent = executionNodes.find((n: any) => n.status === 'active');
+  const evidence = nodes.filter((n: any) => n.type === 'evidence' || n.type === 'fact' || n.type === 'hypothesis');
   const artifacts = nodes.filter((n: any) => n.type === 'artifact');
-  const activeAgent = nodes.find((n: any) => n.status === 'active' && (n.type === 'agent' || n.type === 'task'));
 
   const handleApprove = () => {
     if (pendingApproval) {
@@ -76,9 +70,18 @@ export default function VIEComprehensionView({
     }
   };
 
+  const renderEmptyState = (message: string) => (
+    <div className="flex flex-col items-center justify-center py-6 text-[var(--text-tertiary)] space-y-2">
+      <div className="w-8 h-8 rounded-full border border-[var(--border-subtle)] flex items-center justify-center bg-[var(--surface)]">
+        <Clock size={14} />
+      </div>
+      <span className="text-[10px] uppercase tracking-wider">{message}</span>
+    </div>
+  );
+
   return (
     <div className="flex-1 h-full overflow-y-auto p-4 sm:p-6 bg-[var(--material-canvas)] text-[var(--text-primary)] select-none">
-      <div className="max-w-4xl mx-auto space-y-6">
+      <div className="max-w-6xl mx-auto space-y-6">
         {/* Header Bar */}
         <div className="flex items-center justify-between border-b border-[var(--border-subtle)] pb-4">
           <div>
@@ -164,106 +167,135 @@ export default function VIEComprehensionView({
           </div>
         )}
 
-        {/* 3 Pillars Grid: What Ñkyel is Doing · What Ñkyel Knows · What Has Been Produced */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {/* Column 1: Current Activity & Active Agents */}
-          <div className="p-4 rounded-2xl bg-[var(--bg-elevated)] border border-[var(--border)] space-y-3">
+        {/* 4 Pillars Grid: Perception, Intention, Execution, Preuve */}
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
+          
+          {/* 1. PERCEPTION (Raw sources) */}
+          <div className="p-4 rounded-2xl bg-[var(--bg-elevated)] border border-[var(--border)] space-y-3 flex flex-col">
             <div className="flex items-center justify-between border-b border-[var(--border-subtle)] pb-2">
               <div className="flex items-center gap-2 text-xs font-semibold text-[var(--text-primary)]">
-                <Brain size={16} className="text-[var(--accent)]" />
-                <span>{isFr ? 'Ce que fait Ñkyel' : 'Current Action'}</span>
-              </div>
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-            </div>
-
-            <div className="space-y-2">
-              <div className="p-2.5 rounded-xl bg-[var(--surface)] border border-[var(--border)] text-xs space-y-1">
-                <p className="font-medium text-[var(--text-primary)]">
-                  {activeAgent?.title || (isFr ? 'Synthèse et validation en cours...' : 'Synthesizing and validating...')}
-                </p>
-                <p className="text-[11px] text-[var(--text-secondary)] leading-relaxed">
-                  {activeAgent?.summary || (isFr ? 'Croisement des sources, vérification de cohérence financière et rédaction du rapport.' : 'Cross-checking sources, financial consistency and drafting deliverable.')}
-                </p>
-              </div>
-
-              <div className="text-[11px] text-[var(--text-tertiary)] flex items-center justify-between pt-1">
-                <span>{isFr ? 'Phase actuelle :' : 'Current phase:'}</span>
-                <span className="font-mono text-[var(--accent)]">2 / 4 (Analyse)</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Column 2: World Model (Facts & Verified Evidence) */}
-          <div className="p-4 rounded-2xl bg-[var(--bg-elevated)] border border-[var(--border)] space-y-3">
-            <div className="flex items-center justify-between border-b border-[var(--border-subtle)] pb-2">
-              <div className="flex items-center gap-2 text-xs font-semibold text-[var(--text-primary)]">
-                <Globe size={16} className="text-cyan-400" />
-                <span>{isFr ? 'Ce que sait Ñkyel (World Model)' : 'What Ñkyel Knows'}</span>
+                <Eye size={16} className="text-blue-400" />
+                <span className="uppercase tracking-widest">{isFr ? 'Perception' : 'Perception'}</span>
               </div>
               <span className="text-[10px] font-mono text-[var(--text-tertiary)]">
-                {facts.length} {isFr ? 'faits' : 'facts'}
+                {sources.length}
               </span>
             </div>
-
-            <div className="space-y-1.5 max-h-48 overflow-y-auto pe-1">
-              <div className="p-2 rounded-xl bg-[var(--surface)] border border-[var(--border)] text-xs">
-                <div className="flex items-center gap-1.5 text-emerald-400 font-semibold text-[11px]">
-                  <CheckCircle size={13} weight="fill" />
-                  <span>{isFr ? 'Fait vérifié' : 'Verified Fact'}</span>
+            <div className="flex-1 space-y-2 overflow-y-auto max-h-64 pe-1">
+              {sources.length === 0 ? renderEmptyState(isFr ? 'Aucune source raw' : 'No raw sources') : sources.map((src: any) => (
+                <div key={src.id} className="p-2 rounded-xl bg-[var(--surface)] border border-[var(--border)] text-xs">
+                  <div className="flex items-center gap-1.5 text-[var(--text-secondary)] font-semibold text-[11px]">
+                    <Globe size={13} />
+                    <span>{src.data?.label || 'Source'}</span>
+                  </div>
+                  {src.data?.description && (
+                    <p className="text-[10px] text-[var(--text-tertiary)] mt-1">{src.data.description}</p>
+                  )}
                 </div>
-                <p className="text-[11px] text-[var(--text-secondary)] mt-0.5">
-                  Potentiel d’irradiation solaire au Gabon : 4.5 à 5.5 kWh/m²/jour.
-                </p>
-              </div>
-
-              <div className="p-2 rounded-xl bg-[var(--surface)] border border-[var(--border)] text-xs">
-                <div className="flex items-center gap-1.5 text-cyan-400 font-semibold text-[11px]">
-                  <Globe size={13} />
-                  <span>{isFr ? 'Donnée macroéconomique' : 'Macro Data'}</span>
-                </div>
-                <p className="text-[11px] text-[var(--text-secondary)] mt-0.5">
-                  Plan Gabon 2026 : exonérations douanières sur les panneaux photovoltaïques.
-                </p>
-              </div>
+              ))}
             </div>
           </div>
 
-          {/* Column 3: Universal Artifacts Produced */}
-          <div className="p-4 rounded-2xl bg-[var(--bg-elevated)] border border-[var(--border)] space-y-3">
+          {/* 2. INTENTION (Goals, Plans) */}
+          <div className="p-4 rounded-2xl bg-[var(--bg-elevated)] border border-[var(--border)] space-y-3 flex flex-col">
             <div className="flex items-center justify-between border-b border-[var(--border-subtle)] pb-2">
               <div className="flex items-center gap-2 text-xs font-semibold text-[var(--text-primary)]">
-                <FileText size={16} className="text-purple-400" />
-                <span>{isFr ? 'Artefacts Produits' : 'Produced Artifacts'}</span>
+                <Target size={16} className="text-purple-400" />
+                <span className="uppercase tracking-widest">{isFr ? 'Intention' : 'Intention'}</span>
               </div>
               <span className="text-[10px] font-mono text-[var(--text-tertiary)]">
-                {artifacts.length > 0 ? artifacts.length : 3} {isFr ? 'livrables' : 'items'}
+                {goals.length}
               </span>
             </div>
-
-            <div className="space-y-1.5 max-h-48 overflow-y-auto pe-1">
-              <div className="p-2 rounded-xl bg-[var(--surface)] border border-[var(--border)] text-xs flex items-center justify-between">
-                <div className="flex items-center gap-2 min-w-0">
-                  <FileText size={15} className="text-blue-400 shrink-0" />
-                  <div className="min-w-0">
-                    <p className="font-semibold text-xs truncate">Rapport Solaire Gabon 2026</p>
-                    <p className="text-[10px] text-[var(--text-tertiary)]">PDF · 12 pages</p>
+            <div className="flex-1 space-y-2 overflow-y-auto max-h-64 pe-1">
+              {goals.length === 0 ? renderEmptyState(isFr ? 'Aucun objectif défini' : 'No goals defined') : goals.map((goal: any) => (
+                <div key={goal.id} className="p-2 rounded-xl bg-[var(--surface)] border border-[var(--border)] text-xs">
+                  <div className="flex items-center gap-1.5 text-[var(--text-secondary)] font-semibold text-[11px]">
+                    <ArrowRight size={13} />
+                    <span>{goal.data?.label || 'Objectif'}</span>
                   </div>
+                  {goal.data?.description && (
+                    <p className="text-[10px] text-[var(--text-tertiary)] mt-1">{goal.data.description}</p>
+                  )}
                 </div>
-                <span className="text-[10px] px-1.5 py-0.5 rounded-md bg-emerald-500/15 text-emerald-400 font-medium">Prêt</span>
-              </div>
-
-              <div className="p-2 rounded-xl bg-[var(--surface)] border border-[var(--border)] text-xs flex items-center justify-between">
-                <div className="flex items-center gap-2 min-w-0">
-                  <Database size={15} className="text-emerald-400 shrink-0" />
-                  <div className="min-w-0">
-                    <p className="font-semibold text-xs truncate">Modèle Financier DCF 3 Scénarios</p>
-                    <p className="text-[10px] text-[var(--text-tertiary)]">XLSX · 4 feuilles</p>
-                  </div>
-                </div>
-                <span className="text-[10px] px-1.5 py-0.5 rounded-md bg-emerald-500/15 text-emerald-400 font-medium">Prêt</span>
-              </div>
+              ))}
             </div>
           </div>
+
+          {/* 3. EXECUTION (Agents, Tasks) */}
+          <div className="p-4 rounded-2xl bg-[var(--bg-elevated)] border border-[var(--border)] space-y-3 flex flex-col">
+            <div className="flex items-center justify-between border-b border-[var(--border-subtle)] pb-2">
+              <div className="flex items-center gap-2 text-xs font-semibold text-[var(--text-primary)]">
+                <Lightning size={16} className="text-amber-400" />
+                <span className="uppercase tracking-widest">{isFr ? 'Exécution' : 'Execution'}</span>
+              </div>
+              <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" style={{ opacity: isRunning ? 1 : 0 }} />
+            </div>
+            <div className="flex-1 space-y-2 overflow-y-auto max-h-64 pe-1">
+              {executionNodes.length === 0 ? renderEmptyState(isFr ? 'En attente...' : 'Awaiting...') : (
+                <>
+                  {activeAgent && (
+                    <div className="p-2.5 rounded-xl bg-[var(--accent-subtle)] border border-[var(--accent-muted)] text-xs space-y-1">
+                      <p className="font-medium text-[var(--text-primary)] flex items-center gap-1">
+                        <Brain size={14} className="text-[var(--accent)]" />
+                        {activeAgent.data?.label || 'Agent Actif'}
+                      </p>
+                      <p className="text-[11px] text-[var(--text-secondary)] leading-relaxed">
+                        {activeAgent.data?.description || 'En cours...'}
+                      </p>
+                    </div>
+                  )}
+                  {executionNodes.filter((n: any) => n.id !== activeAgent?.id).map((node: any) => (
+                    <div key={node.id} className="p-2 rounded-xl bg-[var(--surface)] border border-[var(--border)] text-xs opacity-70">
+                       <p className="font-medium text-[var(--text-secondary)]">{node.data?.label}</p>
+                    </div>
+                  ))}
+                </>
+              )}
+            </div>
+          </div>
+
+          {/* 4. PREUVE (Evidence, Artifacts) */}
+          <div className="p-4 rounded-2xl bg-[var(--bg-elevated)] border border-[var(--border)] space-y-3 flex flex-col">
+            <div className="flex items-center justify-between border-b border-[var(--border-subtle)] pb-2">
+              <div className="flex items-center gap-2 text-xs font-semibold text-[var(--text-primary)]">
+                <MagnifyingGlass size={16} className="text-emerald-400" />
+                <span className="uppercase tracking-widest">{isFr ? 'Preuve' : 'Evidence'}</span>
+              </div>
+              <span className="text-[10px] font-mono text-[var(--text-tertiary)]">
+                {evidence.length + artifacts.length}
+              </span>
+            </div>
+            <div className="flex-1 space-y-2 overflow-y-auto max-h-64 pe-1">
+              {evidence.length === 0 && artifacts.length === 0 ? renderEmptyState(isFr ? 'Aucune preuve structurée' : 'No structured evidence') : (
+                <>
+                  {evidence.map((ev: any) => (
+                    <div key={ev.id} className="p-2 rounded-xl bg-[var(--surface)] border border-[var(--border)] text-xs">
+                      <div className="flex items-center gap-1.5 text-emerald-400 font-semibold text-[11px]">
+                        <CheckCircle size={13} weight="fill" />
+                        <span>{ev.data?.label || 'Fait'}</span>
+                      </div>
+                      {ev.data?.description && (
+                         <p className="text-[10px] text-[var(--text-secondary)] mt-0.5">{ev.data.description}</p>
+                      )}
+                    </div>
+                  ))}
+                  {artifacts.map((art: any) => (
+                    <div key={art.id} className="p-2 rounded-xl bg-blue-500/10 border border-blue-500/20 text-xs flex items-center justify-between mt-2">
+                      <div className="flex items-center gap-2 min-w-0">
+                        <FileText size={15} className="text-blue-400 shrink-0" />
+                        <div className="min-w-0">
+                          <p className="font-semibold text-xs truncate text-blue-100">{art.data?.label || 'Artifact'}</p>
+                        </div>
+                      </div>
+                      <span className="text-[10px] px-1.5 py-0.5 rounded-md bg-blue-500/20 text-blue-300 font-medium">Livrable</span>
+                    </div>
+                  ))}
+                </>
+              )}
+            </div>
+          </div>
+
         </div>
       </div>
     </div>

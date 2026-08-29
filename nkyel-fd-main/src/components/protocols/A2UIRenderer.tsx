@@ -46,7 +46,7 @@ interface A2UIRendererProps {
   onValidationChange?: (allValid: boolean) => void;
 }
 
-const WADA_CHART_COLORS = ['#665F9E', '#315A70', '#6F9485', '#C39A52', '#765E78', '#AAA2C8'];
+const WADA_CHART_COLORS = ['var(--accent)', 'var(--info)', 'var(--success)', 'var(--warning)', 'var(--error)', 'var(--text-secondary)'];
 
 export default function A2UIRenderer({
   spec,
@@ -102,21 +102,11 @@ export default function A2UIRenderer({
   }, [spec.tableData, sortCol, sortAsc]);
 
   return (
-    <div
-      className="w-full rounded-2xl p-5 my-3 relative overflow-hidden transition-all"
-      style={{
-        background: 'rgba(21, 25, 34, 0.75)',
-        border: '1px solid rgba(118, 94, 120, 0.25)', // Muted Plum accent border for A2UI
-        boxShadow: '0 8px 32px rgba(0,0,0,0.28)',
-      }}
-    >
+    <div className="w-full rounded-2xl p-5 my-3 relative overflow-hidden transition-all bg-[var(--glass-elevated)] border border-[var(--glass-border)] shadow-[var(--shadow-floating)]">
       {/* Surface Header */}
-      <div className="flex items-center justify-between pb-3 mb-4 border-b border-white/[0.06]">
+      <div className="flex items-center justify-between pb-3 mb-4 border-b border-[var(--border-subtle)]">
         <div className="flex items-center gap-2.5">
-          <span
-            className="w-7 h-7 rounded-lg flex items-center justify-center text-[13px] font-semibold"
-            style={{ background: 'rgba(118, 94, 120, 0.2)', color: '#AAA2C8' }}
-          >
+          <span className="w-7 h-7 rounded-lg flex items-center justify-center text-[13px] font-semibold bg-[var(--accent-10)] text-[var(--accent)]">
             {spec.componentType === 'table' && <TableIcon size={16} />}
             {spec.componentType === 'chart' && <ChartLine size={16} />}
             {spec.componentType === 'comparison_panel' && <Cards size={16} />}
@@ -124,21 +114,18 @@ export default function A2UIRenderer({
             {spec.componentType === 'metric_card' && <FileText size={16} />}
           </span>
           <div>
-            <h4 className="text-[14px] font-semibold text-[#F1EEE7] tracking-tight">{spec.title}</h4>
+            <h4 className="text-[14px] font-semibold text-[var(--text-primary)] tracking-tight">{spec.title}</h4>
             {spec.description && (
-              <p className="text-[12px] text-[#7E8795] mt-0.5">{spec.description}</p>
+              <p className="text-[12px] text-[var(--text-tertiary)] mt-0.5">{spec.description}</p>
             )}
           </div>
         </div>
 
         <div className="flex items-center gap-2">
-          <span
-            className="text-[10px] px-2 py-0.5 rounded-full font-medium tracking-wide uppercase"
-            style={{ background: 'rgba(118, 94, 120, 0.15)', color: '#AAA2C8', border: '1px solid rgba(118, 94, 120, 0.3)' }}
-          >
+          <span className="text-[10px] px-2 py-0.5 rounded-full font-medium tracking-wide uppercase bg-[var(--accent-06)] text-[var(--accent)] border border-[var(--accent-10)]">
             A2UI · {spec.schemaVersion}
           </span>
-          <span className="text-[11px] text-[#7E8795]">Agent: {spec.generatedByAgent}</span>
+          <span className="text-[11px] text-[var(--text-tertiary)]">Agent: {spec.generatedByAgent}</span>
         </div>
       </div>
 
@@ -154,8 +141,8 @@ export default function A2UIRenderer({
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {spec.formFields.map((field) => (
               <div key={field.id} className={field.type === 'textarea' ? 'md:col-span-2' : ''}>
-                <label className="block text-[12px] font-medium text-[#B8C0CC] mb-1.5">
-                  {field.label} {field.required && <span className="text-[#BE6254]">*</span>}
+                <label className="block text-[12px] font-medium text-[var(--text-secondary)] mb-1.5">
+                  {field.label} {field.required && <span className="text-[var(--error)]">*</span>}
                 </label>
 
                 {field.type === 'text' || field.type === 'email' || field.type === 'number' ? (
@@ -165,14 +152,14 @@ export default function A2UIRenderer({
                     placeholder={field.placeholder}
                     required={field.required}
                     onChange={(e) => handleFieldChange(field.name, e.target.value)}
-                    className="w-full px-3.5 py-2 rounded-xl text-[13px] text-[#F1EEE7] bg-[#0E121A] border border-white/[0.08] focus:border-[#665F9E] focus:outline-none transition-colors"
+                    className="w-full px-3.5 py-2 rounded-xl text-[13px] text-[var(--text-primary)] bg-[var(--surface-raised)] border border-[var(--border-subtle)] focus:border-[var(--accent)] focus:outline-none transition-colors"
                   />
                 ) : field.type === 'select' ? (
                   <select
                     value={(formData[field.name] as string) || ''}
                     required={field.required}
                     onChange={(e) => handleFieldChange(field.name, e.target.value)}
-                    className="w-full px-3.5 py-2 rounded-xl text-[13px] text-[#F1EEE7] bg-[#0E121A] border border-white/[0.08] focus:border-[#665F9E] focus:outline-none transition-colors"
+                    className="w-full px-3.5 py-2 rounded-xl text-[13px] text-[var(--text-primary)] bg-[var(--surface-raised)] border border-[var(--border-subtle)] focus:border-[var(--accent)] focus:outline-none transition-colors"
                   >
                     <option value="">Sélectionner une option...</option>
                     {field.options?.map((opt) => (
@@ -188,7 +175,7 @@ export default function A2UIRenderer({
                     placeholder={field.placeholder}
                     required={field.required}
                     onChange={(e) => handleFieldChange(field.name, e.target.value)}
-                    className="w-full px-3.5 py-2 rounded-xl text-[13px] text-[#F1EEE7] bg-[#0E121A] border border-white/[0.08] focus:border-[#665F9E] focus:outline-none transition-colors"
+                    className="w-full px-3.5 py-2 rounded-xl text-[13px] text-[var(--text-primary)] bg-[var(--surface-raised)] border border-[var(--border-subtle)] focus:border-[var(--accent)] focus:outline-none transition-colors"
                   />
                 ) : field.type === 'checkbox' ? (
                   <label className="flex items-center gap-2.5 cursor-pointer py-1">
@@ -196,9 +183,9 @@ export default function A2UIRenderer({
                       type="checkbox"
                       checked={Boolean(formData[field.name])}
                       onChange={(e) => handleFieldChange(field.name, e.target.checked)}
-                      className="w-4 h-4 rounded text-[#665F9E] bg-[#0E121A] border-white/10"
+                      className="w-4 h-4 rounded text-[var(--accent)] bg-[var(--surface-raised)] border-[var(--border-subtle)]"
                     />
-                    <span className="text-[13px] text-[#B8C0CC]">{field.label}</span>
+                    <span className="text-[13px] text-[var(--text-secondary)]">{field.label}</span>
                   </label>
                 ) : null}
               </div>
@@ -213,10 +200,10 @@ export default function A2UIRenderer({
                 onClick={() => act.variant !== 'primary' && onSubmitAction(act.actionKey, formData)}
                 className={`px-4 py-2 rounded-xl text-[13px] font-semibold transition-all ${
                   act.variant === 'primary'
-                    ? 'bg-[#665F9E] hover:bg-[#665F9E]/90 text-white shadow-md'
+                    ? 'bg-[var(--accent)] hover:bg-[var(--accent)] text-[var(--text-inverse)] shadow-md opacity-90 hover:opacity-100'
                     : act.variant === 'danger'
-                    ? 'bg-[#BE6254]/20 hover:bg-[#BE6254]/30 text-[#BE6254] border border-[#BE6254]/30'
-                    : 'bg-white/[0.06] hover:bg-white/[0.1] text-[#F1EEE7] border border-white/[0.08]'
+                    ? 'bg-[var(--error-subtle)] hover:bg-[var(--error)] text-[var(--error)] hover:text-white border border-[var(--error)]/30'
+                    : 'bg-[var(--control-bg)] hover:bg-[var(--control-hover)] text-[var(--text-primary)] border border-[var(--control-border)]'
                 }`}
               >
                 {act.label}
@@ -228,9 +215,9 @@ export default function A2UIRenderer({
 
       {/* ── 2. TABLE RENDERER ── */}
       {spec.componentType === 'table' && spec.tableColumns && (
-        <div className="overflow-x-auto rounded-xl border border-white/[0.06]">
+        <div className="overflow-x-auto rounded-xl border border-[var(--border-subtle)]">
           <table className="w-full text-start text-[13px] border-collapse">
-            <thead className="bg-[#0E121A] text-[#7E8795] font-medium border-b border-white/[0.06]">
+            <thead className="bg-[var(--surface-raised)] text-[var(--text-tertiary)] font-medium border-b border-[var(--border-subtle)]">
               <tr>
                 {spec.tableColumns.map((col) => (
                   <th
@@ -254,9 +241,9 @@ export default function A2UIRenderer({
                 ))}
               </tr>
             </thead>
-            <tbody className="divide-y divide-white/[0.04]">
+            <tbody className="divide-y divide-[var(--border-subtle)]">
               {sortedTableData.map((row, idx) => (
-                <tr key={idx} className="hover:bg-white/[0.02] transition-colors">
+                <tr key={idx} className="hover:bg-[var(--hover)] transition-colors">
                   {spec.tableColumns!.map((col) => {
                     const rawVal = row[col.key];
                     return (
@@ -265,7 +252,7 @@ export default function A2UIRenderer({
                         className={`px-4 py-2.5 ${col.align === 'right' ? 'text-end' : col.align === 'center' ? 'text-center' : 'text-start'}`}
                       >
                         {col.type === 'badge' ? (
-                          <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-[#6F9485]/15 text-[#6F9485] border border-[#6F9485]/20">
+                          <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-[var(--info-subtle)] text-[var(--info)] border border-[var(--info)]/20">
                             {String(rawVal)}
                           </span>
                         ) : col.type === 'currency' ? (
@@ -275,7 +262,7 @@ export default function A2UIRenderer({
                               : String(rawVal)}
                           </span>
                         ) : (
-                          <span className="text-[#F1EEE7]">{String(rawVal ?? '-')}</span>
+                          <span className="text-[var(--text-primary)]">{String(rawVal ?? '-')}</span>
                         )}
                       </td>
                     );
@@ -293,16 +280,16 @@ export default function A2UIRenderer({
           <ResponsiveContainer width="100%" height="100%">
             {spec.chartSpec.chartType === 'line' ? (
               <LineChart data={spec.chartSpec.data}>
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
-                <XAxis dataKey={spec.chartSpec.xAxisKey} stroke="#7E8795" fontSize={11} />
-                <YAxis stroke="#7E8795" fontSize={11} />
+                <CartesianGrid strokeDasharray="3 3" stroke="var(--border-subtle)" />
+                <XAxis dataKey={spec.chartSpec.xAxisKey} stroke="var(--text-tertiary)" fontSize={11} />
+                <YAxis stroke="var(--text-tertiary)" fontSize={11} />
                 <Tooltip
                   contentStyle={{
-                    backgroundColor: '#151922',
-                    borderColor: 'rgba(255,255,255,0.1)',
+                    backgroundColor: 'var(--surface-raised)',
+                    borderColor: 'var(--border-subtle)',
                     borderRadius: 12,
                     fontSize: 12,
-                    color: '#F1EEE7',
+                    color: 'var(--text-primary)',
                   }}
                 />
                 {spec.chartSpec.series.map((s, idx) => (
@@ -319,16 +306,16 @@ export default function A2UIRenderer({
               </LineChart>
             ) : spec.chartSpec.chartType === 'bar' ? (
               <BarChart data={spec.chartSpec.data}>
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
-                <XAxis dataKey={spec.chartSpec.xAxisKey} stroke="#7E8795" fontSize={11} />
-                <YAxis stroke="#7E8795" fontSize={11} />
+                <CartesianGrid strokeDasharray="3 3" stroke="var(--border-subtle)" />
+                <XAxis dataKey={spec.chartSpec.xAxisKey} stroke="var(--text-tertiary)" fontSize={11} />
+                <YAxis stroke="var(--text-tertiary)" fontSize={11} />
                 <Tooltip
                   contentStyle={{
-                    backgroundColor: '#151922',
-                    borderColor: 'rgba(255,255,255,0.1)',
+                    backgroundColor: 'var(--surface-raised)',
+                    borderColor: 'var(--border-subtle)',
                     borderRadius: 12,
                     fontSize: 12,
-                    color: '#F1EEE7',
+                    color: 'var(--text-primary)',
                   }}
                 />
                 {spec.chartSpec.series.map((s, idx) => (
@@ -343,16 +330,16 @@ export default function A2UIRenderer({
               </BarChart>
             ) : (
               <AreaChart data={spec.chartSpec.data}>
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
-                <XAxis dataKey={spec.chartSpec.xAxisKey} stroke="#7E8795" fontSize={11} />
-                <YAxis stroke="#7E8795" fontSize={11} />
+                <CartesianGrid strokeDasharray="3 3" stroke="var(--border-subtle)" />
+                <XAxis dataKey={spec.chartSpec.xAxisKey} stroke="var(--text-tertiary)" fontSize={11} />
+                <YAxis stroke="var(--text-tertiary)" fontSize={11} />
                 <Tooltip
                   contentStyle={{
-                    backgroundColor: '#151922',
-                    borderColor: 'rgba(255,255,255,0.1)',
+                    backgroundColor: 'var(--surface-raised)',
+                    borderColor: 'var(--border-subtle)',
                     borderRadius: 12,
                     fontSize: 12,
-                    color: '#F1EEE7',
+                    color: 'var(--text-primary)',
                   }}
                 />
                 {spec.chartSpec.series.map((s, idx) => (
@@ -362,7 +349,7 @@ export default function A2UIRenderer({
                     dataKey={s.key}
                     name={s.name}
                     stroke={s.color || WADA_CHART_COLORS[idx % WADA_CHART_COLORS.length]}
-                    fill={`${s.color || WADA_CHART_COLORS[idx % WADA_CHART_COLORS.length]}25`}
+                    fill={`var(--accent-10)`}
                   />
                 ))}
               </AreaChart>
@@ -379,19 +366,19 @@ export default function A2UIRenderer({
               key={item.id}
               className={`p-4 rounded-xl border flex flex-col justify-between transition-all ${
                 item.isRecommended
-                  ? 'bg-[#665F9E]/10 border-[#665F9E]/40 shadow-lg'
-                  : 'bg-[#0E121A] border-white/[0.06]'
+                  ? 'bg-[var(--accent-06)] border-[var(--accent)]/40 shadow-lg'
+                  : 'bg-[var(--surface-raised)] border-[var(--border-subtle)]'
               }`}
             >
               <div>
                 <div className="flex items-center justify-between mb-2">
-                  <h5 className="text-[14px] font-semibold text-[#F1EEE7]">{item.title}</h5>
+                  <h5 className="text-[14px] font-semibold text-[var(--text-primary)]">{item.title}</h5>
                   {item.badge && (
                     <span
                       className={`text-[10px] px-2 py-0.5 rounded-full font-semibold ${
                         item.isRecommended
-                          ? 'bg-[var(--accent-subtle)] text-[var(--accent)] border border-[var(--accent)]/30'
-                          : 'bg-white/[0.08] text-[#B8C0CC]'
+                          ? 'bg-[var(--accent-10)] text-[var(--accent)] border border-[var(--accent)]/30'
+                          : 'bg-[var(--control-bg)] text-[var(--text-secondary)]'
                       }`}
                     >
                       {item.badge}
@@ -403,8 +390,8 @@ export default function A2UIRenderer({
                 <div className="space-y-1.5 my-3">
                   {item.metrics.map((m, idx) => (
                     <div key={idx} className="flex items-center justify-between text-[12px]">
-                      <span className="text-[#7E8795]">{m.label}</span>
-                      <span className={`font-semibold ${m.isPositive ? 'text-[#6F9485]' : 'text-[#F1EEE7]'}`}>
+                      <span className="text-[var(--text-tertiary)]">{m.label}</span>
+                      <span className={`font-semibold ${m.isPositive ? 'text-[var(--success)]' : 'text-[var(--text-primary)]'}`}>
                         {m.value}
                       </span>
                     </div>
@@ -412,13 +399,13 @@ export default function A2UIRenderer({
                 </div>
 
                 {/* Feature Checklist */}
-                <div className="space-y-1 pt-2 border-t border-white/[0.04]">
+                <div className="space-y-1 pt-2 border-t border-[var(--border-subtle)]">
                   {item.features.map((f, idx) => (
-                    <div key={idx} className="flex items-center gap-2 text-[11px] text-[#B8C0CC]">
+                    <div key={idx} className="flex items-center gap-2 text-[11px] text-[var(--text-secondary)]">
                       {f.supported ? (
-                        <CheckCircle size={13} weight="fill" className="text-[#6F9485] shrink-0" />
+                        <CheckCircle size={13} weight="fill" className="text-[var(--success)] shrink-0" />
                       ) : (
-                        <span className="text-[#7E8795] opacity-50 shrink-0">✕</span>
+                        <span className="text-[var(--text-tertiary)] opacity-50 shrink-0">✕</span>
                       )}
                       <span>{f.text}</span>
                     </div>
@@ -432,8 +419,8 @@ export default function A2UIRenderer({
                   onClick={() => onSubmitAction('select_comparison_item', { itemId: item.id })}
                   className={`mt-4 w-full py-2 rounded-xl text-[12px] font-semibold transition-all ${
                     item.isRecommended
-                      ? 'bg-[#665F9E] hover:bg-[#665F9E]/90 text-white'
-                      : 'bg-white/[0.06] hover:bg-white/[0.1] text-[#F1EEE7]'
+                      ? 'bg-[var(--accent)] hover:opacity-90 text-[var(--text-inverse)]'
+                      : 'bg-[var(--control-bg)] hover:bg-[var(--control-hover)] text-[var(--text-primary)]'
                   }`}
                 >
                   {item.actionLabel}
@@ -446,15 +433,15 @@ export default function A2UIRenderer({
 
       {/* ── 5. METRIC CARD ── */}
       {spec.componentType === 'metric_card' && spec.metricCardData && (
-        <div className="p-4 rounded-xl bg-[#0E121A] border border-white/[0.06] flex items-center justify-between">
+        <div className="p-4 rounded-xl bg-[var(--surface-raised)] border border-[var(--border-subtle)] flex items-center justify-between">
           <div>
-            <span className="text-[12px] text-[#7E8795] font-medium block">{spec.metricCardData.label}</span>
+            <span className="text-[12px] text-[var(--text-tertiary)] font-medium block">{spec.metricCardData.label}</span>
             <div className="flex items-baseline gap-2.5 mt-1">
-              <span className="text-2xl font-bold font-mono text-[#F1EEE7]">{spec.metricCardData.value}</span>
+              <span className="text-2xl font-bold font-mono text-[var(--text-primary)]">{spec.metricCardData.value}</span>
               {spec.metricCardData.trendPercent !== undefined && (
                 <span
                   className={`flex items-center text-[11px] font-semibold ${
-                    spec.metricCardData.trendDirection === 'up' ? 'text-[#6F9485]' : 'text-[#BE6254]'
+                    spec.metricCardData.trendDirection === 'up' ? 'text-[var(--success)]' : 'text-[var(--error)]'
                   }`}
                 >
                   {spec.metricCardData.trendDirection === 'up' ? <ArrowUpRight size={14} /> : <ArrowDownRight size={14} />}
@@ -463,7 +450,7 @@ export default function A2UIRenderer({
               )}
             </div>
             {spec.metricCardData.subtext && (
-              <span className="text-[11px] text-[#7E8795] mt-1 block">{spec.metricCardData.subtext}</span>
+              <span className="text-[11px] text-[var(--text-tertiary)] mt-1 block">{spec.metricCardData.subtext}</span>
             )}
           </div>
         </div>
@@ -471,23 +458,23 @@ export default function A2UIRenderer({
 
       {/* ── 6. VALIDATION CONTROLS (HUMAN IN THE LOOP) ── */}
       {spec.validationControls && (
-        <div className="mt-4 pt-3 border-t border-white/[0.06] space-y-2">
+        <div className="mt-4 pt-3 border-t border-[var(--border-subtle)] space-y-2">
           <div className="text-[12px] font-semibold text-[var(--accent)] uppercase tracking-wider">
             Points de vérification humaine requis
           </div>
           {spec.validationControls.checklist.map((item) => (
             <label
               key={item.id}
-              className="flex items-start gap-2.5 cursor-pointer py-1 text-[12px] text-[#B8C0CC] hover:text-white transition-colors"
+              className="flex items-start gap-2.5 cursor-pointer py-1 text-[12px] text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
             >
               <input
                 type="checkbox"
                 checked={Boolean(checklistState[item.id])}
                 onChange={() => handleChecklistToggle(item.id)}
-                className="w-4 h-4 rounded text-[#665F9E] bg-[#0E121A] border-white/10 mt-0.5"
+                className="w-4 h-4 rounded text-[var(--accent)] bg-[var(--surface-raised)] border-white/10 mt-0.5"
               />
               <span>
-                {item.text} {item.isMandatory && <span className="text-[#BE6254] font-medium">(Obligatoire)</span>}
+                {item.text} {item.isMandatory && <span className="text-[var(--error)] font-medium">(Obligatoire)</span>}
               </span>
             </label>
           ))}

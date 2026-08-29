@@ -22,7 +22,7 @@ export async function DELETE() {
     await client.users.deleteUser(userId);
 
     // Proactively delete in our database in case the webhook has latency.
-    await db.delete(users).where(eq(users.clerkId, userId));
+    await db.delete(users).where(eq(users.clerkUserId, userId));
 
     return NextResponse.json({ success: true });
   } catch (err: any) {

@@ -90,20 +90,12 @@ export default function PlusLauncherMenu({ onClose, onSelectAction, isMobile }: 
         <span className="font-semibold text-[15px]">{t('launcher.sanctuary') || 'Sanctuary'}</span>
       </div>
       
-      {/* Fake recent items for demonstration, actual implementation pulls from Sanctuary store */}
+      {/* Production implementation pulls from Sanctuary store, for now empty state */}
       <div className="px-3 py-1 space-y-1">
         <div className="text-[12px] font-semibold text-[var(--text-muted)] mb-2 uppercase tracking-wide">Recent Files</div>
-        {[1, 2, 3].map(i => (
-          <button key={i} onClick={() => onSelectAction('sanctuary_file', `file_${i}`)} className="w-full flex items-center gap-3 px-3 py-2.5 hover:bg-[var(--hover)] rounded-xl text-start transition-colors">
-            <div className="w-8 h-8 rounded-lg bg-[var(--surface)] flex items-center justify-center shrink-0 border border-[var(--border-subtle)]">
-              <FileText size={18} className="text-[var(--text-secondary)]" />
-            </div>
-            <div className="flex flex-col min-w-0">
-              <span className="text-[14px] font-medium truncate">Strategic_Plan_2026_v{i}.pdf</span>
-              <span className="text-[12px] text-[var(--text-muted)]">Mission {i}</span>
-            </div>
-          </button>
-        ))}
+        <div className="text-center text-[13px] text-[var(--text-muted)] py-4">
+          No recent files found.
+        </div>
       </div>
       
       <div className="px-3 pt-2 mt-2 border-t border-[var(--border-subtle)]">

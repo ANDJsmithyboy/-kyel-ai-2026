@@ -17,7 +17,8 @@ import { applyRTLToDOM } from './language.store';
 export type { ThemeKey, AccentKey } from './theme';
 export { THEMES, ACCENTS } from './theme';
 
-export type FontSize = 'small' | 'normal' | 'large';
+export type FontSize = 'small' | 'default' | 'large' | 'xlarge';
+export type TextStyle = 'balanced' | 'compact' | 'comfortable' | 'editorial';
 export type Density = 'comfortable' | 'compact' | 'spacious';
 export type ResponseDepth = 'fast' | 'balanced' | 'deep' | 'research';
 export type ResearchDepth = 'quick' | 'balanced' | 'deep' | 'exhaustive';
@@ -54,11 +55,34 @@ export interface UserPreferencesState {
 
   // 2. Apparence & Thème
   theme: ThemeKey;
+  themeMode: 'light' | 'dark' | 'auto';
   accent: AccentKey;
   fontSize: FontSize;
+  textStyle: TextStyle;
   density: Density;
   reducedMotion: boolean;
   highContrast: boolean;
+
+  // 2b. Interface
+  uiPreferences: {
+    openLinksInNewTab: boolean;
+    compactSidebar: boolean;
+    showRecentMissions: boolean;
+    showProjectPreviews: boolean;
+    showTooltips: boolean;
+    showKeyboardHints: boolean;
+    rememberSidebarState: boolean;
+    defaultLandingPage: string;
+  };
+
+  // 2c. Startup
+  startupPreferences: {
+    defaultNkyelProfile: string;
+    defaultProject: string;
+    restoreLastMission: boolean;
+    openLastWorkspace: boolean;
+    startWithSidebarExpanded: boolean;
+  };
 
   // 3. Personnalisation & Agent
   responseDepth: ResponseDepth;
@@ -83,9 +107,17 @@ export interface UserPreferencesState {
 
   // 6. Notifications
   notifications: {
-    missionUpdates: boolean;
-    checkpointAlerts: boolean;
-    costAlerts: boolean;
+    browserNotifications: boolean;
+    soundAlerts: boolean;
+    missionCompleted: boolean;
+    missionFailed: boolean;
+    approvalRequired: boolean;
+    programCompleted: boolean;
+    programFailed: boolean;
+    artifactReady: boolean;
+    connectorDisconnected: boolean;
+    securityAlert: boolean;
+    productUpdates: boolean;
     emailDigest: boolean;
   };
 
@@ -99,9 +131,13 @@ export interface UserPreferencesState {
   // Actions
   updatePreferences: (updates: Partial<UserPreferencesState>) => Promise<void>;
   setTheme: (t: ThemeKey) => void;
+  setThemeMode: (mode: 'light' | 'dark' | 'auto') => void;
   setAccent: (a: AccentKey) => void;
   setFontSize: (f: FontSize) => void;
+  setTextStyle: (t: TextStyle) => void;
   setDensity: (d: Density) => void;
+  setReducedMotion: (v: boolean) => void;
+  setHighContrast: (v: boolean) => void;
   setUiLocale: (locale: string) => void;
   setAgentLanguage: (lang: string) => void;
   setDateFormat: (f: DateFormat) => void;
@@ -111,19 +147,22 @@ export interface UserPreferencesState {
   setResearchDepth: (r: ResearchDepth) => void;
   setMemoryPolicy: (p: 'never' | 'always_ask' | 'auto_preferences' | 'auto_all') => void;
   setDataResidency: (r: DataResidency) => void;
+  setUiPreferences: (updates: Partial<UserPreferencesState['uiPreferences']>) => void;
+  setStartupPreferences: (updates: Partial<UserPreferencesState['startupPreferences']>) => void;
+  setNotificationsConfig: (updates: Partial<UserPreferencesState['notifications']>) => void;
   fetchFromServer: () => Promise<void>;
   saveToServer: () => Promise<void>;
   hydrateDOM: () => void;
 }
 
-const LIGHT_THEMES = new Set<string>(['light', 'aurore-ogoue', 'neo-blanc']);
+const LIGHT_THEMES = new Set<string>(['light']);
 
 export function applyDOMTheme(theme: string): void {
   if (typeof window === 'undefined') return;
   let resolvedTheme = theme;
   if (theme === 'system' || theme === 'auto') {
     const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-    resolvedTheme = prefersDark ? 'black-panther' : 'neo-blanc';
+    resolvedTheme = prefersDark ? 'dark' : 'light';
   }
   const isLight = LIGHT_THEMES.has(resolvedTheme);
   document.documentElement.setAttribute('data-theme', resolvedTheme);
@@ -132,9 +171,12 @@ export function applyDOMTheme(theme: string): void {
 
 export function applyDOMScale(fontSize: FontSize): void {
   if (typeof window === 'undefined') return;
-  const scale = fontSize === 'small' ? '0.88' : fontSize === 'large' ? '1.14' : '1.0';
   document.documentElement.setAttribute('data-text-size', fontSize);
-  document.documentElement.style.setProperty('--app-text-scale', scale);
+}
+
+export function applyDOMTextStyle(style: TextStyle): void {
+  if (typeof window === 'undefined') return;
+  document.documentElement.setAttribute('data-text-style', style);
 }
 
 export function applyDOMAccent(accent: string): void {
@@ -149,7 +191,12 @@ export function applyDOMDensity(density: Density): void {
 
 export function applyDOMMotion(reducedMotion: boolean): void {
   if (typeof window === 'undefined') return;
-  document.documentElement.style.setProperty('--app-motion-factor', reducedMotion ? '0' : '1');
+  document.documentElement.setAttribute('data-motion', reducedMotion ? 'reduced' : 'normal');
+}
+
+export function applyDOMContrast(highContrast: boolean): void {
+  if (typeof window === 'undefined') return;
+  document.documentElement.setAttribute('data-contrast', highContrast ? 'high' : 'normal');
 }
 
 export const useSettingsStore = create<UserPreferencesState>()(
@@ -166,10 +213,11 @@ export const useSettingsStore = create<UserPreferencesState>()(
       currencyDisplay: 'XAF',
       firstDayOfWeek: 'monday',
 
-      theme: 'black-panther',
-      blackPantherMode: true,
+      theme: 'dark',
+      themeMode: 'auto',
       accent: 'gold',
-      fontSize: 'normal',
+      fontSize: 'default',
+      textStyle: 'balanced',
       density: 'comfortable',
       reducedMotion: false,
       highContrast: false,
@@ -197,6 +245,9 @@ export const useSettingsStore = create<UserPreferencesState>()(
         checkpointAlerts: true,
         costAlerts: true,
         emailDigest: false,
+        browserNotifications: false,
+        soundAlerts: true,
+        productUpdates: true,
       },
 
       defaultTools: ['web_search', 'code_interpreter', 'doc_generation', 'workgraph', 'vision'],
@@ -209,8 +260,11 @@ export const useSettingsStore = create<UserPreferencesState>()(
         applyDOMTheme(state.theme);
         applyDOMAccent(state.accent);
         applyDOMScale(state.fontSize);
+        applyDOMTextStyle(state.textStyle);
         applyDOMDensity(state.density);
         applyDOMMotion(state.reducedMotion);
+        applyDOMContrast(state.highContrast);
+        applyRTLToDOM(state.uiLocale);
         applyRTLToDOM(state.uiLocale);
       },
 
@@ -226,6 +280,11 @@ export const useSettingsStore = create<UserPreferencesState>()(
         get().saveToServer();
       },
 
+      setThemeMode: (mode: 'light' | 'dark' | 'auto') => {
+        set({ themeMode: mode });
+        get().saveToServer();
+      },
+
       setAccent: (a: AccentKey) => {
         applyDOMAccent(a);
         set({ accent: a });
@@ -237,16 +296,30 @@ export const useSettingsStore = create<UserPreferencesState>()(
         set({ fontSize: f });
         get().saveToServer();
       },
-
+      setTextStyle: (t: TextStyle) => {
+        applyDOMTextStyle(t);
+        set({ textStyle: t });
+        get().saveToServer();
+      },
       setDensity: (d: Density) => {
         applyDOMDensity(d);
         set({ density: d });
         get().saveToServer();
       },
+      setReducedMotion: (v: boolean) => {
+        applyDOMMotion(v);
+        set({ reducedMotion: v });
+        get().saveToServer();
+      },
+      setHighContrast: (v: boolean) => {
+        applyDOMContrast(v);
+        set({ highContrast: v });
+        get().saveToServer();
+      },
 
-      toggleBlackPanther: () => {
+      toggleTheme: () => {
         const current = get().theme;
-        const next = current === 'black-panther' ? 'neo-blanc' : 'black-panther';
+        const next = current === 'dark' ? 'light' : 'dark';
         get().setTheme(next);
       },
       greetingStyle: 'formal',
@@ -326,6 +399,13 @@ export const useSettingsStore = create<UserPreferencesState>()(
         get().saveToServer();
       },
 
+      setNotificationsConfig: (updates: Partial<UserPreferencesState['notifications']>) => {
+        set((state: UserPreferencesState) => ({
+          notifications: { ...state.notifications, ...updates }
+        }));
+        get().saveToServer();
+      },
+
       fetchFromServer: async () => {
         if (typeof window === 'undefined') return;
         try {
@@ -343,7 +423,8 @@ export const useSettingsStore = create<UserPreferencesState>()(
               numberFormat: data.number_format || 'space_comma',
               currencyDisplay: data.currency_display || 'XAF',
               firstDayOfWeek: data.first_day_of_week || 'monday',
-              theme: data.theme || 'black-panther',
+              theme: data.theme || 'dark',
+              themeMode: data.themeMode || 'auto',
               reducedMotion: !!data.reduced_motion,
               density: data.density || 'comfortable',
               responseDepth: data.response_depth || 'balanced',
@@ -356,11 +437,13 @@ export const useSettingsStore = create<UserPreferencesState>()(
               askBeforeRemembering: !!data.ask_before_remembering,
               memoryPolicy: data.memory_policy || 'auto_preferences',
               dataResidency: data.data_residency || 'GLOBAL',
-              notifications: data.notifications || {
-                missionUpdates: true,
-                checkpointAlerts: true,
-                costAlerts: true,
-                emailDigest: false,
+              notifications: {
+                missionUpdates: data.notifications?.missionUpdates ?? true,
+                checkpointAlerts: data.notifications?.checkpointAlerts ?? true,
+                costAlerts: data.notifications?.costAlerts ?? true,
+                emailDigest: data.notifications?.emailDigest ?? false,
+                browserNotifications: data.notifications?.browserNotifications ?? true,
+                soundAlerts: data.notifications?.soundAlerts ?? true,
               },
               defaultTools: data.default_tools || ['web_search', 'code_interpreter', 'doc_generation', 'workgraph', 'vision'],
               visualIntelligenceLevel: data.visual_intelligence_level || 'enhanced',
@@ -391,6 +474,7 @@ export const useSettingsStore = create<UserPreferencesState>()(
             currency_display: s.currencyDisplay,
             first_day_of_week: s.firstDayOfWeek,
             theme: s.theme,
+            themeMode: s.themeMode,
             reduced_motion: s.reducedMotion,
             density: s.density,
             response_depth: s.responseDepth,

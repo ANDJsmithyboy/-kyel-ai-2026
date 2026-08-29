@@ -36,7 +36,7 @@ import {
   Robot,
   PlugsConnected,
   CalendarCheck,
-  Books,
+  Bank,
   FolderSimplePlus,
   FolderSimple,
   SidebarSimple,
@@ -68,6 +68,7 @@ import {
 import { useSidebar } from '@/hooks/useSidebar';
 import useSWR from 'swr';
 import { useSettingsModal } from '@/hooks/useSettingsModal';
+import { getUserTier } from '@/lib/userTiers';
 import { useSafeUser as useUser, useSafeClerk as useClerk } from '@/lib/auth-client';
 import { useLanguageStore } from '@/stores/language.store';
 import { useConversations, type NeonConversation } from '@/hooks/useConversations';
@@ -77,7 +78,6 @@ import { PantherMissionGlyph, SmartAndJTechIcon } from '@/components/icons';
 import MissionContextMenu from '@/components/sidebar/MissionContextMenu';
 import ProjectDialog from '@/components/sidebar/ProjectDialog';
 import MissionSearchOverlay from '@/components/sidebar/MissionSearchOverlay';
-import { getUserTier } from '@/lib/userTiers';
 
 /* ═══════════════════════════════════════════════════════
    NAV CONFIGURATION — P0 Canonical Order
@@ -148,7 +148,6 @@ export default function NkyelSidebar() {
 
   const { data: quotaData } = useSWR('/api/user/quotas', (url) => fetch(url).then(res => res.json()));
   const credits = quotaData?.credits ?? 300;
-  const displayTier = userTier.tierId === 'CREATOR' ? 'Mode God' : userTier.tierId === 'VIP_CONTRIBUTOR' ? 'VIP' : quotaData?.tier ?? (isFr ? 'Gratuit' : 'Free');
 
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
@@ -173,12 +172,13 @@ export default function NkyelSidebar() {
   const isSuperAdmin = user?.publicMetadata?.role === 'SUPER_ADMIN';
   const userTier = getUserTier(userEmail, (user?.publicMetadata?.role as string) || null);
   const showIconsOnly = isCollapsed && !isSidebarMobile;
+  const displayTier = userTier.tierId === 'CREATOR' ? 'Mode God' : userTier.tierId === 'VIP_CONTRIBUTOR' ? 'VIP' : quotaData?.tier ?? (isFr ? 'Gratuit' : 'Free');
 
   const navItems: NavItem[] = [
     { id: 'agent',        label: t('nav.agent') || 'Agent',                  href: '/agent',      icon: Robot },
     { id: 'connections',  label: t('nav.connectors') || 'Connectors',       href: '/connectors', icon: PlugsConnected },
     { id: 'automations',  label: t('nav.programs') || 'Programs',          href: '/scheduled',  icon: CalendarCheck },
-    { id: 'creations',    label: t('nav.sanctuary') || 'Sanctuary',         href: '/library',    icon: Books },
+    { id: 'creations',    label: t('nav.sanctuary') || 'Sanctuary',         href: '/library',    icon: Bank },
   ];
 
   const hydrateFromStorage = useSidebar((s: any) => s.hydrateFromStorage);
@@ -437,7 +437,7 @@ export default function NkyelSidebar() {
                 >
                   <Icon
                     size={18}
-                    weight={active ? 'fill' : 'regular'}
+                    weight="bold"
                     className="shrink-0"
                     style={{
                       color: active ? 'var(--accent)' : 'var(--text-tertiary)',
@@ -447,10 +447,10 @@ export default function NkyelSidebar() {
 
                   {!showIconsOnly && (
                     <div className="flex-1 flex items-center justify-between min-w-0">
-                      <span className="truncate">{item.label}</span>
+                      <span className="truncate font-bold">{item.label}</span>
                       {item.badge && (
                         <span
-                          className="font-mono"
+                          className="font-mono font-bold"
                           style={{
                             fontSize: '10px',
                             padding: '1px 6px',
@@ -458,7 +458,6 @@ export default function NkyelSidebar() {
                             background: 'var(--accent-subtle)',
                             color: 'var(--text-tertiary)',
                             border: '1px solid var(--border-subtle)',
-                            fontWeight: 500,
                           }}
                         >
                           {item.badge}
@@ -483,6 +482,7 @@ export default function NkyelSidebar() {
                         color: 'var(--text-primary)',
                         fontSize: 'var(--text-xs, 12px)',
                         boxShadow: 'var(--shadow-key)',
+                        fontWeight: 600,
                       }}
                     >
                       {item.label}

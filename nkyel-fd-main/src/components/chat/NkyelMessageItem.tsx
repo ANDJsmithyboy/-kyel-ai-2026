@@ -30,6 +30,8 @@ import {
   PencilSimple,
 } from '@phosphor-icons/react';
 import NkyelMarkdownRenderer from './NkyelMarkdownRenderer';
+import MissionStatusCard from './MissionStatusCard';
+import type { NkyelVisualEvent } from '@/lib/visualEvents';
 import { useLanguageStore } from '@/stores/language.store';
 
 export interface ArtifactPreview {
@@ -55,6 +57,12 @@ export interface NkyelMessageItemProps {
   onSelectSuggestion?: (suggestion: string) => void;
   onOpenVIE?: () => void;
   onOpenArtifact?: (artifact: ArtifactPreview) => void;
+  missionState?: {
+    status: 'idle' | 'analyzing' | 'planning' | 'researching' | 'executing' | 'completed' | 'failed';
+    events?: NkyelVisualEvent[];
+    deliverables?: ArtifactPreview[];
+    progress?: number;
+  };
 }
 
 export default function NkyelMessageItem({
@@ -71,6 +79,7 @@ export default function NkyelMessageItem({
   onSelectSuggestion,
   onOpenVIE,
   onOpenArtifact,
+  missionState,
 }: NkyelMessageItemProps) {
   const isUser = role === 'user';
   const { uiLocale } = useLanguageStore();
@@ -183,6 +192,16 @@ export default function NkyelMessageItem({
       <div className="w-full">
         <NkyelMarkdownRenderer content={content} />
       </div>
+
+      {/* Real Backend First: Mission Status / Timeline (Screen C) */}
+      {missionState && (
+        <MissionStatusCard 
+          status={missionState.status}
+          events={missionState.events}
+          deliverables={missionState.deliverables}
+          progress={missionState.progress}
+        />
+      )}
 
       {/* Streaming Active Pulse Indicator */}
       {isStreaming && (

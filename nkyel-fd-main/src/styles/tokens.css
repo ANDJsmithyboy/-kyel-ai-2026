@@ -20,18 +20,20 @@
 
   /* Échelle typographique adaptative (contrôlée par data-text-size) */
   --app-text-scale: 1;
-  --text-caption:  calc(12px * var(--app-text-scale, 1));
-  --text-meta:     calc(13px * var(--app-text-scale, 1));
-  --text-label-sm: calc(14px * var(--app-text-scale, 1));
-  --text-ui:       calc(15px * var(--app-text-scale, 1));
-  --text-body:     calc(16px * var(--app-text-scale, 1));
-  --text-body-lg:  calc(17px * var(--app-text-scale, 1));
-  --text-title-sm: calc(18px * var(--app-text-scale, 1));
-  --text-title-md: calc(20px * var(--app-text-scale, 1));
-  --text-title-lg: calc(24px * var(--app-text-scale, 1));
-  --text-page-title: calc(28px * var(--app-text-scale, 1));
-  --text-display:  calc(32px * var(--app-text-scale, 1));
-  --text-hero:     clamp(40px, 10vw, 52px);
+  --base-font-size: 16px;
+  
+  --text-caption:  calc(12px * var(--app-text-scale));
+  --text-meta:     calc(13px * var(--app-text-scale));
+  --text-label-sm: calc(14px * var(--app-text-scale));
+  --text-ui:       calc(15px * var(--app-text-scale));
+  --text-body:     calc(16px * var(--app-text-scale));
+  --text-body-lg:  calc(17px * var(--app-text-scale));
+  --text-title-sm: calc(18px * var(--app-text-scale));
+  --text-title-md: calc(20px * var(--app-text-scale));
+  --text-title-lg: calc(24px * var(--app-text-scale));
+  --text-page-title: calc(28px * var(--app-text-scale));
+  --text-display:  calc(32px * var(--app-text-scale));
+  --text-hero:     clamp(40px, calc(10vw * var(--app-text-scale)), 52px);
 
   --leading-tight:   1.0;
   --leading-snug:    1.2;
@@ -42,6 +44,54 @@
   --tracking-snug:   -0.01em;
   --tracking-normal: 0;
   --tracking-wide:   0.01em;
+}
+
+/* ═══════════════════════════════════════════════════════
+   PERSONALIZATION ATTRIBUTES
+   ═══════════════════════════════════════════════════════ */
+
+[data-text-size="small"] { --app-text-scale: 0.92; }
+[data-text-size="default"] { --app-text-scale: 1.0; }
+[data-text-size="large"] { --app-text-scale: 1.08; }
+[data-text-size="xlarge"] { --app-text-scale: 1.16; }
+
+[data-text-style="compact"] {
+  --leading-tight: 1.0;
+  --leading-snug: 1.1;
+  --leading-normal: 1.3;
+  --leading-relaxed: 1.5;
+  --tracking-normal: -0.01em;
+}
+[data-text-style="balanced"] {
+  --tracking-normal: 0;
+}
+[data-text-style="comfortable"] {
+  --leading-tight: 1.1;
+  --leading-snug: 1.3;
+  --leading-normal: 1.5;
+  --leading-relaxed: 1.7;
+}
+[data-text-style="editorial"] {
+  --leading-tight: 1.1;
+  --leading-snug: 1.3;
+  --leading-normal: 1.6;
+  --leading-relaxed: 1.8;
+  --tracking-normal: 0.01em;
+}
+
+[data-motion="reduced"] * {
+  transition-duration: 0.01ms !important;
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  scroll-behavior: auto !important;
+}
+
+[data-contrast="high"] {
+  --border-subtle: var(--border-strong);
+  --text-tertiary: var(--text-secondary);
+}
+
+:root {
 
   /* ═══════════════════════════════════════════════════════
      SPATIAL GRID & CONCENTRIC RADII (Nested Radii)
@@ -188,10 +238,6 @@
 
 :root,
 [data-theme="dark"],
-[data-theme="black-panther"],
-[data-theme="nuit-lope"],
-[data-theme="bleu-nuit"],
-[data-theme="violette-mandrille"],
 html.dark {
   color-scheme: dark;
 
@@ -315,8 +361,6 @@ html.dark {
    ═══════════════════════════════════════════════════════ */
 
 [data-theme="light"],
-[data-theme="neo-blanc"],
-[data-theme="aurore-ogoue"],
 html.light {
   color-scheme: light;
 
@@ -476,14 +520,24 @@ html.light {
   --accent-muted:    rgba(240, 0, 128, 0.22);
 }
 
-[data-accent="graphite"] {
-  --accent:          #8A92A0;
-  --accent-hover:    #727A88;
-  --accent-active:   #5C6472;
+[data-accent="violet"] {
+  --accent:          #7C3AED;
+  --accent-hover:    #6D28D9;
+  --accent-active:   #5B21B6;
   --accent-fg:       #FFFFFF;
-  --focus-ring:      #8A92A0;
-  --accent-subtle:   rgba(138, 146, 160, 0.12);
-  --accent-muted:    rgba(138, 146, 160, 0.22);
+  --focus-ring:      #7C3AED;
+  --accent-subtle:   rgba(124, 58, 237, 0.12);
+  --accent-muted:    rgba(124, 58, 237, 0.22);
+}
+
+[data-accent="green"] {
+  --accent:          #10B981;
+  --accent-hover:    #059669;
+  --accent-active:   #047857;
+  --accent-fg:       #FFFFFF;
+  --focus-ring:      #10B981;
+  --accent-subtle:   rgba(16, 185, 129, 0.12);
+  --accent-muted:    rgba(16, 185, 129, 0.22);
 }
 
 /* ═══════════════════════════════════════════════════════

@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { 
   ShareNetwork, PencilSimple, ArrowSquareOut, PushPin, 
-  Star, Folder, ArchiveBox, Trash
+  Star, Folder, Archive, Trash
 } from '@phosphor-icons/react';
 import { useLanguageStore } from '@/stores/language.store';
 
@@ -49,7 +49,7 @@ export default function MissionContextMenu({
           
           <div className="h-[1px] bg-[var(--border-subtle)] my-1.5 mx-3" />
           
-          <MenuAction icon={<ArchiveBox weight="bold" size={22} />} label={t('common.archive') || 'Archive'} onClick={onClose} />
+          <MenuAction icon={<Archive weight="bold" size={22} />} label={t('common.archive') || 'Archive'} onClick={onClose} />
           <MenuAction 
             icon={<Trash weight="bold" size={22} />} 
             label={t('common.delete') || 'Delete'} 

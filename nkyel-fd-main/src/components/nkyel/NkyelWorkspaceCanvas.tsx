@@ -30,33 +30,33 @@ import type { WorkNode, WorkEdge, WorkNodeType, NkyelEvent } from '@/lib/nkyel/w
 // --- Node Colors by Type --------------------------------
 
 const NODE_COLORS: Record<WorkNodeType, string> = {
-  goal: '#C39A52',       // Old Gold
-  plan: '#665F9E',       // Ñkyel Indigo
-  task: '#7C9AE8',       // Light blue
-  agent: '#6F9485',      // Celadon green (A2A)
-  tool_call: '#5BA3B5',  // Cyan Hexagon (MCP)
-  source: '#315A70',     // Deep Aizuri Blue
-  evidence: '#6F9485',   // Celadon
-  claim: '#E8A838',      // Amber
-  hypothesis: '#CF72A8', // Pink
-  scenario: '#B56BD4',   // Violet
-  decision: '#C39A52',   // Gold
-  artifact: '#72B8CF',   // Cyan
-  approval: '#BE6254',   // Soft Vermilion
-  checkpoint: '#C39A52', // Gold
-  error: '#BE6254',      // Soft Vermilion
+  goal: 'var(--warning)',       // Old Gold -> Warning/Gold
+  plan: 'var(--accent)',        // Ñkyel Indigo -> Accent
+  task: 'var(--info)',          // Light blue -> Info
+  agent: 'var(--success)',      // Celadon green (A2A) -> Success
+  tool_call: 'var(--info)',     // Cyan Hexagon (MCP) -> Info
+  source: 'var(--text-secondary)',// Deep Aizuri Blue
+  evidence: 'var(--success)',   // Celadon -> Success
+  claim: 'var(--warning)',      // Amber -> Warning
+  hypothesis: 'var(--error)',   // Pink -> Error/Magenta
+  scenario: 'var(--accent)',    // Violet -> Accent
+  decision: 'var(--warning)',   // Gold -> Warning
+  artifact: 'var(--info)',      // Cyan -> Info
+  approval: 'var(--error)',     // Soft Vermilion -> Error
+  checkpoint: 'var(--warning)', // Gold -> Warning
+  error: 'var(--error)',        // Soft Vermilion -> Error
   // Protocol extensions
-  mcp_tool: '#5BA3B5',        // Cyan Hexagon
-  mcp_app: '#665F9E',         // Indigo Interactive Window
-  skill: '#C39A52',           // Golden Puzzle Piece
-  a2a_agent: '#6F9485',       // Green Double Circles
-  agui_stream: '#315A70',     // Animated Blue Stream
-  a2ui_surface: '#765E78',    // Muted Plum Panel
-  ap2_payment: '#D98E3B',     // Amber Shield
-  ucp_commerce: '#C5A059',    // Commerce Network
-  google_tool: '#4285F4',     // Google Blue
-  workspace_doc: '#72B8CF',   // Document Blue
-  firebase_deploy: '#FFA000', // Firebase Amber
+  mcp_tool: 'var(--info)',        // Cyan Hexagon
+  mcp_app: 'var(--accent)',       // Indigo Interactive Window
+  skill: 'var(--warning)',        // Golden Puzzle Piece
+  a2a_agent: 'var(--success)',    // Green Double Circles
+  agui_stream: 'var(--info)',     // Animated Blue Stream
+  a2ui_surface: 'var(--text-secondary)', // Muted Plum Panel
+  ap2_payment: 'var(--warning)',  // Amber Shield
+  ucp_commerce: 'var(--warning)', // Commerce Network
+  google_tool: 'var(--info)',     // Google Blue
+  workspace_doc: 'var(--info)',   // Document Blue
+  firebase_deploy: 'var(--warning)', // Firebase Amber
 };
 
 const NODE_ICONS: Record<WorkNodeType, string> = {

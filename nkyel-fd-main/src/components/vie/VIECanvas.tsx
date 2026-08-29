@@ -25,7 +25,6 @@ import {
   BackgroundVariant,
   Panel,
 } from '@xyflow/react';
-import '@xyflow/react/dist/style.css';
 import { useWorkGraphStore } from '@/lib/nkyel/work-graph-store';
 import type { WorkNode, WorkEdge, WorkNodeType } from '@/lib/nkyel/work-graph.types';
 import HumanInterventionBar from './HumanInterventionBar';
@@ -158,6 +157,15 @@ export default function VIECanvas() {
   const [nodes, setNodes, onNodesChange] = useNodesState<any>(rfNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState<any>(rfEdges);
 
+  // XYFlow acts solely as a visual projection engine.
+  // Any UI-driven mutations (drag, connect) must be persisted to the backend
+  // to become real WorkGraph state.
+  const handleNodesChange = useCallback((changes: any) => {
+    onNodesChange(changes);
+    // TODO: Sync node position updates to backend via AG-UI/SSE 
+    // e.g., if (change.type === 'position' && change.dragging === false) { syncPositionToBackend(change.id, change.position); }
+  }, [onNodesChange]);
+
   useEffect(() => {
     setNodes(rfNodes);
   }, [rfNodes, setNodes]);
@@ -204,11 +212,12 @@ export default function VIECanvas() {
         <ReactFlow
           nodes={nodes}
           edges={edges}
-          onNodesChange={onNodesChange}
+          onNodesChange={handleNodesChange}
           onEdgesChange={onEdgesChange}
           nodeTypes={nodeTypes}
           onNodeClick={(_, node) => selectNode(node.id)}
           fitView
+          onlyRenderVisibleElements={true}
           className="bg-transparent"
         >
           <Background color="var(--graph-grid)" gap={24} size={1.5} />

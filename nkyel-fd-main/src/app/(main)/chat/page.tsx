@@ -56,11 +56,8 @@ export default function ChatPage() {
     role: m.role as 'user' | 'assistant',
     content: m.content,
     timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-    sources: m.role === 'assistant' ? ['src-1', 'src-2', 'src-3'] : undefined,
-    toolActivity:
-      m.role === 'assistant'
-        ? { name: 'Google Gemini 3.1 Pro & Wandana Web Radar', status: 'completed', duration: '1.2s' }
-        : undefined,
+    sources: m.sources as unknown as string[] || undefined,
+    toolActivity: (m as any).toolActivity || undefined,
   }));
 
   return (

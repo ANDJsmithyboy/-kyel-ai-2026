@@ -108,12 +108,12 @@ export default function ConnectorCard({ connector, onSelect, onConnect }: Connec
           }}
           disabled={isConnecting}
           aria-label={isConnected ? `Manage ${connector.name}` : `Connect ${connector.name}`}
-          className={`w-[42px] h-[42px] rounded-[12px] flex items-center justify-center transition-all duration-150 active:scale-95 shadow-xs border ${
+          className={`w-[42px] h-[42px] rounded-full flex items-center justify-center transition-all duration-150 active:scale-95 shadow-xs border ${
             isConnected
-              ? 'bg-[var(--success-subtle)] text-[var(--success)] border-[color-mix(in_srgb,var(--success)_30%,transparent)] hover:brightness-110'
+              ? 'bg-[#10B981] text-white border-transparent shadow-[0_0_12px_rgba(16,185,129,0.3)] hover:brightness-110'
               : isError
               ? 'bg-[var(--error-subtle)] text-[var(--error)] border-[color-mix(in_srgb,var(--error)_30%,transparent)]'
-              : 'bg-[var(--control-bg)] hover:bg-[var(--hover)] text-[var(--text-primary)] border-[var(--border)] hover:border-[var(--accent-muted)]'
+              : 'bg-transparent hover:bg-[var(--hover)] text-[var(--text-secondary)] border-[var(--border-strong)] hover:border-[var(--accent-muted)]'
           }`}
         >
           {isConnecting ? (

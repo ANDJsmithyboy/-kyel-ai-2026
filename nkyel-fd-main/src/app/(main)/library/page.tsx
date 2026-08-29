@@ -30,6 +30,7 @@ import {
   HardDrives,
   Graph,
   ArrowSquareOut,
+  Trash,
 } from '@phosphor-icons/react';
 import { useRenduPanel } from '@/hooks/useRenduPanel';
 import { useLanguageStore } from '@/stores/language.store';
@@ -58,81 +59,7 @@ export interface LibraryArtifact {
   duration?: string;
 }
 
-const CANONICAL_ARTIFACTS: LibraryArtifact[] = [
-  {
-    id: 'art_deck_gabon_2026',
-    title: 'Présentation Stratégique Gabon 2026',
-    type: 'slide',
-    missionTitle: 'Analyse Économique & Transition Énergétique',
-    projectName: 'Gabon Énergie 2026',
-    url: 'https://media.nkyel.ai/artifacts/gabon_2026_deck.pptx',
-    size: '4.2 MB',
-    createdAtHuman: 'Aujourd’hui à 11:20',
-    updatedAtTimestamp: Date.now() - 3600000 * 2,
-    previewSnippet: 'Diapositive 1 : Transition Énergétique & Potentiel Hydroélectrique',
-    pageCount: 14,
-  },
-  {
-    id: 'art_report_dcf_model',
-    title: 'Rapport d’Évaluation & Modélisation DCF',
-    type: 'document',
-    missionTitle: 'Analyse Économique & Transition Énergétique',
-    projectName: 'Gabon Énergie 2026',
-    url: 'https://media.nkyel.ai/artifacts/rapport_dcf.pdf',
-    size: '1.8 MB',
-    createdAtHuman: 'Aujourd’hui à 10:45',
-    updatedAtTimestamp: Date.now() - 3600000 * 4,
-    previewSnippet: 'Synthèse exécutive des flux de trésorerie actualisés...',
-    pageCount: 28,
-  },
-  {
-    id: 'art_fin_model_sheets',
-    title: 'Modèle Financier & Hypothèses TRI-VAN',
-    type: 'spreadsheet',
-    missionTitle: 'Analyse Économique & Transition Énergétique',
-    projectName: 'Gabon Énergie 2026',
-    url: 'https://media.nkyel.ai/artifacts/modele_tri_van.xlsx',
-    size: '850 KB',
-    createdAtHuman: 'Aujourd’hui à 09:30',
-    updatedAtTimestamp: Date.now() - 3600000 * 6,
-    previewSnippet: 'WACC: 8.4% | TRI: 18.2% | VAN: 42.5M €',
-  },
-  {
-    id: 'art_landing_tourism',
-    title: 'Site Vitrine Tourisme & Éco-Parcs Gabon',
-    type: 'website',
-    missionTitle: 'Développement Landing Page Tourisme',
-    projectName: 'Tourisme Durable',
-    url: 'https://nkyel.app/preview/tourisme-gabon',
-    size: '18 KB Code',
-    createdAtHuman: 'Hier à 16:00',
-    updatedAtTimestamp: Date.now() - 86400000,
-    previewSnippet: 'Landing page interactive React / Tailwind / Hero 3D',
-  },
-  {
-    id: 'art_hero_visual_flux',
-    title: 'Visuel Identité Heptagramme & Climat',
-    type: 'image',
-    missionTitle: 'Génération Multimédia FLUX & Wan2.1',
-    projectName: 'Identité Souveraine',
-    url: 'https://media.nkyel.ai/artifacts/heptagramme_hero.png',
-    size: '3.4 MB',
-    createdAtHuman: 'Hier à 14:15',
-    updatedAtTimestamp: Date.now() - 86400000 * 1.2,
-  },
-  {
-    id: 'art_motion_clip_wan',
-    title: 'Teaser Vidéo de Lancement 15s (Wan2.1)',
-    type: 'video',
-    missionTitle: 'Génération Multimédia FLUX & Wan2.1',
-    projectName: 'Identité Souveraine',
-    url: 'https://media.nkyel.ai/artifacts/teaser_wan21.mp4',
-    size: '8.6 MB',
-    createdAtHuman: '22 Août 2026',
-    updatedAtTimestamp: Date.now() - 86400000 * 3,
-    duration: '0:15',
-  },
-];
+const CANONICAL_ARTIFACTS: LibraryArtifact[] = [];
 
 const fetcher = (url: string) => fetch(url).then(res => res.json());
 
@@ -143,31 +70,28 @@ export default function LibraryPage() {
   const { data: backendArtifacts, error, isLoading } = useSWR<any[]>('/api/artifacts', fetcher);
 
   const artifacts = useMemo<LibraryArtifact[]>(() => {
-    let list = [...CANONICAL_ARTIFACTS];
-    if (backendArtifacts && Array.isArray(backendArtifacts)) {
-      const mapped = backendArtifacts.map((a): LibraryArtifact => {
-        let mappedType: ArtifactType = 'document';
-        if (a.artifact_type === 'REPORT') mappedType = 'document';
-        else if (a.artifact_type === 'CODE') mappedType = 'code';
-        else if (a.artifact_type === 'CHART' || a.artifact_type === 'IMAGE') mappedType = 'image';
-        else if (a.artifact_type === 'TABLE') mappedType = 'spreadsheet';
-        
-        return {
-          id: a.id,
-          title: a.title,
-          type: mappedType,
-          missionTitle: a.mission_id ? `Mission: ${a.mission_id.substring(0,8)}` : 'Génération',
-          projectName: 'Workspace',
-          url: a.content_url || '#',
-          size: a.content_size_bytes ? `${Math.round(a.content_size_bytes / 1024)} KB` : 'N/A',
-          createdAtHuman: 'Récemment',
-          updatedAtTimestamp: new Date(a.created_at).getTime(),
-          previewSnippet: a.description || 'Artefact généré par IA.',
-        };
-      });
-      list = [...mapped, ...list];
-    }
-    return list;
+    if (!backendArtifacts || !Array.isArray(backendArtifacts)) return [];
+    
+    return backendArtifacts.map((a): LibraryArtifact => {
+      let mappedType: ArtifactType = 'document';
+      if (a.artifact_type === 'REPORT') mappedType = 'document';
+      else if (a.artifact_type === 'CODE') mappedType = 'code';
+      else if (a.artifact_type === 'CHART' || a.artifact_type === 'IMAGE') mappedType = 'image';
+      else if (a.artifact_type === 'TABLE') mappedType = 'spreadsheet';
+      
+      return {
+        id: a.id,
+        title: a.title,
+        type: mappedType,
+        missionTitle: a.mission_id ? `Mission: ${a.mission_id.substring(0,8)}` : 'Génération',
+        projectName: 'Workspace',
+        url: a.content_url || '#',
+        size: a.content_size_bytes ? `${Math.round(a.content_size_bytes / 1024)} KB` : 'N/A',
+        createdAtHuman: 'Récemment',
+        updatedAtTimestamp: new Date(a.created_at).getTime(),
+        previewSnippet: a.description || 'Artefact généré par IA.',
+      };
+    });
   }, [backendArtifacts]);
 
   const [activeFilter, setActiveFilter] = useState<string>('all');
@@ -207,6 +131,18 @@ export default function LibraryPage() {
       url: item.url,
       created_at: item.updatedAtTimestamp,
     });
+  };
+
+  const handleDeleteArtifact = async (id: string) => {
+    try {
+      const res = await fetch(`/api/artifacts/${id}`, { method: 'DELETE' });
+      if (res.ok) {
+        // Assume SWR will re-fetch or we manually mutate
+        console.log('Deleted artifact', id);
+      }
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   const getFormatBadge = (type: ArtifactType) => {
@@ -415,6 +351,17 @@ export default function LibraryPage() {
                       >
                         <DownloadSimple size={15} />
                       </button>
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDeleteArtifact(item.id);
+                        }}
+                        className="w-8 h-8 rounded-xl bg-[var(--control-bg)] hover:bg-red-500/20 flex items-center justify-center text-[var(--text-secondary)] hover:text-red-400 transition-colors"
+                        title="Delete"
+                      >
+                        <Trash size={15} />
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -468,6 +415,28 @@ export default function LibraryPage() {
                     >
                       <Eye size={14} />
                       <span>{t('sanctuary.open') || 'Open'}</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        window.open(item.url, '_blank');
+                      }}
+                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[var(--control-bg)] hover:bg-[var(--active)] text-xs font-semibold text-[var(--text-primary)] transition-colors"
+                    >
+                      <DownloadSimple size={14} />
+                      <span>{t('sanctuary.download') || 'Download'}</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDeleteArtifact(item.id);
+                      }}
+                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[var(--control-bg)] hover:bg-red-500/20 text-xs font-semibold text-red-400 transition-colors"
+                    >
+                      <Trash size={14} />
+                      <span>{isFr ? 'Supprimer' : 'Delete'}</span>
                     </button>
                   </div>
                 </div>

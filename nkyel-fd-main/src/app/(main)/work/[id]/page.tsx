@@ -7,8 +7,7 @@
 
 import React from 'react';
 import { useParams } from 'next/navigation';
-import VIECanvas from '@/components/vie/VIECanvas';
-import ReplayTimeline from '@/components/nkyel/ReplayTimeline';
+import WorkGraphContainer from '@/components/workgraph/WorkGraphContainer';
 
 export default function WorkGraphPage() {
   const params = useParams();
@@ -17,23 +16,33 @@ export default function WorkGraphPage() {
   return (
     <div className="w-full h-full flex flex-col bg-[#08090D] overflow-hidden">
       {/* Top Bar Navigation */}
-      <div className="h-12 border-b border-white/[0.06] bg-[#0E121A] px-4 flex items-center justify-between shrink-0">
-        <div className="flex items-center gap-2">
-          <span className="text-xs font-semibold text-[#F1EEE7]">Espace VIE — WorkGraph</span>
-          <span className="text-[10px] px-2 py-0.5 rounded-full bg-[#665F9E]/20 text-[#AAA2C8] font-mono">
-            Mission : {threadId}
+      <div className="h-14 border-b border-white/[0.06] bg-[#0E121A] px-5 flex items-center justify-between shrink-0">
+        <div className="flex items-center gap-4">
+          <h1 className="text-2xl font-serif font-medium text-white tracking-wide">WorkGraph</h1>
+          <span className="text-[10px] uppercase tracking-wider font-semibold px-2 py-0.5 rounded-full bg-[var(--accent)]/10 text-[var(--accent)] border border-[var(--accent)]/20">
+            Bêta
+          </span>
+          <div className="w-[1px] h-5 bg-white/[0.06] mx-2" />
+          <span className="text-sm text-white/50">
+            Orchestrez vos idées. Visualisez ce qui compte.
+          </span>
+        </div>
+        
+        <div className="flex items-center gap-3">
+          <div className="flex items-center text-xs font-medium border border-white/[0.06] rounded-full overflow-hidden bg-white/[0.02]">
+            <span className="px-3 py-1.5 text-white/50 hover:text-white cursor-pointer transition-colors">plan gratuit</span>
+            <div className="w-[1px] h-4 bg-white/[0.06]" />
+            <span className="px-3 py-1.5 text-[var(--accent)] hover:brightness-110 cursor-pointer transition-colors">mise à niveau</span>
+          </div>
+          <span className="text-[10px] px-2 py-0.5 rounded-full bg-[#665F9E]/20 text-[#AAA2C8] font-mono ml-4 hidden md:inline-block">
+            Mission : {threadId.substring(0, 8)}...
           </span>
         </div>
       </div>
 
-      {/* Canvas central */}
+      {/* Main WorkGraph Container */}
       <div className="flex-1 relative min-h-0">
-        <VIECanvas />
-      </div>
-
-      {/* Timeline d'exécution pas à pas */}
-      <div className="h-14 border-t border-white/[0.06] bg-[#0E121A] shrink-0">
-        <ReplayTimeline runId={threadId} />
+        <WorkGraphContainer />
       </div>
     </div>
   );

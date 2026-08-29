@@ -47,9 +47,10 @@ import {
   Paperclip,
   Sparkle,
   ArrowDown,
-  GithubLogo,
+  ArrowUp,
   Monitor,
   Terminal,
+  Microphone,
 } from '@phosphor-icons/react';
 import { Plus as PhosphorPlus } from '@phosphor-icons/react';
 import NkyelMessageItem from './NkyelMessageItem';
@@ -102,6 +103,7 @@ export default function AdaptiveChatWorkspace({
   const [activeSurface, setActiveSurface] = useState<'chat' | 'workgraph' | 'vie' | 'live_flow'>('chat');
   const [attachedFiles, setAttachedFiles] = useState<{ id: string; name: string; size: string }[]>([]);
   const [isSending, setIsSending] = useState(false);
+  const [isRecording, setIsRecording] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
 
   const { modeId, setModeId } = useNkyelModel();
@@ -167,6 +169,31 @@ export default function AdaptiveChatWorkspace({
 
   const handleRemoveFile = (id: string) => {
     setAttachedFiles((prev) => prev.filter((f) => f.id !== id));
+  };
+
+  const handleVoiceRecord = async () => {
+    if (isRecording) {
+      setIsRecording(false);
+      // Stop recording logic here (would stop MediaRecorder and send to Groq API)
+      return;
+    }
+    setIsRecording(true);
+    try {
+      // Placeholder for actual MediaRecorder + Backend STT logic
+      setTimeout(() => {
+        setIsRecording(false);
+        const transcript = isFr ? 'Ceci est une transcription de test.' : 'This is a test transcript.';
+        setInputText((prev) => prev + (prev ? ' ' : '') + transcript);
+        if (textareaRef.current) {
+          textareaRef.current.style.height = 'auto';
+          textareaRef.current.style.height = `${Math.min(textareaRef.current.scrollHeight, 180)}px`;
+          textareaRef.current.focus();
+        }
+      }, 1500);
+    } catch (error) {
+      console.error('STT Error:', error);
+      setIsRecording(false);
+    }
   };
 
   const handleActionSelect = (action: string) => {
@@ -287,17 +314,8 @@ export default function AdaptiveChatWorkspace({
       if (onSendMessage) {
         await onSendMessage(sentText);
       } else {
-        setTimeout(() => {
-          const assistantMsg: ChatMessage = {
-            id: `msg-${Date.now() + 1}`,
-            role: 'assistant',
-            content: `Reçu. Analyse en cours en mode **${isFr ? getIntelligenceMode(modeId).labelFr : getIntelligenceMode(modeId).labelEn}** pour la consigne : « ${sentText} ».\n\nLes sources et artefacts générés sont disponibles dans l'Inspecteur de Contexte.`,
-            timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-            toolActivity: { name: 'Routeur Ñkyel & Exécution autonome', status: 'completed', duration: '0.8s' },
-            sources: ['src-live-1', 'src-live-2'],
-          };
-          setMessages((prev) => [...prev, assistantMsg]);
-        }, 500);
+        // PRODUCTION NOTE: Always requires onSendMessage in production
+        console.warn('AdaptiveChatWorkspace: onSendMessage not provided. Message not sent.');
       }
     } finally {
       setIsSending(false);
@@ -552,7 +570,7 @@ export default function AdaptiveChatWorkspace({
                         e.target.style.height = `${Math.min(e.target.scrollHeight, 180)}px`;
                       }}
                       onKeyDown={handleKeyDown}
-                      placeholder={t('composer.ask') || (isFr ? "Assignez une tâche ou tapez / pour plus" : "Assign a task or type / for more")}
+                      placeholder={t('composer.ask') || (isFr ? "assignez une mission ou tapez / pour plus" : "assign a mission or type / for more")}
                       rows={1}
                       className="w-full bg-transparent border-0 focus:ring-0 focus:outline-none resize-none text-base placeholder:text-[var(--text-tertiary)] text-[var(--text-primary)] max-h-44 px-1 py-1 font-sans"
                     />
@@ -569,11 +587,11 @@ export default function AdaptiveChatWorkspace({
                         className={`flex items-center justify-center rounded-full transition-all duration-200 active:scale-[0.97]
                           ${plusMenuOpen 
                             ? 'bg-[var(--accent)] text-[var(--accent-fg)] shadow-sm' 
-                            : 'bg-[var(--surface-raised)] border border-[var(--border-strong)] text-[var(--text-primary)] hover:bg-[var(--hover)] hover:border-[var(--accent-muted)]'
+                            : 'bg-transparent border border-[var(--border-strong)] text-[var(--text-primary)] hover:bg-[var(--hover)] hover:border-[var(--accent-muted)]'
                           }`}
                         style={{
-                          width: isMobile ? '52px' : '44px',
-                          height: isMobile ? '52px' : '44px',
+                          width: '42px',
+                          height: '42px',
                           flexShrink: 0
                         }}
                       >
@@ -599,20 +617,18 @@ export default function AdaptiveChatWorkspace({
                       <button
                         type="button"
                         onClick={() => handleActionSelect('connections')}
-                        className="w-8 h-8 rounded-xl bg-[var(--surface)] hover:bg-[var(--surface-raised)] border border-[var(--border)] flex items-center justify-center text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors shadow-xs"
+                        className="w-[42px] h-[42px] rounded-full bg-transparent border border-[var(--border-strong)] hover:border-[var(--accent-muted)] hover:bg-[var(--hover)] flex items-center justify-center text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
                         title="GitHub"
                       >
-                        <GithubLogo size={15} />
+                        <PlugsConnected size={18} weight="bold" />
                       </button>
-
                       <button
                         type="button"
                         onClick={() => handleActionSelect('artifacts')}
-                        className="hidden sm:flex items-center gap-1.5 h-8 px-2.5 rounded-xl bg-[var(--surface)] hover:bg-[var(--surface-raised)] border border-[var(--border)] text-xs text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors shadow-xs"
-                        title={isFr ? "Manus Bureau" : "Computer"}
+                        className="w-[42px] h-[42px] rounded-full bg-transparent border border-[var(--border-strong)] hover:border-[var(--accent-muted)] hover:bg-[var(--hover)] flex items-center justify-center text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
+                        title={isFr ? "Bureau" : "Computer"}
                       >
-                        <Monitor size={14} />
-                        <span className="font-medium text-[11px]">{isFr ? 'Bureau' : 'Computer'}</span>
+                        <Monitor size={18} weight="fill" />
                       </button>
 
 
@@ -620,31 +636,25 @@ export default function AdaptiveChatWorkspace({
 
                     {/* Right Cluster: Commands / Mic / Send / Stop */}
                     <div className="flex items-center gap-1.5">
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setInputText('/');
-                          textareaRef.current?.focus();
-                        }}
-                        className="w-8 h-8 rounded-xl hover:bg-[var(--hover)] text-[var(--text-tertiary)] hover:text-[var(--text-primary)] flex items-center justify-center transition-colors"
-                        title={isFr ? "Commandes rapides (/)" : "Slash commands (/)"}
-                      >
-                        <Terminal size={15} />
-                      </button>
 
                       <button
                         type="button"
-                        className="w-8 h-8 rounded-xl hover:bg-[var(--hover)] text-[var(--text-tertiary)] hover:text-[var(--text-primary)] flex items-center justify-center transition-colors"
+                        onClick={handleVoiceRecord}
+                        className={`w-[42px] h-[42px] rounded-full flex items-center justify-center transition-colors ${
+                          isRecording 
+                            ? 'bg-red-500/10 text-red-500 hover:bg-red-500/20' 
+                            : 'bg-transparent hover:bg-[var(--hover)] text-[var(--text-tertiary)] hover:text-[var(--text-primary)]'
+                        }`}
                         title={isFr ? "Dictée vocale" : "Voice dictation"}
                       >
-                        <GeistMic size={16} />
+                        <Microphone size={20} weight={isRecording ? "fill" : "bold"} className={isRecording ? 'animate-pulse text-red-500' : ''} />
                       </button>
 
                       {isStreaming ? (
                         <button
                           type="button"
                           onClick={onStopStreaming}
-                          className="w-8 h-8 rounded-xl bg-red-500/20 hover:bg-red-500/30 text-red-400 flex items-center justify-center transition-colors border border-red-500/30"
+                          className="w-[42px] h-[42px] rounded-full bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white flex items-center justify-center transition-colors"
                           title={isFr ? "Arrêter l'exécution de la mission" : "Stop mission execution"}
                         >
                           <GeistCross size={13} strokeWidth={2} />
@@ -654,14 +664,14 @@ export default function AdaptiveChatWorkspace({
                           type="button"
                           onClick={handleSend}
                           disabled={!inputText.trim() && attachedFiles.length === 0}
-                          className={`w-8 h-8 rounded-xl flex items-center justify-center transition-all ${
+                          className={`w-[42px] h-[42px] rounded-full flex items-center justify-center transition-all ${
                             inputText.trim() || attachedFiles.length > 0
-                              ? 'bg-[var(--accent)] text-[var(--accent-fg)] font-bold shadow-md active:scale-95'
-                              : 'bg-[var(--surface)] text-[var(--text-tertiary)] cursor-not-allowed opacity-50'
+                              ? 'bg-[var(--accent)] text-[var(--accent-fg)] font-bold shadow-[0_0_12px_var(--accent-muted)] active:scale-95'
+                              : 'bg-transparent text-[var(--text-tertiary)] border border-[var(--border-strong)] cursor-not-allowed opacity-60'
                           }`}
                           title={isFr ? "Envoyer la mission" : "Send mission"}
                         >
-                          <GeistArrowUp size={16} strokeWidth={2} />
+                          <ArrowUp size={20} weight="bold" />
                         </button>
                       )}
                     </div>

@@ -3,14 +3,43 @@
 import React, { useState, useEffect } from 'react';
 import { MagnifyingGlass, ChatCircleDots, CalendarBlank } from '@phosphor-icons/react';
 import { useLanguageStore } from '@/stores/language.store';
-import { useConversations } from '@/hooks/useConversations';
+import { useConversations, type NeonConversation } from '@/hooks/useConversations';
 import { useRouter } from 'next/navigation';
+
+function groupConversationsByTime(conversations: NeonConversation[], t: any) {
+  const now = Date.now();
+  const todayStart = new Date().setHours(0, 0, 0, 0);
+  const yesterdayStart = todayStart - 86400000;
+  const weekAgo = todayStart - 7 * 86400000;
+
+  const groups = [
+    { label: t('time.today') || "Aujourd'hui", items: [] as NeonConversation[] },
+    { label: t('time.yesterday') || 'Hier', items: [] as NeonConversation[] },
+    { label: t('time.thisWeek') || 'Cette semaine', items: [] as NeonConversation[] },
+    { label: t('time.older') || 'Plus ancien', items: [] as NeonConversation[] },
+  ];
+
+  (conversations || []).forEach((c) => {
+    const time = new Date(c.updated_at || c.created_at).getTime() || now;
+    if (time >= todayStart) groups[0].items.push(c);
+    else if (time >= yesterdayStart) groups[1].items.push(c);
+    else if (time >= weekAgo) groups[2].items.push(c);
+    else groups[3].items.push(c);
+  });
+
+  return groups.filter((g) => g.items.length > 0);
+}
 
 export default function MissionSearchOverlay({ isOpen, onClose }: { isOpen: boolean, onClose: () => void }) {
   const { t } = useLanguageStore();
   const router = useRouter();
-  const { recentGroups, setActiveConversation } = useConversations();
+  const { conversations, setCurrentConversationId } = useConversations();
   const [query, setQuery] = useState('');
+  
+  const recentGroups = groupConversationsByTime(
+    conversations.filter(c => !query || c.title?.toLowerCase().includes(query.toLowerCase())),
+    t
+  );
 
   // Close on Escape
   useEffect(() => {
@@ -81,7 +110,7 @@ export default function MissionSearchOverlay({ isOpen, onClose }: { isOpen: bool
                   <button
                     key={mission.id}
                     onClick={() => {
-                      setActiveConversation(mission.id);
+                      setCurrentConversationId(mission.id);
                       router.push('/chat');
                       onClose();
                     }}
@@ -92,9 +121,6 @@ export default function MissionSearchOverlay({ isOpen, onClose }: { isOpen: bool
                     </div>
                     <div className="flex flex-col min-w-0 flex-1">
                       <span className="font-medium text-[15px] text-[var(--text-primary)] truncate">{mission.title || 'Untitled'}</span>
-                      <span className="text-[13px] text-[var(--text-secondary)] truncate">
-                        {mission.preview || 'No preview available'}
-                      </span>
                       <div className="flex items-center gap-1 mt-1 text-[11px] text-[var(--text-tertiary)]">
                         <CalendarBlank size={12} />
                         <span>{new Date(mission.updated_at || Date.now()).toLocaleDateString()}</span>

@@ -18,6 +18,8 @@ import { IbogaNavigationTrigger } from '@/components/brand';
 import { RenduIcon, LoxoIcon } from '@/components/icons';
 import ModelSelectorModal from '@/components/composer/ModelSelectorModal';
 import type { ModelMetadata } from '@/lib/modelRegistry';
+import { useWorkspaceStore } from '@/stores/workspace.store';
+import { useChatStore } from '@/stores/chat.store';
 
 interface TopBarProps {
   onOpenCapabilities?: () => void;
@@ -27,6 +29,12 @@ export default function TopBar({ onOpenCapabilities }: TopBarProps) {
   const engineId = useNkyelModel((state: any) => state.engineId);
   const setEngineId = useNkyelModel((state: any) => state.setEngineId);
   const { open: openMobileSidebar } = useSidebar();
+  const { currentWorkspace, isLoading: wsLoading } = useWorkspaceStore();
+  const { availableProfiles, isProfilesLoading, fetchProfiles } = useChatStore();
+
+  useEffect(() => {
+    fetchProfiles();
+  }, [fetchProfiles]);
 
   const [modelDropdown, setModelDropdown] = useState(false);
   const [isUpgradeOpen, setIsUpgradeOpen] = useState(false);
@@ -106,7 +114,7 @@ export default function TopBar({ onOpenCapabilities }: TopBarProps) {
             />
           </div>
 
-          <div className="hidden md:block w-[1px] h-4 bg-[var(--border-subtle)] mx-1" />
+
 
           {/* Canonical Intelligence Mode Selector — Visible on all viewports (Section 16) */}
           <div className="relative flex items-center" ref={dropdownRef}>
@@ -208,9 +216,13 @@ export default function TopBar({ onOpenCapabilities }: TopBarProps) {
             </kbd>
           </button>
 
-          {/* Plan Gratuit | Mise à niveau (Screenshot 3) */}
+          {/* Plan Gratuit | Mise à niveau */}
           <div className="hidden sm:flex items-center gap-1.5 px-3 py-1 rounded-full bg-[var(--surface-raised)] border border-[var(--border)] text-xs text-[var(--text-secondary)]">
-            <span className="text-[11px] text-[var(--text-tertiary)]">{isFr ? 'Plan gratuit' : 'Free plan'}</span>
+            {wsLoading ? (
+              <span className="w-16 h-3 bg-[var(--border)] rounded animate-pulse" />
+            ) : (
+              <span className="text-[11px] text-[var(--text-tertiary)]">{currentWorkspace?.plan || (isFr ? 'Plan gratuit' : 'Free plan')}</span>
+            )}
             <span className="text-[10px] text-[var(--border-strong)]">|</span>
             <button
               type="button"
@@ -221,15 +233,19 @@ export default function TopBar({ onOpenCapabilities }: TopBarProps) {
             </button>
           </div>
 
-          {/* Credits Chip ✨ 300 (Screenshot 3) */}
+          {/* Credits Chip ✨ */}
           <button
             type="button"
             onClick={() => setIsUpgradeOpen(true)}
             className="flex items-center gap-1.5 h-8 px-3 rounded-full bg-[var(--surface-raised)] hover:bg-[var(--hover)] border border-[var(--border)] text-xs font-semibold text-[var(--text-primary)] transition-all shadow-xs"
-            title={isFr ? "300 crédits disponibles" : "300 credits available"}
+            title={isFr ? "Crédits disponibles" : "Credits available"}
           >
             <Sparkle size={14} weight="fill" className="text-[var(--accent)]" />
-            <span className="font-mono">300</span>
+            {wsLoading ? (
+              <span className="w-6 h-3 bg-[var(--border)] rounded animate-pulse" />
+            ) : (
+              <span className="font-mono">{currentWorkspace?.credits ?? '—'}</span>
+            )}
           </button>
         </div>
       </header>

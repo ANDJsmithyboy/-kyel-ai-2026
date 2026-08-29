@@ -27,7 +27,7 @@ const CustomNode = ({ data }: any) => {
     <div className="rounded-[1.35rem] border border-[rgba(255,255,255,0.08)] bg-[rgba(8,12,22,0.9)] p-4 shadow-[0_14px_60px_rgba(0,0,0,0.24)] min-w-[180px]">
       <Handle type="target" position={Position.Top} style={{ background: 'var(--text-tertiary)' }} />
       <span className="text-[0.65rem] uppercase tracking-[0.24em]" style={{ color: data.accent || 'var(--text-tertiary)' }}>
-        Nœud
+        {data.nodeType || 'Nœud'}
       </span>
       <p className="mt-2 text-lg font-semibold text-[var(--text-primary)]">{data.label}</p>
       <div className="mt-3 rounded-2xl border border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.03)] px-3 py-2 text-xs text-[var(--text-secondary)]">
@@ -42,37 +42,32 @@ const nodeTypes = {
   custom: CustomNode,
 };
 
-/* --- INITIAL DATA --- */
-const initialNodes = [
-  {
-    id: 'prompt',
-    type: 'custom',
-    position: { x: 50, y: 50 },
-    data: { label: 'Prompt', accent: 'var(--gabon-blue)', description: 'Entrée utilisateur initiale.' },
-  },
-  {
-    id: 'intent',
-    type: 'custom',
-    position: { x: 250, y: 200 },
-    data: { label: 'Intent', accent: 'var(--gabon-green)', description: 'Classification de l\'intention.' },
-  },
-  {
-    id: 'agent',
-    type: 'custom',
-    position: { x: 450, y: 350 },
-    data: { label: 'Agent', accent: 'var(--gabon-yellow)', description: 'Exécution du modèle Black Panther.' },
-  },
-];
-
-const initialEdges = [
-  { id: 'e1-2', source: 'prompt', target: 'intent', animated: true, style: { stroke: 'rgba(255,255,255,0.3)' } },
-  { id: 'e2-3', source: 'intent', target: 'agent', animated: true, style: { stroke: 'rgba(255,255,255,0.3)' } },
-];
+const initialNodes: any[] = [];
+const initialEdges: any[] = [];
 
 export default function DeerFlowCanvas() {
   const [liveMode, setLiveMode] = useState(true);
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState<any>(initialEdges);
+  const [isLoading, setIsLoading] = useState(true);
+
+  React.useEffect(() => {
+    async function fetchWorkGraph() {
+      try {
+        const res = await fetch('/api/workgraph/current');
+        if (res.ok) {
+          const data = await res.json();
+          if (data.nodes) setNodes(data.nodes);
+          if (data.edges) setEdges(data.edges);
+        }
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    fetchWorkGraph();
+  }, [setNodes, setEdges]);
 
   const onConnect = useCallback(
     (params: Connection | Edge) => setEdges((eds: any) => addEdge({ ...params, animated: true, style: { stroke: 'rgba(255,255,255,0.3)' } } as any, eds)),
@@ -111,32 +106,45 @@ export default function DeerFlowCanvas() {
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(46,204,138,0.12),_transparent_24%),radial-gradient(circle_at_bottom_right,_rgba(56,189,248,0.12),_transparent_28%)] z-0" />
         
         {/* Canvas React Flow */}
-        <ReactFlow
-          nodes={nodes}
-          edges={edges}
-          onNodesChange={onNodesChange}
-          onEdgesChange={onEdgesChange}
-          onConnect={onConnect}
-          nodeTypes={nodeTypes}
-          fitView
-          className="z-10 bg-transparent"
-        >
-          <Controls className="bg-[rgba(5,7,12,0.8)] border-[rgba(255,255,255,0.1)] fill-white text-white" />
-          <MiniMap 
-            nodeColor={(node) => {
-              switch (node.id) {
-                case 'prompt': return 'var(--gabon-blue)';
-                case 'intent': return 'var(--gabon-green)';
-                case 'agent': return 'var(--gabon-yellow)';
-                default: return 'var(--text-tertiary)';
-              }
-            }}
-            nodeStrokeWidth={3}
-            maskColor="rgba(0, 0, 0, 0.7)"
-            style={{ backgroundColor: 'rgba(5, 7, 12, 0.9)', border: '1px solid rgba(255,255,255,0.1)' }}
-          />
-          <Background color="rgba(255,255,255,0.05)" gap={16} />
-        </ReactFlow>
+        {isLoading ? (
+          <div className="absolute inset-0 flex items-center justify-center z-20">
+            <div className="w-10 h-10 border-4 border-[var(--accent)] border-t-transparent rounded-full animate-spin"></div>
+          </div>
+        ) : nodes.length === 0 ? (
+          <div className="absolute inset-0 flex flex-col items-center justify-center z-20 space-y-4">
+             <div className="w-20 h-20 rounded-full bg-[rgba(255,255,255,0.02)] border border-[rgba(255,255,255,0.05)] flex items-center justify-center text-[var(--text-tertiary)] shadow-lg shadow-black/20 backdrop-blur-xl">
+              <Sparkles size={32} />
+             </div>
+             <div className="text-center space-y-1">
+               <h3 className="text-lg font-semibold text-[var(--text-primary)]">WorkGraph Vierge</h3>
+               <p className="text-sm text-[var(--text-secondary)] max-w-sm">
+                 Le plan d'exécution apparaîtra ici sous forme de nœuds canoniques (Objectif, Plan, Agent, Outil, etc.) dès que vous lancerez une mission.
+               </p>
+             </div>
+          </div>
+        ) : (
+          <ReactFlow
+            nodes={nodes}
+            edges={edges}
+            onNodesChange={onNodesChange}
+            onEdgesChange={onEdgesChange}
+            onConnect={onConnect}
+            nodeTypes={nodeTypes}
+            fitView
+            className="z-10 bg-transparent"
+          >
+            <Controls className="bg-[rgba(5,7,12,0.8)] border-[rgba(255,255,255,0.1)] fill-white text-white" />
+            <MiniMap 
+              nodeColor={(node) => {
+                return node.data?.accent as string || 'var(--text-tertiary)';
+              }}
+              nodeStrokeWidth={3}
+              maskColor="rgba(0, 0, 0, 0.7)"
+              style={{ backgroundColor: 'rgba(5, 7, 12, 0.9)', border: '1px solid rgba(255,255,255,0.1)' }}
+            />
+            <Background color="rgba(255,255,255,0.05)" gap={16} />
+          </ReactFlow>
+        )}
       </div>
     </div>
   );

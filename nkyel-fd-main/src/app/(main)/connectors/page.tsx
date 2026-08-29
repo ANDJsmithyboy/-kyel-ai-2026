@@ -29,65 +29,23 @@ import {
   Trash,
   CheckCircle,
   PaperPlaneTilt,
+  ArrowsClockwise
 } from '@phosphor-icons/react';
 import { useConnectorsStore, type ConnectorItem } from '@/stores/connectors.store';
 import { useLanguageStore } from '@/stores/language.store';
 import ConnectorCard from '@/components/connectors/ConnectorCard';
 import ConnectorDetailSheet from '@/components/connectors/ConnectorDetailSheet';
 import MCPServerModal, { type MCPServerConfig } from '@/components/connectors/MCPServerModal';
+import PageContainer from '@/components/layout/PageContainer';
 
 export type ConnectorsActiveTab = 'apps' | 'custom_api' | 'mcp_servers' | 'projects';
 
-const INITIAL_MCP_SERVERS: MCPServerConfig[] = [
-  {
-    id: 'mcp_postgres_prod',
-    name: 'PostgreSQL Enterprise Hub',
-    description: 'Secure read-only analytics access to relational tables and schemas.',
-    transport: 'stdio',
-    command: 'npx -y @modelcontextprotocol/server-postgres',
-    enabled: true,
-    status: 'connected',
-    discoveredToolsCount: 6,
-    lastPingMs: 12,
-  },
-  {
-    id: 'mcp_github_gateway',
-    name: 'GitHub Repository Gateway',
-    description: 'Pull request management, issues, repository tree navigation, and Git actions.',
-    transport: 'stdio',
-    command: 'npx -y @modelcontextprotocol/server-github',
-    enabled: true,
-    status: 'connected',
-    discoveredToolsCount: 14,
-    lastPingMs: 24,
-  },
-  {
-    id: 'mcp_brave_search',
-    name: 'Brave Search Live Feed',
-    transport: 'streamable-http',
-    url: 'https://mcp.brave.com/v1',
-    description: 'Independent live web indexing and privacy-focused multi-source search.',
-    enabled: true,
-    status: 'connected',
-    discoveredToolsCount: 3,
-    lastPingMs: 45,
-  },
-  {
-    id: 'mcp_filesystem_sandbox',
-    name: 'Filesystem Sandbox Workspace',
-    description: 'Read and write artifacts safely inside the /workspace environment.',
-    transport: 'stdio',
-    command: 'npx -y @modelcontextprotocol/server-filesystem',
-    enabled: true,
-    status: 'connected',
-    discoveredToolsCount: 8,
-    lastPingMs: 8,
-  },
-];
+const INITIAL_MCP_SERVERS: MCPServerConfig[] = [];
 
 export default function ConnectorsPage() {
   const router = useRouter();
-  const { t } = useLanguageStore();
+  const { t, uiLocale } = useLanguageStore();
+  const isFr = uiLocale?.startsWith('fr');
 
   const {
     connectors,
@@ -277,161 +235,190 @@ export default function ConnectorsPage() {
       )}
 
       {/* ═══════════════════════════════════════════════════
-         MAIN CONTAINER (Mobile-First Sheet Style: Section 34 & 35)
+         MAIN CONTAINER (Standardized Wide PageContainer)
          ═══════════════════════════════════════════════════ */}
-      <div className="flex-1 flex flex-col max-w-4xl mx-auto w-full px-3 sm:px-6 py-4 sm:py-6 overflow-hidden">
-        {/* Header: Title + Close target */}
-        <div className="shrink-0 flex items-center justify-between pb-3">
-          <h1 className="text-2xl sm:text-[28px] font-semibold tracking-tight text-[var(--text-primary)]">
-            {t('connectors.title') || 'Connectors'}
-          </h1>
-          <button
-            type="button"
-            onClick={() => router.push('/')}
-            className="w-11 h-11 min-h-[44px] min-w-[44px] rounded-xl flex items-center justify-center text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--hover)] transition-colors active:scale-95"
-            aria-label="Close"
-            title="Close"
-          >
-            <X size={20} />
-          </button>
-        </div>
-
-        {/* Search Bar: Section 36 (48-52px height, 14-18px radius) */}
-        <div className="shrink-0 relative mb-4">
-          <MagnifyingGlass
-            size={19}
-            className="absolute start-3.5 top-1/2 -translate-y-1/2 text-[var(--text-tertiary)] pointer-events-none"
-          />
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder={t('connectors.searchPlaceholder') || 'Search connectors...'}
-            className="w-full h-12 ps-10 pe-4 rounded-[16px] border border-[var(--border)] bg-[var(--surface-raised)] text-sm text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] transition-all"
-          />
-        </div>
-
-        {/* Categories / Navigation Tabs & Create Control (Section 37 & 38) */}
-        <div className="shrink-0 flex items-center justify-between gap-2 pb-3 border-b border-[var(--border-subtle)]">
-          {/* Horizontally scrollable category tabs */}
-          <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-none py-1 min-w-0">
-            {[
-              { id: 'apps', label: t('connectors.applications') || 'Applications', icon: PlugsConnected },
-              { id: 'custom_api', label: t('connectors.customApi') || 'Custom API', icon: Globe },
-              { id: 'mcp_servers', label: t('connectors.mcpServers') || 'MCP Servers', icon: Terminal },
-              { id: 'projects', label: t('connectors.projects') || 'Projects', icon: FolderSimple },
-            ].map((tab) => {
-              const Icon = tab.icon;
-              const isActive = activeTab === tab.id;
-              return (
-                <button
-                  key={tab.id}
-                  type="button"
-                  onClick={() => setActiveTab(tab.id as ConnectorsActiveTab)}
-                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium whitespace-nowrap transition-all touch-manipulation min-h-[34px] ${
-                    isActive
-                      ? 'bg-[var(--surface-raised)] text-[var(--text-primary)] border border-[var(--border-strong)] shadow-xs'
-                      : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--hover)] border border-transparent'
-                  }`}
-                >
-                  <Icon size={15} weight={isActive ? 'fill' : 'regular'} className={isActive ? 'text-[var(--accent)]' : ''} />
-                  <span>{tab.label}</span>
-                </button>
-              );
-            })}
-          </div>
-
-          {/* Create ˅ Control (Section 38) */}
-          <div className="relative shrink-0" ref={createMenuRef}>
+      <div className="flex-1 overflow-y-auto">
+        <PageContainer variant="wide" className="space-y-4">
+          {/* Header: Title + Close target */}
+          <div className="shrink-0 flex items-start justify-between pb-1">
+            <div className="space-y-1.5">
+              <h1 className="text-2xl sm:text-[28px] font-semibold tracking-tight text-[var(--text-primary)]">
+                {isFr ? 'Connecteurs' : 'Connectors'}
+              </h1>
+              <p className="text-[13.5px] text-[var(--text-secondary)]">
+                {isFr ? 'Connectez ñkyel à vos outils et données en quelques clics.' : 'Connect ñkyel to your tools and data in a few clicks.'}
+              </p>
+            </div>
             <button
               type="button"
-              onClick={() => setCreateMenuOpen(!createMenuOpen)}
-              className="flex items-center gap-1 px-3 py-1.5 rounded-xl text-xs font-semibold bg-[var(--surface-raised)] hover:bg-[var(--hover)] text-[var(--text-primary)] border border-[var(--border)] transition-colors shadow-xs touch-manipulation min-h-[34px]"
+              onClick={() => router.back()}
+              className="w-10 h-10 min-h-[40px] min-w-[40px] rounded-xl flex items-center justify-center text-[var(--text-tertiary)] hover:text-[var(--text-primary)] hover:bg-[var(--hover)] transition-colors active:scale-95 border border-transparent hover:border-[var(--border)] bg-[var(--surface-raised)]"
+              aria-label="Close"
+              title="Close"
             >
-              <span>{t('connectors.create') || 'Create'}</span>
-              <CaretDown size={12} className="opacity-60" />
+              <X size={18} weight="bold" />
             </button>
-
-            {createMenuOpen && (
-              <div className="absolute end-0 top-full mt-1.5 w-48 p-1.5 rounded-2xl bg-[var(--bg-elevated)] border border-[var(--border-strong)] shadow-[var(--shadow-modal)] text-xs z-50 animate-scale-in">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setCreateMenuOpen(false);
-                    setIsAddServerOpen(true);
-                  }}
-                  className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-start hover:bg-[var(--hover)] text-[var(--text-primary)]"
-                >
-                  <Terminal size={15} className="text-[var(--accent)]" />
-                  <span>MCP Server</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setCreateMenuOpen(false);
-                    setIsSuggestModalOpen(true);
-                  }}
-                  className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-start hover:bg-[var(--hover)] text-[var(--text-primary)]"
-                >
-                  <Globe size={15} className="text-emerald-400" />
-                  <span>Custom API</span>
-                </button>
-              </div>
-            )}
           </div>
-        </div>
 
-        {/* ═══════════════════════════════════════════════════
-           CONNECTOR LIST / TAB PANELS (Section 39: 1-COLUMN MOBILE)
-           ═══════════════════════════════════════════════════ */}
-        <div className="flex-1 overflow-y-auto py-3 space-y-3 scrollbar-thin">
-          {activeTab === 'apps' && (
-            <div className="flex flex-col gap-2.5">
-              {filteredConnectors.length === 0 ? (
-                <div className="text-center py-12 space-y-3">
-                  <div className="w-10 h-10 rounded-full bg-[var(--surface-raised)] border border-[var(--border)] flex items-center justify-center mx-auto text-[var(--text-tertiary)]">
-                    <PlugsConnected size={20} />
-                  </div>
-                  <p className="text-xs text-[var(--text-secondary)]">
-                    No connectors found matching &ldquo;{searchQuery}&rdquo;
-                  </p>
+          {/* Search Bar */}
+          <div className="shrink-0 relative">
+            <MagnifyingGlass
+              size={17}
+              className="absolute start-3.5 top-1/2 -translate-y-1/2 text-[var(--text-tertiary)] pointer-events-none"
+            />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder={isFr ? 'Rechercher un connecteur...' : 'Search for a connector...'}
+              className="w-full h-11 ps-10 pe-4 rounded-2xl border border-[var(--border-strong)] bg-[var(--bg-inset)] focus:bg-[var(--surface-raised)] text-[13.5px] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] outline-none focus:border-[var(--accent)] transition-all shadow-inner-sm"
+            />
+          </div>
+
+          {/* Categories / Navigation Tabs & Create Control (Section 37 & 38) */}
+          <div className="shrink-0 flex items-center justify-between gap-2 pb-3 border-b border-[var(--border-strong)]">
+            {/* Horizontally scrollable category tabs */}
+            <div className="flex items-center gap-2 overflow-x-auto scrollbar-none min-w-0">
+              {[
+                { id: 'apps', label: isFr ? 'Applications' : 'Applications' },
+                { id: 'custom_api', label: isFr ? 'APIs & services' : 'APIs & services' },
+                { id: 'projects', label: isFr ? 'Passerelles' : 'Gateways' },
+                { id: 'mcp_servers', label: isFr ? 'MCP & serveurs' : 'MCP & servers' },
+              ].map((tab) => {
+                const isActive = activeTab === tab.id;
+                return (
+                  <button
+                    key={tab.id}
+                    type="button"
+                    onClick={() => setActiveTab(tab.id as ConnectorsActiveTab)}
+                    className={`relative px-4 py-2 text-[13px] font-medium whitespace-nowrap transition-colors rounded-xl ${
+                      isActive
+                        ? 'text-[var(--text-primary)] border border-[var(--accent)] bg-[var(--surface-raised)]'
+                        : 'text-[var(--text-secondary)] border border-transparent hover:text-[var(--text-primary)] hover:bg-[var(--hover)]'
+                    }`}
+                  >
+                    <span>{tab.label}</span>
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Create ˅ Control (Section 38) */}
+            <div className="relative shrink-0" ref={createMenuRef}>
+              <button
+                type="button"
+                onClick={() => setCreateMenuOpen(!createMenuOpen)}
+                className="flex items-center gap-1 px-3 py-1.5 rounded-xl text-xs font-semibold bg-[var(--surface-raised)] hover:bg-[var(--hover)] text-[var(--text-primary)] border border-[var(--border)] transition-colors shadow-xs touch-manipulation min-h-[34px]"
+              >
+                <span>{t('connectors.create') || 'Create'}</span>
+                <CaretDown size={12} className="opacity-60" />
+              </button>
+
+              {createMenuOpen && (
+                <div className="absolute end-0 top-full mt-1.5 w-48 p-1.5 rounded-2xl bg-[var(--bg-elevated)] border border-[var(--border-strong)] shadow-[var(--shadow-modal)] text-xs z-50 animate-scale-in">
                   <button
                     type="button"
-                    onClick={() => setIsSuggestModalOpen(true)}
-                    className="inline-block text-xs font-semibold text-[var(--accent)] hover:underline"
+                    onClick={() => {
+                      setCreateMenuOpen(false);
+                      setIsAddServerOpen(true);
+                    }}
+                    className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-start hover:bg-[var(--hover)] text-[var(--text-primary)]"
                   >
-                    + Suggest this connector
+                    <Terminal size={15} className="text-[var(--accent)]" />
+                    <span>MCP Server</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setCreateMenuOpen(false);
+                      setIsSuggestModalOpen(true);
+                    }}
+                    className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-start hover:bg-[var(--hover)] text-[var(--text-primary)]"
+                  >
+                    <Globe size={15} className="text-emerald-400" />
+                    <span>Custom API</span>
                   </button>
                 </div>
-              ) : (
-                filteredConnectors.map((conn) => (
-                  <ConnectorCard
-                    key={conn.id}
-                    connector={conn}
-                    onSelect={setSelectedConnectorId}
-                    onConnect={connectConnector}
-                  />
-                ))
               )}
-
-              {/* Catalog Request Footer (Section 52) */}
-              <div className="pt-6 pb-8 text-center space-y-1.5 border-t border-[var(--border-subtle)] mt-4">
-                <p className="text-xs text-[var(--text-tertiary)]">
-                  {t('connectors.missing') || "Can't find what you need?"}
-                </p>
-                <button
-                  type="button"
-                  onClick={() => setIsSuggestModalOpen(true)}
-                  className="inline-flex items-center gap-1.5 text-xs font-semibold text-[var(--accent)] hover:underline"
-                >
-                  <span>{t('connectors.suggest') || 'Suggest one'}</span>
-                  <span>→</span>
-                </button>
-              </div>
             </div>
-          )}
+          </div>
 
-          {activeTab === 'custom_api' && (
+          {/* ═══════════════════════════════════════════════════
+             CONNECTOR LIST / TAB PANELS (Responsive Grid: 1 Col Mobile, 2-3 Col Desktop)
+             ═══════════════════════════════════════════════════ */}
+          <div className="py-2">
+            {activeTab === 'apps' && (
+              <div className="space-y-4">
+                {connectors.length === 0 ? (
+                  <div className="text-center py-20 px-4 space-y-4 rounded-3xl border border-[var(--border-subtle)] bg-[var(--surface-raised)]/50 mt-4">
+                    <div className="w-12 h-12 rounded-full bg-[var(--control-bg)] border border-[var(--border-strong)] flex items-center justify-center mx-auto text-[var(--text-tertiary)] shadow-inner-sm">
+                      <PlugsConnected size={24} weight="duotone" />
+                    </div>
+                    <div className="space-y-1">
+                      <h3 className="text-[15px] font-semibold text-[var(--text-primary)]">
+                        {isFr ? 'Aucun connecteur disponible' : 'No connectors available'}
+                      </h3>
+                      <p className="text-[13px] text-[var(--text-secondary)] max-w-sm mx-auto">
+                        {isFr 
+                          ? 'Le registre de connecteurs est actuellement vide. Veuillez configurer vos fournisseurs dans le backend.'
+                          : 'The connector registry is currently empty. Please configure your providers in the backend.'}
+                      </p>
+                    </div>
+                    <div className="pt-2">
+                      <button
+                        type="button"
+                        onClick={() => fetchConnectors()}
+                        className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold bg-[var(--control-bg)] border border-[var(--border)] text-[var(--text-primary)] hover:bg-[var(--hover)] hover:border-[var(--border-strong)] transition-all shadow-xs"
+                      >
+                        <ArrowsClockwise size={14} weight="bold" />
+                        <span>{isFr ? 'Rafraîchir le registre' : 'Refresh Registry'}</span>
+                      </button>
+                    </div>
+                  </div>
+                ) : filteredConnectors.length === 0 ? (
+                  <div className="text-center py-12 space-y-3">
+                    <div className="w-10 h-10 rounded-full bg-[var(--surface-raised)] border border-[var(--border)] flex items-center justify-center mx-auto text-[var(--text-tertiary)]">
+                      <MagnifyingGlass size={20} />
+                    </div>
+                    <p className="text-xs text-[var(--text-secondary)]">
+                      {isFr ? 'Aucun résultat pour' : 'No connectors found matching'} &ldquo;{searchQuery}&rdquo;
+                    </p>
+                    <button
+                      type="button"
+                      onClick={() => setIsSuggestModalOpen(true)}
+                      className="inline-block text-xs font-semibold text-[var(--accent)] hover:underline"
+                    >
+                      {isFr ? '+ Suggérer ce connecteur' : '+ Suggest this connector'}
+                    </button>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5">
+                    {filteredConnectors.map((conn) => (
+                      <ConnectorCard
+                        key={conn.id}
+                        connector={conn}
+                        onSelect={setSelectedConnectorId}
+                        onConnect={connectConnector}
+                      />
+                    ))}
+                  </div>
+                )}
+
+                {/* Catalog Request Footer */}
+                <div className="pt-8 pb-12 flex items-center justify-between mt-2 border-t border-[var(--border-subtle)]">
+                  <div className="flex items-center gap-2 text-[13px] font-medium text-[var(--text-tertiary)]">
+                    <ArrowsClockwise size={15} weight="bold" />
+                    <span>{filteredConnectors.length} connecteurs disponibles</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-[13px] font-medium text-[var(--text-secondary)]">
+                    <span className="w-2 h-2 rounded-full bg-[#10B981] shadow-[0_0_8px_rgba(16,185,129,0.5)]" />
+                    <span>{connectors.filter(c => c.status === 'CONNECTED').length} connectés</span>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {activeTab === 'custom_api' && (
             <div className="py-8 text-center space-y-3">
               <div className="w-10 h-10 rounded-xl bg-[var(--control-bg)] border border-[var(--border)] flex items-center justify-center mx-auto text-[var(--accent)]">
                 <Globe size={20} />
@@ -466,7 +453,17 @@ export default function ConnectorsPage() {
                 </button>
               </div>
 
-              {mcpServers.map((srv) => (
+              {mcpServers.length === 0 ? (
+                <div className="text-center py-12 space-y-3">
+                  <div className="w-10 h-10 rounded-full bg-[var(--surface-raised)] border border-[var(--border)] flex items-center justify-center mx-auto text-[var(--text-tertiary)]">
+                    <Terminal size={20} />
+                  </div>
+                  <p className="text-xs text-[var(--text-secondary)]">
+                    Aucun serveur MCP configuré.
+                  </p>
+                </div>
+              ) : (
+                mcpServers.map((srv) => (
                 <div
                   key={srv.id}
                   className="p-4 rounded-[18px] border border-[var(--border)] bg-[var(--surface-raised)] space-y-3"
@@ -517,7 +514,7 @@ export default function ConnectorsPage() {
                     </div>
                   )}
                 </div>
-              ))}
+              )))}
             </div>
           )}
 
@@ -540,7 +537,8 @@ export default function ConnectorsPage() {
             </div>
           )}
         </div>
-      </div>
+      </PageContainer>
+    </div>
     </div>
   );
 }

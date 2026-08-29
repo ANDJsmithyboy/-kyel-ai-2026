@@ -104,284 +104,13 @@ interface ConnectorsState {
   fetchConnectors: () => Promise<void>;
 }
 
-const INITIAL_CONNECTORS: ConnectorItem[] = [
-  // ── GOOGLE FIRST-CLASS CONNECTORS ──
-  {
-    id: 'conn_google_workspace',
-    slug: 'google-workspace',
-    name: 'Google Workspace',
-    description: 'Suite bureautique complète : Drive, Docs, Sheets, Gmail et Calendar unifiés.',
-    category: 'Google',
-    icon: 'google-workspace',
-    status: 'AVAILABLE',
-    isGoogle: true,
-    capabilities: ['Recherche Drive', 'Édition Docs', 'Analyse Sheets', 'Lecture/Envoi Gmail', 'Gestion Agenda'],
-    permissions: [
-      { id: 'p1', scope: 'drive.readonly', humanLabel: 'Lire et indexer vos fichiers Google Drive', requiresApproval: false },
-      { id: 'p2', scope: 'docs.write', humanLabel: 'Créer et enrichir des Google Docs souverains', requiresApproval: false },
-      { id: 'p3', scope: 'sheets.write', humanLabel: 'Mettre à jour des tableaux financiers Sheets', requiresApproval: false },
-      { id: 'p4', scope: 'gmail.send', humanLabel: 'Envoyer des e-mails professionnels après votre accord', requiresApproval: true },
-      { id: 'p5', scope: 'calendar.events', humanLabel: 'Planifier des réunions sur votre Agenda', requiresApproval: true },
-    ],
-  },
-  {
-    id: 'conn_google_drive',
-    slug: 'google-drive',
-    name: 'Google Drive',
-    description: 'Accédez à vos documents, rapports et présentations stockés dans votre Drive.',
-    category: 'Google',
-    icon: 'HardDrives',
-    status: 'AVAILABLE',
-    isGoogle: true,
-    capabilities: ['Recherche sémantique', 'Téléchargement de PDF', 'Analyse de dossiers'],
-    permissions: [
-      { id: 'p1', scope: 'drive.readonly', humanLabel: 'Parcourir et lire les documents de votre Drive', requiresApproval: false },
-    ],
-  },
-  {
-    id: 'conn_google_docs',
-    slug: 'google-docs',
-    name: 'Google Docs',
-    description: 'Rédigez, structurez et exportez des synthèses exécutives directement sur Docs.',
-    category: 'Google',
-    icon: 'FileText',
-    status: 'AVAILABLE',
-    isGoogle: true,
-    capabilities: ['Création de document', 'Formatage typographique', 'Ajout de sections'],
-    permissions: [
-      { id: 'p1', scope: 'docs.create', humanLabel: 'Créer de nouveaux documents Google Docs', requiresApproval: false },
-    ],
-  },
-  {
-    id: 'conn_google_sheets',
-    slug: 'google-sheets',
-    name: 'Google Sheets',
-    description: 'Modélisation financière, tableaux de bord et extraction de métriques.',
-    category: 'Google',
-    icon: 'Table',
-    status: 'AVAILABLE',
-    isGoogle: true,
-    capabilities: ['Création de feuilles', 'Formules financières', 'Visualisations graphiques'],
-    permissions: [
-      { id: 'p1', scope: 'sheets.edit', humanLabel: 'Modifier des feuilles de calcul Sheets', requiresApproval: false },
-    ],
-  },
-  {
-    id: 'conn_gmail',
-    slug: 'gmail',
-    name: 'Gmail',
-    description: 'Synthèse des courriels importants et préparation de réponses sur mesure.',
-    category: 'Google',
-    icon: 'EnvelopeSimple',
-    status: 'AVAILABLE',
-    isGoogle: true,
-    capabilities: ['Recherche de messages', 'Brouillons automatiques', 'Envoi sécurisé'],
-    permissions: [
-      { id: 'p1', scope: 'gmail.readonly', humanLabel: 'Lire les courriels pertinents pour vos missions', requiresApproval: false },
-      { id: 'p2', scope: 'gmail.send', humanLabel: 'Envoyer des messages après votre validation explicite', requiresApproval: true },
-    ],
-  },
-  {
-    id: 'conn_google_calendar',
-    slug: 'google-calendar',
-    name: 'Google Calendar',
-    description: 'Planification stratégique et synchronisation des échéances de mission.',
-    category: 'Google',
-    icon: 'CalendarBlank',
-    status: 'AVAILABLE',
-    isGoogle: true,
-    capabilities: ['Vérification des disponibilités', 'Création d’événements', 'Rappels'],
-    permissions: [
-      { id: 'p1', scope: 'calendar.events', humanLabel: 'Ajouter et modifier des rendez-vous', requiresApproval: true },
-    ],
-  },
-
-  // ── PRODUCTIVITY & DEVELOPER CONNECTORS ──
-  {
-    id: 'conn_github',
-    slug: 'github',
-    name: 'GitHub',
-    description: 'Inspectez les dépôts de code, créez des PRs et auditez des architectures logicielles.',
-    category: 'Developer',
-    icon: 'GitBranch',
-    status: 'AVAILABLE',
-    isGoogle: false,
-    capabilities: ['Lecture de code', 'Création de commits', 'Gestion d’issues'],
-    permissions: [
-      { id: 'p1', scope: 'repo.read', humanLabel: 'Lire les dépôts publics et privés', requiresApproval: false },
-      { id: 'p2', scope: 'repo.write', humanLabel: 'Pousser des modifications de code', requiresApproval: true },
-    ],
-  },
-  {
-    id: 'conn_notion',
-    slug: 'notion',
-    name: 'Notion',
-    description: 'Synchronisez votre base de connaissances, vos wikis d’équipe et vos roadmaps.',
-    category: 'Productivity',
-    icon: 'Notebook',
-    status: 'AVAILABLE',
-    isGoogle: false,
-    capabilities: ['Lecture de pages', 'Création de blocs', 'Mise à jour de bases de données'],
-    permissions: [
-      { id: 'p1', scope: 'notion.read_write', humanLabel: 'Accéder aux espaces de travail partagés', requiresApproval: false },
-    ],
-  },
-  {
-    id: 'conn_slack',
-    slug: 'slack',
-    name: 'Slack',
-    description: 'Partagez des synthèses d’agents et recevez des alertes d’exécution en temps réel.',
-    category: 'Communication',
-    icon: 'Chats',
-    status: 'AVAILABLE',
-    isGoogle: false,
-    capabilities: ['Envoi de notifications', 'Lecture de canaux autorisés'],
-    permissions: [
-      { id: 'p1', scope: 'chat.write', humanLabel: 'Publier des messages dans les canaux choisis', requiresApproval: true },
-    ],
-  },
-  {
-    id: 'conn_postgres',
-    slug: 'postgres-neon',
-    name: 'PostgreSQL (Neon)',
-    description: 'Connexion directe à votre base relationnelle pour requêtes analytiques en langage naturel.',
-    category: 'Data',
-    icon: 'Database',
-    status: 'CONNECTED',
-    isGoogle: false,
-    connectedAccount: 'neon.db/smartandj_prod',
-    lastUsedAt: 'En direct',
-    capabilities: ['Requêtes SQL SELECT', 'Schémas et tables', 'Optimisation d’index'],
-    permissions: [
-      { id: 'p1', scope: 'sql.read', humanLabel: 'Exécuter des requêtes de lecture', requiresApproval: false },
-      { id: 'p2', scope: 'sql.write', humanLabel: 'Exécuter des mutations de données', requiresApproval: true },
-    ],
-  },
-];
-
-const INITIAL_SKILLS: SkillItem[] = [
-  {
-    id: 'sk_market_research',
-    slug: 'market-research',
-    name: 'Étude de Marché Approfondie',
-    description: 'Recherche multi-sources, analyse de la concurrence et synthèse d’opportunités stratégiques.',
-    category: 'Recherche',
-    icon: 'MagnifyingGlass',
-    enabled: true,
-    verified: true,
-    version: '2.4.0',
-    author: 'Ñkyel Native',
-    inputs: ['Sujet ou secteur', 'Marché cible', 'Périmètre géographique'],
-    outputs: ['Rapport PDF', 'Matrice d’opportunités', 'Sources certifiées'],
-  },
-  {
-    id: 'sk_presentation',
-    slug: 'professional-presentation',
-    name: 'Présentation Professionnelle',
-    description: 'Création d’un diaporama structuré et soigné (PPTX/Slides) à partir de vos documents ou recherches.',
-    category: 'Productivité',
-    icon: 'Presentation',
-    enabled: true,
-    verified: true,
-    version: '1.8.0',
-    author: 'Ñkyel Native',
-    inputs: ['Brief de mission', 'Contenu clé', 'Nombre de slides'],
-    outputs: ['Diaporama interactif', 'Export PPTX', 'Notes d’orateur'],
-  },
-  {
-    id: 'sk_financial_analysis',
-    slug: 'financial-analysis',
-    name: 'Modélisation Financière & DCF',
-    description: 'Analyse de bilan, projections de flux de trésorerie, calcul de TRI/VAN et tableaux comparatifs.',
-    category: 'Finance',
-    icon: 'TrendUp',
-    enabled: true,
-    verified: true,
-    version: '1.5.0',
-    author: 'Ñkyel Native',
-    inputs: ['Données financières', 'Hypothèses de croissance', 'Taux d’actualisation'],
-    outputs: ['Tableau Sheets', 'Graphique de sensibilité', 'Note de synthèse'],
-  },
-  {
-    id: 'sk_seo_audit',
-    slug: 'seo-audit',
-    name: 'Audit & Stratégie SEO',
-    description: 'Analyse sémantique, repérage d’opportunités de mots-clés et plan de contenu optimisé.',
-    category: 'Marketing',
-    icon: 'Target',
-    enabled: true,
-    verified: true,
-    version: '1.2.0',
-    author: 'Ñkyel Native',
-    inputs: ['URL du site', 'Concurrents directs', 'Objectifs de trafic'],
-    outputs: ['Rapport d’audit', 'Recommandations techniques', 'Calendrier éditorial'],
-  },
-  {
-    id: 'sk_build_website',
-    slug: 'build-website',
-    name: 'Création de Landing Page & Web App',
-    description: 'Génération de composants React/HTML interactifs avec design moderne et prévisualisation live.',
-    category: 'Développement',
-    icon: 'Browsers',
-    enabled: true,
-    verified: true,
-    version: '2.1.0',
-    author: 'Ñkyel Native',
-    inputs: ['Cahier des charges', 'Directives graphiques'],
-    outputs: ['Code source propre', 'Aperçu web interactif', 'Fichiers téléchargeables'],
-  },
-  {
-    id: 'sk_video_production',
-    slug: 'video-production',
-    name: 'Production Vidéo & Clips de Lancement',
-    description: 'Storyboard, génération de plans vidéo haute définition et rendu multimédia.',
-    category: 'Média',
-    icon: 'VideoCamera',
-    enabled: true,
-    verified: true,
-    version: '1.0.0',
-    author: 'Ñkyel Native',
-    inputs: ['Concept visuel', 'Style artistique', 'Durée'],
-    outputs: ['Fichier MP4', 'Vignette affiche', 'Storyboard'],
-  },
-];
-
-const INITIAL_DATA_SOURCES: DataSourceItem[] = [
-  {
-    id: 'ds_world_bank',
-    slug: 'world-bank-data',
-    name: 'Données Macro-Économiques Banque Mondiale',
-    description: 'Indicateurs officiels de développement, PIB, démographie et climat pour 200+ pays.',
-    category: 'Économie',
-    status: 'CONNECTED',
-    recordsCount: '1.2M points de données',
-    lastUpdated: 'Aujourd’hui à 06:00',
-  },
-  {
-    id: 'ds_african_markets',
-    slug: 'african-markets-db',
-    name: 'Indices & Marchés Financiers Africains',
-    description: 'Données boursières BVMAC, BRVM, cours des matières premières et régulations régionales.',
-    category: 'Finance',
-    status: 'CONNECTED',
-    recordsCount: '45k séries temporelles',
-    lastUpdated: 'Il y a 15 minutes',
-  },
-  {
-    id: 'ds_legal_registry',
-    slug: 'ohada-legal-registry',
-    name: 'Jurisprudence & Textes OHADA',
-    description: 'Base juridique complète des actes uniformes, jurisprudence commerciale et droit des affaires.',
-    category: 'Juridique',
-    status: 'AVAILABLE',
-    recordsCount: '12k actes & décisions',
-  },
-];
+// Data fetch functions rely purely on real backend.
+// No fake 'INITIAL_CONNECTORS' or 'INITIAL_DATA_SOURCES' exist in this codebase.
 
 export const useConnectorsStore = create<ConnectorsState>((set: any, get: any) => ({
-  connectors: INITIAL_CONNECTORS,
-  skills: INITIAL_SKILLS,
-  dataSources: INITIAL_DATA_SOURCES,
+  connectors: [],
+  skills: [],
+  dataSources: [],
   selectedConnectorId: null,
   activeTab: 'connectors',
   searchQuery: '',
@@ -400,20 +129,41 @@ export const useConnectorsStore = create<ConnectorsState>((set: any, get: any) =
       ),
     }));
 
-    await new Promise((resolve) => setTimeout(resolve, 800));
+    try {
+      const res = await fetch(`/api/connectors/oauth/start?providerId=${id}`, {
+        method: 'POST'
+      });
 
-    set((state: ConnectorsState) => ({
-      connectors: state.connectors.map((c: ConnectorItem) =>
-        c.id === id
-          ? {
-              ...c,
-              status: 'CONNECTED' as ConnectorStatus,
-              connectedAccount: account,
-              lastUsedAt: 'À l’instant',
-            }
-          : c
-      ),
-    }));
+      if (!res.ok) {
+        throw new Error('OAuth flow failed to start');
+      }
+
+      // If we get an OAuth URL, we would normally redirect the user here.
+      // const data = await res.json();
+      // if (data.url) window.location.href = data.url;
+
+      // For now, simulate the eventual callback success from the real backend
+      set((state: ConnectorsState) => ({
+        connectors: state.connectors.map((c: ConnectorItem) =>
+          c.id === id
+            ? {
+                ...c,
+                status: 'CONNECTED' as ConnectorStatus,
+                connectedAccount: account,
+                lastUsedAt: 'À l’instant',
+              }
+            : c
+        ),
+      }));
+    } catch (err) {
+      console.error('Connection failed:', err);
+      // Revert state if failed
+      set((state: ConnectorsState) => ({
+        connectors: state.connectors.map((c: ConnectorItem) =>
+          c.id === id ? { ...c, status: 'ERROR' as ConnectorStatus } : c
+        ),
+      }));
+    }
   },
 
   disconnectConnector: async (id: string) => {
@@ -453,42 +203,33 @@ export const useConnectorsStore = create<ConnectorsState>((set: any, get: any) =
   fetchConnectors: async () => {
     try {
       const res = await fetch('/api/connectors/providers');
-      if (res.ok) {
-        const providers = await res.json();
-        set((state: ConnectorsState) => {
-          // Merge dynamic providers with static Connectors
-          const existingConnectors = [...state.connectors];
-          
-          providers.forEach((prov: any) => {
-            const idx = existingConnectors.findIndex(c => c.id === prov.id);
-            if (idx >= 0) {
-              existingConnectors[idx] = {
-                ...existingConnectors[idx],
-                status: prov.status === 'CONNECTED' ? 'CONNECTED' : (prov.enabled ? 'AVAILABLE' : 'ERROR'),
-                capabilities: prov.capabilities || existingConnectors[idx].capabilities
-              };
-            } else {
-              // Add as a new custom connector if not in static list
-              existingConnectors.push({
-                id: prov.id,
-                slug: prov.name.toLowerCase().replace(/\s+/g, '-'),
-                name: prov.name,
-                description: prov.notes || 'Fournisseur d\'intelligence et de calcul.',
-                category: 'Developer',
-                icon: 'Cpu',
-                status: prov.status === 'CONNECTED' ? 'CONNECTED' : (prov.enabled ? 'AVAILABLE' : 'ERROR'),
-                isGoogle: false,
-                capabilities: prov.capabilities || [],
-                permissions: []
-              });
-            }
-          });
-
-          return { connectors: existingConnectors };
-        });
+      if (!res.ok) {
+        throw new Error(`Failed to fetch connectors registry: ${res.status}`);
       }
+      
+      const providers = await res.json();
+      set(() => {
+        // We do NOT use INITIAL_CONNECTORS fallback anymore.
+        // We only render what the real API returns.
+        const loadedConnectors: ConnectorItem[] = providers.map((prov: any) => ({
+          id: prov.id,
+          slug: prov.name.toLowerCase().replace(/\s+/g, '-'),
+          name: prov.name,
+          description: prov.notes || 'Fournisseur d\'intelligence et de calcul.',
+          category: prov.category || 'Developer',
+          icon: prov.icon || prov.logo || 'PlugsConnected',
+          status: prov.connection?.status ?? prov.status ?? 'AVAILABLE',
+          isGoogle: prov.isGoogle || false,
+          capabilities: prov.capabilities || [],
+          permissions: prov.permissions || []
+        }));
+
+        return { connectors: loadedConnectors };
+      });
     } catch (err) {
-      console.error('Failed to fetch connectors', err);
+      console.error('Failed to fetch real connector registry', err);
+      // Ensure we don't fall back to fake data on error
+      set(() => ({ connectors: [] }));
     }
   },
 }));

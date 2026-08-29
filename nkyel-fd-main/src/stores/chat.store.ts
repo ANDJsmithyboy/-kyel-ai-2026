@@ -23,6 +23,11 @@ interface ChatState {
   conversations: Conversation[];
   activeConversationId: string | null;
   isGenerating: boolean;
+  isLoading: boolean;
+  error: string | null;
+
+  availableProfiles: any[];
+  isProfilesLoading: boolean;
 
   setConversations: (convs: Conversation[]) => void;
   setActiveConversation: (id: string | null) => void;
@@ -35,6 +40,8 @@ interface ChatState {
   setStreaming: (convId: string, msgId: string, streaming: boolean) => void;
   setIsGenerating: (v: boolean) => void;
   clearMessages: (convId: string) => void;
+  fetchConversations: () => Promise<void>;
+  fetchProfiles: () => Promise<void>;
 
   getActiveConversation: () => Conversation | undefined;
 }
@@ -45,6 +52,47 @@ export const useChatStore = create<ChatState>()(
       conversations: [],
       activeConversationId: null,
       isGenerating: false,
+      isLoading: false,
+      error: null,
+      availableProfiles: [],
+      isProfilesLoading: false,
+
+  fetchProfiles: async () => {
+    try {
+      set({ isProfilesLoading: true });
+      // TODO: Replace with real Neon backend endpoint when ready
+      const res = await fetch('/api/v1/profiles');
+      if (!res.ok) {
+        throw new Error('Failed to fetch profiles');
+      }
+      const data = await res.json();
+      set({ availableProfiles: data.profiles || [], isProfilesLoading: false });
+    } catch (err: any) {
+      console.warn('[ChatStore] fetchProfiles error:', err);
+      set({ 
+        availableProfiles: [], 
+        isProfilesLoading: false 
+      });
+    }
+  },
+
+  fetchConversations: async () => {
+    try {
+      set({ isLoading: true, error: null });
+      // TODO: Replace with real Neon backend endpoint when ready
+      const res = await fetch('/api/v1/missions');
+      if (!res.ok) {
+        throw new Error('Failed to fetch missions');
+      }
+      const data = await res.json();
+      set({ conversations: data.missions || [], isLoading: false });
+    } catch (err: any) {
+      // If endpoint doesn't exist yet, we still resolve gracefully as EMPTY, not necessarily breaking the UI,
+      // but we log the real error. We'll set error so UI can display real error state if needed.
+      console.warn('[ChatStore] fetchConversations error:', err);
+      set({ error: err.message || 'Error loading missions', isLoading: false });
+    }
+  },
 
   setConversations: (convs: Conversation[]) => set({ conversations: convs }),
   setActiveConversation: (id: string | null) => set({ activeConversationId: id }),

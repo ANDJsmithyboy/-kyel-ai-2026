@@ -11,25 +11,10 @@ import { saveDraft, getDraft } from '@/lib/indexedDB';
 import { useNkyelModel } from '@/hooks/useNkyelModel';
 
 /* -- Types ------------------------------------------ */
-type ModelKey = 'aurata' | 'nkyel' | 'onyx-gris' | 'black-panther' | 'wandana';
-
-interface Model {
-  key: ModelKey;
-  label: string;
-  description: string;
-  status: 'online' | 'offline';
-}
-
-const MODELS: Model[] = [
-  { key: 'aurata',        label: 'Aurata',        description: 'Mode Flash — exécution quotidienne', status: 'online' },
-  { key: 'nkyel',         label: 'Nkyel',         description: 'Mode Pro — raisonnement logique profond', status: 'online' },
-  { key: 'onyx-gris',     label: 'OnyxGris',      description: 'Agent IA autonome', status: 'online' },
-  { key: 'black-panther', label: 'Black Panther', description: 'Le GOAT — multi-agent autonome', status: 'online' },
-  { key: 'wandana',       label: 'Wandana',       description: 'L\'Éléphant — recherche web profonde', status: 'online' },
-];
+import { INTELLIGENCE_MODES, getIntelligenceMode, type IntelligenceModeId } from '@/hooks/useNkyelModel';
 
 interface InputBarProps {
-  onSend: (message: string, model: ModelKey | null, wandana: boolean) => void;
+  onSend: (message: string, model: IntelligenceModeId | null, wandana: boolean) => void;
   onStop?: () => void;
   isGenerating?: boolean;
 }
@@ -179,13 +164,13 @@ export default function InputBar({ onSend, onStop, isGenerating }: InputBarProps
     }
   };
 
-  const handleSelectModel = (model: ModelKey, status: string) => {
-    if (status === 'offline') return;
+  const handleSelectModel = (model: IntelligenceModeId) => {
     setSelectedModel(model);
     setPopoverOpen(false);
   };
 
-  const selectedLabel = MODELS.find(m => m.key === selectedModel)?.label;
+  const currentMode = getIntelligenceMode(selectedModel);
+  const selectedLabel = currentMode ? (currentMode.labelFr) : '';
 
   return (
     <div className="w-full relative z-50 px-4 pb-[env(safe-area-inset-bottom)]">
@@ -210,20 +195,19 @@ export default function InputBar({ onSend, onStop, isGenerating }: InputBarProps
                 <p className="mb-2 px-2 text-[10px] font-bold uppercase tracking-widest text-white/40">
                   Modèles Nkyel
                 </p>
-                {MODELS.map((model) => (
+                {Object.values(INTELLIGENCE_MODES).map((model) => (
                   <button
-                    key={model.key}
-                    onClick={() => handleSelectModel(model.key, model.status)}
-                    disabled={model.status === 'offline'}
-                    className={`flex w-full items-center gap-3 rounded-[16px] px-3 py-3 transition-colors ${model.status === 'offline' ? 'opacity-40 cursor-not-allowed' : ''}`}
-                    style={{ background: selectedModel === model.key ? 'rgba(var(--accent-rgb), 0.15)' : 'transparent' }}
-                    onMouseEnter={(e) => { if (selectedModel !== model.key && model.status !== 'offline') e.currentTarget.style.background = 'rgba(255,255,255,0.05)'; }}
-                    onMouseLeave={(e) => { if (selectedModel !== model.key) e.currentTarget.style.background = 'transparent'; }}
+                    key={model.id}
+                    onClick={() => handleSelectModel(model.id)}
+                    className={`flex w-full items-center gap-3 rounded-[16px] px-3 py-3 transition-colors`}
+                    style={{ background: selectedModel === model.id ? 'rgba(var(--accent-rgb), 0.15)' : 'transparent' }}
+                    onMouseEnter={(e) => { if (selectedModel !== model.id) e.currentTarget.style.background = 'rgba(255,255,255,0.05)'; }}
+                    onMouseLeave={(e) => { if (selectedModel !== model.id) e.currentTarget.style.background = 'transparent'; }}
                   >
-                    <div className="flex-shrink-0" style={{ color: selectedModel === model.key ? 'var(--accent)' : 'rgba(255,255,255,0.6)' }}>
+                    <div className="flex-shrink-0" style={{ color: selectedModel === model.id ? 'var(--accent)' : 'rgba(255,255,255,0.6)' }}>
                       {(() => {
                         const props = { width: 18, height: 18 };
-                        switch (model.key) {
+                        switch (model.id as string) {
                           case 'black-panther': return <IconBlackPanther {...props} />;
                           case 'aurata': return <IconAurata {...props} />;
                           case 'nkyel': return <IconNkyel {...props} />;
@@ -235,10 +219,9 @@ export default function InputBar({ onSend, onStop, isGenerating }: InputBarProps
                     </div>
                     <div className="text-start flex-1">
                       <div className="flex items-center justify-between">
-                        <p className="text-[14px] font-semibold text-white">{model.label}</p>
-                        {model.status === 'offline' && <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-red-500/20 text-red-400">Offline</span>}
+                        <p className="text-[14px] font-semibold text-white">{model.labelFr}</p>
                       </div>
-                      <p className="text-[11px] text-white/50">{model.description}</p>
+                      <p className="text-[11px] text-white/50">{model.descFr}</p>
                     </div>
                   </button>
                 ))}

@@ -5,20 +5,13 @@
  */
 
 'use client';
-
-import { useRouter } from 'next/navigation';
 import { IbogaNavigationTrigger } from '@/components/brand';
 
 export default function TopBar() {
-  const router = useRouter();
 
   const handleOpenSidebar = () => {
     /* Dispatch custom event — sidebar listens for this */
     window.dispatchEvent(new CustomEvent('nkyel:sidebar:toggle'));
-  };
-
-  const handleNewChat = () => {
-    router.push('/chat');
   };
 
   return (
@@ -40,32 +33,12 @@ export default function TopBar() {
           className="select-none text-[15px] font-semibold tracking-tight text-[var(--text-primary)]"
           style={{ letterSpacing: '-0.025em' }}
         >
-          Ñkyel
+          Ñkyel ▼
         </span>
       </div>
 
-      {/* CENTER — Empty */}
+      {/* CENTER / RIGHT — Empty by default */}
       <div />
-
-      {/* RIGHT — New chat */}
-      <button
-        type="button"
-        onClick={handleNewChat}
-        className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg transition-colors"
-        style={{ color: 'var(--text-secondary)' }}
-        aria-label="Nouvelle conversation"
-      >
-        {/* SquarePen icon */}
-        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-          <path
-            d="M13.5 3.5L16.5 6.5M11.5 5.5L3 14V17H6L14.5 8.5"
-            stroke="currentColor"
-            strokeWidth="1.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
-      </button>
     </header>
   );
 }
