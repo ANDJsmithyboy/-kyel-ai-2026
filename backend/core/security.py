@@ -7,7 +7,7 @@ import httpx
 from functools import lru_cache
 from typing import Optional, Dict, Any
 
-from fastapi import Depends, HTTPException, status
+from fastapi import Depends, HTTPException, status, Request
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 
 from core.config import settings
@@ -214,9 +214,17 @@ async def require_current_user(
 ADMIN_ROLES = frozenset({"OWNER", "SUPER_ADMIN", "AI_ADMIN", "SUPPORT", "OBSERVER", "admin"})
 
 async def require_admin(
+    request: Request,
     user: dict = Depends(get_current_user),
 ) -> dict:
     """Dépendance qui vérifie que l'utilisateur possède un rôle administratif valide."""
+    # EXPLICIT BLOCK: Google Review Sessions must NEVER access admin routes
+    if request and request.cookies.get("nkyel_review_session"):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Forbidden: Google Review sessions cannot access the Admin Command Center."
+        )
+
     email = str(user.get("email", "")).lower()
     if email in SUPERADMIN_EMAILS:
         user["is_admin"] = True

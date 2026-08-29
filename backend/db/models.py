@@ -840,3 +840,42 @@ class ModelRegistry(Base):
     priority: Mapped[int] = mapped_column(Integer, default=10, nullable=False)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
+
+class ReviewInvitation(Base):
+    __tablename__ = "review_invitations"
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=generate_uuid)
+    token_hash: Mapped[str] = mapped_column(String(255), unique=True, nullable=False)
+    audience: Mapped[str] = mapped_column(String(50), default="google_reviewers", nullable=False)
+    access_profile: Mapped[str] = mapped_column(Text, default="{}", nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+    expires_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+    revoked_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+    last_used_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+    use_count: Mapped[int] = mapped_column(Integer, default=0)
+    created_by: Mapped[Optional[uuid.UUID]] = mapped_column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=True)
+    metadata_json: Mapped[Optional[str]] = mapped_column(Text, default="{}", nullable=True)
+
+class ReviewSession(Base):
+    __tablename__ = "review_sessions"
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=generate_uuid)
+    invitation_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("review_invitations.id", ondelete="CASCADE"), nullable=False)
+    session_token_hash: Mapped[str] = mapped_column(String(255), unique=True, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+    expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    ip_address: Mapped[Optional[str]] = mapped_column(String(45), nullable=True)
+    user_agent: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    is_active: Mapped[bool] = mapped_column(Boolean, default=True)
+
+class ReviewQuotaUsage(Base):
+    __tablename__ = "review_quota_usage"
+
+    session_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("review_sessions.id", ondelete="CASCADE"), primary_key=True)
+    quota_profile: Mapped[str] = mapped_column(String(50), default="unlimited")
+    tokens_input: Mapped[int] = mapped_column(Integer, default=0)
+    tokens_output: Mapped[int] = mapped_column(Integer, default=0)
+    images_generated: Mapped[int] = mapped_column(Integer, default=0)
+    videos_generated: Mapped[int] = mapped_column(Integer, default=0)
+    searches_performed: Mapped[int] = mapped_column(Integer, default=0)
+    last_updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))

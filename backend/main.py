@@ -35,6 +35,7 @@ from api.v1.agent import router as agent_router
 from api.v1.feedback import router as feedback_router
 # from api.v1.media import router as media_router
 from api.v1.artifacts import router as artifacts_router
+from api.v1.review import router as review_router
 from services.language_registry_service import language_service
 
 logger = logging.getLogger(__name__)
@@ -174,6 +175,7 @@ app.include_router(agent_router, prefix="/api/v1")
 app.include_router(feedback_router, prefix="/api/v1")
 # app.include_router(media_router, prefix="/api/v1")
 app.include_router(artifacts_router, prefix="/api/v1")
+app.include_router(review_router, prefix="/api/v1")
 
 
 
@@ -192,6 +194,17 @@ async def get_supported_languages():
 # ══════════════════════════════════════════════════════════════
 # Health Endpoints (K8s / BetterStack / Railway)
 # ══════════════════════════════════════════════════════════════
+
+@app.get("/", tags=["System"])
+@app.get("/api", tags=["System"])
+async def root_index():
+    """Point d'entrée racine de l'API."""
+    return {
+        "app": settings.app_name,
+        "status": "online",
+        "message": "Bienvenue sur l'API de Ñkyel AI",
+        "documentation": "/docs" if settings.debug else "private"
+    }
 
 @app.get("/health", tags=["System"])
 @app.get("/api/health", tags=["System"])

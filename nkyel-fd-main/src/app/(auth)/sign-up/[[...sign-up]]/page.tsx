@@ -29,19 +29,19 @@ export default function SignUpPage() {
               footer: 'hidden',
               footerAction: 'hidden',
               formButtonPrimary:
-                'w-full h-11 rounded-2xl bg-gradient-to-r from-[#E5A93C] to-[#D4952B] hover:from-[#F0B74B] hover:to-[#E5A93C] text-black font-semibold text-sm shadow-[0_4px_25px_rgba(229,169,60,0.3)] transition-all active:scale-[0.98] touch-manipulation min-h-[44px]',
+                'w-full h-11 rounded-2xl bg-[var(--accent)] text-[var(--accent-fg)] hover:opacity-90 font-semibold text-sm shadow-sm transition-all active:scale-[0.98] touch-manipulation min-h-[44px]',
               formFieldInput:
-                'w-full h-11 px-4 rounded-2xl border border-white/12 bg-white/[0.04] text-white placeholder:text-neutral-500 focus:border-[#E5A93C] focus:ring-1 focus:ring-[#E5A93C] text-sm outline-none transition-all touch-manipulation',
-              formFieldLabel: 'text-xs font-semibold text-neutral-300',
+                'w-full h-11 px-4 rounded-2xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] text-sm outline-none transition-all touch-manipulation',
+              formFieldLabel: 'text-xs font-semibold text-[var(--text-secondary)]',
               socialButtonsBlockButton:
-                'w-full h-11 px-4 rounded-2xl bg-white/[0.04] border border-white/12 hover:bg-white/[0.08] hover:border-white/20 text-white font-medium text-xs flex items-center justify-center gap-2.5 transition-all shadow-sm active:scale-[0.98] touch-manipulation min-h-[44px]',
-              socialButtonsBlockButtonText: 'text-xs font-medium text-white',
-              dividerLine: 'bg-white/10',
-              dividerText: 'text-[10px] font-mono text-neutral-500 uppercase bg-[#0E121B] px-3',
-              identityPreview: 'rounded-2xl border border-white/10 bg-white/[0.03] p-3 text-white',
-              formFieldSuccessText: 'text-xs text-emerald-400',
-              formFieldErrorText: 'text-xs text-rose-400',
-              alert: 'rounded-2xl border border-rose-500/20 bg-rose-500/10 text-rose-300 text-xs p-3.5',
+                'w-full h-11 px-4 rounded-2xl bg-[var(--surface)] border border-[var(--border)] hover:bg-[var(--hover)] hover:border-[var(--border-strong)] text-[var(--text-primary)] font-medium text-xs flex items-center justify-center gap-2.5 transition-all shadow-sm active:scale-[0.98] touch-manipulation min-h-[44px]',
+              socialButtonsBlockButtonText: 'text-xs font-medium text-[var(--text-primary)]',
+              dividerLine: 'bg-[var(--border)]',
+              dividerText: 'text-[10px] font-mono text-[var(--text-tertiary)] uppercase bg-transparent px-3',
+              identityPreview: 'rounded-2xl border border-[var(--border)] bg-[var(--surface-raised)] p-3 text-[var(--text-primary)]',
+              formFieldSuccessText: 'text-xs text-[var(--success)]',
+              formFieldErrorText: 'text-xs text-[var(--danger)]',
+              alert: 'rounded-2xl border border-[var(--danger)] bg-red-500/10 text-[var(--danger)] text-xs p-3.5',
             },
           }}
         />

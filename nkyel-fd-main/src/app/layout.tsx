@@ -33,13 +33,10 @@ export const metadata: Metadata = {
   manifest: '/manifest.json',
   icons: {
     icon: [
-      { url: '/favicon-32x32.png', sizes: '32x32', type: 'image/png' },
-      { url: '/icon-192x192.png', sizes: '192x192', type: 'image/png' },
-      { url: '/icon-512x512.png', sizes: '512x512', type: 'image/png' },
+      { url: '/brand/nkyel-logo-black.png', type: 'image/png' },
     ],
     apple: [
-      { url: '/apple-touch-icon-180x180.png', sizes: '180x180', type: 'image/png' },
-      { url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' },
+      { url: '/brand/nkyel-logo-black.png', type: 'image/png' },
     ],
   },
   appleWebApp: {
@@ -48,7 +45,7 @@ export const metadata: Metadata = {
     title: 'Ñkyel',
     startupImage: [
       {
-        url: '/apple-touch-icon-180x180.png',
+        url: '/brand/nkyel-logo-black.png',
       },
     ],
   },

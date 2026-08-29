@@ -49,9 +49,11 @@ export default function AuthShell({ mode, children }: AuthShellProps) {
           className="inline-flex items-center gap-2.5 group transition-all rounded-full px-3.5 py-1.5 bg-white/[0.04] hover:bg-white/[0.08] backdrop-blur-2xl border border-white/10 text-white shadow-lg active:scale-95"
           aria-label="Ñkyel Home"
         >
-          <div className="w-5 h-5 rounded-md bg-[var(--accent)] text-[var(--accent-fg)] flex items-center justify-center font-black text-[11px] shadow-sm">
-            Ñ
-          </div>
+          <img 
+            src="/brand/nkyel-logo-white.png" 
+            alt="Ñkyel Logo" 
+            className="w-5 h-5 object-contain"
+          />
           <span className="font-semibold text-[15px] tracking-tight text-white font-serif">
             nkyel
           </span>
@@ -78,9 +80,13 @@ export default function AuthShell({ mode, children }: AuthShellProps) {
 
           {/* Card Brand Header */}
           <div className="flex flex-col items-center justify-center space-y-3.5">
-            {/* Apple Frosted Squircle Emblem with Panther Paws */}
-            <div className="w-13 h-13 p-3 rounded-2xl bg-white/[0.05] border border-white/15 flex items-center justify-center text-[var(--accent)] shadow-xl backdrop-blur-xl ring-1 ring-white/5">
-              <PantherMissionGlyph size={26} />
+            {/* Official Ñkyel Logo */}
+            <div className="w-13 h-13 p-2 rounded-2xl bg-white/[0.05] border border-white/15 flex items-center justify-center shadow-xl backdrop-blur-xl ring-1 ring-white/5">
+              <img 
+                src="/brand/nkyel-logo-white.png" 
+                alt="Ñkyel Logo" 
+                className="w-8 h-8 object-contain"
+              />
             </div>
 
             {/* Title & Subtitle */}

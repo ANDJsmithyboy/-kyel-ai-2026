@@ -37,6 +37,7 @@ import {
   PlugsConnected,
   CalendarCheck,
   Vault,
+  Bank,
   FolderSimplePlus,
   FolderSimple,
   Folder,
@@ -186,7 +187,7 @@ export default function NkyelSidebar() {
     { id: 'agent',        label: t('nav.agent') || 'Agent',                  href: '/agent',      icon: Robot },
     { id: 'connections',  label: t('nav.connectors') || 'Connectors',       href: '/connectors', icon: PlugsConnected },
     { id: 'automations',  label: t('nav.programs') || 'Programs',          href: '/programs',   icon: CalendarCheck },
-    { id: 'creations',    label: t('nav.sanctuary') || 'Sanctuary',         href: '/library',    icon: Vault },
+    { id: 'creations',    label: t('nav.sanctuary') || 'Sanctuary',         href: '/library',    icon: Bank },
   ];
 
   const hydrateFromStorage = useSidebar((s: any) => s.hydrateFromStorage);
@@ -337,6 +338,8 @@ export default function NkyelSidebar() {
                 title="ñkyel — Home"
                 onClick={handleNavClick}
               >
+                <img src="/brand/nkyel-logo-black.png" alt="Ñkyel Logo" className="w-[26px] h-[26px] object-contain dark:hidden" />
+                <img src="/brand/nkyel-logo-white.png" alt="Ñkyel Logo" className="w-[26px] h-[26px] object-contain hidden dark:block" />
                 <span
                   className="font-medium truncate tracking-tight text-[26px] select-none text-[var(--text-primary)] leading-none"
                   style={{ letterSpacing: '-0.035em' }}
@@ -354,7 +357,7 @@ export default function NkyelSidebar() {
                   title="Search (⌘K)"
                   aria-label="Search"
                 >
-                  <MagnifyingGlass size={22} weight="bold" />
+                  <MagnifyingGlass size={18} weight="bold" />
                 </button>
                 <IbogaNavigationTrigger
                   open={true}
@@ -372,7 +375,7 @@ export default function NkyelSidebar() {
         {/* ═══════════════════════════════════════════════════
            ZONE 2: Nouvelle Mission Button (Section 4 & 5)
            ═══════════════════════════════════════════════════ */}
-        <div style={{ padding: `12px 12px 8px` }}>
+        <div style={{ padding: `16px 16px 8px` }}>
           <Link
             href="/chat?new=true"
             className="group flex flex-col items-center justify-center w-full focus-visible:outline-none"
@@ -381,11 +384,13 @@ export default function NkyelSidebar() {
           >
             {/* Light Theme: Subtle border & accent text. Dark theme: subtle glow */}
             <div 
-              className="flex items-center w-full py-2.5 rounded-[12px] bg-[var(--surface-raised)] border border-[var(--border)] text-[var(--text-primary)] hover:border-[var(--accent)] hover:text-[var(--accent)] shadow-xs transition-all"
-              style={{ paddingInline: '12px', gap: '12px', justifyContent: showIconsOnly ? 'center' : 'flex-start' }}
+              className="flex items-center w-full min-h-[44px] rounded-[12px] bg-[var(--surface-raised)] border border-[var(--border)] text-[var(--text-primary)] hover:border-[var(--accent)] hover:text-[var(--accent)] shadow-xs transition-all"
+              style={{ paddingInline: '16px', gap: '12px', justifyContent: showIconsOnly ? 'center' : 'flex-start' }}
             >
-              <PawPrint size={18} weight="bold" className="shrink-0" />
-              {!showIconsOnly && <span className="font-semibold text-[13.5px] tracking-tight">{t('nav.newMission')}</span>}
+              <div className="w-[24px] flex justify-center shrink-0">
+                <PawPrint size={20} weight="bold" />
+              </div>
+              {!showIconsOnly && <span className="font-semibold text-[15.5px] tracking-tight">{t('nav.newMission')}</span>}
             </div>
           </Link>
         </div>
@@ -395,7 +400,7 @@ export default function NkyelSidebar() {
            ═══════════════════════════════════════════════════ */}
         <nav
           className="shrink-0"
-          style={{ paddingInline: 'var(--space-2)', paddingBottom: 'var(--space-2)' }}
+          style={{ paddingInline: '12px', paddingBottom: '12px' }}
         >
           <div className="flex flex-col" style={{ gap: '2px' }}>
             {navItems.map((item) => {
@@ -407,12 +412,12 @@ export default function NkyelSidebar() {
                   key={item.id}
                   href={item.href}
                   onClick={handleNavClick}
-                  className="group relative flex items-center font-medium min-h-[38px] touch-manipulation"
+                  className="group relative flex items-center font-medium min-h-[44px] touch-manipulation"
                   style={{
                     gap: '12px',
                     paddingInline: '12px',
                     borderRadius: 'var(--radius-control)',
-                    fontSize: 'var(--text-sm)',
+                    fontSize: '15.5px',
                     justifyContent: showIconsOnly ? 'center' : 'flex-start',
                     color: active ? 'var(--text-primary)' : 'var(--text-secondary)',
                     background: active ? 'var(--surface-raised)' : 'transparent',
@@ -434,19 +439,20 @@ export default function NkyelSidebar() {
                   }}
                   title={showIconsOnly ? item.label : undefined}
                 >
-                  <Icon
-                    size={18}
-                    weight="bold"
-                    className="shrink-0"
-                    style={{
-                      color: active ? 'var(--accent)' : 'var(--text-tertiary)',
-                      transition: `color var(--transition-fast)`,
-                    }}
-                  />
+                  <div className="w-[24px] flex justify-center shrink-0">
+                    <Icon
+                      size={20}
+                      weight="bold"
+                      style={{
+                        color: active ? 'var(--accent)' : 'var(--text-tertiary)',
+                        transition: `color var(--transition-fast)`,
+                      }}
+                    />
+                  </div>
 
                   {!showIconsOnly && (
                     <div className="flex-1 flex items-center justify-between min-w-0">
-                      <span className="truncate font-semibold tracking-tight text-[14.5px]">{item.label}</span>
+                      <span className="truncate font-semibold tracking-tight text-[15.5px]">{item.label}</span>
                       {item.badge && (
                         <span
                           className="font-mono font-bold"
@@ -514,7 +520,7 @@ export default function NkyelSidebar() {
            ZONE 4: Projects
            ═══════════════════════════════════════════════════ */}
         {!showIconsOnly && (
-          <div style={{ padding: `var(--space-2) var(--space-2) 0` }}>
+          <div style={{ padding: `12px 12px 0` }}>
             <div
               role="button"
               tabIndex={0}
@@ -527,7 +533,7 @@ export default function NkyelSidebar() {
               }}
               className="w-full flex items-center justify-between rounded-lg min-h-[32px] touch-manipulation cursor-pointer select-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--accent)]"
               style={{
-                padding: `var(--space-1) var(--space-2)`,
+                padding: `4px 12px`,
                 fontSize: '11px',
                 fontWeight: 600,
                 textTransform: 'uppercase',
@@ -577,13 +583,12 @@ export default function NkyelSidebar() {
                 <Link
                   href="/projects"
                   onClick={handleNavClick}
-                  className="flex items-center rounded-lg min-h-[32px] touch-manipulation"
+                  className="flex items-center rounded-lg min-h-[44px] touch-manipulation"
                   style={{
                     gap: '12px',
                     paddingInline: '12px',
-                    paddingTop: '6px',
-                    paddingBottom: '6px',
-                    fontSize: 'var(--text-sm)',
+                    fontSize: '15px',
+                    fontWeight: 500,
                     color: 'var(--text-secondary)',
                     transition: `all var(--transition-fast)`,
                   }}
@@ -596,8 +601,10 @@ export default function NkyelSidebar() {
                     e.currentTarget.style.color = 'var(--text-secondary)';
                   }}
                 >
-                  <FolderSimple size={18} className="shrink-0" style={{ color: 'var(--text-tertiary)' }} />
-                  <span className="truncate text-[13px]">{t('nav.newProject')}</span>
+                  <div className="w-[24px] flex justify-center shrink-0">
+                    <FolderSimple size={20} style={{ color: 'var(--text-tertiary)' }} />
+                  </div>
+                  <span className="truncate">{t('nav.newProject')}</span>
                 </Link>
               </div>
             )}
@@ -610,13 +617,13 @@ export default function NkyelSidebar() {
         <div
           className="flex-1 overflow-y-auto"
           style={{
-            paddingInline: 'var(--space-2)',
-            paddingTop: 'var(--space-2)',
-            paddingBottom: 'var(--space-2)',
+            paddingInline: '12px',
+            paddingTop: '12px',
+            paddingBottom: '12px',
           }}
         >
           {!showIconsOnly && (
-            <div className="flex flex-col" style={{ gap: 'var(--space-3)' }}>
+            <div className="flex flex-col" style={{ gap: '12px' }}>
               {recentGroups.length === 0 ? (
                 <div className="px-3 py-6 text-center space-y-2">
                   <div className="w-8 h-8 rounded-full bg-white/[0.04] border border-white/[0.08] flex items-center justify-center mx-auto text-white/40">
@@ -640,7 +647,7 @@ export default function NkyelSidebar() {
                   <div key={group.label}>
                     <div
                       style={{
-                        padding: `var(--space-1) var(--space-2)`,
+                        padding: `4px 12px`,
                         fontSize: '11px',
                         fontWeight: 600,
                         textTransform: 'uppercase',
@@ -663,11 +670,12 @@ export default function NkyelSidebar() {
                                 router.push('/chat');
                                 handleNavClick();
                               }}
-                              className="w-full flex items-center justify-between rounded-lg text-start select-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--accent)]"
+                              className="w-full flex items-center justify-between rounded-lg text-start select-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--accent)] min-h-[44px]"
                               style={{
-                                padding: `6px 12px`,
-                                paddingRight: '28px', /* Leave room for context button */
-                                fontSize: '13px',
+                                padding: `0 12px`,
+                                paddingRight: '28px',
+                                fontSize: '15px',
+                                fontWeight: 500,
                                 color: missionActive ? 'var(--text-primary)' : 'var(--text-secondary)',
                                 background: missionActive ? 'var(--surface-raised)' : 'transparent',
                                 transition: `all var(--transition-fast)`,

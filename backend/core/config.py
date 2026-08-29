@@ -103,6 +103,15 @@ class Settings(BaseSettings):
     google_calendar_enabled: bool = False
     google_computer_use_enabled: bool = False
 
+    # ── Google Review Private Access Quotas ─────────────────
+    google_review_enabled: bool = True
+    google_review_invite_ttl_days: int = 35
+    google_review_token_per_mission: int = 500000
+    google_review_token_soft_daily: int = 1000000
+    google_review_token_hard_daily: int = 1500000
+    google_review_image_limit: int = 5
+    google_review_video_limit: int = 2
+
     # ── Current Official Google Model Identifiers ───────────
     google_primary_model: str = "gemini-3.7-flash"
     google_fast_model: str = "gemini-3.6-flash"
