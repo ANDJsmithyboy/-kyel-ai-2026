@@ -27,7 +27,7 @@ import { PantherMissionGlyph } from '@/components/icons';
 const PWA_DISMISS_KEY = 'nkyel_pwa_install_dismissed_until';
 
 export default function PWAInstallPrompt() {
-  const { isInstallable, isNativePromptReady, isInstalled, isIOS, isStandalone, promptInstall } =
+  const { isInstallable, isNativePromptReady, isInstalled, isIOS, isMobileDevice, isStandalone, promptInstall } =
     usePWAInstall();
 
   const [isVisible, setIsVisible] = useState(false);
@@ -70,7 +70,7 @@ export default function PWAInstallPrompt() {
     }
   };
 
-  if (!isVisible || isStandalone || isInstalled) return null;
+  if (!isVisible || isStandalone || isInstalled || !isMobileDevice) return null;
 
   return (
     <AnimatePresence>

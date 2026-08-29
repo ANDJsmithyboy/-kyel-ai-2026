@@ -171,15 +171,29 @@
   --header-height:          48px;
   --touch-target:           44px;
 
-  /* Accent par défaut (Kin - Or Restreint) */
-  --brand-gold:        #D5AE57;
-  --brand-gold-soft:   rgba(213, 174, 87, 0.42);
-  --accent:            #D5AE57;
-  --accent-fg:         #05060A;
-  --accent-hover:      #C59E47;
-  --accent-active:     #B48D36;
-  --accent-subtle:     rgba(213, 174, 87, 0.12);
-  --accent-muted:      rgba(213, 174, 87, 0.22);
+  /* Accents Sémantiques (Système multi-couleurs Apple x Manus) */
+  --accent-gold:       #D5AE57;
+  --accent-violet:     #5E5CE6;
+  --accent-pink:       #FF2D55;
+  --accent-blue:       #0A84FF;
+  --accent-green:      #30D158;
+  --accent-cyan:       #64D2FF;
+
+  /* Couleurs de texte pour les accents (pour le contraste sur les boutons pleins) */
+  --accent-gold-fg:    #05060A;
+  --accent-violet-fg:  #FFFFFF;
+  --accent-pink-fg:    #FFFFFF;
+  --accent-blue-fg:    #FFFFFF;
+  --accent-green-fg:   #05060A;
+  --accent-cyan-fg:    #05060A;
+
+  /* Accent Actif / Défaut */
+  --accent:            var(--accent-gold);
+  --accent-fg:         var(--accent-gold-fg);
+  --accent-hover:      color-mix(in srgb, var(--accent) 85%, black);
+  --accent-active:     color-mix(in srgb, var(--accent) 70%, black);
+  --accent-subtle:     color-mix(in srgb, var(--accent) 12%, transparent);
+  --accent-muted:      color-mix(in srgb, var(--accent) 22%, transparent);
   --focus-ring:        var(--accent);
   --accent-brand:      var(--accent);
 

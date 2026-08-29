@@ -28,7 +28,7 @@ interface TopBarProps {
 export default function TopBar({ onOpenCapabilities }: TopBarProps) {
   const engineId = useNkyelModel((state: any) => state.engineId);
   const setEngineId = useNkyelModel((state: any) => state.setEngineId);
-  const { open: openMobileSidebar } = useSidebar();
+  const { isOpen, toggleSidebar } = useSidebar();
   const { currentWorkspace, isLoading: wsLoading } = useWorkspaceStore();
   const { availableProfiles, isProfilesLoading, fetchProfiles } = useChatStore();
 
@@ -105,8 +105,8 @@ export default function TopBar({ onOpenCapabilities }: TopBarProps) {
           {/* Mobile Iboga Navigation Trigger Button (No logo/wordmark on mobile) */}
           <div className="md:hidden flex items-center">
             <IbogaNavigationTrigger
-              open={false}
-              onToggle={openMobileSidebar}
+              open={isOpen}
+              onToggle={toggleSidebar}
               glyphSize={17}
               variant="mobile"
               title="Ouvrir la navigation"

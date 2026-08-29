@@ -158,7 +158,7 @@ export default function ChatHero({ onSelectAction, onOpenMore }: ChatHeroProps) 
               key={chip.id}
               type="button"
               onClick={() => onSelectAction(chip.prompt)}
-              className="flex items-center gap-2 h-[42px] px-4 rounded-full bg-[var(--surface-raised)] hover:bg-[var(--hover)] border border-[var(--border)] hover:border-[var(--accent-muted)] text-[var(--text-primary)] text-xs sm:text-[13.5px] font-medium transition-all duration-150 shadow-xs active:scale-[0.98] touch-manipulation whitespace-nowrap"
+              className="flex items-center gap-2 h-[36px] px-3.5 rounded-full bg-[var(--surface)] hover:bg-[var(--surface-raised)] border border-[var(--border-subtle)] hover:border-[var(--accent-muted)] text-[var(--text-primary)] text-xs sm:text-[13.5px] font-semibold transition-all duration-150 shadow-sm active:scale-[0.98] touch-manipulation whitespace-nowrap"
             >
               <Icon size={16} className="text-[var(--accent)] shrink-0" />
               <span>{chip.label}</span>
@@ -173,7 +173,7 @@ export default function ChatHero({ onSelectAction, onOpenMore }: ChatHeroProps) 
             if (onOpenMore) onOpenMore();
             else onSelectAction(isFr ? 'Explore les capacités avancées et outils connectés : ' : 'Explore advanced tools and connected capabilities: ');
           }}
-          className="flex items-center gap-1.5 h-[42px] px-4 rounded-full bg-[var(--surface-raised)] hover:bg-[var(--hover)] border border-[var(--border)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] text-xs sm:text-[13.5px] font-medium transition-all duration-150 shadow-xs active:scale-[0.98] touch-manipulation"
+          className="flex items-center gap-1.5 h-[36px] px-3.5 rounded-full bg-[var(--surface)] hover:bg-[var(--surface-raised)] border border-[var(--border-subtle)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] text-xs sm:text-[13.5px] font-semibold transition-all duration-150 shadow-sm active:scale-[0.98] touch-manipulation"
         >
           <span>{isFr ? 'Plus' : 'Plus'}</span>
         </button>

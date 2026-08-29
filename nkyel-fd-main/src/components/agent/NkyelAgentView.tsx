@@ -1,400 +1,142 @@
 /**
- * Ñkyel AI · NkyelAgentView — Sovereign Personal Agent Hub (Apple × Manus Level)
- * SmartANDJ AI Technologies · Founder: Daniel Jonathan ANDJ
- *
- * Architecture & Style :
- * - Manus-grade autonomous directive composer & capability deck
- * - Apple-level restraint, glassmorphism, and responsive layout
- * - Real-time tool status (MCP, Grounding, Sandbox, Memory)
- * - Multi-language reactive support via useLanguageStore
+ * Ñkyel AI · Agent Studio
+ * SmartANDJ AI Technologies
+ * 
+ * Premium UI for personalizing the sovereign agent.
  */
 
 'use client';
 
 import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import {
-  Robot,
-  Sparkle,
-  PaperPlaneTilt,
-  Microphone,
-  Plus,
-  SlidersHorizontal,
-  FileText,
-  CheckCircle,
-  Database,
-  Lightning,
-  Brain,
-  Globe,
-  ArrowRight,
-  ShieldCheck,
-  HardDrives,
-  Cpu,
-  Terminal,
-  Clock,
-  Graph,
-  Check,
+import { 
+  Robot, SlidersHorizontal, Brain, Plug, LockKey, Desktop,
+  PaintBrush, ShieldCheck, Database, Waveform, ChatCircleText 
 } from '@phosphor-icons/react';
 import { useLanguageStore } from '@/stores/language.store';
-import { useNkyelModel } from '@/hooks/useNkyelModel';
+import Image from 'next/image';
 
-interface RecentDispatch {
-  id: string;
-  title: string;
-  category: string;
-  timestamp: string;
-  duration: string;
-  status: 'completed' | 'running' | 'ready';
-  artifactsCount: number;
-  sourcesCount: number;
-}
-
-const RECENT_DISPATCHES: RecentDispatch[] = [
-  {
-    id: 'disp_01',
-    title: 'Analyse Économique & Transition Énergétique Gabon 2026',
-    category: 'Deep Research & Financial Modeling',
-    timestamp: 'Aujourd’hui à 11:20',
-    duration: '4m 12s',
-    status: 'completed',
-    artifactsCount: 3,
-    sourcesCount: 18,
-  },
-  {
-    id: 'disp_02',
-    title: 'Architecture & Implémentation Système de Feedback Sentry/Neon',
-    category: 'Software Engineering',
-    timestamp: 'Hier à 16:45',
-    duration: '2m 30s',
-    status: 'completed',
-    artifactsCount: 2,
-    sourcesCount: 8,
-  },
-  {
-    id: 'disp_03',
-    title: 'Recherche Réglementaire & Code des Investissements CEMAC',
-    category: 'Legal & Executive Briefing',
-    timestamp: '26 Août 2026',
-    duration: '6m 05s',
-    status: 'completed',
-    artifactsCount: 4,
-    sourcesCount: 24,
-  },
-];
+type Tab = 'personnalisation' | 'competences' | 'acces' | 'avance';
 
 export default function NkyelAgentView() {
-  const router = useRouter();
-  const { t, uiLocale } = useLanguageStore();
-  const isFr = !uiLocale || uiLocale.startsWith('fr');
+  const { t } = useLanguageStore();
+  const [activeTab, setActiveTab] = useState<Tab>('personnalisation');
 
-  const { engineId, setEngineId } = useNkyelModel();
-
-  const [prompt, setPrompt] = useState('');
-  const [isConfigOpen, setIsConfigOpen] = useState(false);
-  const [workingStyle, setWorkingStyle] = useState<'analytical' | 'executive' | 'code' | 'creative'>('analytical');
-  const [selectedTools, setSelectedTools] = useState<string[]>(['mcp_brave', 'mcp_fs', 'sandbox_py', 'memory']);
-
-  const handleLaunchMission = (e?: React.FormEvent) => {
-    if (e) e.preventDefault();
-    if (!prompt.trim()) return;
-    router.push(`/chat?prompt=${encodeURIComponent(prompt.trim())}`);
-  };
-
-  const handleQuickDirective = (directive: string) => {
-    router.push(`/chat?prompt=${encodeURIComponent(directive)}`);
-  };
-
-  const toggleTool = (toolId: string) => {
-    setSelectedTools((prev) =>
-      prev.includes(toolId) ? prev.filter((id) => id !== toolId) : [...prev, toolId]
-    );
-  };
+  const tabs: { id: Tab; label: string; icon: any }[] = [
+    { id: 'personnalisation', label: 'Personnalisation', icon: SlidersHorizontal },
+    { id: 'competences', label: 'Compétences', icon: Brain },
+    { id: 'acces', label: 'Accès', icon: LockKey },
+    { id: 'avance', label: 'Avancé', icon: Desktop },
+  ];
 
   return (
-    <div className="flex-1 flex flex-col h-full overflow-hidden" style={{ background: 'var(--material-canvas)' }}>
-      {/* ── Scrollable Agent Stage ── */}
-      <div className="flex-1 overflow-y-auto overflow-x-hidden custom-scrollbar px-4 sm:px-8 py-6 max-w-5xl mx-auto w-full space-y-7 pb-28">
+    <div className="flex-1 overflow-y-auto w-full bg-[var(--bg)]">
+      <div className="max-w-4xl mx-auto w-full px-4 sm:px-8 py-10 pb-24">
         
-        {/* ── Header: Agent Identity & Status ── */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-2 border-b border-[var(--border-subtle)] pb-5">
-          <div className="flex items-center gap-3.5">
-            <div className="w-12 h-12 rounded-2xl bg-[var(--surface-raised)] border border-[var(--accent)]/30 flex items-center justify-center text-[var(--accent)] shadow-sm">
-              <Robot size={26} weight="bold" />
-            </div>
-            <div>
-              <div className="flex items-center gap-2.5">
-                <h1 className="text-xl sm:text-2xl font-semibold tracking-tight text-[var(--text-primary)]">
-                  {t('agent.myAgent') || 'My Agent'}
-                </h1>
-                <span className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/25">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                  <span>{isFr ? 'Prêt à agir' : 'Ready to work'}</span>
-                </span>
-              </div>
-              <p className="text-xs text-[var(--text-secondary)] mt-0.5">
-                {isFr
-                  ? 'Agent autonome persistant avec mémoire souveraine et exécution en bac à sable.'
-                  : 'Persistent autonomous agent with sovereign memory and sandboxed tool execution.'}
-              </p>
-            </div>
+        {/* Header */}
+        <div className="mb-10">
+          <h1 className="text-3xl font-semibold tracking-tight text-[var(--text-primary)] mb-2" style={{ fontFamily: 'var(--font-heading)' }}>
+            Agent Studio
+          </h1>
+          <p className="text-[var(--text-secondary)]">
+            Configurez et personnalisez l'identité, les outils et les capacités de votre agent souverain Ñkyel.
+          </p>
+        </div>
+
+        {/* Hero Card (VIE Identity) */}
+        <div className="relative w-full h-[200px] sm:h-[240px] rounded-3xl overflow-hidden mb-10 shadow-lg border border-[var(--border-subtle)] bg-[var(--surface-raised)] group">
+          <div className="absolute inset-0 bg-gradient-to-r from-black/80 to-transparent z-10" />
+          <div className="absolute inset-0">
+            {/* Fallback pattern in case image is missing */}
+            <div className="w-full h-full opacity-30" style={{ background: 'linear-gradient(135deg, var(--accent) 0%, #000 100%)' }} />
           </div>
-
-          {/* Quick Engine & Tuning Toggle */}
-          <div className="flex items-center gap-2">
-            <div className="flex items-center gap-1 p-1 rounded-xl bg-[var(--surface-raised)] border border-[var(--border)] text-xs">
-              {[
-                { id: 'auto', label: 'Auto' },
-                { id: 'fast', label: isFr ? 'Rapide' : 'Fast' },
-                { id: 'deep', label: isFr ? 'Profond' : 'Deep' },
-                { id: 'research', label: isFr ? 'Recherche' : 'Research' },
-              ].map((m) => (
-                <button
-                  key={m.id}
-                  type="button"
-                  onClick={() => setEngineId(m.id as any)}
-                  className={`px-3 py-1 rounded-lg font-medium transition-all ${
-                    engineId === m.id
-                      ? 'bg-[var(--surface)] text-[var(--text-primary)] shadow-xs font-semibold'
-                      : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
-                  }`}
-                >
-                  {m.label}
-                </button>
-              ))}
+          <div className="absolute inset-0 z-20 flex flex-col justify-end p-6 sm:p-8">
+            <div className="flex items-center gap-3 mb-2">
+              <Robot size={32} weight="duotone" className="text-white" />
+              <h2 className="text-2xl font-bold text-white tracking-tight">Identité VIE (Panthère)</h2>
             </div>
-
-            <button
-              type="button"
-              onClick={() => setIsConfigOpen(!isConfigOpen)}
-              className={`p-2 rounded-xl border text-xs font-medium transition-all ${
-                isConfigOpen
-                  ? 'bg-[var(--surface-raised)] border-[var(--accent)] text-[var(--accent)] shadow-xs'
-                  : 'bg-[var(--surface-raised)] border-[var(--border)] text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
-              }`}
-              title={isFr ? 'Configurer les paramètres' : 'Configure parameters'}
-            >
-              <SlidersHorizontal size={16} />
-            </button>
+            <p className="text-gray-300 max-w-lg text-sm leading-relaxed">
+              Votre agent est propulsé par l'intelligence souveraine VIE. Il s'adapte à vos données de manière sécurisée et privée.
+            </p>
           </div>
         </div>
 
-        {/* ── Optional Agent Tuning Drawer (Apple Restraint) ── */}
-        <AnimatePresence>
-          {isConfigOpen && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              exit={{ opacity: 0, height: 0 }}
-              className="overflow-hidden p-5 rounded-3xl bg-[var(--surface-raised)] border border-[var(--border-strong)] space-y-4 shadow-sm"
-            >
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-semibold uppercase tracking-wider text-[var(--text-tertiary)]">
-                  {isFr ? 'Configuration du Comportement & Outils' : 'Behavior & Tool Capabilities'}
-                </span>
-                <span className="text-[11px] font-mono text-emerald-400 flex items-center gap-1">
-                  <ShieldCheck size={14} weight="fill" />
-                  <span>{isFr ? 'Zéro-Fuite Garanti' : 'Zero-Leakage Certified'}</span>
-                </span>
-              </div>
+        {/* Tabs */}
+        <div className="flex items-center gap-2 mb-8 border-b border-[var(--border-subtle)] pb-px overflow-x-auto no-scrollbar">
+          {tabs.map((tab) => {
+            const Icon = tab.icon;
+            const isActive = activeTab === tab.id;
+            return (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`flex items-center gap-2 px-4 py-3 border-b-2 font-medium text-[14px] transition-colors whitespace-nowrap ${
+                  isActive 
+                    ? 'border-[var(--text-primary)] text-[var(--text-primary)]' 
+                    : 'border-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
+                }`}
+              >
+                <Icon size={18} weight={isActive ? 'fill' : 'regular'} />
+                {tab.label}
+              </button>
+            );
+          })}
+        </div>
 
-              {/* Working Style Pills */}
-              <div className="space-y-1.5">
-                <label className="text-xs font-medium text-[var(--text-secondary)]">
-                  {isFr ? 'Style d’Analyse & de Restitution' : 'Working Persona & Tone'}
-                </label>
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                  {[
-                    { id: 'analytical', label: isFr ? 'Architecte Exécutif' : 'Executive Architect', desc: isFr ? 'Synthèses rigoureuses & décisives' : 'Rigorous & decisive synthesis' },
-                    { id: 'code', label: isFr ? 'Ingénieur Logiciel' : 'Software Engineer', desc: isFr ? 'Code modulaire & TypeScript strict' : 'Modular code & strict TypeScript' },
-                    { id: 'executive', label: isFr ? 'Analyste Financier' : 'Financial Analyst', desc: isFr ? 'Modélisation DCF & ratios chiffrés' : 'DCF modeling & key ratios' },
-                    { id: 'creative', label: isFr ? 'Concepteur Graphique' : 'Creative Director', desc: isFr ? 'Présentations & design soigné' : 'Decks & high visual polish' },
-                  ].map((style) => (
-                    <button
-                      key={style.id}
-                      type="button"
-                      onClick={() => setWorkingStyle(style.id as any)}
-                      className={`p-3 rounded-2xl border text-start transition-all ${
-                        workingStyle === style.id
-                          ? 'bg-[var(--control-bg)] border-[var(--accent)] text-[var(--text-primary)] shadow-xs'
-                          : 'bg-[var(--surface)] border-[var(--border-subtle)] text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
-                      }`}
-                    >
-                      <div className="font-semibold text-xs text-[var(--text-primary)]">{style.label}</div>
-                      <div className="text-[11px] text-[var(--text-tertiary)] mt-0.5 leading-tight">{style.desc}</div>
-                    </button>
-                  ))}
-                </div>
+        {/* Tab Content */}
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={activeTab}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.2 }}
+            className="space-y-6"
+          >
+            {activeTab === 'personnalisation' && (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <SectionCard icon={PaintBrush} title="Apparence" description="Définissez le nom, l'avatar et le thème visuel de votre agent." />
+                <SectionCard icon={Robot} title="Personnalité" description="Ajustez le ton, l'empathie et les directives de base." />
+                <SectionCard icon={ChatCircleText} title="Style de réponse" description="Longueur des réponses, formatage markdown, et utilisation d'emojis." />
+                <SectionCard icon={Waveform} title="Voix" description="Choisissez la voix de synthèse pour les interactions orales." />
               </div>
+            )}
 
-              {/* Active Tools Grid */}
-              <div className="space-y-1.5 pt-2 border-t border-[var(--border-subtle)]">
-                <label className="text-xs font-medium text-[var(--text-secondary)]">
-                  {isFr ? 'Outils Autonomes Connectés' : 'Connected Autonomous Tools'}
-                </label>
-                <div className="flex flex-wrap gap-2">
-                  {[
-                    { id: 'mcp_brave', label: 'Brave Search MCP', icon: Globe },
-                    { id: 'mcp_fs', label: 'Filesystem Sandbox', icon: HardDrives },
-                    { id: 'sandbox_py', label: 'Python 3.12 Runtime', icon: Terminal },
-                    { id: 'memory', label: 'Sovereign Memory', icon: Brain },
-                    { id: 'google_ws', label: 'Google Workspace', icon: Cpu },
-                  ].map((tool) => {
-                    const Icon = tool.icon;
-                    const isEnabled = selectedTools.includes(tool.id);
-                    return (
-                      <button
-                        key={tool.id}
-                        type="button"
-                        onClick={() => toggleTool(tool.id)}
-                        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium transition-all ${
-                          isEnabled
-                            ? 'bg-[var(--control-bg)] border border-[var(--accent)]/40 text-[var(--text-primary)]'
-                            : 'bg-[var(--surface)] border border-[var(--border-subtle)] text-[var(--text-disabled)] opacity-60'
-                        }`}
-                      >
-                        <Icon size={14} className={isEnabled ? 'text-[var(--accent)]' : ''} />
-                        <span>{tool.label}</span>
-                        {isEnabled && <Check size={12} weight="bold" className="text-emerald-400 ms-0.5" />}
-                      </button>
-                    );
-                  })}
-                </div>
+            {activeTab === 'competences' && (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <SectionCard icon={Database} title="Mémoire" description="Gérez le contexte à long terme, les souvenirs et les documents intégrés." />
+                <SectionCard icon={ShieldCheck} title="Outils" description="Activez la recherche web, l'exécution de code, et la génération d'images." />
+                <SectionCard icon={Plug} title="Connecteurs" description="Reliez l'agent à Google Drive, Notion, Slack et autres services externes." />
               </div>
-            </motion.div>
-          )}
+            )}
+
+            {(activeTab === 'acces' || activeTab === 'avance') && (
+              <div className="flex flex-col items-center justify-center py-20 text-center border border-dashed border-[var(--border)] rounded-2xl">
+                <LockKey size={48} className="text-[var(--text-tertiary)] mb-4" />
+                <h3 className="text-lg font-medium text-[var(--text-primary)]">Section en développement</h3>
+                <p className="text-[var(--text-secondary)] mt-2">Cette configuration sera disponible prochainement.</p>
+              </div>
+            )}
+          </motion.div>
         </AnimatePresence>
 
-        {/* ── Main Directive Composer (Manus × Apple Floating Glass) ── */}
-        <div className="space-y-3">
-          <form
-            onSubmit={handleLaunchMission}
-            className="p-3.5 sm:p-4 rounded-[28px] bg-[var(--surface-raised)] border border-[var(--border-strong)] shadow-[var(--shadow-key)] space-y-3 focus-within:border-[var(--accent)] focus-within:ring-1 focus-within:ring-[var(--accent)] transition-all"
-          >
-            <textarea
-              value={prompt}
-              onChange={(e) => setPrompt(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
-                  e.preventDefault();
-                  handleLaunchMission();
-                }
-              }}
-              rows={3}
-              placeholder={t('agent.directivePlaceholder') || 'Give a complex mission directive to your agent...'}
-              className="w-full bg-transparent border-0 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] outline-none resize-none px-1 leading-relaxed"
-            />
-
-            <div className="flex items-center justify-between pt-2 border-t border-[var(--border-subtle)]">
-              <div className="flex items-center gap-1 text-[var(--text-tertiary)]">
-                <button
-                  type="button"
-                  className="w-8 h-8 rounded-full flex items-center justify-center hover:bg-[var(--hover)] hover:text-[var(--text-primary)] transition-colors"
-                  title="Attach file or dataset"
-                >
-                  <Plus size={16} weight="bold" />
-                </button>
-                <button
-                  type="button"
-                  className="w-8 h-8 rounded-full flex items-center justify-center hover:bg-[var(--hover)] hover:text-[var(--text-primary)] transition-colors"
-                  title="Voice directive"
-                >
-                  <Microphone size={16} />
-                </button>
-                <span className="text-[11px] font-mono ms-2 hidden sm:inline text-[var(--text-disabled)]">
-                  ⌘ + Enter
-                </span>
-              </div>
-
-              <button
-                type="submit"
-                disabled={!prompt.trim()}
-                className="flex items-center gap-1.5 px-4 py-2 rounded-2xl bg-[var(--accent)] text-[var(--accent-fg)] text-xs font-semibold shadow-xs disabled:opacity-40 disabled:cursor-not-allowed hover:brightness-105 active:scale-95 transition-all touch-manipulation"
-              >
-                <span>{t('agent.launchMission') || 'Execute Directive'}</span>
-                <PaperPlaneTilt size={14} weight="bold" />
-              </button>
-            </div>
-          </form>
-
-          {/* Capability Quick Starters */}
-          <div className="flex flex-wrap items-center gap-2">
-            {[
-              { label: isFr ? 'Modélisation DCF & Tableaux' : 'DCF Modeling & Tables', query: isFr ? 'Conçois une modélisation financière DCF avec VAN et TRI pour un projet d’infrastructure.' : 'Build a DCF financial model with NPV and IRR for an infrastructure project.' },
-              { label: isFr ? 'Synthèse Juridique CEMAC' : 'Legal & Regulatory Briefing', query: isFr ? 'Rédige une synthèse exécutive des règles d’investissement CEMAC et garanties de change.' : 'Draft an executive briefing on CEMAC investment regulations and FX guarantees.' },
-              { label: isFr ? 'Architecture TypeScript' : 'Clean TypeScript Architecture', query: isFr ? 'Structure une architecture Next.js / TypeScript modulaire avec état réactif.' : 'Structure a modular Next.js / TypeScript architecture with reactive state.' },
-              { label: isFr ? 'Générer Présentation PPTX' : 'Generate Presentation Deck', query: isFr ? 'Génère une présentation exécutive de 12 diapositives sur la transition énergétique.' : 'Generate a 12-slide executive presentation deck on energy transition.' },
-            ].map((starter, idx) => (
-              <button
-                key={idx}
-                type="button"
-                onClick={() => handleQuickDirective(starter.query)}
-                className="px-3.5 py-1.5 rounded-full bg-[var(--surface)] hover:bg-[var(--surface-raised)] border border-[var(--border-subtle)] hover:border-[var(--accent-muted)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] text-xs font-medium transition-all active:scale-98"
-              >
-                {starter.label}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* ── Recent Dispatches & Mission History ── */}
-        <div className="space-y-3 pt-4">
-          <div className="flex items-center justify-between">
-            <h3 className="text-sm font-semibold text-[var(--text-primary)] tracking-tight">
-              {t('agent.recentDispatches') || 'Recent Agent Dispatches'}
-            </h3>
-            <span className="text-xs text-[var(--text-tertiary)] font-mono">
-              {RECENT_DISPATCHES.length} {isFr ? 'missions archivées' : 'archived missions'}
-            </span>
-          </div>
-
-          <div className="space-y-2.5">
-            {RECENT_DISPATCHES.map((dispatch) => (
-              <div
-                key={dispatch.id}
-                role="button"
-                tabIndex={0}
-                onClick={() => router.push('/chat')}
-                className="p-4 rounded-2xl bg-[var(--surface-raised)] hover:bg-[var(--hover)] border border-[var(--border)] hover:border-[var(--accent-muted)] transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-3 cursor-pointer group shadow-xs active:scale-[0.99]"
-              >
-                <div className="space-y-1 min-w-0">
-                  <div className="flex items-center gap-2">
-                    <span className="w-2 h-2 rounded-full bg-emerald-400" />
-                    <h4 className="font-semibold text-sm text-[var(--text-primary)] group-hover:text-[var(--accent)] transition-colors truncate">
-                      {dispatch.title}
-                    </h4>
-                  </div>
-                  <div className="flex items-center gap-3 text-xs text-[var(--text-tertiary)]">
-                    <span>{dispatch.category}</span>
-                    <span>·</span>
-                    <span className="flex items-center gap-1 font-mono">
-                      <Clock size={12} />
-                      {dispatch.duration}
-                    </span>
-                    <span>·</span>
-                    <span>{dispatch.timestamp}</span>
-                  </div>
-                </div>
-
-                <div className="shrink-0 flex items-center gap-3">
-                  <div className="text-end hidden sm:block">
-                    <span className="text-xs font-mono text-[var(--text-secondary)] block">
-                      {dispatch.artifactsCount} {isFr ? 'artefacts' : 'artifacts'}
-                    </span>
-                    <span className="text-[11px] font-mono text-[var(--text-tertiary)] block">
-                      {dispatch.sourcesCount} {isFr ? 'sources' : 'sources'}
-                    </span>
-                  </div>
-                  <div className="w-8 h-8 rounded-xl bg-[var(--control-bg)] border border-[var(--border-subtle)] flex items-center justify-center text-[var(--text-tertiary)] group-hover:text-[var(--text-primary)] group-hover:border-[var(--accent-muted)] transition-colors">
-                    <ArrowRight size={14} />
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
       </div>
+    </div>
+  );
+}
+
+function SectionCard({ icon: Icon, title, description }: { icon: any, title: string, description: string }) {
+  return (
+    <div className="flex flex-col gap-3 p-5 rounded-2xl bg-[var(--surface-raised)] border border-[var(--border-subtle)] hover:border-[var(--border)] transition-colors shadow-sm cursor-pointer group">
+      <div className="flex items-center gap-3">
+        <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-[var(--hover)] text-[var(--text-primary)] group-hover:bg-[var(--text-primary)] group-hover:text-[var(--bg)] transition-colors">
+          <Icon size={20} weight="fill" />
+        </div>
+        <h3 className="font-semibold text-[15px] text-[var(--text-primary)]">{title}</h3>
+      </div>
+      <p className="text-[13.5px] text-[var(--text-secondary)] leading-relaxed">
+        {description}
+      </p>
     </div>
   );
 }

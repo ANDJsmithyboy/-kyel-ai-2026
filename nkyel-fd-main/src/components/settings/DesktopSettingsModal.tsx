@@ -12,7 +12,7 @@ import {
 } from '@phosphor-icons/react';
 import { useSettingsModal } from '@/hooks/useSettingsModal';
 import { useFocusTrap } from '@/hooks/useFocusTrap';
-import { useLanguageStore } from '@/stores/language.store';
+import { useLanguageStore, SUPPORTED_LANGUAGES } from '@/stores/language.store';
 import { ACCENTS, useSettingsStore } from '@/stores/settings.store';
 import type { ThemeKey, AccentKey } from '@/stores/theme';
 import PersonalizationTab from '@/components/settings/PersonalizationTab';
@@ -24,12 +24,6 @@ type SettingsSection =
   | 'advanced' | 'about';
 
 type ThemeMode = 'light' | 'dark' | 'auto';
-
-const LANGUAGES = [
-  { code: 'en-US', label: 'English' },
-  { code: 'fr-FR', label: 'Français' },
-  { code: 'es-ES', label: 'Español' },
-];
 
 const THEME_OPTIONS: Array<{ id: ThemeMode; label: string; icon: any }> = [
   { id: 'light', label: 'Clair', icon: Sun },
@@ -167,7 +161,7 @@ export default function DesktopSettingsModal() {
   const displayName = user?.fullName || user?.username || 'SmartANDJ AI Technologies';
   const email = user?.primaryEmailAddress?.emailAddress || 'founder@nkyel.ai';
   const initials = initialsFor(displayName);
-  const currentLanguageLabel = LANGUAGES.find((l) => l.code === uiLocale || (uiLocale.startsWith('fr') && l.code === 'fr-FR'))?.label || 'Français';
+  const currentLanguageLabel = SUPPORTED_LANGUAGES.find((l) => l.tag === uiLocale || (uiLocale.startsWith('fr') && l.tag === 'fr-FR'))?.nativeName || 'Français';
 
   const TABS: Array<{ id: SettingsSection; label: string; icon: any }> = [
     { id: 'general', label: isFr ? 'Général' : 'General', icon: SlidersHorizontal },
@@ -334,20 +328,21 @@ export default function DesktopSettingsModal() {
                           <CaretDown size={14} className="text-[var(--text-tertiary)]" />
                         </button>
                         {languageDropdownOpen && (
-                          <div className="absolute top-full left-0 mt-2 w-full max-w-xs rounded-xl bg-[var(--surface-raised)] border border-[var(--border-strong)] shadow-xl p-1.5 z-50">
-                            {LANGUAGES.map((lang) => (
+                          <div className="absolute top-full left-0 mt-2 w-full max-w-xs rounded-xl bg-[var(--surface-raised)] border border-[var(--border-strong)] shadow-xl p-1.5 z-50 max-h-64 overflow-y-auto custom-scrollbar">
+                            {SUPPORTED_LANGUAGES.map((lang) => (
                               <button
-                                key={lang.code}
+                                key={lang.tag}
                                 onClick={() => {
-                                  setUiLocale(lang.code);
-                                  if (setLocale) setLocale(lang.code);
+                                  setUiLocale(lang.tag);
+                                  if (setLocale) setLocale(lang.tag);
                                   setLanguageDropdownOpen(false);
                                 }}
-                                className={`w-full text-left px-3 py-2.5 rounded-lg text-[13px] hover:bg-[var(--hover)] ${
-                                  uiLocale === lang.code ? 'font-semibold text-[var(--accent)]' : 'text-[var(--text-primary)]'
+                                className={`w-full text-left px-3 py-2.5 rounded-lg text-[13px] hover:bg-[var(--hover)] flex flex-col gap-0.5 ${
+                                  uiLocale === lang.tag ? 'font-semibold text-[var(--accent)] bg-[var(--accent-subtle)]' : 'text-[var(--text-primary)]'
                                 }`}
                               >
-                                {lang.label}
+                                <span>{lang.nativeName}</span>
+                                <span className="text-[10px] text-[var(--text-tertiary)] font-normal opacity-80">{lang.name}</span>
                               </button>
                             ))}
                           </div>

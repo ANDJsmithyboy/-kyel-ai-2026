@@ -342,7 +342,7 @@ export default function AdaptiveChatWorkspace({
       {/* ─── CENTRE : ESPACE CENTRAL DE L'INTELLIGENCE ─── */}
       <section className="flex flex-1 flex-col min-w-0 h-full relative overflow-hidden">
         {/* ── Top Bar Minimale (Apple × Geist) ── */}
-        <header className="h-10 px-4 border-b border-[var(--border-subtle)] bg-[var(--material-canvas)] flex items-center justify-between shrink-0 z-10">
+        <header className="h-10 px-4 border-b border-[var(--border-subtle)] bg-[var(--material-canvas)] flex items-center justify-between shrink-0 z-[100] relative">
           <div className="flex items-center gap-2 min-w-0">
             <span className="font-semibold text-xs text-[var(--text-primary)] truncate max-w-[220px] sm:max-w-xs md:max-w-sm font-sans">
               {missionTitle}
@@ -523,8 +523,7 @@ export default function AdaptiveChatWorkspace({
             <div className="absolute bottom-0 start-0 end-0 p-3 sm:p-5 bg-gradient-to-t from-[var(--material-canvas)] via-[var(--material-canvas)]/80 to-transparent pointer-events-none flex flex-col items-center z-20">
               <div className="max-w-[780px] w-full pointer-events-auto flex flex-col gap-1.5">
                 <Surface
-                  material="glass-floating"
-                  className="rounded-[28px] p-2.5 sm:p-3.5 transition-all shadow-[var(--shadow-composer)] border border-[var(--border)] flex flex-col gap-1.5 backdrop-blur-2xl bg-[var(--composer-bg)]"
+                  className="rounded-[28px] p-2.5 sm:p-3.5 transition-all border border-[var(--border-subtle)] flex flex-col gap-1.5 bg-[var(--surface)] shadow-md"
                 >
                   {/* Hidden File Input for Real Attachments */}
                   <input
@@ -572,7 +571,7 @@ export default function AdaptiveChatWorkspace({
                       onKeyDown={handleKeyDown}
                       placeholder={t('composer.ask') || (isFr ? "assignez une mission ou tapez / pour plus" : "assign a mission or type / for more")}
                       rows={1}
-                      className="w-full bg-transparent border-0 focus:ring-0 focus:outline-none resize-none text-base placeholder:text-[var(--text-tertiary)] text-[var(--text-primary)] max-h-44 px-1 py-1 font-sans"
+                      className="w-full bg-transparent border-0 focus:ring-0 focus:outline-none resize-none text-[15px] placeholder:text-[var(--text-tertiary)] text-[var(--text-primary)] max-h-[250px] px-1 py-1 font-sans leading-relaxed"
                     />
                   </div>
 

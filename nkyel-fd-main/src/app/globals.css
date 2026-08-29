@@ -1463,4 +1463,12 @@ html[data-density="compact"] .nkyel-composer-toolbar { min-height: 30px; }
   background-color: var(--text-tertiary);
 }
 
-
+/* ═══════════════════════════════════════════════════════
+   ACCENT SYSTEM (Dynamic Theme Switching)
+   ═══════════════════════════════════════════════════════ */
+.theme-gold { --accent: var(--accent-gold); --accent-fg: var(--accent-gold-fg); }
+.theme-violet { --accent: var(--accent-violet); --accent-fg: var(--accent-violet-fg); }
+.theme-pink { --accent: var(--accent-pink); --accent-fg: var(--accent-pink-fg); }
+.theme-blue { --accent: var(--accent-blue); --accent-fg: var(--accent-blue-fg); }
+.theme-green { --accent: var(--accent-green); --accent-fg: var(--accent-green-fg); }
+.theme-cyan { --accent: var(--accent-cyan); --accent-fg: var(--accent-cyan-fg); }

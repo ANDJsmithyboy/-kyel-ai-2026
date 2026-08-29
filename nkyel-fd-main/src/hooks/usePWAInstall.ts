@@ -20,6 +20,7 @@ export function usePWAInstall() {
   const [isInstallable, setIsInstallable] = useState(false);
   const [isInstalled, setIsInstalled] = useState(false);
   const [isIOS, setIsIOS] = useState(false);
+  const [isMobileDevice, setIsMobileDevice] = useState(false);
   const [isStandalone, setIsStandalone] = useState(false);
 
   useEffect(() => {
@@ -38,7 +39,9 @@ export function usePWAInstall() {
     // Detect iOS
     const userAgent = window.navigator.userAgent.toLowerCase();
     const isIOSSafari = /iphone|ipad|ipod/.test(userAgent) && !(window as any).MSStream;
+    const mobile = /iphone|ipad|ipod|android|blackberry|windows phone/i.test(userAgent);
     setIsIOS(isIOSSafari);
+    setIsMobileDevice(mobile);
 
     // Capture beforeinstallprompt for Android / Chrome / Edge
     const handleBeforeInstallPrompt = (e: Event) => {
@@ -90,6 +93,7 @@ export function usePWAInstall() {
     isNativePromptReady: !!deferredPrompt,
     isInstalled,
     isIOS,
+    isMobileDevice,
     isStandalone,
     promptInstall,
   };

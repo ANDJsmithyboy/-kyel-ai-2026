@@ -1,126 +1,141 @@
+/**
+ * Ñkyel AI · Programmes (Workflows)
+ * SmartANDJ AI Technologies
+ * 
+ * Directory of AI workflows, agents, and routines.
+ */
+
 'use client';
 
-import React from 'react';
-import useSWR from 'swr';
-import { TerminalWindow, Play, Clock, CheckCircle, CalendarBlank, Plus } from '@phosphor-icons/react';
-import { useLanguageStore } from '@/stores/language.store';
-import { formatDistanceToNow } from 'date-fns';
-import { fr, enUS } from 'date-fns/locale';
+import React, { useState } from 'react';
+import { motion } from 'framer-motion';
+import { 
+  MagnifyingGlass, Plus, Play, Copy, ChartBar, Globe, 
+  Code, Users, Briefcase, FileText 
+} from '@phosphor-icons/react';
 
-interface Mission {
-  id: string;
-  workspace_id: string;
-  title: string;
-  objective: string;
-  status: 'draft' | 'scheduled' | 'running' | 'completed' | 'failed';
-  priority: string;
-  autonomy_level: string;
-  created_at: string;
-}
+const CATEGORIES = ['Tout', 'Business', 'Contenu', 'Dev', 'Analyse', 'Équipe'];
 
-const fetcher = (url: string) => fetch(url).then(res => res.json());
+const PROGRAMMES = [
+  { id: '1', title: 'Génération de rapport', category: 'Business', icon: ChartBar, desc: 'Agrège les données et génère un rapport de synthèse hebdomadaire.' },
+  { id: '2', title: 'Audit site web', category: 'Analyse', icon: Globe, desc: 'Analyse SEO, performance et accessibilité d\'une URL cible.' },
+  { id: '3', title: 'Pipeline RAG', category: 'Dev', icon: Code, desc: 'Ingestion de documents et recherche sémantique avec vectorisation.' },
+  { id: '4', title: 'Veille marché', category: 'Business', icon: Briefcase, desc: 'Scraping quotidien des tendances et résumé exécutif.' },
+  { id: '5', title: 'Plan marketing', category: 'Contenu', icon: FileText, desc: 'Création d\'un calendrier éditorial multi-canal sur 30 jours.' },
+  { id: '6', title: 'Assistant support', category: 'Équipe', icon: Users, desc: 'Agent conversationnel pour le triage de tickets de niveau 1.' },
+];
 
-export default function ProgramsPage() {
-  const { isFr } = useLanguageStore();
-  const { data: missions, error, isLoading } = useSWR<Mission[]>('/api/missions', fetcher);
+export default function ProgrammesPage() {
+  const [activeCategory, setActiveCategory] = useState('Tout');
+  const [searchQuery, setSearchQuery] = useState('');
 
-  const getStatusConfig = (status: Mission['status']) => {
-    switch (status) {
-      case 'running': return { icon: Play, color: 'text-emerald-400', bg: 'bg-emerald-500/10', border: 'border-emerald-500/20', label: isFr ? 'En cours' : 'Running' };
-      case 'scheduled': return { icon: CalendarBlank, color: 'text-blue-400', bg: 'bg-blue-500/10', border: 'border-blue-500/20', label: isFr ? 'Planifié' : 'Scheduled' };
-      case 'completed': return { icon: CheckCircle, color: 'text-[var(--text-secondary)]', bg: 'bg-[var(--surface)]', border: 'border-[var(--border)]', label: isFr ? 'Terminé' : 'Completed' };
-      default: return { icon: Clock, color: 'text-[var(--text-tertiary)]', bg: 'bg-[var(--surface)]', border: 'border-[var(--border)]', label: status };
-    }
-  };
+  const filteredProgrammes = PROGRAMMES.filter(p => {
+    const matchCategory = activeCategory === 'Tout' || p.category === activeCategory;
+    const matchSearch = p.title.toLowerCase().includes(searchQuery.toLowerCase()) || p.desc.toLowerCase().includes(searchQuery.toLowerCase());
+    return matchCategory && matchSearch;
+  });
 
   return (
-    <div className="flex-1 flex flex-col h-full overflow-hidden select-none bg-[var(--material-canvas)]">
-      <div className="flex-1 overflow-y-auto w-full">
-        {/* Editorial Hero Pattern */}
-        <div className="relative w-full pt-16 pb-12 px-6 sm:px-12 border-b border-[var(--border-subtle)] bg-gradient-to-b from-[var(--surface-raised)] to-transparent">
-          <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-start md:items-end justify-between gap-6">
-            <div className="space-y-4">
-              <div className="w-14 h-14 rounded-2xl bg-[var(--control-bg)] border border-[var(--border-strong)] flex items-center justify-center text-[var(--accent)] shadow-sm">
-                <TerminalWindow size={28} weight="duotone" />
-              </div>
-              <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-[var(--text-primary)] font-heading">
-                {isFr ? 'Programmes & Missions' : 'Programs & Missions'}
-              </h1>
-              <p className="text-sm sm:text-base text-[var(--text-secondary)] max-w-lg leading-relaxed">
-                {isFr 
-                  ? 'Gérez vos workflows d\'intelligence autonomes. Planifiez, surveillez et orchestrez les agents en arrière-plan.' 
-                  : 'Manage your autonomous intelligence workflows. Schedule, monitor, and orchestrate background agents.'}
-              </p>
+    <div className="flex-1 overflow-y-auto w-full bg-[var(--bg)]">
+      <div className="max-w-6xl mx-auto w-full px-4 sm:px-8 py-10 pb-24">
+        
+        {/* Header Area */}
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-10">
+          <div>
+            <h1 className="text-3xl font-semibold tracking-tight text-[var(--text-primary)] mb-2" style={{ fontFamily: 'var(--font-heading)' }}>
+              Programmes
+            </h1>
+            <p className="text-[var(--text-secondary)]">
+              Découvrez, clonez et lancez des workflows d'intelligence artificielle.
+            </p>
+          </div>
+          <button className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[var(--text-primary)] text-[var(--bg)] hover:opacity-90 transition-all font-semibold text-[14px] shadow-sm">
+            <Plus size={16} weight="bold" />
+            Nouveau programme
+          </button>
+        </div>
+
+        {/* Search & Filters */}
+        <div className="flex flex-col md:flex-row md:items-center gap-4 mb-8">
+          <div className="relative flex-1 max-w-md">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <MagnifyingGlass size={18} className="text-[var(--text-tertiary)]" />
             </div>
-            
-            <button className="flex items-center gap-2 px-5 py-2.5 rounded-xl font-semibold bg-[var(--accent)] text-[var(--accent-fg)] hover:opacity-90 transition-opacity active:scale-95 shadow-sm">
-              <Plus size={18} weight="bold" />
-              <span>{isFr ? 'Nouveau Programme' : 'New Program'}</span>
-            </button>
+            <input
+              type="text"
+              placeholder="Rechercher un programme..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-[var(--surface-raised)] border border-[var(--border-subtle)] focus:border-[var(--border)] outline-none text-[14.5px] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] transition-colors"
+            />
+          </div>
+          
+          <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1 md:pb-0">
+            {CATEGORIES.map(cat => (
+              <button
+                key={cat}
+                onClick={() => setActiveCategory(cat)}
+                className={`px-3.5 py-1.5 rounded-lg text-[13.5px] font-medium whitespace-nowrap transition-colors ${
+                  activeCategory === cat
+                    ? 'bg-[var(--text-primary)] text-[var(--bg)] shadow-sm'
+                    : 'bg-[var(--surface-raised)] border border-[var(--border-subtle)] text-[var(--text-secondary)] hover:bg-[var(--hover)] hover:text-[var(--text-primary)]'
+                }`}
+              >
+                {cat}
+              </button>
+            ))}
           </div>
         </div>
 
-        {/* Mission Queue Grid */}
-        <div className="max-w-5xl mx-auto px-6 sm:px-12 py-10">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-lg font-semibold text-[var(--text-primary)] tracking-tight">
-              {isFr ? 'File d\'exécution' : 'Execution Queue'}
-            </h2>
-            <div className="flex gap-2 text-xs font-medium">
-              <span className="px-3 py-1 rounded-full bg-[var(--surface-raised)] border border-[var(--border)] text-[var(--text-secondary)]">All</span>
-              <span className="px-3 py-1 rounded-full bg-transparent text-[var(--text-tertiary)] hover:text-[var(--text-secondary)] cursor-pointer">Active</span>
-            </div>
-          </div>
-
-          {isLoading && (
-            <div className="py-20 text-center text-[var(--text-tertiary)]">
-              <div className="animate-spin w-8 h-8 border-2 border-[var(--accent)] border-t-transparent rounded-full mx-auto mb-4" />
-              <p>Chargement des missions...</p>
-            </div>
-          )}
-
-          {error && (
-            <div className="p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm">
-              Failed to load missions.
-            </div>
-          )}
-
-          {missions && (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {missions.map(mission => {
-                const conf = getStatusConfig(mission.status);
-                const Icon = conf.icon;
-                return (
-                  <div key={mission.id} className="group relative flex flex-col p-5 rounded-2xl bg-[var(--surface-raised)] border border-[var(--border-subtle)] hover:border-[var(--accent-muted)] transition-all shadow-sm hover:shadow-md cursor-pointer">
-                    <div className="flex items-start justify-between mb-4">
-                      <div className={`px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider flex items-center gap-1.5 border ${conf.bg} ${conf.color} ${conf.border}`}>
-                        <Icon size={12} weight="bold" />
-                        <span>{conf.label}</span>
-                      </div>
-                      <span className="text-[10px] font-mono text-[var(--text-tertiary)] px-2 py-0.5 rounded bg-[var(--surface)] border border-[var(--border)]">
-                        {mission.autonomy_level}
-                      </span>
-                    </div>
-                    
-                    <h3 className="font-semibold text-base text-[var(--text-primary)] mb-2 leading-snug line-clamp-2">
-                      {mission.title}
-                    </h3>
-                    <p className="text-xs text-[var(--text-secondary)] leading-relaxed line-clamp-3 mb-6 flex-1">
-                      {mission.objective}
-                    </p>
-
-                    <div className="flex items-center justify-between pt-4 border-t border-[var(--border-subtle)] text-[11px] font-medium text-[var(--text-tertiary)]">
-                      <span>{mission.priority.toUpperCase()} PRIORITY</span>
-                      <span>
-                        {formatDistanceToNow(new Date(mission.created_at), { addSuffix: true, locale: isFr ? fr : enUS })}
-                      </span>
-                    </div>
+        {/* Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+          {filteredProgrammes.map((prog) => {
+            const Icon = prog.icon;
+            return (
+              <motion.div
+                key={prog.id}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="flex flex-col p-5 rounded-2xl bg-[var(--surface-raised)] border border-[var(--border-subtle)] hover:border-[var(--border)] shadow-sm hover:shadow-md transition-all group"
+              >
+                <div className="flex items-start justify-between mb-4">
+                  <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-[var(--hover)] text-[var(--text-primary)] group-hover:bg-[var(--text-primary)] group-hover:text-[var(--bg)] transition-colors">
+                    <Icon size={24} weight="duotone" />
                   </div>
-                );
-              })}
-            </div>
-          )}
+                  <span className="px-2 py-1 rounded-md bg-[var(--bg)] border border-[var(--border-subtle)] text-[10px] font-semibold tracking-wider uppercase text-[var(--text-tertiary)]">
+                    {prog.category}
+                  </span>
+                </div>
+                
+                <h3 className="text-[16px] font-semibold text-[var(--text-primary)] mb-1 tracking-tight">
+                  {prog.title}
+                </h3>
+                <p className="text-[13.5px] text-[var(--text-secondary)] leading-relaxed mb-6 flex-1">
+                  {prog.desc}
+                </p>
+
+                <div className="flex items-center gap-2 mt-auto pt-4 border-t border-[var(--border-subtle)]">
+                  <button className="flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-lg bg-[var(--bg)] border border-[var(--border)] hover:border-[var(--text-primary)] text-[var(--text-primary)] transition-colors text-[13px] font-semibold">
+                    <Play size={14} weight="fill" />
+                    Lancer
+                  </button>
+                  <button className="flex items-center justify-center w-9 h-9 rounded-lg bg-[var(--bg)] border border-[var(--border-subtle)] hover:bg-[var(--hover)] hover:text-[var(--text-primary)] text-[var(--text-secondary)] transition-colors" title="Cloner">
+                    <Copy size={16} />
+                  </button>
+                </div>
+              </motion.div>
+            );
+          })}
         </div>
+
+        {filteredProgrammes.length === 0 && (
+          <div className="flex flex-col items-center justify-center py-20 text-center">
+            <MagnifyingGlass size={48} className="text-[var(--text-tertiary)] mb-4" />
+            <h3 className="text-lg font-medium text-[var(--text-primary)]">Aucun programme trouvé</h3>
+            <p className="text-[var(--text-secondary)] mt-1">Essayez de modifier vos filtres ou de chercher autre chose.</p>
+          </div>
+        )}
+
       </div>
     </div>
   );

@@ -6,7 +6,7 @@ import { getRequestConfig } from 'next-intl/server';
 
 export const locales = ['fr', 'en', 'fang', 'punu'] as const;
 export type Locale = (typeof locales)[number];
-export const defaultLocale: Locale = 'fr';
+export const defaultLocale = 'en-US';
 
 export default getRequestConfig(async () => {
   // For now, default to French. In future, detect from user preferences or Clerk metadata.
