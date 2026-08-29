@@ -66,6 +66,7 @@ import {
   Copy,
   Desktop,
   MagnifyingGlass,
+  PawPrint,
 } from '@phosphor-icons/react';
 import { useSidebar } from '@/hooks/useSidebar';
 import useSWR from 'swr';
@@ -371,7 +372,7 @@ export default function NkyelSidebar() {
         {/* ═══════════════════════════════════════════════════
            ZONE 2: Nouvelle Mission Button (Section 4 & 5)
            ═══════════════════════════════════════════════════ */}
-        <div style={{ padding: `var(--space-3) var(--space-3) var(--space-2)` }}>
+        <div style={{ padding: `12px 12px 8px` }}>
           <Link
             href="/chat?new=true"
             className="group flex flex-col items-center justify-center w-full focus-visible:outline-none"
@@ -379,9 +380,12 @@ export default function NkyelSidebar() {
             onClick={handleNavClick}
           >
             {/* Light Theme: Subtle border & accent text. Dark theme: subtle glow */}
-            <div className="flex items-center justify-center gap-2 px-3 py-2.5 rounded-[12px] bg-[var(--surface-raised)] border border-[var(--border)] text-[var(--text-primary)] hover:border-[var(--accent)] hover:text-[var(--accent)] shadow-xs transition-all w-full">
-              <Plus size={16} weight="bold" />
-              <span className="font-semibold text-[13.5px] tracking-tight">{t('nav.newMission')}</span>
+            <div 
+              className="flex items-center w-full py-2.5 rounded-[12px] bg-[var(--surface-raised)] border border-[var(--border)] text-[var(--text-primary)] hover:border-[var(--accent)] hover:text-[var(--accent)] shadow-xs transition-all"
+              style={{ paddingInline: '12px', gap: '12px', justifyContent: showIconsOnly ? 'center' : 'flex-start' }}
+            >
+              <PawPrint size={18} weight="bold" className="shrink-0" />
+              {!showIconsOnly && <span className="font-semibold text-[13.5px] tracking-tight">{t('nav.newMission')}</span>}
             </div>
           </Link>
         </div>
@@ -405,8 +409,8 @@ export default function NkyelSidebar() {
                   onClick={handleNavClick}
                   className="group relative flex items-center font-medium min-h-[38px] touch-manipulation"
                   style={{
-                    gap: 'var(--space-3)',
-                    paddingInline: 'var(--space-3)',
+                    gap: '12px',
+                    paddingInline: '12px',
                     borderRadius: 'var(--radius-control)',
                     fontSize: 'var(--text-sm)',
                     justifyContent: showIconsOnly ? 'center' : 'flex-start',
@@ -573,9 +577,12 @@ export default function NkyelSidebar() {
                 <Link
                   href="/projects"
                   onClick={handleNavClick}
-                  className="flex items-center gap-2.5 rounded-lg min-h-[32px] touch-manipulation"
+                  className="flex items-center rounded-lg min-h-[32px] touch-manipulation"
                   style={{
-                    padding: `6px var(--space-3)`,
+                    gap: '12px',
+                    paddingInline: '12px',
+                    paddingTop: '6px',
+                    paddingBottom: '6px',
                     fontSize: 'var(--text-sm)',
                     color: 'var(--text-secondary)',
                     transition: `all var(--transition-fast)`,
@@ -589,7 +596,7 @@ export default function NkyelSidebar() {
                     e.currentTarget.style.color = 'var(--text-secondary)';
                   }}
                 >
-                  <FolderSimple size={15} className="shrink-0" style={{ color: 'var(--text-tertiary)' }} />
+                  <FolderSimple size={18} className="shrink-0" style={{ color: 'var(--text-tertiary)' }} />
                   <span className="truncate text-[13px]">{t('nav.newProject')}</span>
                 </Link>
               </div>
@@ -614,6 +621,7 @@ export default function NkyelSidebar() {
                 <div className="px-3 py-6 text-center space-y-2">
                   <div className="w-8 h-8 rounded-full bg-white/[0.04] border border-white/[0.08] flex items-center justify-center mx-auto text-white/40">
                     <ChatCircleDots size={16} />
+                    <PawPrint size={16} />
                   </div>
                   <div className="text-xs text-[var(--text-tertiary)]">
                     {t('nav.tasks')}
@@ -621,9 +629,10 @@ export default function NkyelSidebar() {
                   <Link
                     href="/chat?new=true"
                     onClick={handleNavClick}
-                    className="inline-block text-[11px] font-medium text-[var(--accent)] hover:underline"
+                    className="flex items-center justify-center gap-[12px] px-[12px] py-2 rounded-lg text-[13px] font-medium text-[var(--text-secondary)] hover:bg-[var(--hover)] hover:text-[var(--text-primary)] transition-all"
                   >
-                    + {t('nav.newTask')}
+                    <PawPrint size={18} className="shrink-0" />
+                    {t('nav.newTask')}
                   </Link>
                 </div>
               ) : (
@@ -656,7 +665,7 @@ export default function NkyelSidebar() {
                               }}
                               className="w-full flex items-center justify-between rounded-lg text-start select-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--accent)]"
                               style={{
-                                padding: `6px var(--space-2)`,
+                                padding: `6px 12px`,
                                 paddingRight: '28px', /* Leave room for context button */
                                 fontSize: '13px',
                                 color: missionActive ? 'var(--text-primary)' : 'var(--text-secondary)',
@@ -676,8 +685,8 @@ export default function NkyelSidebar() {
                                 }
                               }}
                             >
-                              <div className="flex items-center gap-2 min-w-0 w-full">
-                                <ChatCircleDots size={14} className="shrink-0" style={{ color: 'var(--accent)' }} />
+                              <div className="flex items-center gap-[12px] min-w-0 w-full">
+                                <ChatCircleDots size={18} className="shrink-0" style={{ color: 'var(--accent)' }} />
                                 <span className="truncate">{mission.title || 'Untitled mission'}</span>
                               </div>
                             </button>
