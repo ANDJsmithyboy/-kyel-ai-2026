@@ -739,7 +739,7 @@ class ArtifactService:
             else:
                 story.append(Paragraph(line, body_style))
 
-        doc.build(story)
+        doc.build(story)  # type: ignore
         return buf.getvalue()
 
     @classmethod
@@ -840,6 +840,7 @@ class ArtifactService:
 
         wb = openpyxl.Workbook()
         ws = wb.active
+        assert ws is not None
         ws.title = "Master Data"
 
         header_fill = PatternFill(start_color="0E1626", end_color="0E1626", fill_type="solid")
