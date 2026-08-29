@@ -882,7 +882,7 @@ class ArtifactService:
             headers = list(data_rows[0].keys())
             lines = [",".join(headers)]
             for r in data_rows:
-                lines.append(",".join([f'"{str(r.get(h, "")).replace("\"", "\"\"")}"' for h in headers]))
+                lines.append(",".join(['"{}"'.format(str(r.get(h, "")).replace('"', '""')) for h in headers]))
             return "\n".join(lines).encode("utf-8")
 
         raw_text = cls._get_raw_text(artifact)
