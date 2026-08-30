@@ -236,6 +236,7 @@ class BetaService:
         """
         Attribution atomique transactionnelle d'un siège (1..100).
         Protégée par un verrou asynchrone et row locking FOR UPDATE.
+        Les administrateurs et comptes internes (smartandj.com, nkyel.com) ne consomment pas les 100 places.
         """
         async with _enrollment_lock:
             # 1. Vérifier si l'utilisateur est déjà inscrit
@@ -246,6 +247,20 @@ class BetaService:
             existing = existing_res.scalar_one_or_none()
             if existing:
                 return True, "Utilisateur déjà inscrit", existing.seat_number
+
+            # Vérifier si l'utilisateur est interne ou admin
+            user_stmt = select(User).where(User.id == user_id)
+            user_res = await session.execute(user_stmt)
+            user = user_res.scalar_one_or_none()
+            
+            is_internal = False
+            if user:
+                role_val = getattr(user.role, "value", str(user.role))
+                email_lower = user.email.lower()
+                if role_val == "admin":
+                    is_internal = True
+                elif email_lower.endswith("@smartandj.com") or email_lower.endswith("@nkyel.com") or email_lower.startswith("review") or email_lower.startswith("founder"):
+                    is_internal = True
 
             # 2. Verrouiller la ligne de campagne pour allocation atomique
             campaign_stmt = (
@@ -267,13 +282,27 @@ class BetaService:
             if state in ("PUBLIC_CLOSED", "DISABLED"):
                 return False, "La bêta est terminée ou désactivée", None
 
-            # 3. Vérifier la capacité stricte de 100 places
-            if campaign.claimed_seats >= campaign.max_seats:
-                return False, "Toutes les places ont été attribuées", None
+            # 3. Traiter les utilisateurs internes vs publics
+            if is_internal:
+                # Trouver le dernier siège interne (>= 1000)
+                internal_max_stmt = select(func.max(BetaEnrollment.seat_number)).where(
+                    BetaEnrollment.campaign_id == campaign.id,
+                    BetaEnrollment.seat_number >= 1000
+                )
+                internal_max_res = await session.execute(internal_max_stmt)
+                internal_max = internal_max_res.scalar() or 999
+                next_seat = internal_max + 1
+                msg = "Accès prioritaire (Interne/Admin)"
+                # Ne PAS incrémenter campaign.claimed_seats
+            else:
+                # 3b. Vérifier la capacité stricte de 100 places publiques
+                if campaign.claimed_seats >= campaign.max_seats:
+                    return False, "Toutes les places ont été attribuées", None
 
-            # 4. Attribuer le prochain siège
-            next_seat = campaign.claimed_seats + 1
-            campaign.claimed_seats = next_seat
+                # 4. Attribuer le prochain siège public
+                next_seat = campaign.claimed_seats + 1
+                campaign.claimed_seats = next_seat
+                msg = "Place attribuée avec succès"
 
             enrollment = BetaEnrollment(
                 campaign_id=campaign.id,
@@ -284,7 +313,7 @@ class BetaService:
                 enrolled_at=datetime.now(timezone.utc),
                 terms_version=terms_version,
                 locale=locale,
-                metadata_json=json.dumps(metadata or {}),
+                metadata_json=json.dumps({"internal": is_internal, **(metadata or {})}),
             )
             session.add(enrollment)
 
@@ -295,15 +324,19 @@ class BetaService:
                 enrollment_id=enrollment.id,
                 user_id=user_id,
                 event_name="beta.seat_claimed",
-                metadata_json=json.dumps({"seat_number": next_seat, "locale": locale}),
+                metadata_json=json.dumps({"seat_number": next_seat, "locale": locale, "is_internal": is_internal}),
                 occurred_at=datetime.now(timezone.utc),
             )
             session.add(event)
 
             await session.commit()
             await session.refresh(enrollment)
-            logger.info(f"🎉 Place #{next_seat}/100 attribuée avec succès à {clerk_user_id}")
-            return True, "Place attribuée avec succès", next_seat
+            if is_internal:
+                logger.info(f"🛡️ Place interne {next_seat} attribuée à {clerk_user_id} ({user.email if user else 'Inconnu'})")
+            else:
+                logger.info(f"🎉 Place #{next_seat}/100 attribuée avec succès à {clerk_user_id}")
+                
+            return True, msg, next_seat
 
     @classmethod
     async def record_feedback(

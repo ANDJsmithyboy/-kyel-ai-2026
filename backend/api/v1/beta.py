@@ -82,6 +82,8 @@ async def get_beta_status(
     return await BetaService.get_beta_status(db, user_clerk_id=clerk_id)
 
 
+from fastapi.responses import JSONResponse
+
 @router.post("/enroll")
 async def enroll_in_beta(
     req: BetaEnrollRequest,
@@ -103,16 +105,29 @@ async def enroll_in_beta(
     )
 
     if not success:
-        raise HTTPException(
-            status_code=status.HTTP_409_CONFLICT if "places" in message else status.HTTP_400_BAD_REQUEST,
-            detail=message,
-        )
+        if "Toutes les places" in message:
+            return JSONResponse(
+                status_code=status.HTTP_409_CONFLICT,
+                content={
+                    "admitted": False,
+                    "reason": "BETA_FULL",
+                    "capacity": 100,
+                    "message": message
+                }
+            )
+        else:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=message,
+            )
 
     return {
+        "admitted": True,
         "success": True,
         "message": message,
         "seat_number": seat_number,
-        "total_seats": 100,
+        "capacity": 100,
+        "remaining": max(0, 100 - (seat_number if seat_number and seat_number <= 100 else 100)),
     }
 
 
