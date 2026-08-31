@@ -21,7 +21,7 @@ interface MissionState {
   getMission: (missionId: string) => Promise<Mission | null>;
 }
 
-const getApiUrl = () => process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1';
+const getApiUrl = () => (process.env.NEXT_PUBLIC_API_BASE_URL || process.env.NEXT_PUBLIC_API_URL) || 'https://api.nkyel.smartandjai.com/api/v1';
 
 const getHeaders = () => {
   const token = typeof window !== 'undefined' ? localStorage.getItem('token') || localStorage.getItem('nkyel_access_token') : null;

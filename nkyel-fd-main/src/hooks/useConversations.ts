@@ -12,7 +12,7 @@ import { useState, useCallback, useRef } from 'react';
 import { useAuth } from '@clerk/nextjs';
 import { getWorkspaceId } from './useNeonSync';
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || '';
+const API_BASE = (process.env.NEXT_PUBLIC_API_BASE_URL || process.env.NEXT_PUBLIC_API_URL) || '';
 
 export interface NeonConversation {
   id: string;

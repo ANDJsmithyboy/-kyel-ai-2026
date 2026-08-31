@@ -59,7 +59,7 @@ export interface BetaFeedbackPayload {
 }
 
 export async function fetchBetaStatus(): Promise<BetaStatusResponse> {
-  const backendBase = process.env.NEXT_PUBLIC_API_URL || '';
+  const backendBase = (process.env.NEXT_PUBLIC_API_BASE_URL || process.env.NEXT_PUBLIC_API_URL) || '';
   const res = await fetch(`${backendBase}/api/v1/beta/status`, {
     cache: 'no-store',
   });
@@ -70,7 +70,7 @@ export async function fetchBetaStatus(): Promise<BetaStatusResponse> {
 }
 
 export async function enrollInBeta(locale: string = 'fr'): Promise<{ success: boolean; seat_number: number; message: string }> {
-  const backendBase = process.env.NEXT_PUBLIC_API_URL || '';
+  const backendBase = (process.env.NEXT_PUBLIC_API_BASE_URL || process.env.NEXT_PUBLIC_API_URL) || '';
   const res = await fetch(`${backendBase}/api/v1/beta/enroll`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -84,7 +84,7 @@ export async function enrollInBeta(locale: string = 'fr'): Promise<{ success: bo
 }
 
 export async function submitBetaFeedback(payload: BetaFeedbackPayload): Promise<{ success: boolean; feedback_id: string }> {
-  const backendBase = process.env.NEXT_PUBLIC_API_URL || '';
+  const backendBase = (process.env.NEXT_PUBLIC_API_BASE_URL || process.env.NEXT_PUBLIC_API_URL) || '';
   const res = await fetch(`${backendBase}/api/v1/beta/feedback`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },

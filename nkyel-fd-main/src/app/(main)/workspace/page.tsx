@@ -199,7 +199,7 @@ export default function NkyelWorkspacePage() {
       setIsSubmitting(true);
 
       const runId = startRun(goal.trim(), 'Objectif de mission soumis par l\'utilisateur');
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://ejresep5jsepf3-8080.proxy.runpod.net';
+      const apiUrl = (process.env.NEXT_PUBLIC_API_BASE_URL || process.env.NEXT_PUBLIC_API_URL) || 'https://api.nkyel.smartandjai.com';
 
       try {
         const adapter = new AgUiStreamAdapter(runId);

@@ -15,7 +15,7 @@ export async function GET() {
     // Get the active Clerk JWT to pass to FastAPI
     const token = await session.getToken();
 
-    const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+    const backendUrl = (process.env.NEXT_PUBLIC_API_BASE_URL || process.env.NEXT_PUBLIC_API_URL) || 'https://api.nkyel.smartandjai.com';
     
     // Transparent BFF proxy to FastAPI
     const res = await fetch(`${backendUrl}/api/v1/connectors/providers`, {

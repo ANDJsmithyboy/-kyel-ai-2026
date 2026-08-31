@@ -66,7 +66,7 @@ function generateId(prefix: string): string {
 
 // --- Store ----------------------------------------------
 
-const getApiUrl = () => process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1';
+const getApiUrl = () => (process.env.NEXT_PUBLIC_API_BASE_URL || process.env.NEXT_PUBLIC_API_URL) || 'https://api.nkyel.smartandjai.com/api/v1';
 
 const getHeaders = () => {
   const token = typeof window !== 'undefined' ? localStorage.getItem('token') || localStorage.getItem('nkyel_access_token') : null;
@@ -170,7 +170,7 @@ export const useWorkGraphStore = create<WorkGraphState>((set, get) => {
         });
         
         // Trigger the backend via the adapter to process SSE
-        const backendBase = process.env.NEXT_PUBLIC_API_URL || 'https://ejresep5jsepf3-8080.proxy.runpod.net';
+        const backendBase = (process.env.NEXT_PUBLIC_API_BASE_URL || process.env.NEXT_PUBLIC_API_URL) || 'https://api.nkyel.smartandjai.com';
         const adapter = new AgUiStreamAdapter(state.runId);
         adapter.connect(`${backendBase}/api/v1/nkyel/replan`, {
           run_id: state.runId,

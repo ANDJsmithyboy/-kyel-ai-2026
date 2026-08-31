@@ -51,7 +51,7 @@ import MCPAppRunner from '@/components/protocols/MCPAppRunner';
 import type { NkyelRendu, RenduType } from '@/lib/models';
 import { useRouter } from 'next/navigation';
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+const API_BASE = (process.env.NEXT_PUBLIC_API_BASE_URL || process.env.NEXT_PUBLIC_API_URL) || 'https://api.nkyel.smartandjai.com';
 
 const TYPE_ICONS: Record<RenduType, React.ReactNode> = {
   markdown: <FileText size={18} className="text-[var(--accent)]" />,

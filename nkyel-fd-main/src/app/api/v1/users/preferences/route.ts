@@ -8,7 +8,7 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+    const backendUrl = (process.env.NEXT_PUBLIC_API_BASE_URL || process.env.NEXT_PUBLIC_API_URL) || 'https://api.nkyel.smartandjai.com';
     const token = await getToken();
 
     const res = await fetch(`${backendUrl}/api/v1/users/preferences`, {
@@ -39,7 +39,7 @@ export async function PUT(request: Request) {
     }
 
     const body = await request.json();
-    const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+    const backendUrl = (process.env.NEXT_PUBLIC_API_BASE_URL || process.env.NEXT_PUBLIC_API_URL) || 'https://api.nkyel.smartandjai.com';
     const token = await getToken();
 
     const res = await fetch(`${backendUrl}/api/v1/users/preferences`, {

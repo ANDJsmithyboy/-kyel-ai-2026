@@ -12,7 +12,7 @@
 import { useEffect, useRef } from 'react';
 import { useUser, useAuth } from '@clerk/nextjs';
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || '';
+const API_BASE = (process.env.NEXT_PUBLIC_API_BASE_URL || process.env.NEXT_PUBLIC_API_URL) || '';
 
 interface SyncResult {
   id: string;

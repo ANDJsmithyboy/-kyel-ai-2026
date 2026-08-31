@@ -295,7 +295,7 @@ export default function AdminCommandCenter() {
   // ── API Fetchers ──────────────────────────────────────────
   const fetchAllData = useCallback(async () => {
     setRefreshing(true);
-    const backendBase = process.env.NEXT_PUBLIC_API_URL || '';
+    const backendBase = (process.env.NEXT_PUBLIC_API_BASE_URL || process.env.NEXT_PUBLIC_API_URL) || '';
 
     try {
       // 1. Validation Cockpit
@@ -365,7 +365,7 @@ export default function AdminCommandCenter() {
   // Load timeline when mission selected
   const handleSelectMission = async (mission: any) => {
     setSelectedMission(mission);
-    const backendBase = process.env.NEXT_PUBLIC_API_URL || '';
+    const backendBase = (process.env.NEXT_PUBLIC_API_BASE_URL || process.env.NEXT_PUBLIC_API_URL) || '';
     try {
       const res = await fetch(`${backendBase}/v1/admin/runs/${mission.run_id || mission.mission_id}/timeline`);
       if (res.ok) setRunTimeline(await res.json());
@@ -376,7 +376,7 @@ export default function AdminCommandCenter() {
 
   // Handlers
   const handleToggleProvider = async (providerId: string, currentEnabled: boolean) => {
-    const backendBase = process.env.NEXT_PUBLIC_API_URL || '';
+    const backendBase = (process.env.NEXT_PUBLIC_API_BASE_URL || process.env.NEXT_PUBLIC_API_URL) || '';
     const newStatus = !currentEnabled;
     try {
       const res = await fetch(`${backendBase}/v1/admin/providers/${providerId}`, {
@@ -395,7 +395,7 @@ export default function AdminCommandCenter() {
 
   const handleSaveCredential = async () => {
     if (!editingProvider) return;
-    const backendBase = process.env.NEXT_PUBLIC_API_URL || '';
+    const backendBase = (process.env.NEXT_PUBLIC_API_BASE_URL || process.env.NEXT_PUBLIC_API_URL) || '';
     try {
       const res = await fetch(`${backendBase}/v1/admin/providers/${editingProvider.id}`, {
         method: 'POST',
@@ -415,7 +415,7 @@ export default function AdminCommandCenter() {
 
   const handleSaveTriage = async () => {
     if (!triageModalFeedback) return;
-    const backendBase = process.env.NEXT_PUBLIC_API_URL || '';
+    const backendBase = (process.env.NEXT_PUBLIC_API_BASE_URL || process.env.NEXT_PUBLIC_API_URL) || '';
     try {
       const res = await fetch(`${backendBase}/v1/admin/feedback/${triageModalFeedback.id}/triage`, {
         method: 'POST',
@@ -437,7 +437,7 @@ export default function AdminCommandCenter() {
   };
 
   const handleToggleFlag = async (flagId: string, currentEnabled: boolean) => {
-    const backendBase = process.env.NEXT_PUBLIC_API_URL || '';
+    const backendBase = (process.env.NEXT_PUBLIC_API_BASE_URL || process.env.NEXT_PUBLIC_API_URL) || '';
     const newStatus = !currentEnabled;
     try {
       const res = await fetch(`${backendBase}/v1/admin/feature-flags/${flagId}`, {
@@ -455,7 +455,7 @@ export default function AdminCommandCenter() {
   };
 
   const handleToggleMaintenance = async () => {
-    const backendBase = process.env.NEXT_PUBLIC_API_URL || '';
+    const backendBase = (process.env.NEXT_PUBLIC_API_BASE_URL || process.env.NEXT_PUBLIC_API_URL) || '';
     const newMode = !settingsData.maintenance_mode;
     try {
       const res = await fetch(`${backendBase}/v1/admin/settings`, {
