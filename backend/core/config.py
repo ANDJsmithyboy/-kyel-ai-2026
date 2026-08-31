@@ -37,7 +37,7 @@ class Settings(BaseSettings):
     qstash_token: str = ""
 
     # ── Clerk Auth (JWKS RS256) ─────────────────────────────
-    clerk_domain: str = "clerk.nkyel.ai"
+    clerk_domain: str = "clerk.smartandjai.com"
     clerk_secret_key: str = ""
     clerk_publishable_key: str = ""
     clerk_webhook_secret: str = ""
@@ -149,15 +149,15 @@ class Settings(BaseSettings):
     # ── Stockage d'Artefacts & R2 ───────────────────────────
     artifacts_storage_path: str = "./storage/artifacts"
     cloudflare_r2_bucket: str = "nkyel-media-sovereign"
-    cloudflare_r2_public_domain: str = "https://media.nkyel.ai"
+    cloudflare_r2_public_domain: str = "https://media.nkyel.smartandjai.com"
     r2_account_id: str = ""
     r2_access_key_id: str = ""
     r2_secret_access_key: str = ""
     r2_bucket_name: str = "nkyel-artifacts"
-    r2_public_url: str = "https://artifacts.nkyel.ai"
+    r2_public_url: str = "https://artifacts.nkyel.smartandjai.com"
 
     # ── CORS ────────────────────────────────────────────────
-    cors_origins: str = "http://localhost:3000,http://localhost:8081,http://localhost:5173,http://localhost:5175,https://nkyel.smartandjai.com,https://demo.nkyel.smartandjai.com,https://nkyel.ai,https://nkyel-fd.vercel.app,https://nkyel-fd-two.vercel.app"
+    cors_origins: str = "http://localhost:3000,http://localhost:8081,http://localhost:5173,http://localhost:5175,https://nkyel.smartandjai.com,https://demo.nkyel.smartandjai.com,https://nkyel-fd.vercel.app,https://nkyel-fd-two.vercel.app"
 
     @property
     def cors_origins_list(self) -> List[str]:
