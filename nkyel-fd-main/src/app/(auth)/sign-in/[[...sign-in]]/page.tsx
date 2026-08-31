@@ -11,18 +11,10 @@ export default function SignInPage() {
         appearance={{
           elements: {
             rootBox: 'w-full',
-            card: 'bg-transparent shadow-none border-none w-full',
-            headerTitle: 'text-[var(--text-primary)] font-semibold',
-            headerSubtitle: 'text-[var(--text-secondary)]',
-            formButtonPrimary:
-              'bg-[#18181b] hover:bg-[#27272a] text-white rounded-[24px] h-[48px] font-medium transition-all',
-            formFieldInput:
-              'bg-[var(--bg-elevated)] border-[var(--border)] text-[var(--text-primary)] rounded-xl',
-            footerActionLink: 'text-[var(--accent)] hover:text-[var(--accent-hover)]',
-            socialButtonsBlockButton:
-              'bg-[var(--bg-elevated)] border-[var(--border)] text-[var(--text-primary)] rounded-xl hover:bg-[var(--bg-hover)]',
-            dividerLine: 'bg-[var(--border)]',
-            dividerText: 'text-[var(--text-tertiary)]',
+            card: 'bg-transparent shadow-none border-none w-full p-0',
+            header: 'hidden',
+            footer: 'hidden',
+            footerAction: 'hidden',
           },
         }}
         routing="path"

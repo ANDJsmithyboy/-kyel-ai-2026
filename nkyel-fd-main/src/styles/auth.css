@@ -2,13 +2,12 @@
  * Ñkyel AI · Auth Page Styles
  * SmartANDJ AI Technologies · Founder: Daniel Jonathan ANDJ
  *
- * Premium auth card: centered, calm, minimal, theme-aware.
- * Uses existing Ñkyel design tokens — no hardcoded colors.
- * Mobile-first responsive.
+ * Premium auth card matching approved visual reference.
+ * Soft meadow background, white centered card, Clerk overrides.
  */
 
 /* ═══════════════════════════════════════════════════════
-   AUTH PAGES — Sovereign Ñkyel Authentication
+   AUTH PAGE — Full viewport background + centered card
    ═══════════════════════════════════════════════════════ */
 
 .nkyel-auth-page {
@@ -16,100 +15,69 @@
   min-height: 100dvh;
   width: 100%;
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  /* Beautiful sunset landscape background matching reference */
-  background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%), radial-gradient(circle at top right, #ffd194, #70e1f5);
-  background-image: url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=2073&auto=format&fit=crop');
+  background-image: url('/images/auth-bg.jpg');
   background-size: cover;
   background-position: center;
-  color: #1a1a1a;
-  font-family: var(--font-sans);
+  background-repeat: no-repeat;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   position: relative;
   padding: 24px 16px;
-  padding-bottom: max(24px, env(safe-area-inset-bottom));
   overflow-x: hidden;
   overflow-y: auto;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* ── Language Switcher ── */
-.nkyel-auth-lang-switcher {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  z-index: var(--z-raised);
-}
+/* ═══════════════════════════════════════════════════════
+   AUTH CARD — White, centered, large radius, soft shadow
+   ═══════════════════════════════════════════════════════ */
 
-.nkyel-auth-lang-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 6px 14px;
-  border-radius: var(--radius-pill);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  background: rgba(255, 255, 255, 0.8);
-  backdrop-filter: blur(8px);
-  font-family: var(--font-sans);
-  font-size: 12px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all var(--transition-fast);
-  color: #4a4a4a;
-}
-
-.nkyel-auth-lang-active {
-  color: #1a1a1a;
-  font-weight: 600;
-}
-
-.nkyel-auth-lang-inactive {
-  color: #888;
-  font-weight: 400;
-}
-
-/* ── Auth Card ── */
 .nkyel-auth-card {
   width: 100%;
-  max-width: 440px;
+  max-width: 460px;
   background: #ffffff;
-  border: 1px solid rgba(0, 0, 0, 0.05);
-  border-radius: 24px;
-  padding: 40px 36px 36px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+  border-radius: 20px;
+  padding: 48px 40px 40px;
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.08), 0 2px 12px rgba(0, 0, 0, 0.04);
   display: flex;
   flex-direction: column;
   align-items: center;
   position: relative;
-  z-index: var(--z-content);
+  z-index: 1;
 }
 
-/* ── Brand ── */
+/* ═══════════════════════════════════════════════════════
+   BRAND — Logo + wordmark
+   ═══════════════════════════════════════════════════════ */
+
 .nkyel-auth-brand {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 12px;
-  margin-bottom: 24px;
+  gap: 10px;
+  margin-bottom: 28px;
 }
 
 .nkyel-auth-logo {
-  width: 42px;
-  height: 42px;
+  width: 44px;
+  height: 44px;
   object-fit: contain;
 }
 
 .nkyel-auth-brand-name {
-  font-family: var(--font-sans);
-  font-size: 28px;
+  font-size: 30px;
   font-weight: 500;
   color: #1a1a1a;
   margin: 0;
+  letter-spacing: -0.01em;
 }
 
-/* ── Header ── */
+/* ═══════════════════════════════════════════════════════
+   HEADER — Title + subtitle
+   ═══════════════════════════════════════════════════════ */
+
 .nkyel-auth-header {
   text-align: center;
   margin-bottom: 28px;
@@ -117,8 +85,8 @@
 }
 
 .nkyel-auth-title {
-  font-size: 22px;
-  font-weight: 600;
+  font-size: 24px;
+  font-weight: 700;
   color: #18181b;
   margin: 0 0 8px;
 }
@@ -130,19 +98,24 @@
   margin: 0;
 }
 
-/* ── Auth Form (Clerk container) ── */
+/* ═══════════════════════════════════════════════════════
+   CLERK FORM CONTAINER
+   ═══════════════════════════════════════════════════════ */
+
 .nkyel-auth-form {
   width: 100%;
 }
 
-/* ── Switch Link ── */
+/* ═══════════════════════════════════════════════════════
+   SWITCH LINK (bottom of card)
+   ═══════════════════════════════════════════════════════ */
+
 .nkyel-auth-switch {
   width: 100%;
   text-align: center;
   margin-top: 24px;
-  font-size: 13px;
-  color: var(--text-secondary);
-  font-weight: 400;
+  font-size: 14px;
+  color: #71717a;
 }
 
 .nkyel-auth-switch p {
@@ -150,7 +123,7 @@
 }
 
 .nkyel-auth-link {
-  color: #a25bc2;
+  color: #6366f1;
   font-weight: 500;
   text-decoration: none;
 }
@@ -159,78 +132,18 @@
   text-decoration: underline;
 }
 
-.nkyel-auth-link:focus-visible {
-  outline: 2px solid var(--focus-ring);
-  outline-offset: 2px;
-  border-radius: 3px;
-}
-
-/* ── Footer ── */
-.nkyel-auth-footer {
-  margin-top: 32px;
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 6px;
-}
-
-.nkyel-auth-footer-brand {
-  font-size: 11px;
-  color: var(--text-tertiary);
-  font-weight: 400;
-  margin: 0;
-}
-
-.nkyel-auth-footer-name {
-  font-weight: 600;
-  color: var(--text-secondary);
-}
-
-.nkyel-auth-footer-copyright {
-  font-size: 10px;
-  color: var(--text-disabled);
-  font-family: var(--font-mono);
-  margin: 0;
-  letter-spacing: 0.02em;
-}
-
-.nkyel-auth-footer-links {
-  display: flex;
-  gap: 16px;
-  margin-top: 2px;
-}
-
-.nkyel-auth-footer-link {
-  font-size: 11px;
-  color: var(--text-tertiary);
-  text-decoration: none;
-  transition: color var(--transition-fast);
-}
-
-.nkyel-auth-footer-link:hover {
-  color: var(--text-primary);
-  text-decoration: underline;
-  text-underline-offset: 3px;
-}
-
-.nkyel-auth-footer-link:focus-visible {
-  outline: 2px solid var(--focus-ring);
-  outline-offset: 2px;
-  border-radius: 3px;
-}
-
 /* ═══════════════════════════════════════════════════════
-   CLERK COMPONENT OVERRIDES — Ñkyel Token Integration
+   CLERK COMPONENT OVERRIDES
    ═══════════════════════════════════════════════════════ */
 
-/* Hide Clerk's default footer to use our own */
+/* Hide Clerk's own footer and header (we provide our own) */
 .nkyel-auth-form .cl-footer,
-.nkyel-auth-form .cl-footerAction {
+.nkyel-auth-form .cl-footerAction,
+.nkyel-auth-form .cl-header {
   display: none !important;
 }
 
-/* Root containers */
+/* Root containers — transparent, no border, no shadow */
 .nkyel-auth-form .cl-rootBox {
   width: 100% !important;
 }
@@ -245,24 +158,26 @@
   margin: 0 !important;
 }
 
-/* Social (Google) Button */
+/* ── Google Button — pill shape, white bg, border ── */
 .nkyel-auth-form .cl-socialButtonsBlockButton {
   width: 100% !important;
   height: 48px !important;
   border-radius: 24px !important;
   background: #ffffff !important;
-  border: 1px solid #e4e4e7 !important;
+  border: 1.5px solid #e4e4e7 !important;
   color: #18181b !important;
-  font-size: 14px !important;
+  font-size: 15px !important;
   font-weight: 500 !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
   gap: 10px !important;
+  cursor: pointer !important;
+  transition: background 0.15s ease !important;
 }
 
 .nkyel-auth-form .cl-socialButtonsBlockButton:hover {
-  background: #f4f4f5 !important;
+  background: #f9f9fb !important;
 }
 
 .nkyel-auth-form .cl-socialButtonsBlockButtonText {
@@ -270,187 +185,162 @@
   font-weight: 500 !important;
 }
 
-/* Divider */
+/* ── Divider (ou) ── */
 .nkyel-auth-form .cl-dividerLine {
   background: #e4e4e7 !important;
 }
 
 .nkyel-auth-form .cl-dividerText {
-  font-size: 12px !important;
-  color: #71717a !important;
+  font-size: 13px !important;
+  color: #a1a1aa !important;
   background: #ffffff !important;
-  padding: 0 12px !important;
+  padding: 0 14px !important;
   text-transform: lowercase !important;
 }
 
-/* Form fields */
+/* ── Email Input ── */
 .nkyel-auth-form .cl-formFieldInput {
   width: 100% !important;
   height: 48px !important;
   padding: 0 16px !important;
-  border-radius: 12px !important;
-  border: 1px solid #e4e4e7 !important;
+  padding-left: 44px !important;
+  border-radius: 24px !important;
+  border: 1.5px solid #e4e4e7 !important;
   background: #ffffff !important;
   color: #18181b !important;
-  font-size: 14px !important;
+  font-size: 15px !important;
+  transition: border-color 0.15s ease !important;
+}
+
+.nkyel-auth-form .cl-formFieldInput::placeholder {
+  color: #a1a1aa !important;
 }
 
 .nkyel-auth-form .cl-formFieldInput:focus {
-  border-color: #a25bc2 !important;
-  box-shadow: 0 0 0 1px #a25bc2 !important;
+  border-color: #18181b !important;
+  box-shadow: none !important;
+  outline: none !important;
 }
 
 .nkyel-auth-form .cl-formFieldLabel {
   display: none !important;
 }
 
-/* Primary CTA */
+/* ── Continue Button — dark pill ── */
 .nkyel-auth-form .cl-formButtonPrimary {
   width: 100% !important;
   height: 48px !important;
   border-radius: 24px !important;
   background: #18181b !important;
   color: #ffffff !important;
-  font-size: 14px !important;
-  font-weight: 500 !important;
-  margin-top: 12px !important;
+  font-size: 15px !important;
+  font-weight: 600 !important;
+  margin-top: 16px !important;
+  border: none !important;
+  cursor: pointer !important;
+  transition: background 0.15s ease !important;
 }
 
 .nkyel-auth-form .cl-formButtonPrimary:hover {
   background: #27272a !important;
 }
 
-/* Identity preview (email verification step) */
+/* ── Identity preview (email verification step) ── */
 .nkyel-auth-form .cl-identityPreview {
-  border-radius: var(--radius-control) !important;
-  border: 1px solid var(--border) !important;
-  background: var(--surface) !important;
+  border-radius: 12px !important;
+  border: 1px solid #e4e4e7 !important;
+  background: #fafafa !important;
   padding: 12px !important;
-  color: var(--text-primary) !important;
-  font-family: var(--font-sans) !important;
+  color: #18181b !important;
 }
 
-/* Error / Success */
-.nkyel-auth-form .cl-formFieldSuccessText {
-  font-size: 12px !important;
-  color: var(--success) !important;
-  font-family: var(--font-sans) !important;
-}
-
+/* ── Errors ── */
 .nkyel-auth-form .cl-formFieldErrorText {
-  font-size: 12px !important;
-  color: var(--error) !important;
-  font-family: var(--font-sans) !important;
+  font-size: 13px !important;
+  color: #ef4444 !important;
 }
 
 .nkyel-auth-form .cl-alert {
-  border-radius: var(--radius-control) !important;
-  border: 1px solid var(--error) !important;
-  background: var(--error-subtle) !important;
-  color: var(--error) !important;
+  border-radius: 12px !important;
+  border: 1px solid #fecaca !important;
+  background: #fef2f2 !important;
+  color: #dc2626 !important;
   font-size: 13px !important;
   padding: 12px 14px !important;
-  font-family: var(--font-sans) !important;
 }
 
-/* OTP / Verification inputs */
+/* ── OTP inputs ── */
 .nkyel-auth-form .cl-otpCodeFieldInput {
-  border: 1px solid var(--border-strong) !important;
-  background: var(--surface) !important;
-  color: var(--text-primary) !important;
-  border-radius: var(--radius-control-sm) !important;
-  font-family: var(--font-mono) !important;
+  border: 1.5px solid #e4e4e7 !important;
+  background: #ffffff !important;
+  color: #18181b !important;
+  border-radius: 10px !important;
+  font-family: 'SF Mono', 'Fira Code', monospace !important;
 }
 
 .nkyel-auth-form .cl-otpCodeFieldInput:focus {
-  border-color: var(--accent) !important;
-  box-shadow: 0 0 0 3px var(--accent-subtle) !important;
+  border-color: #18181b !important;
+  box-shadow: 0 0 0 2px rgba(24, 24, 27, 0.1) !important;
 }
 
-/* Back button / navigation within Clerk */
+/* ── Clerk internal nav links ── */
 .nkyel-auth-form .cl-headerBackLink,
 .nkyel-auth-form .cl-formHeaderTitle,
-.nkyel-auth-form .cl-formHeaderSubtitle,
-.nkyel-auth-form .cl-headerTitle,
-.nkyel-auth-form .cl-headerSubtitle {
-  color: var(--text-primary) !important;
-  font-family: var(--font-sans) !important;
+.nkyel-auth-form .cl-headerTitle {
+  color: #18181b !important;
 }
 
 .nkyel-auth-form .cl-formHeaderSubtitle,
 .nkyel-auth-form .cl-headerSubtitle {
-  color: var(--text-secondary) !important;
+  color: #71717a !important;
 }
 
 /* ═══════════════════════════════════════════════════════
-   AUTH RESPONSIVE — Mobile-First
+   RESPONSIVE
    ═══════════════════════════════════════════════════════ */
 
 @media (max-width: 520px) {
   .nkyel-auth-page {
-    padding: 16px;
-    padding-top: 56px;
+    padding: 16px 12px;
+    padding-top: max(24px, env(safe-area-inset-top));
     padding-bottom: max(16px, env(safe-area-inset-bottom));
-    justify-content: flex-start;
+    align-items: flex-start;
+    justify-content: center;
   }
 
   .nkyel-auth-card {
     max-width: none;
     width: 100%;
-    padding: 32px 24px 28px;
-    border-radius: var(--radius-card);
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    padding: 36px 24px 28px;
+    border-radius: 16px;
   }
 
   .nkyel-auth-brand-name {
-    font-size: var(--text-title-md);
-  }
-
-  .nkyel-auth-brand {
-    margin-bottom: 20px;
-  }
-
-  .nkyel-auth-header {
-    margin-bottom: 24px;
+    font-size: 26px;
   }
 
   .nkyel-auth-title {
-    font-size: var(--text-title-sm);
+    font-size: 20px;
   }
 
   .nkyel-auth-subtitle {
     font-size: 13px;
   }
-
-  .nkyel-auth-lang-switcher {
-    top: 14px;
-    right: 14px;
-  }
-
-  .nkyel-auth-footer {
-    margin-top: 24px;
-  }
 }
 
 @media (max-width: 360px) {
   .nkyel-auth-card {
-    padding: 28px 20px 24px;
+    padding: 28px 18px 24px;
   }
 }
 
-/* Keyboard visible: ensure fields stay in view */
 @media (max-height: 600px) {
   .nkyel-auth-page {
-    justify-content: flex-start;
+    align-items: flex-start;
     padding-top: 16px;
-  }
-
-  .nkyel-auth-footer {
-    margin-top: 16px;
   }
 }
 
-/* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
   .nkyel-auth-form .cl-socialButtonsBlockButton:active,
   .nkyel-auth-form .cl-formButtonPrimary:active {
