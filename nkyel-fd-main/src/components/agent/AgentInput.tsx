@@ -32,7 +32,7 @@ export default function AgentInput() {
 
     // Démarrer une session via l'API
     try {
-      const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL ?? '';
+      const backendUrl = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'https://api.nkyel.smartandjai.com';
       const res = await fetch(`${backendUrl}/api/agent/start`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

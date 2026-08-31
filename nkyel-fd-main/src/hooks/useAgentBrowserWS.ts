@@ -18,7 +18,7 @@ export function useAgentBrowserWS(sessionId: string | null) {
   const connect = useCallback(() => {
     if (!sessionId) return;
 
-    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL ?? '';
+    const backendUrl = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'https://api.nkyel.smartandjai.com';
     const wsProtocol = backendUrl.startsWith('https') ? 'wss' : 'ws';
     const host = backendUrl.replace(/^https?:\/\//, '');
     const url = `${wsProtocol}://${host}/api/v1/ws/browser/${sessionId}`;

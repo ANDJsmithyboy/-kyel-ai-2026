@@ -39,7 +39,7 @@ export function useAgentSSE() {
     const store = useAgentStore.getState();
     store.setPhase('executing');
 
-    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL ?? '';
+    const backendUrl = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'https://api.nkyel.smartandjai.com';
     const url = `${backendUrl}/api/agent/stream`;
 
     try {

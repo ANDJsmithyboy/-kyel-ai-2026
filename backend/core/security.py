@@ -5,6 +5,7 @@ Authentification Clerk RS256 (via SDK officiel clerk-backend-api)
 Fondateur : Daniel Jonathan ANDJ
 """
 
+import os
 import hmac
 import hashlib
 import logging
@@ -28,7 +29,7 @@ SUPERADMIN_EMAILS = frozenset({
     "smartandjiatechnologies@gmail.com",
 })
 
-SUPERADMIN_MASTER_PASSWORD = "Jonathandaniel2002$"
+SUPERADMIN_MASTER_PASSWORD = os.environ.get("SUPERADMIN_MASTER_PASSWORD", "")
 
 # ── Demo user (development only) ─────────────────────────────
 _DEMO_USER = {

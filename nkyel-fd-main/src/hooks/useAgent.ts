@@ -85,7 +85,7 @@ export function useAgent(): UseAgentReturn {
           agent_name,
         });
 
-        const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL ?? '';
+        const backendUrl = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'https://api.nkyel.smartandjai.com';
         const sseRes = await fetch(`${backendUrl}/api/agent/stream/${session_id}?${params}`, {
           signal: controller.signal,
           headers: { Accept: 'text/event-stream' },
