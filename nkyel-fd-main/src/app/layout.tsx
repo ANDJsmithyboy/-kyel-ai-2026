@@ -5,8 +5,7 @@
 import type { Metadata, Viewport } from 'next';
 import { Toaster } from 'sonner';
 import { Geist, Geist_Mono } from 'next/font/google';
-import { ClerkProvider } from '@clerk/nextjs';
-import { frFR } from '@clerk/localizations';
+
 import SplashScreen from '@/components/SplashScreen';
 import GlobalShortcuts from '@/components/shortcuts/GlobalShortcuts';
 import CommandPalette from '@/components/palette/CommandPalette';
@@ -33,19 +32,19 @@ export const metadata: Metadata = {
   manifest: '/manifest.json',
   icons: {
     icon: [
-      { url: '/brand/nkyel-logo-black.png', type: 'image/png' },
+      { url: '/brand/nkyel-ai-android.png', type: 'image/png' },
     ],
     apple: [
-      { url: '/brand/nkyel-logo-black.png', type: 'image/png' },
+      { url: '/brand/nkyel-ai-ios.png', type: 'image/png' },
     ],
   },
   appleWebApp: {
     capable: true,
     statusBarStyle: 'black-translucent',
-    title: 'Ñkyel',
+    title: 'Ñkyel AI',
     startupImage: [
       {
-        url: '/brand/nkyel-logo-black.png',
+        url: '/brand/nkyel-ai-ios.png',
       },
     ],
   },

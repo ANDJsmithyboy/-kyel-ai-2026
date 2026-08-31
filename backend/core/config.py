@@ -39,7 +39,9 @@ class Settings(BaseSettings):
     # ── Clerk Auth (JWKS RS256) ─────────────────────────────
     clerk_domain: str = "clerk.nkyel.ai"
     clerk_secret_key: str = ""
+    clerk_publishable_key: str = ""
     clerk_webhook_secret: str = ""
+    clerk_authorized_parties: str = ""  # comma-separated: "https://nkyel.ai,http://localhost:3000"
 
     # ── Groq (AURATA / SONAR & Pool) ────────────────────────
     groq_api_key: str = ""
@@ -169,6 +171,13 @@ class Settings(BaseSettings):
     @property
     def clerk_jwks_url(self) -> str:
         return f"https://{self.clerk_domain}/.well-known/jwks.json"
+
+    @property
+    def clerk_authorized_parties_list(self) -> List[str]:
+        """Parse CLERK_AUTHORIZED_PARTIES comma-separated string into list[str]."""
+        if not self.clerk_authorized_parties:
+            return []
+        return [p.strip() for p in self.clerk_authorized_parties.split(",") if p.strip()]
 
     @property
     def google_keys_pool(self) -> List[str]:

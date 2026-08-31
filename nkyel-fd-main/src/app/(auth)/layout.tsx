@@ -1,6 +1,8 @@
-/* Nkyel AI · (auth)/layout.tsx · SmartANDJ AI Technologies · Constitution Zion Core
+/* Ñkyel AI · (auth)/layout.tsx · SmartANDJ AI Technologies
    Fondateur : Daniel Jonathan ANDJ
-   Layout auth minimaliste — pas de sidebar */
+   Auth layout — no sidebar, imports auth styles */
+
+import '@/styles/auth.css';
 
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
   return <>{children}</>;

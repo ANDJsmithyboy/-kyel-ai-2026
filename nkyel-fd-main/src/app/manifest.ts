@@ -1,7 +1,7 @@
 export default function manifest(): any {
   return {
     name: 'Ñkyel AI — Sovereign Global Intelligence',
-    short_name: 'Ñkyel',
+    short_name: 'Ñkyel AI',
     description: "Architecture d'intelligence souveraine et multi-agents de nouvelle génération.",
     start_url: '/',
     display: 'standalone',
@@ -10,41 +10,13 @@ export default function manifest(): any {
     orientation: 'any',
     icons: [
       {
-        src: '/icon-192x192.png',
-        sizes: '192x192',
-        type: 'image/png',
-        purpose: 'any',
-      },
-      {
-        src: '/maskable-icon-192x192.png',
-        sizes: '192x192',
-        type: 'image/png',
-        purpose: 'maskable',
-      },
-      {
-        src: '/icon-512x512.png',
-        sizes: '512x512',
-        type: 'image/png',
-        purpose: 'any',
-      },
-      {
-        src: '/maskable-icon-512x512.png',
-        sizes: '512x512',
-        type: 'image/png',
-        purpose: 'maskable',
-      },
-      {
-        src: '/apple-touch-icon.png',
-        sizes: '180x180',
-        type: 'image/png',
-      },
-      {
-        src: '/nkyel-ai-android.png',
+        src: '/brand/nkyel-ai-android.png',
         sizes: '1024x1024',
         type: 'image/png',
+        purpose: 'any maskable',
       },
       {
-        src: '/nkyel-ai-ios.png',
+        src: '/brand/nkyel-ai-ios.png',
         sizes: '1024x1024',
         type: 'image/png',
       },

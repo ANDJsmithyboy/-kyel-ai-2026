@@ -8,9 +8,9 @@
     "build": "next build --webpack",
     "start": "next start --port 3000",
     "lint": "next lint"
-
   },
   "dependencies": {
+    "@ai-sdk/google": "^4.0.58",
     "@ai-sdk/groq": "^4.0.5",
     "@ai-sdk/react": "^1.0.0",
     "@clerk/localizations": "^4.9.1",

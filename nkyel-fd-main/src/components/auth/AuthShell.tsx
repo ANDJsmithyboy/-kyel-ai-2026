@@ -1,169 +1,130 @@
 /**
- * Ñkyel AI — Sovereign Authentication Shell (Apple Luxury $100M Standard)
- * SmartANDJ AI Technologies · Founder & Lead Architect: Daniel Jonathan ANDJ
+ * Ñkyel AI — Sovereign Authentication Shell
+ * SmartANDJ AI Technologies · Founder: Daniel Jonathan ANDJ
+ *
+ * Premium auth card: centered, calm, minimal, theme-aware.
+ * Bilingual EN-US (default) / FR-FR with auto-detection.
+ * Mobile-first: card fills width on small screens.
+ * Uses existing Ñkyel design tokens — no hardcoded colors.
  */
 
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useLanguageStore } from '@/stores/language.store';
-import { Globe, ShieldCheck, Sparkle } from '@phosphor-icons/react';
-import PantherMissionGlyph from '@/components/icons/PantherMissionGlyph';
 
 interface AuthShellProps {
   mode: 'sign-in' | 'sign-up';
   children: React.ReactNode;
 }
 
+/** Detect if browser prefers French */
+function detectLocale(): 'en-US' | 'fr-FR' {
+  if (typeof navigator === 'undefined') return 'en-US';
+  const langs = navigator.languages ?? [navigator.language];
+  for (const l of langs) {
+    if (l.startsWith('fr')) return 'fr-FR';
+  }
+  return 'en-US';
+}
+
 export default function AuthShell({ mode, children }: AuthShellProps) {
-  const { uiLocale, setUiLocale } = useLanguageStore();
+  const { t, uiLocale, setUiLocale, translations } = useLanguageStore();
   const [mounted, setMounted] = useState(false);
 
+  // Auto-detect browser locale on first visit (before any user preference is stored)
   useEffect(() => {
     setMounted(true);
-  }, []);
+    // Only auto-detect if no translations loaded yet (first visit)
+    if (Object.keys(translations).length === 0) {
+      const detected = detectLocale();
+      setUiLocale(detected);
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const isEn = !uiLocale || uiLocale.startsWith('en');
+  const isFr = uiLocale?.startsWith('fr');
 
-  const toggleLanguage = () => {
-    setUiLocale(isEn ? 'fr-FR' : 'en-US');
+  // Toggle between EN and FR
+  const toggleLocale = () => {
+    const next = isFr ? 'en-US' : 'fr-FR';
+    setUiLocale(next);
   };
 
+  // Don't render until mounted to avoid hydration mismatch
+  if (!mounted) {
+    return (
+      <div className="nkyel-auth-page">
+        <div className="nkyel-auth-card" />
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen w-full relative flex flex-col justify-between items-center px-4 py-6 sm:py-10 font-sans select-none overflow-x-hidden bg-[#07090E] text-white">
-      
-      {/* ── Ambient Specular Lighting Mesh (Apple Studio Atmosphere) ── */}
-      <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden">
-        <div className="absolute -top-40 start-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-gradient-to-b from-[#E5A93C]/12 via-[#4F46E5]/8 to-transparent rounded-full blur-[140px]" />
-        <div className="absolute -bottom-40 start-1/3 w-[600px] h-[500px] bg-gradient-to-t from-[#10B981]/8 via-transparent to-transparent rounded-full blur-[120px]" />
-        {/* Subtle dot matrix grid */}
-        <div className="absolute inset-0 bg-[radial-gradient(#ffffff0a_1px,transparent_1px)] [background-size:28px_28px] opacity-70" />
+    <div className="nkyel-auth-page">
+      {/* ── Language Switcher (top-right) ── */}
+      <div className="nkyel-auth-lang-switcher">
+        <button
+          onClick={toggleLocale}
+          className="nkyel-auth-lang-btn"
+          aria-label="Switch language"
+          type="button"
+        >
+          <span className={!isFr ? 'nkyel-auth-lang-active' : 'nkyel-auth-lang-inactive'}>EN</span>
+          <span className="nkyel-auth-lang-sep">|</span>
+          <span className={isFr ? 'nkyel-auth-lang-active' : 'nkyel-auth-lang-inactive'}>FR</span>
+        </button>
       </div>
 
-      {/* ── Top Header Controls ──────────────────────────────────── */}
-      <header className="w-full max-w-5xl mx-auto flex items-center justify-between shrink-0 relative z-10">
-        {/* Brand Mark (Left) */}
-        <Link
-          href="/"
-          className="inline-flex items-center gap-2.5 group transition-all rounded-full px-3.5 py-1.5 bg-white/[0.04] hover:bg-white/[0.08] backdrop-blur-2xl border border-white/10 text-white shadow-lg active:scale-95"
-          aria-label="Ñkyel Home"
-        >
-          <img 
-            src="/brand/nkyel-logo-white.png" 
-            alt="Ñkyel Logo" 
-            className="w-5 h-5 object-contain"
-          />
-          <span className="font-semibold text-[15px] tracking-tight text-white font-serif">
-            nkyel
-          </span>
-        </Link>
-
-        {/* Language Pill (Right) */}
-        <button
-          type="button"
-          onClick={toggleLanguage}
-          className="h-8 px-3.5 rounded-full bg-white/[0.04] hover:bg-white/[0.08] backdrop-blur-2xl border border-white/10 hover:border-white/20 text-xs font-mono text-neutral-300 hover:text-white flex items-center gap-1.5 transition-all shadow-lg active:scale-95"
-          title={isEn ? 'Basculer en Français' : 'Switch to English'}
-        >
-          <Globe size={13} className="text-[var(--accent)]" />
-          <span className="font-semibold">{isEn ? 'EN' : 'FR'}</span>
-        </button>
-      </header>
-
-      {/* ── Center Floating Luxury Glass Card ─────────────────────── */}
-      <main className="w-full max-w-[440px] mx-auto my-auto py-6 relative z-10 animate-in fade-in zoom-in-95 duration-200">
-        <div className="w-full rounded-[32px] bg-[#0E121B]/90 backdrop-blur-3xl text-white shadow-[0_30px_70px_rgba(0,0,0,0.85)] border border-white/12 p-8 sm:p-9 space-y-6 relative overflow-hidden">
-          
-          {/* Subtle Top Specular Inset Highlight */}
-          <div className="absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-white/25 to-transparent pointer-events-none" />
-
-          {/* Card Brand Header */}
-          <div className="flex flex-col items-center justify-center space-y-3.5">
-            {/* Official Ñkyel Logo */}
-            <div className="w-13 h-13 p-2 rounded-2xl bg-white/[0.05] border border-white/15 flex items-center justify-center shadow-xl backdrop-blur-xl ring-1 ring-white/5">
-              <img 
-                src="/brand/nkyel-logo-white.png" 
-                alt="Ñkyel Logo" 
-                className="w-8 h-8 object-contain"
-              />
-            </div>
-
-            {/* Title & Subtitle */}
-            <div className="text-center space-y-1">
-              <h1 className="text-2xl font-bold tracking-tight text-white font-sans">
-                {mode === 'sign-in'
-                  ? isEn
-                    ? 'Welcome back'
-                    : 'Bon retour'
-                  : isEn
-                  ? 'Create account'
-                  : 'Créer un compte'}
-              </h1>
-              <p className="text-xs text-neutral-400 max-w-xs leading-relaxed">
-                {mode === 'sign-in'
-                  ? isEn
-                    ? 'Sign in to access your sovereign intelligence'
-                    : 'Connectez-vous pour accéder à votre espace souverain'
-                  : isEn
-                  ? 'Experience Visual Symbiotic Intelligence'
-                  : 'Découvrez l’Intelligence Symbiotique Visuelle'}
-              </p>
-            </div>
-          </div>
-
-          {/* Form Content */}
-          <div className="w-full">
-            {children}
-          </div>
-
-          {/* Switch Link */}
-          <div className="text-center text-xs text-neutral-400 pt-2 border-t border-white/10">
-            {mode === 'sign-in' ? (
-              <p>
-                {isEn ? "Don't have an account? " : "Vous n'avez pas de compte ? "}
-                <Link
-                  href="/sign-up"
-                  className="font-semibold text-[var(--accent)] hover:underline transition-colors ms-1"
-                >
-                  {isEn ? 'Sign up' : 'Inscrivez-vous'}
-                </Link>
-              </p>
-            ) : (
-              <p>
-                {isEn ? 'Already have an account? ' : 'Vous avez déjà un compte ? '}
-                <Link
-                  href="/sign-in"
-                  className="font-semibold text-[var(--accent)] hover:underline transition-colors ms-1"
-                >
-                  {isEn ? 'Sign in' : 'Connectez-vous'}
-                </Link>
-              </p>
-            )}
-          </div>
+      {/* ── Auth Card ── */}
+      <main className="nkyel-auth-card">
+        {/* Brand */}
+        <div className="nkyel-auth-brand">
+          <img src="/nkyel-ai.svg" alt="Ñkyel Logo" className="nkyel-auth-logo" />
+          <h2 className="nkyel-auth-brand-name">ñkyel</h2>
         </div>
+
+        {/* Title & Subtitle */}
+        <div className="nkyel-auth-header">
+          <h1 className="nkyel-auth-title">
+            {mode === 'sign-in' ? t('auth.welcome') : t('auth.signUpTitle')}
+          </h1>
+          <p className="nkyel-auth-subtitle">
+            {mode === 'sign-in' ? t('auth.continueTo') : t('auth.signUpSubtitle')}
+          </p>
+        </div>
+
+        {/* Clerk Auth Component */}
+        {/* Auth Provider Content (Clerk) */}
+        {children}
+
+        {/* Switch Link */}
+        <div className="nkyel-auth-switch">
+          {mode === 'sign-in' ? (
+            <p>
+              {t('auth.noAccount')} <Link href="/sign-up" className="nkyel-auth-link">{t('auth.createAccount')}</Link>
+            </p>
+          ) : (
+            <p>
+              {t('auth.hasAccount')} <Link href="/sign-in" className="nkyel-auth-link">{t('auth.login')}</Link>
+            </p>
+          )}
+        </div>
+
+        {/* Footer */}
+        <footer className="nkyel-auth-footer">
+          <p className="nkyel-auth-footer-brand">
+            ñkyel <span className="nkyel-auth-footer-name">par SmartANDJ AI Technologies</span>
+          </p>
+          <p className="nkyel-auth-footer-copyright">
+            © 2026 SmartANDJ AI Technologies
+          </p>
+          <div className="nkyel-auth-footer-links">
+            <a href="#" className="nkyel-auth-footer-link">{t('auth.terms')}</a>
+            <a href="#" className="nkyel-auth-footer-link">{t('auth.privacy')}</a>
+          </div>
+        </footer>
       </main>
-
-      {/* ── Footer Sovereignty Tag ────────────────────────────────── */}
-      <footer className="w-full max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3 text-[11px] text-neutral-500 font-mono shrink-0 relative z-10 pt-4 pb-2">
-        <div className="flex items-center gap-1.5">
-          <ShieldCheck size={14} className="text-[var(--accent)]" />
-          <span>Sovereign Global Intelligence · Built in Gabon 🇬🇦</span>
-        </div>
-        <div className="flex items-center gap-4 text-neutral-400">
-          <Link href="/terms" className="hover:text-white transition-colors">
-            {isEn ? 'Terms' : 'Conditions'}
-          </Link>
-          <span>·</span>
-          <Link href="/privacy" className="hover:text-white transition-colors">
-            {isEn ? 'Privacy' : 'Confidentialité'}
-          </Link>
-          <span>·</span>
-          <Link href="/security" className="hover:text-white transition-colors">
-            {isEn ? 'Security' : 'Sécurité'}
-          </Link>
-        </div>
-      </footer>
     </div>
   );
 }

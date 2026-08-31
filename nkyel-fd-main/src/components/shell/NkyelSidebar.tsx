@@ -77,8 +77,7 @@ import { useSafeUser as useUser, useSafeClerk as useClerk } from '@/lib/auth-cli
 import { useLanguageStore } from '@/stores/language.store';
 import { useConversations, type NeonConversation } from '@/hooks/useConversations';
 import { IbogaNavigationTrigger, GabonOriginMark } from '@/components/brand';
-import { useWorkspaceLayout } from '@/hooks/useWorkspaceLayout';
-import { PantherMissionGlyph, SmartAndJTechIcon } from '@/components/icons';
+import { PantherMissionGlyph } from '@/components/icons';
 import MissionContextMenu from '@/components/sidebar/MissionContextMenu';
 import ProjectDialog from '@/components/sidebar/ProjectDialog';
 import MissionSearchOverlay from '@/components/sidebar/MissionSearchOverlay';
@@ -338,8 +337,8 @@ export default function NkyelSidebar() {
                 title="ñkyel — Home"
                 onClick={handleNavClick}
               >
-                <img src="/brand/nkyel-logo-black.png" alt="Ñkyel Logo" className="w-[26px] h-[26px] object-contain dark:hidden" />
-                <img src="/brand/nkyel-logo-white.png" alt="Ñkyel Logo" className="w-[26px] h-[26px] object-contain hidden dark:block" />
+                <img src="/brand/nkyel-logo-black.png" alt="Ñkyel Logo" className="h-[24px] w-auto object-contain dark:hidden shrink-0" />
+                <img src="/brand/nkyel-logo-white.png" alt="Ñkyel Logo" className="h-[24px] w-auto object-contain hidden dark:block shrink-0" />
                 <span
                   className="font-medium truncate tracking-tight text-[26px] select-none text-[var(--text-primary)] leading-none"
                   style={{ letterSpacing: '-0.035em' }}
@@ -388,7 +387,7 @@ export default function NkyelSidebar() {
               style={{ paddingInline: '16px', gap: '12px', justifyContent: showIconsOnly ? 'center' : 'flex-start' }}
             >
               <div className="w-[24px] flex justify-center shrink-0">
-                <PawPrint size={20} weight="bold" />
+                <PantherMissionGlyph size={20} />
               </div>
               {!showIconsOnly && <span className="font-semibold text-[15.5px] tracking-tight">{t('nav.newMission')}</span>}
             </div>
@@ -628,7 +627,7 @@ export default function NkyelSidebar() {
                 <div className="px-3 py-6 text-center space-y-2">
                   <div className="w-8 h-8 rounded-full bg-white/[0.04] border border-white/[0.08] flex items-center justify-center mx-auto text-white/40">
                     <ChatCircleDots size={16} />
-                    <PawPrint size={16} />
+                    <PantherMissionGlyph size={16} />
                   </div>
                   <div className="text-xs text-[var(--text-tertiary)]">
                     {t('nav.tasks')}
@@ -638,7 +637,7 @@ export default function NkyelSidebar() {
                     onClick={handleNavClick}
                     className="flex items-center justify-center gap-[12px] px-[12px] py-2 rounded-lg text-[13px] font-medium text-[var(--text-secondary)] hover:bg-[var(--hover)] hover:text-[var(--text-primary)] transition-all"
                   >
-                    <PawPrint size={18} className="shrink-0" />
+                    <PantherMissionGlyph size={18} className="shrink-0" />
                     {t('nav.newTask')}
                   </Link>
                 </div>

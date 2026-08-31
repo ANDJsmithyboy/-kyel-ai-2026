@@ -86,7 +86,8 @@ export default function NkyelAppShell({
     }
   };
 
-  const isPublicClosed = false;
+  const isPublicClosed = betaStatus?.state === 'PUBLIC_CLOSED' && !betaStatus?.user_enrollment?.enrolled;
+  const isCapacityReached = betaStatus?.state === 'CAPACITY_REACHED' && !betaStatus?.user_enrollment?.enrolled;
 
   return (
     <div className="nkyel-shell nkyel-monochrome-shell antialiased">
@@ -130,11 +131,22 @@ export default function NkyelAppShell({
       />
 
       {/* Écran de Fin de Bêta post-24 août 06h00 Libreville */}
-      {isPublicClosed && (
+      {isPublicClosed && !dismissClosedScreen && (
         <BetaClosedScreen
           onOpenFeedback={() => setFeedbackOpen(true)}
           onViewHistory={() => setDismissClosedScreen(true)}
           onJoinWaitlist={() => window.location.href = '/waitlist'}
+          mode="closed"
+        />
+      )}
+
+      {/* Écran Bêta Complète (100 places attribuées) */}
+      {isCapacityReached && !dismissClosedScreen && (
+        <BetaClosedScreen
+          onOpenFeedback={() => {}}
+          onViewHistory={() => {}}
+          onJoinWaitlist={() => window.location.href = '/waitlist'}
+          mode="full"
         />
       )}
     </div>

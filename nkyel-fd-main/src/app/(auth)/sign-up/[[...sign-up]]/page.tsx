@@ -1,51 +1,35 @@
-/**
- * Ñkyel AI — Sign-Up Page (Clerk Authentication Engine)
- * SmartANDJ AI Technologies · Founder: Daniel Jonathan ANDJ
- */
+/* Ñkyel AI · Sign-Up Page · SmartANDJ AI Technologies
+   Fondateur : Daniel Jonathan ANDJ */
 
-'use client';
-
-import React from 'react';
 import { SignUp } from '@clerk/nextjs';
 import AuthShell from '@/components/auth/AuthShell';
 
 export default function SignUpPage() {
   return (
     <AuthShell mode="sign-up">
-      <div className="w-full flex justify-center">
-        <SignUp
-          routing="path"
-          path="/sign-up"
-          signInUrl="/sign-in"
-          fallbackRedirectUrl="/chat"
-          appearance={{
-            elements: {
-              rootBox: 'w-full',
-              cardBox: 'w-full shadow-none border-0 bg-transparent',
-              card: 'w-full shadow-none p-0 border-0 bg-transparent',
-              header: 'hidden',
-              headerTitle: 'hidden',
-              headerSubtitle: 'hidden',
-              footer: 'hidden',
-              footerAction: 'hidden',
-              formButtonPrimary:
-                'w-full h-11 rounded-2xl bg-[var(--accent)] text-[var(--accent-fg)] hover:opacity-90 font-semibold text-sm shadow-sm transition-all active:scale-[0.98] touch-manipulation min-h-[44px]',
-              formFieldInput:
-                'w-full h-11 px-4 rounded-2xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] text-sm outline-none transition-all touch-manipulation',
-              formFieldLabel: 'text-xs font-semibold text-[var(--text-secondary)]',
-              socialButtonsBlockButton:
-                'w-full h-11 px-4 rounded-2xl bg-[var(--surface)] border border-[var(--border)] hover:bg-[var(--hover)] hover:border-[var(--border-strong)] text-[var(--text-primary)] font-medium text-xs flex items-center justify-center gap-2.5 transition-all shadow-sm active:scale-[0.98] touch-manipulation min-h-[44px]',
-              socialButtonsBlockButtonText: 'text-xs font-medium text-[var(--text-primary)]',
-              dividerLine: 'bg-[var(--border)]',
-              dividerText: 'text-[10px] font-mono text-[var(--text-tertiary)] uppercase bg-transparent px-3',
-              identityPreview: 'rounded-2xl border border-[var(--border)] bg-[var(--surface-raised)] p-3 text-[var(--text-primary)]',
-              formFieldSuccessText: 'text-xs text-[var(--success)]',
-              formFieldErrorText: 'text-xs text-[var(--danger)]',
-              alert: 'rounded-2xl border border-[var(--danger)] bg-red-500/10 text-[var(--danger)] text-xs p-3.5',
-            },
-          }}
-        />
-      </div>
+      <SignUp
+        appearance={{
+          elements: {
+            rootBox: 'w-full',
+            card: 'bg-transparent shadow-none border-none w-full',
+            headerTitle: 'text-[var(--text-primary)] font-semibold',
+            headerSubtitle: 'text-[var(--text-secondary)]',
+            formButtonPrimary:
+              'bg-[#18181b] hover:bg-[#27272a] text-white rounded-[24px] h-[48px] font-medium transition-all',
+            formFieldInput:
+              'bg-[var(--bg-elevated)] border-[var(--border)] text-[var(--text-primary)] rounded-xl',
+            footerActionLink: 'text-[var(--accent)] hover:text-[var(--accent-hover)]',
+            socialButtonsBlockButton:
+              'bg-[var(--bg-elevated)] border-[var(--border)] text-[var(--text-primary)] rounded-xl hover:bg-[var(--bg-hover)]',
+            dividerLine: 'bg-[var(--border)]',
+            dividerText: 'text-[var(--text-tertiary)]',
+          },
+        }}
+        routing="path"
+        path="/sign-up"
+        signInUrl="/sign-in"
+        forceRedirectUrl="/chat"
+      />
     </AuthShell>
   );
 }
