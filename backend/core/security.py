@@ -276,11 +276,15 @@ async def _verify_clerk_token(token: str) -> dict:
 
     payload = jwt.decode(token, signing_key, **decode_kwargs)
 
-    # 4. Validation explicite de l'authorized party (azp)
+    # 4. Validation explicite et stricte de l'authorized party (azp)
     authorized_parties = settings.clerk_authorized_parties_list
     if authorized_parties:
         azp = payload.get("azp")
-        if azp and azp not in authorized_parties:
+        if not azp:
+            raise jwt.InvalidTokenError(
+                "Token Clerk rejeté: claim 'azp' (authorized party) absent."
+            )
+        if azp not in authorized_parties:
             raise jwt.InvalidTokenError(
                 f"Token azp '{azp}' non autorisé. Origines autorisées: {authorized_parties}"
             )

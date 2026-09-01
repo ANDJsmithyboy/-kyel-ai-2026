@@ -122,8 +122,19 @@ async def test_unauthorized_azp(rsa_keypair):
 
 
 @pytest.mark.asyncio
-async def test_invalid_algorithm_rejection():
-    """Vérifie qu'un algorithme non RS256 (ex: HS256) est strictement rejeté."""
-    token = jwt.encode({"sub": "user_spoof"}, "fake-secret", algorithm="HS256", headers={"kid": "spoof_kid"})
-    with pytest.raises(jwt.InvalidAlgorithmError):
-        await _verify_clerk_token(token)
+async def test_missing_azp_rejection(rsa_keypair):
+    """Vérifie qu'un JWT sans claim azp est strictement rejeté lorsque authorized_parties est configuré."""
+    now = int(time.time())
+    payload = {
+        "sub": "user_no_azp",
+        "iss": settings.clerk_issuer,
+        # "azp" omis intentionnellement
+        "iat": now,
+        "exp": now + 3600,
+    }
+    token = create_token(payload, rsa_keypair["private_pem"], kid=rsa_keypair["kid"])
+
+    with patch.object(ClerkJWKSManager, "get_signing_key", return_value=rsa_keypair["public_pem"]):
+        with pytest.raises(jwt.InvalidTokenError, match="claim 'azp' .* absent"):
+            await _verify_clerk_token(token)
+
