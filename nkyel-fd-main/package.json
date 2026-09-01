@@ -5,6 +5,7 @@
   "description": "Ñkyel AI — An autonomous agent whose work becomes a living, verifiable, user-editable visual workspace",
   "scripts": {
     "dev": "next dev --port 3000",
+    "prebuild": "node scripts/check-next-auth-entry.mjs",
     "build": "next build --webpack",
     "start": "next start --port 3000",
     "lint": "next lint"
