@@ -4,6 +4,8 @@ Neon PostgreSQL async via SQLAlchemy 2.0 + asyncpg.
 Fondateur : Daniel Jonathan ANDJ
 """
 
+from collections.abc import AsyncGenerator
+
 from sqlalchemy.ext.asyncio import (
     AsyncSession,
     async_sessionmaker,
@@ -12,7 +14,7 @@ from sqlalchemy.ext.asyncio import (
 from core.config import settings
 
 # ── Engine async Neon PostgreSQL ─────────────────────────────
-db_url = str(settings.database_url or "").strip().strip('"\'')
+db_url = (settings.database_url or "").strip().strip('"\'')
 if db_url.startswith("postgresql://"):
     db_url = db_url.replace("postgresql://", "postgresql+asyncpg://", 1)
 
@@ -42,7 +44,7 @@ async_session = async_sessionmaker(
 )
 
 
-async def get_db() -> AsyncSession:
+async def get_db() -> AsyncGenerator[AsyncSession, None]:
     """Dépendance FastAPI pour obtenir une session DB."""
     async with async_session() as session:
         try:
