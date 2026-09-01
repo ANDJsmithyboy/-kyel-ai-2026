@@ -38,16 +38,22 @@ class Settings(BaseSettings):
 
     # ── Clerk Auth (JWKS RS256) ─────────────────────────────
     clerk_domain: str = "clerk.smartandjai.com"
+    clerk_frontend_api_url: str = "https://clerk.smartandjai.com"
+    clerk_backend_api_url: str = "https://api.clerk.com"
+    clerk_jwks_url_override: str = ""
+    clerk_issuer: str = "https://clerk.smartandjai.com"
+    clerk_jwt_key: str = ""  # Optional PEM public key for offline / fast fallback RS256 verification
     clerk_secret_key: str = ""
     clerk_publishable_key: str = ""
     clerk_webhook_secret: str = ""
-    clerk_authorized_parties: str = ""  # comma-separated: "https://nkyel.ai,http://localhost:3000"
+    clerk_authorized_parties: str = "https://nkyel.smartandjai.com,https://demo.nkyel.smartandjai.com,https://nkyel-fd.vercel.app,http://localhost:3000"
+    frontend_url: str = "https://nkyel.smartandjai.com"
 
     # ── Groq (AURATA / SONAR & Pool) ────────────────────────
     groq_api_key: str = ""
     groq_api_keys: str = ""
-    aurata_model: str = "openai/gpt-oss-120b"
-    sonar_model: str = "groq/compound"
+    aurata_model: str = "llama-3.3-70b-versatile"
+    sonar_model: str = "llama-3.1-8b-instant"
 
     # ── DeerFlow Agent (ONYX / BLACK_PANTHER) ───────────────
     deerflow_url: str = "http://localhost:8080"
@@ -170,6 +176,8 @@ class Settings(BaseSettings):
 
     @property
     def clerk_jwks_url(self) -> str:
+        if self.clerk_jwks_url_override:
+            return self.clerk_jwks_url_override
         return f"https://{self.clerk_domain}/.well-known/jwks.json"
 
     @property

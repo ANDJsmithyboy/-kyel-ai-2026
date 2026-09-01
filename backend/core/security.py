@@ -6,6 +6,8 @@ Fondateur : Daniel Jonathan ANDJ
 """
 
 import os
+import time
+import asyncio
 import hmac
 import hashlib
 import logging
@@ -13,6 +15,7 @@ from datetime import datetime, timedelta, timezone
 from typing import Optional, Dict, Any, List
 from functools import lru_cache
 
+import httpx
 import jwt
 from fastapi import Depends, HTTPException, status, Request
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
@@ -134,42 +137,152 @@ async def _upsert_user_from_clerk(clerk_user_id: str, email: str, name: str = ""
 
 
 # ══════════════════════════════════════════════════════════════
-# CLERK RS256 JWKS Verification (via PyJWT + JWKS endpoint)
+# CLERK RS256 JWKS Verification (Cached + Rotation + Strict Claims)
 # ══════════════════════════════════════════════════════════════
 
-@lru_cache(maxsize=1)
-def _get_jwks_client():
-    """Retourne un PyJWKClient pour les clés JWKS Clerk."""
-    return jwt.PyJWKClient(settings.clerk_jwks_url, cache_keys=True)
+class ClerkJWKSManager:
+    """
+    Gestionnaire robuste de JWKS Clerk avec cache mémoire, TTL,
+    rotation automatique des clés et gestion des erreurs/timeouts.
+    """
+    def __init__(self, jwks_url: str, ttl_seconds: int = 3600, timeout: float = 5.0):
+        self.jwks_url = jwks_url
+        self.ttl_seconds = ttl_seconds
+        self.timeout = timeout
+        self._keys: Dict[str, Any] = {}
+        self._last_fetched: float = 0.0
+        self._lock = asyncio.Lock()
+
+    async def _fetch_jwks(self) -> Dict[str, Any]:
+        """Télécharge le JWKS public depuis l'URL Clerk."""
+        async with httpx.AsyncClient(timeout=self.timeout) as client:
+            resp = await client.get(self.jwks_url)
+            resp.raise_for_status()
+            data = resp.json()
+            jwk_set = jwt.PyJWKSet.from_dict(data)
+            new_keys = {}
+            for jwk in jwk_set.keys:
+                new_keys[jwk.key_id] = jwk.key
+            return new_keys
+
+    async def get_signing_key(self, kid: str) -> Any:
+        """
+        Récupère la clé de signature correspondant au kid.
+        Si la clé n'est pas trouvée ou si le cache a expiré,
+        rafraîchit le JWKS une fois (rotation de clé Clerk).
+        """
+        now = time.time()
+        # 1. Vérifier si la clé est déjà en cache valide
+        if kid in self._keys and (now - self._last_fetched < self.ttl_seconds):
+            return self._keys[kid]
+
+        # 2. Clé manquante ou cache expiré -> rafraîchir sous lock
+        async with self._lock:
+            # Re-check après acquisition du lock
+            now = time.time()
+            if kid in self._keys and (now - self._last_fetched < self.ttl_seconds):
+                return self._keys[kid]
+
+            try:
+                logger.info(f"🔄 Rafraîchissement JWKS Clerk depuis {self.jwks_url}...")
+                new_keys = await self._fetch_jwks()
+                self._keys = new_keys
+                self._last_fetched = time.time()
+            except Exception as e:
+                logger.error(f"❌ Échec de récupération JWKS Clerk ({self.jwks_url}): {e}")
+                if kid in self._keys:
+                    return self._keys[kid]
+                raise
+
+            if kid not in self._keys:
+                raise jwt.InvalidTokenError(
+                    f"Clé de signature Clerk 'kid={kid}' introuvable dans le JWKS."
+                )
+
+            return self._keys[kid]
+
+
+_jwks_manager: Optional[ClerkJWKSManager] = None
+
+
+def _get_clerk_jwks_manager() -> ClerkJWKSManager:
+    global _jwks_manager
+    if _jwks_manager is None or _jwks_manager.jwks_url != settings.clerk_jwks_url:
+        _jwks_manager = ClerkJWKSManager(settings.clerk_jwks_url, ttl_seconds=3600, timeout=5.0)
+    return _jwks_manager
 
 
 async def _verify_clerk_token(token: str) -> dict:
     """
-    Vérifie un JWT Clerk RS256 en utilisant les clés JWKS publiques.
-    Retourne le payload décodé.
+    Vérifie un JWT Clerk de manière stricte:
+    1. Algorithme RS256 obligatoire
+    2. Lookup kid & rotation automatique des clés JWKS
+    3. Option B (clerk_jwt_key) en fallback/mode offline
+    4. Validation stricte de exp, nbf, iat
+    5. Validation de iss (Issuer)
+    6. Validation de azp (Authorized Party)
     """
-    client = _get_jwks_client()
-    signing_key = client.get_signing_key_from_jwt(token)
+    # 1. Décoder le header sans vérifier pour inspecter alg et kid
+    try:
+        unverified_header = jwt.get_unverified_header(token)
+    except Exception as e:
+        raise jwt.InvalidTokenError(f"Header JWT malformé: {e}")
 
-    # Build decode options
-    decode_options = {"verify_aud": False}
+    alg = unverified_header.get("alg")
+    if alg != "RS256":
+        raise jwt.InvalidAlgorithmError(
+            f"Algorithme JWT non autorisé: '{alg}'. Seul RS256 est accepté."
+        )
 
-    # If authorized_parties is configured, verify azp claim
+    kid = unverified_header.get("kid")
+
+    # 2. Obtenir la clé publique de signature
+    signing_key = None
+
+    # Option B: Clé PEM statique configurée (fallback / local)
+    if settings.clerk_jwt_key:
+        try:
+            pem_key = settings.clerk_jwt_key.strip()
+            if not pem_key.startswith("-----BEGIN"):
+                pem_key = f"-----BEGIN PUBLIC KEY-----\n{pem_key}\n-----END PUBLIC KEY-----"
+            signing_key = pem_key
+        except Exception as e:
+            logger.warning(f"⚠️ Erreur parsing clerk_jwt_key: {e}")
+
+    # Option A: JWKS dynamique (recommandé en production)
+    if not signing_key:
+        if not kid:
+            raise jwt.InvalidTokenError("Token JWT Clerk sans 'kid' dans le header.")
+        manager = _get_clerk_jwks_manager()
+        signing_key = await manager.get_signing_key(kid)
+
+    # 3. Validation du token avec vérification exp, nbf, iss, azp
+    decode_kwargs: Dict[str, Any] = {
+        "algorithms": ["RS256"],
+        "options": {
+            "verify_signature": True,
+            "verify_exp": True,
+            "verify_nbf": True,
+            "verify_iat": True,
+            "verify_aud": False,  # Clerk n'inclut pas aud par défaut
+        },
+        "leeway": 10,  # 10 secondes de tolérance horloge
+    }
+
+    # Validation de l'issuer si configuré
+    if settings.clerk_issuer:
+        decode_kwargs["issuer"] = settings.clerk_issuer
+        decode_kwargs["options"]["verify_iss"] = True
+
+    payload = jwt.decode(token, signing_key, **decode_kwargs)
+
+    # 4. Validation explicite de l'authorized party (azp)
     authorized_parties = settings.clerk_authorized_parties_list
-
-    payload = jwt.decode(
-        token,
-        signing_key.key,
-        algorithms=["RS256"],
-        options=decode_options,
-    )
-
-    # Manual azp (authorized party) verification if configured
     if authorized_parties:
-        azp = payload.get("azp", "")
+        azp = payload.get("azp")
         if azp and azp not in authorized_parties:
             raise jwt.InvalidTokenError(
-                f"Token azp '{azp}' not in authorized parties: {authorized_parties}"
+                f"Token azp '{azp}' non autorisé. Origines autorisées: {authorized_parties}"
             )
 
     return payload
