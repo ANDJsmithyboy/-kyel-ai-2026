@@ -12,12 +12,13 @@ from sqlalchemy.ext.asyncio import (
 from core.config import settings
 
 # ── Engine async Neon PostgreSQL ─────────────────────────────
-db_url = settings.database_url
+db_url = str(settings.database_url or "").strip().strip('"\'')
 if db_url.startswith("postgresql://"):
     db_url = db_url.replace("postgresql://", "postgresql+asyncpg://", 1)
 
 # Nettoyage des paramètres libpq incompatibles avec asyncpg
 db_url = db_url.replace("sslmode=require", "ssl=require").replace("channel_binding=require", "")
+db_url = db_url.replace("&&", "&").replace("?&", "?")
 if db_url.endswith("&") or db_url.endswith("?"):
     db_url = db_url[:-1]
 
@@ -27,7 +28,7 @@ engine = create_async_engine(
     pool_size=5,
     max_overflow=10,
     pool_pre_ping=True,
-    connect_args={"timeout": 3.0} if "asyncpg" in db_url else {},
+    connect_args={"timeout": 5.0} if "asyncpg" in db_url else {},
 )
 
 
