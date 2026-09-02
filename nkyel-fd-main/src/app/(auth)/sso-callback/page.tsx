@@ -55,21 +55,38 @@ export default function SSOCallbackPage() {
           <p style={{ margin: '0 0 16px', color: '#71717a', fontSize: '14px' }}>
             {errorInfo || 'The authentication callback could not be completed.'}
           </p>
-          <a
-            href="/sign-in"
-            style={{
-              display: 'inline-block',
-              padding: '10px 24px',
-              borderRadius: '12px',
-              background: '#18181b',
-              color: '#fff',
-              fontSize: '14px',
-              fontWeight: 500,
-              textDecoration: 'none',
-            }}
-          >
-            Return to Sign In
-          </a>
+          <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap' }}>
+            <a
+              href="/sign-up"
+              style={{
+                display: 'inline-block',
+                padding: '10px 24px',
+                borderRadius: '12px',
+                background: '#18181b',
+                color: '#fff',
+                fontSize: '14px',
+                fontWeight: 500,
+                textDecoration: 'none',
+              }}
+            >
+              Create an Account (Sign Up)
+            </a>
+            <a
+              href="/sign-in"
+              style={{
+                display: 'inline-block',
+                padding: '10px 24px',
+                borderRadius: '12px',
+                background: '#f4f4f5',
+                color: '#18181b',
+                fontSize: '14px',
+                fontWeight: 500,
+                textDecoration: 'none',
+              }}
+            >
+              Back to Sign In
+            </a>
+          </div>
         </div>
       </div>
     );
@@ -81,6 +98,7 @@ export default function SSOCallbackPage() {
         <AuthenticateWithRedirectCallback
           signInFallbackRedirectUrl="/chat"
           signUpFallbackRedirectUrl="/chat"
+          continueSignUpUrl="/sign-up"
         />
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', marginTop: '16px' }}>
           <div className="nkyel-spinner" />

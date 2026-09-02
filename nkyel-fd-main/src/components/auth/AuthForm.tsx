@@ -11,7 +11,7 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useSignIn, useSignUp } from '@clerk/nextjs';
+import { useSignIn, useSignUp, useClerk } from '@clerk/nextjs';
 
 interface AuthFormProps {
   mode: 'sign-in' | 'sign-up';
@@ -104,6 +104,7 @@ function MailIcon({ className = 'w-5 h-5 text-gray-400' }: { className?: string 
 
 export default function AuthForm({ mode, locale, onStepChange }: AuthFormProps) {
   const router = useRouter();
+  const clerk = useClerk();
   const { isLoaded: isSignInLoaded, signIn, setActive: setSignInActive } = useSignIn();
   const { isLoaded: isSignUpLoaded, signUp, setActive: setSignUpActive } = useSignUp();
 
@@ -129,29 +130,43 @@ export default function AuthForm({ mode, locale, onStepChange }: AuthFormProps) 
     setGoogleLoading(true);
 
     try {
-      if (mode === 'sign-in') {
-        if (!isSignInLoaded || !signIn) {
-          setErrorMsg(t.errors.generic);
-          setGoogleLoading(false);
-          return;
-        }
-        await signIn.authenticateWithRedirect({
+      // 1. Primary: Universal Clerk authenticateWithRedirect
+      if (clerk && typeof (clerk as any).authenticateWithRedirect === 'function') {
+        await (clerk as any).authenticateWithRedirect({
           strategy: 'oauth_google',
           redirectUrl: '/sso-callback',
           redirectUrlComplete: '/chat',
+          continueSignUpUrl: '/sign-up',
         });
-      } else {
-        if (!isSignUpLoaded || !signUp) {
-          setErrorMsg(t.errors.generic);
-          setGoogleLoading(false);
-          return;
-        }
-        await signUp.authenticateWithRedirect({
-          strategy: 'oauth_google',
-          redirectUrl: '/sso-callback',
-          redirectUrlComplete: '/chat',
-        });
+        return;
       }
+
+      // 2. Secondary: signIn or signUp hook if available
+      const activeAuth = mode === 'sign-up' ? signUp : signIn;
+      if (activeAuth && typeof (activeAuth as any).authenticateWithRedirect === 'function') {
+        await (activeAuth as any).authenticateWithRedirect({
+          strategy: 'oauth_google',
+          redirectUrl: '/sso-callback',
+          redirectUrlComplete: '/chat',
+          continueSignUpUrl: '/sign-up',
+        });
+        return;
+      }
+
+      // 3. Fallback: window.Clerk
+      const globalClerk = typeof window !== 'undefined' ? (window as any)?.Clerk : null;
+      if (globalClerk && typeof globalClerk.authenticateWithRedirect === 'function') {
+        await globalClerk.authenticateWithRedirect({
+          strategy: 'oauth_google',
+          redirectUrl: '/sso-callback',
+          redirectUrlComplete: '/chat',
+          continueSignUpUrl: '/sign-up',
+        });
+        return;
+      }
+
+      setErrorMsg(locale === 'fr-FR' ? "Initialisation du service en cours, veuillez recliquer..." : "Service initializing, please click again...");
+      setGoogleLoading(false);
     } catch (err: any) {
       // Structured Clerk error logging (safe for console, not for UI)
       const clerkError = err?.errors?.[0];
@@ -162,7 +177,12 @@ export default function AuthForm({ mode, locale, onStepChange }: AuthFormProps) 
         longMessage: clerkError?.longMessage,
         meta: clerkError?.meta,
       });
-      const msg = clerkError?.longMessage || clerkError?.message || err?.message || t.errors.generic;
+      let msg = clerkError?.longMessage || clerkError?.message || err?.message || t.errors.generic;
+      if (clerkError?.code === 'external_account_not_found') {
+        msg = locale === 'fr-FR'
+          ? "Aucun compte associé à cette adresse Google. Veuillez d'abord vous inscrire."
+          : "No account found for this Google email. Please sign up first.";
+      }
       setErrorMsg(msg);
       setGoogleLoading(false);
     }
@@ -181,38 +201,54 @@ export default function AuthForm({ mode, locale, onStepChange }: AuthFormProps) 
 
     try {
       if (mode === 'sign-up') {
-        if (!isSignUpLoaded || !signUp) {
-          setErrorMsg(t.errors.generic);
+        let activeSignUp = signUp;
+        if (!activeSignUp || typeof (activeSignUp as any).create !== 'function') {
+          for (let i = 0; i < 8 && (!activeSignUp || typeof (activeSignUp as any).create !== 'function'); i++) {
+            await new Promise(r => setTimeout(r, 250));
+            activeSignUp = signUp || (clerk as any)?.client?.signUp;
+          }
+        }
+        if (!activeSignUp || typeof (activeSignUp as any).create !== 'function') {
+          setErrorMsg(locale === 'fr-FR' ? "Initialisation du service en cours, veuillez recliquer..." : "Service initializing, please click again...");
           setLoading(false);
           return;
         }
 
         // Start sign up flow
-        await signUp.create({
+        await activeSignUp.create({
           emailAddress: email.trim(),
         });
 
         // Send email verification code
-        await signUp.prepareEmailAddressVerification({
+        await activeSignUp.prepareEmailAddressVerification({
           strategy: 'email_code',
         });
 
         updateStep('verify_email_code');
       } else {
         // Sign-in flow
-        if (!isSignInLoaded || !signIn) {
-          setErrorMsg(t.errors.generic);
+        let activeSignIn = signIn;
+        if (!activeSignIn || typeof (activeSignIn as any).create !== 'function') {
+          for (let i = 0; i < 8 && (!activeSignIn || typeof (activeSignIn as any).create !== 'function'); i++) {
+            await new Promise(r => setTimeout(r, 250));
+            activeSignIn = signIn || (clerk as any)?.client?.signIn;
+          }
+        }
+        if (!activeSignIn || typeof (activeSignIn as any).create !== 'function') {
+          setErrorMsg(locale === 'fr-FR' ? "Initialisation du service en cours, veuillez recliquer..." : "Service initializing, please click again...");
           setLoading(false);
           return;
         }
 
-        const res = await signIn.create({
+        const res = await activeSignIn.create({
           identifier: email.trim(),
         });
 
         if (res.status === 'complete') {
           if (setSignInActive) {
             await setSignInActive({ session: res.createdSessionId });
+          } else if (clerk && (clerk as any).setActive) {
+            await (clerk as any).setActive({ session: res.createdSessionId });
           }
           router.push('/chat');
           return;
@@ -224,7 +260,7 @@ export default function AuthForm({ mode, locale, onStepChange }: AuthFormProps) 
           );
 
           if (emailCodeFactor) {
-            await signIn.prepareFirstFactor({
+            await activeSignIn.prepareFirstFactor({
               strategy: 'email_code',
               emailAddressId: (emailCodeFactor as any).emailAddressId,
             });
@@ -252,7 +288,20 @@ export default function AuthForm({ mode, locale, onStepChange }: AuthFormProps) 
         longMessage: clerkError?.longMessage,
         meta: clerkError?.meta,
       });
-      const msg = clerkError?.longMessage || clerkError?.message || err?.message || t.errors.generic;
+      let msg = clerkError?.longMessage || clerkError?.message || err?.message || t.errors.generic;
+      if (clerkError?.code === 'form_identifier_not_found') {
+        msg = locale === 'fr-FR'
+          ? "Aucun compte trouvé avec cet email. Veuillez d'abord vous inscrire."
+          : "No account found with this email. Please sign up first.";
+      } else if (clerkError?.code === 'form_identifier_exists') {
+        msg = locale === 'fr-FR'
+          ? "Un compte existe déjà avec cet email. Veuillez vous connecter."
+          : "An account already exists with this email. Please sign in.";
+      } else if (clerkError?.code === 'captcha_missing_token') {
+        msg = locale === 'fr-FR'
+          ? "Vérification de sécurité requise. Veuillez rafraîchir la page."
+          : "Security verification required. Please refresh the page.";
+      }
       setErrorMsg(msg);
     } finally {
       setLoading(false);
@@ -455,6 +504,9 @@ export default function AuthForm({ mode, locale, onStepChange }: AuthFormProps) 
                 <span>{t.continueBtn}</span>
               )}
             </button>
+
+            {/* Clerk Turnstile Bot Protection container for custom flows */}
+            <div id="clerk-captcha" />
           </form>
 
           {/* OR Divider */}
