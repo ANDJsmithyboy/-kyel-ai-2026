@@ -3,31 +3,32 @@
  * SmartANDJ AI Technologies · Founder: Daniel Jonathan ANDJ
  *
  * PRODUCTION CONTRACT: On every Clerk login, sync user to Neon.
- * Creates user + default workspace if first login.
- * Loads settings from Neon → Zustand on mount.
+ * Creates user + preferences if first login.
+ * Uses centralized authenticated-fetch for Bearer token handling.
  */
 
 'use client';
 
 import { useEffect, useRef } from 'react';
-import { useUser, useAuth } from '@clerk/nextjs';
-
-const API_BASE = (process.env.NEXT_PUBLIC_API_BASE_URL || process.env.NEXT_PUBLIC_API_URL) || '';
+import { useUser } from '@clerk/nextjs';
+import { useAuthenticatedFetch } from '@/lib/authenticated-fetch';
 
 interface SyncResult {
-  id: string;
-  clerk_user_id: string;
-  workspace_id: string;
-  is_new: boolean;
+  status: string;
+  user_id: string;
+  clerk_id: string;
+  email: string;
+  role: string;
+  is_admin: boolean;
 }
 
 /**
  * Call this hook once in your root layout or app shell.
- * It syncs Clerk → Neon on login and hydrates the settings store.
+ * It syncs Clerk → Neon on login via /api/auth/sync-clerk-user.
  */
 export function useNeonSync() {
   const { user, isLoaded, isSignedIn } = useUser();
-  const { getToken } = useAuth();
+  const { authenticatedFetch } = useAuthenticatedFetch();
   const synced = useRef(false);
 
   useEffect(() => {
@@ -35,50 +36,46 @@ export function useNeonSync() {
 
     const doSync = async () => {
       try {
-        const token = await getToken();
-        if (!token) return;
-
-        // 1. Sync user to Neon
-        const syncRes = await fetch(`${API_BASE}/api/v1/settings/sync`, {
+        // Sync Clerk user to Neon PostgreSQL via FastAPI
+        // Route: POST /api/auth/sync-clerk-user
+        // Body matches backend SyncClerkUserRequest schema
+        const syncRes = await authenticatedFetch('/api/auth/sync-clerk-user', {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
           body: JSON.stringify({
-            clerk_user_id: user.id,
-            email: user.primaryEmailAddress?.emailAddress,
-            display_name: user.fullName || user.firstName || 'Utilisateur',
-            avatar_url: user.imageUrl,
+            clerk_id: user.id,
+            email: user.primaryEmailAddress?.emailAddress || '',
+            name: user.fullName || user.firstName || 'Utilisateur',
+            avatar_url: user.imageUrl || '',
           }),
         });
 
         if (syncRes.ok) {
           const data: SyncResult = await syncRes.json();
-          
-          // Store workspace_id for other stores to use
+
+          // Store user_id for other stores to use
           if (typeof window !== 'undefined') {
-            // This is the ONLY acceptable localStorage use:
-            // caching the workspace_id to avoid an extra API call.
-            // The actual data lives in Neon.
-            window.__nkyel_workspace_id = data.workspace_id;
-            window.__nkyel_user_id = data.id;
+            window.__nkyel_user_id = data.user_id;
           }
 
           console.log(
-            `[NeonSync] ${data.is_new ? 'Nouvel utilisateur créé' : 'Utilisateur synchronisé'}`,
-            { userId: data.id, workspaceId: data.workspace_id }
+            `[NeonSync] Utilisateur synchronisé: ${data.status}`,
+            { userId: data.user_id, role: data.role, isAdmin: data.is_admin }
           );
+        } else {
+          const errBody = await syncRes.json().catch(() => ({}));
+          console.error('[NeonSync] Sync failed:', syncRes.status, errBody);
         }
 
         synced.current = true;
       } catch (err) {
         console.error('[NeonSync] Erreur de synchronisation:', err);
+        // Mark as synced to avoid infinite retry loops
+        synced.current = true;
       }
     };
 
     doSync();
-  }, [isLoaded, isSignedIn, user, getToken]);
+  }, [isLoaded, isSignedIn, user, authenticatedFetch]);
 }
 
 // Type augmentation for window

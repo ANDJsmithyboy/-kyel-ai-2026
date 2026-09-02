@@ -153,8 +153,16 @@ export default function AuthForm({ mode, locale, onStepChange }: AuthFormProps) 
         });
       }
     } catch (err: any) {
-      console.error('Google auth error:', err);
-      const msg = err?.errors?.[0]?.longMessage || err?.errors?.[0]?.message || err?.message || t.errors.generic;
+      // Structured Clerk error logging (safe for console, not for UI)
+      const clerkError = err?.errors?.[0];
+      console.error('[Ñkyel Auth] Google OAuth error:', {
+        step: 'google_redirect',
+        code: clerkError?.code || 'unknown',
+        message: clerkError?.message || err?.message,
+        longMessage: clerkError?.longMessage,
+        meta: clerkError?.meta,
+      });
+      const msg = clerkError?.longMessage || clerkError?.message || err?.message || t.errors.generic;
       setErrorMsg(msg);
       setGoogleLoading(false);
     }
@@ -236,8 +244,15 @@ export default function AuthForm({ mode, locale, onStepChange }: AuthFormProps) 
         }
       }
     } catch (err: any) {
-      console.error('Email auth initiation error:', err);
-      const msg = err?.errors?.[0]?.longMessage || err?.errors?.[0]?.message || err?.message || t.errors.generic;
+      const clerkError = err?.errors?.[0];
+      console.error('[Ñkyel Auth] Email initiation error:', {
+        step: mode === 'sign-up' ? 'signup_create' : 'signin_create',
+        code: clerkError?.code || 'unknown',
+        message: clerkError?.message || err?.message,
+        longMessage: clerkError?.longMessage,
+        meta: clerkError?.meta,
+      });
+      const msg = clerkError?.longMessage || clerkError?.message || err?.message || t.errors.generic;
       setErrorMsg(msg);
     } finally {
       setLoading(false);
@@ -289,8 +304,15 @@ export default function AuthForm({ mode, locale, onStepChange }: AuthFormProps) 
         }
       }
     } catch (err: any) {
-      console.error('Code verification error:', err);
-      const msg = err?.errors?.[0]?.longMessage || err?.errors?.[0]?.message || err?.message || t.errors.generic;
+      const clerkError = err?.errors?.[0];
+      console.error('[Ñkyel Auth] Code verification error:', {
+        step: 'verify_email_code',
+        code: clerkError?.code || 'unknown',
+        message: clerkError?.message || err?.message,
+        longMessage: clerkError?.longMessage,
+        meta: clerkError?.meta,
+      });
+      const msg = clerkError?.longMessage || clerkError?.message || err?.message || t.errors.generic;
       setErrorMsg(msg);
     } finally {
       setLoading(false);
@@ -325,8 +347,15 @@ export default function AuthForm({ mode, locale, onStepChange }: AuthFormProps) 
         setErrorMsg(t.errors.generic);
       }
     } catch (err: any) {
-      console.error('Password authentication error:', err);
-      const msg = err?.errors?.[0]?.longMessage || err?.errors?.[0]?.message || err?.message || t.errors.generic;
+      const clerkError = err?.errors?.[0];
+      console.error('[Ñkyel Auth] Password auth error:', {
+        step: 'password_attempt',
+        code: clerkError?.code || 'unknown',
+        message: clerkError?.message || err?.message,
+        longMessage: clerkError?.longMessage,
+        meta: clerkError?.meta,
+      });
+      const msg = clerkError?.longMessage || clerkError?.message || err?.message || t.errors.generic;
       setErrorMsg(msg);
     } finally {
       setLoading(false);
@@ -356,7 +385,14 @@ export default function AuthForm({ mode, locale, onStepChange }: AuthFormProps) 
         }
       }
     } catch (err: any) {
-      const msg = err?.errors?.[0]?.longMessage || err?.errors?.[0]?.message || err?.message || t.errors.generic;
+      const clerkError = err?.errors?.[0];
+      console.error('[Ñkyel Auth] Resend code error:', {
+        step: 'resend_code',
+        code: clerkError?.code || 'unknown',
+        message: clerkError?.message || err?.message,
+        longMessage: clerkError?.longMessage,
+      });
+      const msg = clerkError?.longMessage || clerkError?.message || err?.message || t.errors.generic;
       setErrorMsg(msg);
     } finally {
       setLoading(false);
