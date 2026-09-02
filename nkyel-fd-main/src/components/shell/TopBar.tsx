@@ -20,17 +20,28 @@ import ModelSelectorModal from '@/components/composer/ModelSelectorModal';
 import type { ModelMetadata } from '@/lib/modelRegistry';
 import { useWorkspaceStore } from '@/stores/workspace.store';
 import { useChatStore } from '@/stores/chat.store';
+import { useUser } from '@clerk/nextjs';
 
 interface TopBarProps {
   onOpenCapabilities?: () => void;
 }
 
 export default function TopBar({ onOpenCapabilities }: TopBarProps) {
+  const { user } = useUser();
   const engineId = useNkyelModel((state: any) => state.engineId);
   const setEngineId = useNkyelModel((state: any) => state.setEngineId);
   const { isOpen, toggleSidebar } = useSidebar();
   const { currentWorkspace, isLoading: wsLoading } = useWorkspaceStore();
   const { availableProfiles, isProfilesLoading, fetchProfiles } = useChatStore();
+
+  const isSuperAdmin =
+    user?.publicMetadata?.role === 'super_admin' ||
+    currentWorkspace?.plan === 'internal_unlimited' ||
+    user?.emailAddresses?.some((e) =>
+      ['jonathanakarentoutoume@gmail.com', 'smartandjaitechnologies@gmail.com', 'smartandjiatechnologies@gmail.com'].includes(
+        e.emailAddress.toLowerCase()
+      )
+    );
 
   useEffect(() => {
     fetchProfiles();
@@ -216,22 +227,29 @@ export default function TopBar({ onOpenCapabilities }: TopBarProps) {
             </kbd>
           </button>
 
-          {/* Plan Gratuit | Mise à niveau */}
-          <div className="hidden sm:flex items-center gap-1.5 px-3 py-1 rounded-full bg-[var(--surface-raised)] border border-[var(--border)] text-xs text-[var(--text-secondary)]">
-            {wsLoading ? (
-              <span className="w-16 h-3 bg-[var(--border)] rounded animate-pulse" />
-            ) : (
-              <span className="text-[11px] text-[var(--text-tertiary)]">{currentWorkspace?.plan || (isFr ? 'Plan gratuit' : 'Free plan')}</span>
-            )}
-            <span className="text-[10px] text-[var(--border-strong)]">|</span>
-            <button
-              type="button"
-              onClick={() => setIsUpgradeOpen(true)}
-              className="text-[11px] font-semibold text-[var(--accent)] hover:underline"
-            >
-              {isFr ? 'Mise à niveau' : 'Upgrade'}
-            </button>
-          </div>
+          {/* Plan Badge or Super Admin Sovereign Badge */}
+          {isSuperAdmin ? (
+            <div className="hidden sm:flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-xs shadow-xs" title="Founder & Super Admin · Unlimited Internal Access">
+              <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
+              <span className="text-[11px] font-bold text-amber-400 tracking-wider">FOUNDER • SUPER ADMIN</span>
+            </div>
+          ) : (
+            <div className="hidden sm:flex items-center gap-1.5 px-3 py-1 rounded-full bg-[var(--surface-raised)] border border-[var(--border)] text-xs text-[var(--text-secondary)]">
+              {wsLoading ? (
+                <span className="w-16 h-3 bg-[var(--border)] rounded animate-pulse" />
+              ) : (
+                <span className="text-[11px] text-[var(--text-tertiary)]">{currentWorkspace?.plan || (isFr ? 'Plan gratuit' : 'Free plan')}</span>
+              )}
+              <span className="text-[10px] text-[var(--border-strong)]">|</span>
+              <button
+                type="button"
+                onClick={() => setIsUpgradeOpen(true)}
+                className="text-[11px] font-semibold text-[var(--accent)] hover:underline"
+              >
+                {isFr ? 'Mise à niveau' : 'Upgrade'}
+              </button>
+            </div>
+          )}
 
           {/* Credits Chip ✨ */}
           <button

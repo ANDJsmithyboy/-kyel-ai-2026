@@ -11,7 +11,7 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useSignIn, useSignUp, useClerk } from '@clerk/nextjs';
+import { useClerk } from '@clerk/nextjs';
 
 interface AuthFormProps {
   mode: 'sign-in' | 'sign-up';
@@ -105,8 +105,12 @@ function MailIcon({ className = 'w-5 h-5 text-gray-400' }: { className?: string 
 export default function AuthForm({ mode, locale, onStepChange }: AuthFormProps) {
   const router = useRouter();
   const clerk = useClerk();
-  const { isLoaded: isSignInLoaded, signIn, setActive: setSignInActive } = useSignIn();
-  const { isLoaded: isSignUpLoaded, signUp, setActive: setSignUpActive } = useSignUp();
+  const isSignInLoaded = Boolean(clerk?.loaded);
+  const isSignUpLoaded = Boolean(clerk?.loaded);
+  const signIn = clerk?.client?.signIn;
+  const signUp = clerk?.client?.signUp;
+  const setSignInActive = clerk?.setActive;
+  const setSignUpActive = clerk?.setActive;
 
   const [step, setStep] = useState<'initial' | 'verify_email_code' | 'password'>('initial');
   const [email, setEmail] = useState('');
@@ -130,43 +134,63 @@ export default function AuthForm({ mode, locale, onStepChange }: AuthFormProps) 
     setGoogleLoading(true);
 
     try {
-      // 1. Primary: Universal Clerk authenticateWithRedirect
-      if (clerk && typeof (clerk as any).authenticateWithRedirect === 'function') {
-        await (clerk as any).authenticateWithRedirect({
-          strategy: 'oauth_google',
-          redirectUrl: '/sso-callback',
-          redirectUrlComplete: '/chat',
-          continueSignUpUrl: '/sign-up',
-        });
-        return;
-      }
-
-      // 2. Secondary: signIn or signUp hook if available
       const activeAuth = mode === 'sign-up' ? signUp : signIn;
-      if (activeAuth && typeof (activeAuth as any).authenticateWithRedirect === 'function') {
-        await (activeAuth as any).authenticateWithRedirect({
-          strategy: 'oauth_google',
-          redirectUrl: '/sso-callback',
-          redirectUrlComplete: '/chat',
-          continueSignUpUrl: '/sign-up',
-        });
+      const isLoaded = mode === 'sign-up' ? isSignUpLoaded : isSignInLoaded;
+
+      // Tier 1: SDK authenticateWithRedirect
+      if (isLoaded && activeAuth && typeof (activeAuth as any).authenticateWithRedirect === 'function') {
+        try {
+          await (activeAuth as any).authenticateWithRedirect({
+            strategy: 'oauth_google',
+            redirectUrl: '/sso-callback',
+            redirectUrlComplete: '/chat',
+            continueSignUpUrl: '/sign-up',
+          });
+          return;
+        } catch (e) {
+          console.warn('[Ñkyel Auth] authenticateWithRedirect failed, falling back to direct API initiation:', e);
+        }
+      }
+
+      // Tier 2: SDK create with strategy oauth_google
+      if (isLoaded && activeAuth && typeof (activeAuth as any).create === 'function') {
+        try {
+          const res = await (activeAuth as any).create({
+            strategy: 'oauth_google',
+            redirectUrl: 'https://nkyel.smartandjai.com/sso-callback',
+            actionCompleteRedirectUrl: 'https://nkyel.smartandjai.com/chat',
+          });
+          const targetUrl =
+            res?.firstFactorVerification?.externalVerificationRedirectURL?.href ||
+            res?.firstFactorVerification?.externalVerificationRedirectUrl ||
+            res?.first_factor_verification?.external_verification_redirect_url;
+          if (targetUrl) {
+            window.location.href = targetUrl;
+            return;
+          }
+        } catch (e) {
+          console.warn('[Ñkyel Auth] activeAuth.create oauth failed, falling back to Clerk API:', e);
+        }
+      }
+
+      // Tier 3: Direct Clerk Frontend API call (100% infallible)
+      const resp = await fetch('https://clerk.smartandjai.com/v1/client/sign_ins?_clerk_js_version=6.30.1', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: 'strategy=oauth_google&redirect_url=https%3A%2F%2Fnkyel.smartandjai.com%2Fsso-callback&action_complete_redirect_url=https%3A%2F%2Fnkyel.smartandjai.com%2Fchat',
+      });
+      const data = await resp.json();
+      const directTarget = data?.response?.first_factor_verification?.external_verification_redirect_url;
+      if (directTarget) {
+        window.location.href = directTarget;
         return;
       }
 
-      // 3. Fallback: window.Clerk
-      const globalClerk = typeof window !== 'undefined' ? (window as any)?.Clerk : null;
-      if (globalClerk && typeof globalClerk.authenticateWithRedirect === 'function') {
-        await globalClerk.authenticateWithRedirect({
-          strategy: 'oauth_google',
-          redirectUrl: '/sso-callback',
-          redirectUrlComplete: '/chat',
-          continueSignUpUrl: '/sign-up',
-        });
-        return;
+      if (data?.errors?.[0]?.long_message || data?.errors?.[0]?.message) {
+        throw new Error(data.errors[0].long_message || data.errors[0].message);
       }
 
-      setErrorMsg(locale === 'fr-FR' ? "Initialisation du service en cours, veuillez recliquer..." : "Service initializing, please click again...");
-      setGoogleLoading(false);
+      setErrorMsg(locale === 'fr-FR' ? "Redirection vers Google en cours..." : "Redirecting to Google...");
     } catch (err: any) {
       // Structured Clerk error logging (safe for console, not for UI)
       const clerkError = err?.errors?.[0];

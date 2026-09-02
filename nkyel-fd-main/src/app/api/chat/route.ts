@@ -50,7 +50,7 @@ export async function POST(req: Request) {
         try {
           const groqInstance = createGroq({ apiKey: nextGroqKey() });
           const result = streamText({
-            model: groqInstance('llama-3.1-70b-versatile') as any,
+            model: groqInstance('openai/gpt-oss-120b') as any,
             system: SYSTEM_PROMPT,
             messages: convertToCoreMessages(messages),
           });
@@ -94,7 +94,7 @@ export async function POST(req: Request) {
         'Authorization': `Bearer ${groqApiKey}`,
       },
       body: JSON.stringify({
-        model: 'llama-3.1-70b-versatile',
+        model: 'openai/gpt-oss-120b',
         messages: [
           { role: 'system', content: SYSTEM_PROMPT },
           { role: 'user', content: userMessage.trim() },
@@ -107,7 +107,7 @@ export async function POST(req: Request) {
     if (groqRes.ok) {
       const data = await groqRes.json();
       const content = data.choices?.[0]?.message?.content || 'Réponse prête.';
-      return NextResponse.json({ content, model: 'llama-3.1-70b-versatile' });
+      return NextResponse.json({ content, model: 'openai/gpt-oss-120b' });
     }
 
     return NextResponse.json({

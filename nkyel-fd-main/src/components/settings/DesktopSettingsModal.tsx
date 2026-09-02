@@ -79,6 +79,14 @@ export default function DesktopSettingsModal() {
   const { t, uiLocale, setUiLocale, setLocale } = useLanguageStore();
   const isFr = !uiLocale || uiLocale.startsWith('fr');
 
+  const isSuperAdmin =
+    user?.publicMetadata?.role === 'super_admin' ||
+    user?.emailAddresses?.some((e) =>
+      ['jonathanakarentoutoume@gmail.com', 'smartandjaitechnologies@gmail.com', 'smartandjiatechnologies@gmail.com'].includes(
+        e.emailAddress.toLowerCase()
+      )
+    );
+
   const {
     themeMode,
     accent,
@@ -539,10 +547,18 @@ export default function DesktopSettingsModal() {
                       <div className="text-[20px] font-bold text-[var(--text-primary)]">{displayName}</div>
                       <div className="text-[14px] text-[var(--text-secondary)]">{email}</div>
                       <div className="flex items-center gap-2 mt-2">
-                        <span className="px-2.5 py-1 rounded-md bg-[var(--bg-inset)] border border-[var(--border-subtle)] text-[11px] font-semibold text-[#942BC9] uppercase tracking-wider">
-                          Free Plan
+                        {isSuperAdmin ? (
+                          <span className="px-2.5 py-1 rounded-md bg-amber-500/10 border border-amber-500/30 text-[11px] font-bold text-amber-400 uppercase tracking-wider">
+                            FOUNDER • SUPER ADMIN
+                          </span>
+                        ) : (
+                          <span className="px-2.5 py-1 rounded-md bg-[var(--bg-inset)] border border-[var(--border-subtle)] text-[11px] font-semibold text-[#942BC9] uppercase tracking-wider">
+                            Free Plan
+                          </span>
+                        )}
+                        <span className="text-[12px] text-[var(--text-tertiary)]">
+                          {isSuperAdmin ? (isFr ? 'Accès interne illimité' : 'Unlimited Internal Access') : '1 workspace member'}
                         </span>
-                        <span className="text-[12px] text-[var(--text-tertiary)]">1 workspace member</span>
                       </div>
                     </div>
                   </div>
@@ -579,12 +595,27 @@ export default function DesktopSettingsModal() {
                 <div className="space-y-8">
                   <div className="p-6 rounded-2xl bg-[var(--surface-raised)] border border-[var(--border-strong)] flex items-center justify-between">
                     <div>
-                      <h3 className="text-[18px] font-bold text-[var(--text-primary)]">Free Plan</h3>
-                      <p className="text-[13px] text-[var(--text-secondary)] mt-1">Access to core Ñkyel models and features.</p>
+                      <div className="flex items-center gap-2">
+                        <h3 className="text-[18px] font-bold text-[var(--text-primary)]">
+                          {isSuperAdmin ? 'SUPER ADMIN' : 'Free Plan'}
+                        </h3>
+                        {isSuperAdmin && (
+                          <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/15 text-amber-400 border border-amber-500/30 tracking-wide">
+                            UNLIMITED INTERNAL ACCESS
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-[13px] text-[var(--text-secondary)] mt-1">
+                        {isSuperAdmin
+                          ? (isFr ? 'Accès souverain fondateur · Exempt de facturation · Modèles, agents, connecteurs et outils sans restriction.' : 'Founder Sovereign Access · Billing Exempt · Unlimited models, agents, connectors, and tools.')
+                          : (isFr ? 'Accès aux fonctionnalités et modèles de base de Ñkyel.' : 'Access to core Ñkyel models and features.')}
+                      </p>
                     </div>
-                    <button className="px-4 py-2 rounded-xl bg-[var(--accent)] text-[var(--accent-fg)] font-semibold text-[13px] hover:brightness-110 transition-all shadow-md">
-                      Upgrade
-                    </button>
+                    {!isSuperAdmin && (
+                      <button className="px-4 py-2 rounded-xl bg-[var(--accent)] text-[var(--accent-fg)] font-semibold text-[13px] hover:brightness-110 transition-all shadow-md">
+                        Upgrade
+                      </button>
+                    )}
                   </div>
 
                   <div className="grid grid-cols-2 gap-4">

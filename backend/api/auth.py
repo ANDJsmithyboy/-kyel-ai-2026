@@ -99,7 +99,7 @@ async def sync_clerk_user(
         # Mise à jour idempotente des champs manquants
         if not user.clerk_sub:
             user.clerk_sub = body.clerk_id
-        if is_super and str(user.role) != "admin":
+        if is_super and str(user.role) not in ("super_admin", "admin"):
             user.role = "admin"  # type: ignore[assignment]
         await db.flush()
 
@@ -108,8 +108,10 @@ async def sync_clerk_user(
         "user_id": str(user.id),
         "clerk_id": user.clerk_sub,
         "email": user.email,
-        "role": str(user.role),
+        "role": "super_admin" if is_super else str(user.role),
         "is_admin": is_super,
+        "plan": "internal_unlimited" if is_super else "free",
+        "billing_exempt": is_super,
     }
 
 

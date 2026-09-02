@@ -337,8 +337,8 @@ export default function NkyelSidebar() {
                 title="ñkyel — Home"
                 onClick={handleNavClick}
               >
-                <img src="/brand/nkyel-logo-black.png" alt="Ñkyel Logo" className="h-[24px] w-auto object-contain dark:hidden shrink-0" />
-                <img src="/brand/nkyel-logo-white.png" alt="Ñkyel Logo" className="h-[24px] w-auto object-contain hidden dark:block shrink-0" />
+                <img src="/brand/nkyel-logo-black.png" alt="Ñkyel Logo" className="h-[24px] w-auto object-contain nkyel-logo-light shrink-0" />
+                <img src="/brand/nkyel-logo-white.png" alt="Ñkyel Logo" className="h-[24px] w-auto object-contain nkyel-logo-dark shrink-0" />
                 <span
                   className="font-medium truncate tracking-tight text-[26px] select-none text-[var(--text-primary)] leading-none"
                   style={{ letterSpacing: '-0.035em' }}

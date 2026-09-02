@@ -25,6 +25,27 @@
 @import "../styles/tokens.css";
 @import "@xyflow/react/dist/style.css";
 
+@custom-variant dark (&:where(.dark, .dark *, [data-theme="dark"], [data-theme="dark"] *));
+
+/* ── Enforce Authentic Ñkyel Logo Rendering (Never Inverted) ── */
+html.dark .nkyel-logo-light,
+[data-theme="dark"] .nkyel-logo-light {
+  display: none !important;
+}
+html.dark .nkyel-logo-dark,
+[data-theme="dark"] .nkyel-logo-dark {
+  display: block !important;
+}
+
+html.light .nkyel-logo-light,
+[data-theme="light"] .nkyel-logo-light {
+  display: block !important;
+}
+html.light .nkyel-logo-dark,
+[data-theme="light"] .nkyel-logo-dark {
+  display: none !important;
+}
+
 /* ── Legacy variable aliases at root (compat for un-migrated components) ── */
 :root {
   --font-heading: var(--font-sans);

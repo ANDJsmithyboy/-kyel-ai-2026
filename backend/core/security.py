@@ -30,6 +30,7 @@ security_scheme = HTTPBearer(auto_error=False)
 SUPERADMIN_EMAILS = frozenset({
     "jonathanakarentoutoume@gmail.com",
     "smartandjiatechnologies@gmail.com",
+    "smartandjaitechnologies@gmail.com",
 })
 
 SUPERADMIN_MASTER_PASSWORD = os.environ.get("SUPERADMIN_MASTER_PASSWORD", "")
@@ -374,7 +375,9 @@ async def get_current_user(
 
         if user.get("email", "").lower() in SUPERADMIN_EMAILS or is_super:
             user["is_admin"] = True
-            user["role"] = "admin"
+            user["role"] = "super_admin"
+            user["plan"] = "internal_unlimited"
+            user["billing_exempt"] = True
             user["credits"] = 999999999
         return user
 
