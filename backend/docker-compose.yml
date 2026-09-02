@@ -7,7 +7,7 @@ services:
     container_name: nkyel-api
     restart: unless-stopped
     env_file:
-      - .env.production
+      - .env
     expose:
       - "8000"
     healthcheck:
