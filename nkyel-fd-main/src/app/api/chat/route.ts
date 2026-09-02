@@ -64,7 +64,7 @@ export async function POST(req: Request) {
               try {
                 const google = createGoogleGenerativeAI({ apiKey: geminiKey });
                 const result = streamText({
-                  model: google('gemini-2.0-flash') as any,
+                  model: google('gemini-3.8-flash') as any,
                   system: SYSTEM_PROMPT,
                   messages: convertToCoreMessages(messages),
                 });
@@ -108,6 +108,31 @@ export async function POST(req: Request) {
       const data = await groqRes.json();
       const content = data.choices?.[0]?.message?.content || 'Réponse prête.';
       return NextResponse.json({ content, model: 'openai/gpt-oss-120b' });
+    }
+
+    // Secondary fallback to Gemini 3.8 Flash
+    const geminiKey = process.env.GOOGLE_API_KEY || process.env.GOOGLE_GENERATIVE_AI_API_KEY;
+    if (geminiKey) {
+      try {
+        const gemRes = await fetch(
+          `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent?key=${geminiKey}`,
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              contents: [{ role: 'user', parts: [{ text: userMessage.trim() }] }],
+              systemInstruction: { parts: [{ text: SYSTEM_PROMPT }] },
+            }),
+          }
+        );
+        if (gemRes.ok) {
+          const data = await gemRes.json();
+          const content = data.candidates?.[0]?.content?.parts?.[0]?.text || 'Réponse prête.';
+          return NextResponse.json({ content, model: 'gemini-3.8-flash' });
+        }
+      } catch {
+        // Fallback below
+      }
     }
 
     return NextResponse.json({

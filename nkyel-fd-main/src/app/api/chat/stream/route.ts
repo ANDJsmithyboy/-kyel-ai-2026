@@ -121,7 +121,7 @@ async function streamGemini(
 ): Promise<Response | null> {
   if (!GEMINI_KEY) return null;
 
-  const geminiModel = process.env.NKYEL_PRIMARY_MODEL || 'gemini-2.0-flash';
+  const geminiModel = process.env.NKYEL_PRIMARY_MODEL || 'gemini-3.8-flash';
 
   // Convert messages to Gemini format
   const geminiContents = messages
