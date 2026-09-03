@@ -279,9 +279,21 @@ function mapAgUiEventToNkyelEvent(raw: AgUiRawEvent, runId: string): NkyelEvent 
 export class AgUiStreamAdapter {
   private runId: string;
   private abortController: AbortController | null = null;
+  private listeners: ((event: AgUiRawEvent) => void)[] = [];
 
   constructor(runId: string) {
     this.runId = runId;
+  }
+
+  /**
+   * Register a callback for raw streaming events.
+   * Returns an unregister function.
+   */
+  onEvent(callback: (event: AgUiRawEvent) => void): () => void {
+    this.listeners.push(callback);
+    return () => {
+      this.listeners = this.listeners.filter(cb => cb !== callback);
+    };
   }
 
   /**
@@ -322,6 +334,12 @@ export class AgUiStreamAdapter {
 
           try {
             const raw: AgUiRawEvent = JSON.parse(dataStr);
+
+            // Notify custom listeners
+            this.listeners.forEach(cb => {
+              try { cb(raw); } catch (err) { console.error('[AG-UI onEvent error]', err); }
+            });
+
             const nkyelEvent = mapAgUiEventToNkyelEvent(raw, this.runId);
             if (nkyelEvent) {
               eventStore.append(nkyelEvent);

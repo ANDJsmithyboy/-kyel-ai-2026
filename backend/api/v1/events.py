@@ -255,5 +255,12 @@ async def cancel_run(
     run.status = "CANCELLED"
     run.completed_at = datetime.now(timezone.utc)
     await db.flush()
+
+    try:
+        from core.cancellation import cancellation_manager
+        cancellation_manager.cancel_mission(run_id, reason="user_requested")
+    except Exception:
+        pass
+
     return run
 

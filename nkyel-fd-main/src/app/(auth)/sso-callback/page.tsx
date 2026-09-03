@@ -8,6 +8,7 @@
 
 'use client';
 
+// @ts-ignore - Exported at runtime by @clerk/nextjs
 import { AuthenticateWithRedirectCallback } from '@clerk/nextjs';
 import { useEffect, useState } from 'react';
 

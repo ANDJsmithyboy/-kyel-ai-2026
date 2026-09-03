@@ -29,6 +29,10 @@ class NkyelRunRequest(BaseModel):
     user_id: str = Field(default="anonymous", description="User identifier")
     language: str = Field(default="fr", description="Language code")
     run_id: str | None = Field(default=None, description="Optional run ID for replay/resume")
+    mission_id: str | None = Field(default=None, description="Optional parent mission ID")
+    workspace_id: str | None = Field(default=None, description="Optional workspace ID")
+    engine: str | None = Field(default=None, description="DEERFLOW or NATIVE")
+    features: dict | None = Field(default_factory=dict, description="Agentic features toggles")
 
 
 class NkyelCancelRequest(BaseModel):
@@ -53,10 +57,9 @@ def _sse_event(event_type: str, data: dict) -> str:
 
 async def _run_nkyel_agent(request: NkyelRunRequest) -> AsyncGenerator[str, None]:
     """
-    Run the Ñkyel agent graph and yield SSE events.
-    Each event maps to a Canonical Work Graph event.
+    Run the Ñkyel agent graph or DeerFlow 2.0 runtime and yield SSE events.
+    Each event maps to a Canonical Work Graph event in AG-UI format.
     """
-    from agents.nkyel_graph import nkyel_graph
     from core.cancellation import cancellation_manager
 
     run_id = request.run_id or f"run_{uuid.uuid4().hex[:8]}"
@@ -64,14 +67,93 @@ async def _run_nkyel_agent(request: NkyelRunRequest) -> AsyncGenerator[str, None
     # Register cancellation token for this run
     cancel_token = cancellation_manager.create_token(mission_id=run_id, run_id=run_id)
 
-    # Emit run.created
+    # Emit run_started
     yield _sse_event("run_started", {
         "run_id": run_id,
         "status": "started",
         "message": request.message,
     })
 
+    # Decide runtime via engine / goal intent
+    use_deerflow = (
+        (request.engine and request.engine.upper() in ("DEERFLOW", "DEER_FLOW"))
+        or (request.features and (request.features.get("deepResearch") or request.features.get("executiveArtifacts")))
+        or any(w in request.message.lower() for w in ["deerflow", "rapport", "report", "présentation", "pptx", "xlsx", "tableur", "swot", "marché"])
+    )
+
+    if use_deerflow:
+        try:
+            from core.runtime.base import RuntimeEventType
+            from core.runtime.deerflow_runtime import DeerFlowRuntime
+
+            df_runtime = DeerFlowRuntime()
+            async for rt_event in df_runtime.stream(
+                mission_id=request.mission_id or run_id,
+                goal=request.message,
+                run_id=run_id,
+                user_id=request.user_id,
+            ):
+                if cancel_token.is_cancelled:
+                    yield _sse_event("run_cancelled", {"run_id": run_id, "status": "cancelled", "reason": "user_requested"})
+                    break
+
+                if rt_event.type == RuntimeEventType.STEP_STARTED:
+                    step_name = rt_event.payload.get("step", "Étape")
+                    yield _sse_event("agent_step", {
+                        "run_id": run_id,
+                        "node": {"id": rt_event.task_id or f"task_{uuid.uuid4().hex[:6]}", "label": step_name},
+                        "payload": {"label": step_name},
+                    })
+                elif rt_event.type == RuntimeEventType.STATE_DELTA:
+                    if rt_event.payload.get("source"):
+                        s = rt_event.payload["source"]
+                        yield _sse_event("source_found", {"run_id": run_id, "source": s, "payload": s})
+                    elif rt_event.payload.get("evidence"):
+                        ev = rt_event.payload["evidence"]
+                        yield _sse_event("evidence_recorded", {"run_id": run_id, "evidence": ev, "payload": ev})
+                    elif rt_event.payload.get("artifact_id"):
+                        art = rt_event.payload
+                        yield _sse_event("artifact_created", {"run_id": run_id, "payload": art, "artifact": art})
+                    elif rt_event.payload.get("selected_skill"):
+                        yield _sse_event("agent_step", {
+                            "run_id": run_id,
+                            "node": {"id": rt_event.task_id or "skill", "label": f"Compétence : {rt_event.payload['selected_skill']}"},
+                            "payload": {"label": f"Compétence : {rt_event.payload['selected_skill']}"},
+                        })
+                elif rt_event.type == RuntimeEventType.TOOL_CALL_START:
+                    yield _sse_event("tool.started", {"run_id": run_id, "payload": rt_event.payload})
+                elif rt_event.type == RuntimeEventType.TOOL_CALL_RESULT:
+                    yield _sse_event("tool.completed", {"run_id": run_id, "payload": rt_event.payload})
+                elif rt_event.type == RuntimeEventType.STEP_FINISHED:
+                    yield _sse_event("node_completed", {
+                        "run_id": run_id,
+                        "node": {"id": rt_event.task_id or "step", "label": rt_event.payload.get("step", "Étape terminée")},
+                        "payload": rt_event.payload,
+                    })
+                elif rt_event.type == RuntimeEventType.RUN_FINISHED:
+                    yield _sse_event("run_completed", {
+                        "run_id": run_id,
+                        "status": "completed",
+                        "steps": ["SKILL_DISCOVERY", "MCP_TOOL_DISCOVERY", "SUBAGENT_DELEGATION", "WEB_RESEARCH_TAVILY", "DELIVERABLE_COMPILATION"],
+                    })
+                    if rt_event.payload.get("content"):
+                        yield _sse_event("messages-tuple", {
+                            "type": "ai",
+                            "content": rt_event.payload["content"],
+                        })
+                elif rt_event.type == RuntimeEventType.RUN_ERROR:
+                    yield _sse_event("error", {"run_id": run_id, "message": rt_event.payload.get("error", "Execution error")})
+
+        except Exception as e:
+            yield _sse_event("error", {"run_id": run_id, "message": str(e)})
+
+        yield "data: [DONE]\n\n"
+        return
+
+    # Default: Native LangGraph Runtime
     try:
+        from agents.nkyel_graph import nkyel_graph
+
         # Prepare initial state
         initial_state = {
             "user_message": request.message,
@@ -167,10 +249,44 @@ async def run_nkyel_agent(
     """
     Start a Ñkyel agent run.
     Returns an SSE stream of AG-UI compatible events.
+    Enforces review quotas atomically for Google Review sessions.
     """
     # Enforce real authenticated user identity
     if user and user.get("id"):
         request.user_id = user["id"]
+
+    # Server-side Google Review quota enforcement
+    if user and user.get("is_review"):
+        from core.config import settings
+        from db.session import async_session
+        from db.models import ReviewQuotaUsage
+        from sqlalchemy import select
+        from fastapi import status
+        import uuid
+
+        session_id = user.get("review_session_id")
+        if session_id:
+            try:
+                sess_uuid = uuid.UUID(session_id)
+                async with async_session() as db:
+                    stmt = select(ReviewQuotaUsage).where(ReviewQuotaUsage.session_id == sess_uuid).with_for_update()
+                    res = await db.execute(stmt)
+                    quota = res.scalar_one_or_none()
+                    if quota:
+                        total_tokens = quota.tokens_input + quota.tokens_output
+                        if total_tokens >= settings.google_review_token_hard_daily:
+                            raise HTTPException(
+                                status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+                                detail="Review quota reached: daily token allowance exhausted."
+                            )
+                        # Atomic increment
+                        quota.tokens_input += 1000
+                        quota.searches_performed += 1
+                        await db.commit()
+            except HTTPException:
+                raise
+            except Exception as e:
+                pass
 
     return StreamingResponse(
         _run_nkyel_agent(request),

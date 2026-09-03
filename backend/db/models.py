@@ -31,7 +31,7 @@ from sqlalchemy.orm import (
     mapped_column,
     relationship,
 )
-from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.dialects.postgresql import UUID, JSONB
 
 
 # ── Base déclarative ─────────────────────────────────────────
@@ -1475,7 +1475,7 @@ class ReviewInvitation(Base):
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=generate_uuid)
     token_hash: Mapped[str] = mapped_column(String(255), unique=True, nullable=False)
     audience: Mapped[str] = mapped_column(String(50), default="google_reviewers", nullable=False)
-    access_profile: Mapped[str] = mapped_column(Text, default="{}", nullable=False)
+    access_profile: Mapped[dict] = mapped_column(JSONB, default=dict, nullable=False)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
     expires_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
     revoked_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
