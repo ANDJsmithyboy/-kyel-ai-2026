@@ -39,7 +39,7 @@ docker compose -f docker-compose.production.yml build backend deerflow
 echo "=========================================================="
 echo "⚡ 3. DÉMARRAGE & MISE À JOUR SÉCURISÉE EN PRODUCTION"
 echo "=========================================================="
-docker compose -f docker-compose.production.yml up -d --remove-orphans backend deerflow
+docker compose -f docker-compose.production.yml up -d --force-recreate --remove-orphans backend deerflow
 
 echo "=========================================================="
 echo "⏳ 4. ATTENTE DU HEALTHCHECK INITIAL (15s)..."
