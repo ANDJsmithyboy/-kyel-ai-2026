@@ -29,6 +29,7 @@
 'use client';
 
 import React, { useState, useCallback, useEffect, useRef, useMemo } from 'react';
+import { createPortal } from 'react-dom';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import {
@@ -159,6 +160,11 @@ export default function NkyelSidebar() {
   const [contextMenuId, setContextMenuId] = useState<string | null>(null);
   const [isProjectDialogOpen, setIsProjectDialogOpen] = useState(false);
   const [isSearchOverlayOpen, setIsSearchOverlayOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
   
   // Measure if we're on mobile for context menu layout and sync with global store
   const setGlobalIsMobile = useSidebar((s: any) => s.setIsMobile);
@@ -1048,35 +1054,38 @@ export default function NkyelSidebar() {
       </aside>
 
       {/* ─── 2. MOBILE OVERLAY DRAWER (< 768px ONLY, triggered by Iboga) ─── */}
-      {isOpen && (
-        <div className="md:hidden" role="dialog" aria-modal="true" aria-label="Navigation mobile Ñkyel">
-          {/* Backdrop Scrim */}
-          <div
-            className="fixed inset-0 z-[9998] transition-opacity duration-300"
-            style={{
-              background: 'rgba(0, 0, 0, 0.70)',
-              backdropFilter: 'blur(4px)',
-              WebkitBackdropFilter: 'blur(4px)',
-            }}
-            onClick={closeMobileSidebar}
-            aria-hidden="true"
-          />
+      {isOpen && mounted && typeof document !== 'undefined'
+        ? createPortal(
+            <div className="md:hidden" role="dialog" aria-modal="true" aria-label="Navigation mobile Ñkyel">
+              {/* Backdrop Scrim */}
+              <div
+                className="fixed inset-0 z-[9998] transition-opacity duration-300 pointer-events-auto"
+                style={{
+                  background: 'rgba(0, 0, 0, 0.70)',
+                  backdropFilter: 'blur(4px)',
+                  WebkitBackdropFilter: 'blur(4px)',
+                }}
+                onClick={closeMobileSidebar}
+                aria-hidden="true"
+              />
 
-          {/* Mobile Drawer Panel */}
-          <aside
-            onTouchStart={handleTouchStart}
-            onTouchMove={handleTouchMove}
-            onTouchEnd={handleTouchEnd}
-            className="fixed inset-y-0 start-0 z-[9999] h-[100dvh] w-[min(85vw,340px)] max-w-[calc(100vw-36px)] flex flex-col select-none shadow-2xl transition-transform duration-300 ease-out"
-            style={{
-              background: 'var(--sidebar-bg, #0D0E12)',
-              borderRight: '1px solid var(--sidebar-border, rgba(255, 255, 255, 0.08))',
-            }}
-          >
-            {renderSidebarContent(true)}
-          </aside>
-        </div>
-      )}
+              {/* Mobile Drawer Panel */}
+              <aside
+                onTouchStart={handleTouchStart}
+                onTouchMove={handleTouchMove}
+                onTouchEnd={handleTouchEnd}
+                className="fixed inset-y-0 start-0 z-[9999] h-[100dvh] w-[min(85vw,340px)] max-w-[calc(100vw-36px)] flex flex-col select-none shadow-2xl transition-transform duration-300 ease-out pointer-events-auto"
+                style={{
+                  background: 'var(--sidebar-bg, #0D0E12)',
+                  borderRight: '1px solid var(--sidebar-border, rgba(255, 255, 255, 0.08))',
+                }}
+              >
+                {renderSidebarContent(true)}
+              </aside>
+            </div>,
+            document.body
+          )
+        : null}
     </>
   );
 }

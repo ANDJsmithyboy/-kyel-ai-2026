@@ -117,6 +117,13 @@ export default function TopBar({ onOpenCapabilities }: TopBarProps) {
           <div className="md:hidden flex items-center shrink-0">
             <IbogaNavigationTrigger
               open={isOpen}
+              onClick={() => {
+                if (isOpen) {
+                  closeMobileSidebar();
+                } else {
+                  openMobileSidebar();
+                }
+              }}
               onToggle={() => {
                 if (isOpen) {
                   closeMobileSidebar();
@@ -124,7 +131,7 @@ export default function TopBar({ onOpenCapabilities }: TopBarProps) {
                   openMobileSidebar();
                 }
               }}
-              glyphSize={20}
+              glyphSize={22}
               variant="mobile"
               title={isOpen ? (isFr ? "Fermer la navigation" : "Close navigation") : (isFr ? "Ouvrir la navigation" : "Open navigation")}
               label={isOpen ? (isFr ? "Fermer la navigation" : "Close navigation") : (isFr ? "Ouvrir la navigation" : "Open navigation")}
