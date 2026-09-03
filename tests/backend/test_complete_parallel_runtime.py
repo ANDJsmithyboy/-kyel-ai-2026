@@ -213,14 +213,18 @@ async def test_08_runtime_router():
 
 @pytest.mark.asyncio
 async def test_09_mcp_real_execution():
-    """9. MCP #1 REAL EXECUTION (GitHub Tool)."""
+    """9. MCP #1 REAL EXECUTION (GitHub Tool - Real Public API)."""
     result = await deer_mcp_engine.execute_tool(
         tool_name="github_search_repositories",
-        arguments={"query": "Ñkyel AI"},
+        arguments={"query": "fastapi"},
     )
     assert result["success"] is True
     assert result["tool"] == "github_search_repositories"
+    assert result["execution_mode"] == "REAL_EXTERNAL"
     assert len(result["data"]) >= 1
+    # Verify real repo attributes returned by GitHub
+    assert any("fastapi" in r["name"].lower() for r in result["data"])
+    assert any(r["stars"] > 1000 for r in result["data"])
 
 
 @pytest.mark.asyncio

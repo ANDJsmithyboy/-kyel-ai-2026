@@ -190,36 +190,106 @@ class MultiServerMCPClient:
 
         start_time = time.time()
 
-        # Simulated or real execution depending on provider credentials
+        # Real external network execution via public APIs / transports
         if tool_name == "github_search_repositories":
             query = arguments.get("query", "")
-            # Return real structured response
-            return {
-                "success": True,
-                "tool": tool_name,
-                "data": [
-                    {"name": "-kyel-ai-2026", "owner": "ANDJsmithyboy", "url": "https://github.com/ANDJsmithyboy/-kyel-ai-2026", "stars": 42},
-                    {"name": "deer-flow", "owner": "bytedance", "url": "https://github.com/bytedance/deer-flow", "stars": 12000},
-                ],
-                "duration_ms": int((time.time() - start_time) * 1000),
-            }
+            try:
+                import httpx
+                headers = {"User-Agent": "Nkyel-AI-Production/2.0"}
+                token = os.getenv("GITHUB_TOKEN")
+                if token:
+                    headers["Authorization"] = f"token {token}"
+                async with httpx.AsyncClient(timeout=10.0) as client:
+                    resp = await client.get(
+                        "https://api.github.com/search/repositories",
+                        params={"q": query, "per_page": 5},
+                        headers=headers,
+                    )
+                    if resp.status_code == 200:
+                        items = resp.json().get("items", [])
+                        real_data = [
+                            {
+                                "name": item.get("name"),
+                                "owner": item.get("owner", {}).get("login"),
+                                "url": item.get("html_url"),
+                                "stars": item.get("stargazers_count", 0),
+                                "description": item.get("description"),
+                            }
+                            for item in items
+                        ]
+                        return {
+                            "success": True,
+                            "tool": tool_name,
+                            "data": real_data,
+                            "duration_ms": int((time.time() - start_time) * 1000),
+                            "execution_mode": "REAL_EXTERNAL",
+                        }
+                    else:
+                        return {
+                            "success": False,
+                            "tool": tool_name,
+                            "error": f"GitHub API error {resp.status_code}: {resp.text[:200]}",
+                            "duration_ms": int((time.time() - start_time) * 1000),
+                        }
+            except Exception as e:
+                return {
+                    "success": False,
+                    "tool": tool_name,
+                    "error": f"GitHub API network exception: {e}",
+                    "duration_ms": int((time.time() - start_time) * 1000),
+                }
 
         elif tool_name == "browser_navigate":
             url = arguments.get("url", "https://nkyel.smartandjai.com")
-            return {
-                "success": True,
-                "tool": tool_name,
-                "data": {"title": "Ñkyel AI — Plateforme d'Intelligence Souveraine", "url": url, "status": 200},
-                "duration_ms": int((time.time() - start_time) * 1000),
-            }
+            try:
+                import httpx
+                async with httpx.AsyncClient(timeout=10.0, follow_redirects=True) as client:
+                    resp = await client.get(url, headers={"User-Agent": "Nkyel-Browser/2.0"})
+                    return {
+                        "success": True,
+                        "tool": tool_name,
+                        "data": {
+                            "url": str(resp.url),
+                            "status": resp.status_code,
+                            "content_length": len(resp.content),
+                            "headers": dict(resp.headers),
+                        },
+                        "duration_ms": int((time.time() - start_time) * 1000),
+                        "execution_mode": "REAL_EXTERNAL",
+                    }
+            except Exception as e:
+                return {
+                    "success": False,
+                    "tool": tool_name,
+                    "error": f"Browser navigation exception: {e}",
+                    "duration_ms": int((time.time() - start_time) * 1000),
+                }
 
         elif tool_name == "postgres_query_read":
-            return {
-                "success": True,
-                "tool": tool_name,
-                "data": {"rows": [{"status": "connected", "database": "neondb"}], "row_count": 1},
-                "duration_ms": int((time.time() - start_time) * 1000),
-            }
+            try:
+                from db.session import async_session
+                from sqlalchemy import text
+                async with async_session() as session:
+                    res = await session.execute(text("SELECT current_database(), current_user, version()"))
+                    row = res.fetchone()
+                    return {
+                        "success": True,
+                        "tool": tool_name,
+                        "data": {
+                            "database": row[0] if row else "unknown",
+                            "user": row[1] if row else "unknown",
+                            "version": row[2][:50] if row else "unknown",
+                        },
+                        "duration_ms": int((time.time() - start_time) * 1000),
+                        "execution_mode": "REAL_EXTERNAL",
+                    }
+            except Exception as e:
+                return {
+                    "success": False,
+                    "tool": tool_name,
+                    "error": f"Postgres query exception: {e}",
+                    "duration_ms": int((time.time() - start_time) * 1000),
+                }
 
         return {
             "success": True,

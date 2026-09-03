@@ -189,11 +189,16 @@ class NkyelGraphRuntime(AgentRuntime):
                     # Real search if API key present, or deterministic search response
                     tavily_results = []
                     try:
-                        from app.tools.web_search_tool import search_web_tavily
-                        tavily_results = await search_web_tavily(query=goal, max_results=2)
+                        from app.services.wandana_service import wandana_search, google_scrape_search
+                        search_data = await wandana_search(query=goal, max_results=3)
+                        tavily_results = search_data.get("results", [])
+                        if not tavily_results:
+                            tavily_results = await google_scrape_search(query=goal, max_results=3)
                     except Exception:
+                        pass
+                    if not tavily_results:
                         tavily_results = [
-                            {"title": "Agentic AI Overview", "url": "https://nkyel.smartandjai.com/research", "content": "Autonomous agents evolve rapidly in 2026."}
+                            {"title": "Agentic AI Overview 2026", "url": "https://nkyel.smartandjai.com/research", "content": "Autonomous agents evolve rapidly in 2026."}
                         ]
 
                     yield RuntimeEvent(

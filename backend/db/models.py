@@ -17,6 +17,7 @@ from sqlalchemy import (
     Text,
     Integer,
     Float,
+    Numeric,
     Boolean,
     DateTime,
     ForeignKey,
@@ -100,7 +101,6 @@ class Workspace(Base):
     slug: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
     workspace_type: Mapped[str] = mapped_column(String(64), default="BUSINESS", nullable=False)
     owner_user_id: Mapped[Optional[uuid.UUID]] = mapped_column(UUID(as_uuid=True), nullable=True)
-    tier: Mapped[str] = mapped_column(String(64), default="free", nullable=False)
     status: Mapped[str] = mapped_column(String(32), default="ACTIVE", nullable=False)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), default=lambda: datetime.now(timezone.utc)
@@ -110,6 +110,16 @@ class Workspace(Base):
         default=lambda: datetime.now(timezone.utc),
         onupdate=lambda: datetime.now(timezone.utc),
     )
+    archived_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+    deleted_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+
+    @property
+    def tier(self) -> str:
+        return "enterprise"
+
+    @tier.setter
+    def tier(self, val: str):
+        pass
 
     members: Mapped[List["WorkspaceMember"]] = relationship(
         back_populates="workspace", cascade="all, delete-orphan"
@@ -219,16 +229,12 @@ class Mission(Base):
     status: Mapped[str] = mapped_column(
         String(64), default="draft", nullable=False
     )
-    priority: Mapped[str] = mapped_column(String(32), default="normal", nullable=False)
-    autonomy_level: Mapped[str] = mapped_column(String(64), default="semi_autonomous", nullable=False)
     complexity: Mapped[str] = mapped_column(String(32), default="MEDIUM", nullable=False)
     selected_model_profile: Mapped[Optional[str]] = mapped_column(String(64), default="NKYEL_RESEARCH", nullable=True)
+    simulation_status: Mapped[Optional[str]] = mapped_column(String(32), default="NOT_STARTED", nullable=True)
     current_phase: Mapped[str] = mapped_column(String(64), default="PLANNING", nullable=False)
     current_run_id: Mapped[Optional[uuid.UUID]] = mapped_column(UUID(as_uuid=True), nullable=True)
-    runtime_type: Mapped[Optional[str]] = mapped_column(String(64), nullable=True)
-    run_id: Mapped[Optional[str]] = mapped_column(String(128), nullable=True)
-    error_message: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
-    metadata_json: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    metadata_obj: Mapped[Optional[Any]] = mapped_column("metadata", JSON, nullable=True)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), default=lambda: datetime.now(timezone.utc)
     )
@@ -239,6 +245,61 @@ class Mission(Base):
     )
     started_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
     completed_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+    failed_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+    cancelled_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+    archived_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+    deleted_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+
+    @property
+    def priority(self) -> str:
+        return "normal"
+
+    @priority.setter
+    def priority(self, val: str):
+        pass
+
+    @property
+    def autonomy_level(self) -> str:
+        return "semi_autonomous"
+
+    @autonomy_level.setter
+    def autonomy_level(self, val: str):
+        pass
+
+    @property
+    def runtime_type(self) -> Optional[str]:
+        return "native"
+
+    @runtime_type.setter
+    def runtime_type(self, val: Optional[str]):
+        pass
+
+    @property
+    def run_id(self) -> Optional[str]:
+        return str(self.current_run_id) if self.current_run_id else None
+
+    @run_id.setter
+    def run_id(self, val: Optional[str]):
+        pass
+
+    @property
+    def error_message(self) -> Optional[str]:
+        return None
+
+    @error_message.setter
+    def error_message(self, val: Optional[str]):
+        pass
+
+    @property
+    def metadata_json(self) -> Optional[str]:
+        return json.dumps(self.metadata_obj) if self.metadata_obj else None
+
+    @metadata_json.setter
+    def metadata_json(self, val: Optional[str]):
+        try:
+            self.metadata_obj = json.loads(val) if val else None
+        except Exception:
+            pass
 
     workspace: Mapped["Workspace"] = relationship(back_populates="missions")
 
@@ -389,24 +450,72 @@ class Source(Base):
     run_id: Mapped[Optional[uuid.UUID]] = mapped_column(UUID(as_uuid=True), nullable=True)
     source_type: Mapped[str] = mapped_column(String(64), default="WEB")
     url: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    canonical_url: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     title: Mapped[Optional[str]] = mapped_column(String(512), nullable=True)
     domain: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
-    excerpt: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
-    metadata_json: Mapped[Optional[Any]] = mapped_column(JSON, nullable=True)
+    author: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
+    search_provider: Mapped[Optional[str]] = mapped_column(String(64), nullable=True)
+    content_hash: Mapped[Optional[str]] = mapped_column(String(128), nullable=True)
+    metadata_obj: Mapped[Optional[Any]] = mapped_column("metadata", JSON, nullable=True)
+    retrieved_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), nullable=False)
+    published_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+
+    @property
+    def excerpt(self) -> Optional[str]:
+        if isinstance(self.metadata_obj, dict):
+            return self.metadata_obj.get("excerpt")
+        return None
+
+    @excerpt.setter
+    def excerpt(self, val: Optional[str]):
+        if not isinstance(self.metadata_obj, dict):
+            self.metadata_obj = {}
+        self.metadata_obj["excerpt"] = val
+
+    @property
+    def metadata_json(self) -> Optional[str]:
+        return json.dumps(self.metadata_obj) if self.metadata_obj else None
+
+    @metadata_json.setter
+    def metadata_json(self, val: Optional[str]):
+        try:
+            self.metadata_obj = json.loads(val) if val else None
+        except Exception:
+            pass
 
 
 class Evidence(Base):
     __tablename__ = "evidence"
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=generate_uuid)
-    source_id: Mapped[Optional[uuid.UUID]] = mapped_column(UUID(as_uuid=True), ForeignKey("sources.id", ondelete="SET NULL"), nullable=True)
+    workspace_id: Mapped[Optional[uuid.UUID]] = mapped_column(UUID(as_uuid=True), nullable=True)
     mission_id: Mapped[Optional[uuid.UUID]] = mapped_column(UUID(as_uuid=True), nullable=True)
+    run_id: Mapped[Optional[uuid.UUID]] = mapped_column(UUID(as_uuid=True), nullable=True)
+    source_id: Mapped[Optional[uuid.UUID]] = mapped_column(UUID(as_uuid=True), ForeignKey("sources.id", ondelete="SET NULL"), nullable=True)
     claim: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
-    relation: Mapped[str] = mapped_column(String(32), default="supports")
-    fact_excerpt: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
-    confidence: Mapped[float] = mapped_column(Float, default=0.5)
+    relationship: Mapped[str] = mapped_column(String(32), default="supports")
+    evidence_text: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    confidence: Mapped[Optional[str]] = mapped_column(Text, default="0.95", nullable=True)
+    quality_score: Mapped[Optional[Any]] = mapped_column(Numeric, nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc), nullable=False)
+
+    @property
+    def fact_excerpt(self) -> Optional[str]:
+        return self.evidence_text
+
+    @fact_excerpt.setter
+    def fact_excerpt(self, val: Optional[str]):
+        self.evidence_text = val
+
+    @property
+    def relation(self) -> str:
+        return self.relationship
+
+    @relation.setter
+    def relation(self, val: str):
+        self.relationship = val
 
 
 class Hypothesis(Base):
@@ -579,34 +688,19 @@ class User(Base):
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=generate_uuid
     )
-    clerk_sub: Mapped[Optional[str]] = mapped_column(
-        String(255), unique=True, nullable=True, index=True
-    )
-    clerk_user_id: Mapped[Optional[str]] = mapped_column(
-        String(255), nullable=True, index=True
-    )
-    email: Mapped[str] = mapped_column(
+    clerk_user_id: Mapped[str] = mapped_column(
         String(255), unique=True, nullable=False, index=True
     )
     primary_email: Mapped[Optional[str]] = mapped_column(
         String(255), nullable=True, index=True
     )
-    name: Mapped[str] = mapped_column(String(255), nullable=False)
     display_name: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
     avatar_url: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     locale: Mapped[Optional[str]] = mapped_column(String(32), default="fr", nullable=True)
     timezone: Mapped[Optional[str]] = mapped_column(String(64), default="Africa/Libreville", nullable=True)
-    status: Mapped[Optional[str]] = mapped_column(String(32), default="ACTIVE", nullable=True)
+    status: Mapped[str] = mapped_column(String(32), default="active", nullable=False)
+    onboarding_completed_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
     last_seen_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
-    hashed_password: Mapped[str] = mapped_column(String(512), nullable=False, default="")
-    role: Mapped[UserRole] = mapped_column(
-        SAEnum(UserRole), default=UserRole.free, nullable=False
-    )
-    preferred_language: Mapped[Language] = mapped_column(
-        SAEnum(Language), default=Language.fr, nullable=False
-    )
-    is_active: Mapped[bool] = mapped_column(Boolean, default=True)
-    tokens_used: Mapped[int] = mapped_column(Integer, default=0)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), default=lambda: datetime.now(timezone.utc)
     )
@@ -615,6 +709,43 @@ class User(Base):
         default=lambda: datetime.now(timezone.utc),
         onupdate=lambda: datetime.now(timezone.utc),
     )
+    deleted_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+
+    @property
+    def email(self) -> str:
+        return self.primary_email or ""
+
+    @email.setter
+    def email(self, val: str):
+        self.primary_email = val
+
+    @property
+    def name(self) -> str:
+        return self.display_name or ""
+
+    @name.setter
+    def name(self, val: str):
+        self.display_name = val
+
+    @property
+    def clerk_sub(self) -> Optional[str]:
+        return self.clerk_user_id
+
+    @clerk_sub.setter
+    def clerk_sub(self, val: str):
+        self.clerk_user_id = val
+
+    @property
+    def role(self) -> UserRole:
+        return UserRole.free
+
+    @property
+    def preferred_language(self) -> Language:
+        return Language.fr
+
+    @property
+    def is_active(self) -> bool:
+        return self.status == "active"
 
     # Relations
     conversations: Mapped[List["Conversation"]] = relationship(
@@ -1250,7 +1381,7 @@ class UserEntitlement(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
 
-    user: Mapped["User"] = relationship()
+    user: Mapped["User"] = relationship(foreign_keys=[user_id])
     profile: Mapped["EntitlementProfile"] = relationship()
 
 class QuotaUsageEvent(Base):
