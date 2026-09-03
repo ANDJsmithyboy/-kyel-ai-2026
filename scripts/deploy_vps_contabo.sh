@@ -18,11 +18,12 @@ if [ -f backend/.env ]; then
     cp backend/.env .env
 fi
 
-# Arrêt préventif des anciens conteneurs orphelins ou conflictuels (ex: ancien nkyel-api sur le port 8000)
-echo "[*] Libération du port 8000 et nettoyage des anciens conteneurs..."
+# Arrêt préventif des anciens conteneurs orphelins ou conflictuels et libération du port 8000
+echo "[*] Libération du port 8000 et nettoyage des conteneurs existants..."
 docker compose -f docker-compose.yml down 2>/dev/null || true
-docker stop nkyel-api 2>/dev/null || true
-docker rm nkyel-api 2>/dev/null || true
+docker rm -f nkyel-api nkyel-backend-prod 2>/dev/null || true
+docker ps -q --filter publish=8000 | xargs -r docker rm -f 2>/dev/null || true
+fuser -k 8000/tcp 2>/dev/null || true
 
 echo "=========================================================="
 echo "🏗️ 2. REBUILD DES CONTENEURS (BACKEND + DEERFLOW 2.0)"
