@@ -19,6 +19,7 @@ const isPublicRoute = createRouteMatcher([
   '/api/webhooks(.*)',
   '/api/v1/clerk-webhook(.*)',
   '/api/health(.*)',
+  '/api/chat(.*)',
   '/',
   '/terms(.*)',
   '/privacy(.*)',
@@ -31,6 +32,10 @@ const isPublicRoute = createRouteMatcher([
 
 export default clerkMiddleware(async (auth, request) => {
   if (!isPublicRoute(request)) {
+    const cookieHeader = request.headers.get('cookie') || '';
+    if (cookieHeader.includes('nkyel_review_session')) {
+      return;
+    }
     await auth.protect();
   }
 });

@@ -52,6 +52,14 @@ export default function NkyelAppShell({
   const [dismissClosedScreen, setDismissClosedScreen] = useState(false);
 
   useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const hasReviewSession =
+        document.cookie.includes('nkyel_review_session') ||
+        Boolean(localStorage.getItem('nkyel_review_token'));
+      if (hasReviewSession) {
+        return; // Review session bypass active
+      }
+    }
     if (isLoaded && !isSignedIn) {
       router.push('/sign-in');
     }

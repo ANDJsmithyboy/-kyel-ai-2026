@@ -739,6 +739,10 @@ class User(Base):
     def role(self) -> UserRole:
         return UserRole.free
 
+    @role.setter
+    def role(self, val: Any):
+        pass  # Canonical role is WorkspaceMember.role; no-op setter to avoid AttributeError
+
     @property
     def preferred_language(self) -> Language:
         return Language.fr

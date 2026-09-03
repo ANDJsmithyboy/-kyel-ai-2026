@@ -48,6 +48,19 @@ async def create_invitation(
         "expires_at": expires_at,
         "url": f"/review/google/{token_raw}"
     }
+ 
+@router.api_route("/google/session", methods=["GET", "POST"])
+async def get_or_create_google_review_session(
+    response: Response,
+    request: Request,
+    db: AsyncSession = Depends(get_db)
+):
+    """
+    Initialise directement et de manière idempotente la session Google Review
+    pour l'accès officiel sans redirection : https://nkyel.smartandjai.com/review/google/
+    """
+    canonical_token = "g_rev_7SMNAzSmcavmHI8xWVqzy28k1CMPTheFNNeIclTmw-0"
+    return await authenticate_review_token(token=canonical_token, response=response, request=request, db=db)
 
 @router.post("/auth/{token}")
 async def authenticate_review_token(

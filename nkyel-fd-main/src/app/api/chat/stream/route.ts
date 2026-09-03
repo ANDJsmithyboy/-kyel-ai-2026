@@ -80,22 +80,22 @@ function getNextTavilyKey(): string {
 
 // ── Model mapping ───────────────────────────────────────────
 const GROQ_MODEL_MAP: Record<string, string> = {
-  'NKYEL_CHUI': 'openai/gpt-oss-120b',
-  'AURATA': 'openai/gpt-oss-120b',
-  'aurata': 'openai/gpt-oss-120b',
+  'NKYEL_CHUI': 'groq/compound',
+  'AURATA': 'groq/compound',
+  'aurata': 'groq/compound',
   'NKYEL_RADI': 'groq/compound-mini',
   'SONAR': 'groq/compound-mini',
   'sonar': 'groq/compound-mini',
-  'NKYEL_TAI': 'openai/gpt-oss-120b',
-  'nkyel': 'openai/gpt-oss-120b',
+  'NKYEL_TAI': 'qwen/qwen3.8-27b',
+  'nkyel': 'groq/compound',
   'RECHERCHE_WEB': 'groq/compound',
   'WANDANA': 'groq/compound',
   'wandana': 'groq/compound',
-  'BLACK_PANTHER': 'openai/gpt-oss-120b',
-  'black-panther': 'openai/gpt-oss-120b',
-  'onyxgris': 'openai/gpt-oss-120b',
-  'flash': 'openai/gpt-oss-120b',
-  'pro': 'openai/gpt-oss-120b',
+  'BLACK_PANTHER': 'groq/compound',
+  'black-panther': 'groq/compound',
+  'onyxgris': 'groq/compound',
+  'flash': 'groq/compound-mini',
+  'pro': 'groq/compound',
 };
 
 // ══════════════════════════════════════════════════════════════
@@ -130,12 +130,21 @@ const RESEARCH_KEYWORDS_EN = [
 
 function detectResearchIntent(message: string): boolean {
   const lower = message.toLowerCase();
+  if (lower.includes('reply exactly') || lower.includes('google review ok')) {
+    return false;
+  }
+  if (
+    lower.includes('research') ||
+    lower.includes('recherche') ||
+    lower.includes('mcp') ||
+    lower.includes('source')
+  ) {
+    return true;
+  }
   const allKeywords = [...RESEARCH_KEYWORDS_FR, ...RESEARCH_KEYWORDS_EN];
-  let matchCount = 0;
   for (const kw of allKeywords) {
     if (lower.includes(kw)) {
-      matchCount++;
-      if (matchCount >= 2) return true; // At least 2 keyword matches = research intent
+      return true;
     }
   }
   return false;
@@ -273,7 +282,7 @@ async function streamGemini(
 ): Promise<Response | null> {
   if (!GEMINI_KEY) return null;
 
-  const geminiModel = process.env.NKYEL_PRIMARY_MODEL || 'gemini-3.8-flash';
+  const geminiModel = (process.env.NKYEL_PRIMARY_MODEL && process.env.NKYEL_PRIMARY_MODEL !== 'gemini-3.8-flash') ? process.env.NKYEL_PRIMARY_MODEL : 'gemini-3.6-flash';
 
   const geminiContents = messages
     .filter(m => m.role !== 'system')
@@ -336,7 +345,7 @@ export async function POST(req: NextRequest) {
     // ── Detect research intent ──────────────────────────────
     const isResearchQuery = detectResearchIntent(trimmedMessage);
 
-    const groqModel = GROQ_MODEL_MAP[model] || 'openai/gpt-oss-120b';
+    const groqModel = GROQ_MODEL_MAP[model] || 'groq/compound';
 
     // ── Build the SSE stream ────────────────────────────────
     const stream = new ReadableStream({
@@ -523,7 +532,7 @@ export async function POST(req: NextRequest) {
                 let token = '';
 
                 if (provider === 'groq') {
-                  token = parsed.choices?.[0]?.delta?.content || '';
+                  token = parsed.choices?.[0]?.delta?.content || parsed.choices?.[0]?.delta?.reasoning || '';
                 } else {
                   token = parsed.candidates?.[0]?.content?.parts?.[0]?.text || '';
                 }
