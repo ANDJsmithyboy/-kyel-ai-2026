@@ -177,10 +177,10 @@ export default function NkyelSidebar() {
   const displayName = user?.fullName || user?.firstName || t('profile.defaultName') || 'Utilisateur';
   const userEmail = user?.primaryEmailAddress?.emailAddress || '';
   const userInitials = (displayName.slice(0, 2) || 'NK').toUpperCase();
-  const isSuperAdmin = user?.publicMetadata?.role === 'SUPER_ADMIN';
   const userTier = getUserTier(userEmail, (user?.publicMetadata?.role as string) || null);
-  const showIconsOnly = isCollapsed && !isSidebarMobile;
   const displayTier = userTier.tierId === 'CREATOR' ? 'Mode God' : userTier.tierId === 'VIP_CONTRIBUTOR' ? 'VIP' : quotaData?.tier ?? (isFr ? 'Gratuit' : 'Free');
+  // showIconsOnly is evaluated inside renderSidebarContent based on desktop collapse or drawer
+
 
   const navItems: NavItem[] = [
     { id: 'agent',        label: t('nav.agent') || 'Agent',                  href: '/agent',      icon: Robot },
@@ -240,9 +240,39 @@ export default function NkyelSidebar() {
   }, [profileMenuOpen]);
 
   const handleNavClick = useCallback(() => {
-    if (isSidebarMobile) closeMobileSidebar();
+    closeMobileSidebar();
     setProfileMenuOpen(false);
-  }, [isSidebarMobile, closeMobileSidebar]);
+  }, [closeMobileSidebar]);
+
+  // Close mobile drawer on Escape key
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        closeMobileSidebar();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, closeMobileSidebar]);
+
+  // Handle browser / Android back button to close mobile drawer
+  useEffect(() => {
+    if (!isOpen) return;
+    window.history.pushState({ nkyelDrawerOpen: true }, '');
+    const handlePopState = () => {
+      closeMobileSidebar();
+    };
+    window.addEventListener('popstate', handlePopState);
+    return () => {
+      window.removeEventListener('popstate', handlePopState);
+    };
+  }, [isOpen, closeMobileSidebar]);
+
+  // Close mobile drawer on route change
+  useEffect(() => {
+    closeMobileSidebar();
+  }, [pathname, closeMobileSidebar]);
 
   const isActive = (href: string) => {
     const base = href.split('?')[0];
@@ -271,41 +301,11 @@ export default function NkyelSidebar() {
     touchStartX.current = null;
   };
 
-  /* ─── Render ─── */
+  const renderSidebarContent = (isDrawer: boolean) => {
+    const showIconsOnly = !isDrawer && isCollapsed;
 
-  return (
-    <>
-      {/* Mobile backdrop */}
-      {isSidebarMobile && isOpen && (
-        <div
-          className="fixed inset-0"
-          style={{
-            background: 'var(--material-scrim)',
-            zIndex: 'var(--z-overlay)',
-            transition: `opacity var(--transition-standard)`,
-          }}
-          onClick={closeMobileSidebar}
-          aria-hidden="true"
-        />
-      )}
-
-      <aside
-        onTouchStart={handleTouchStart}
-        onTouchMove={handleTouchMove}
-        onTouchEnd={handleTouchEnd}
-        className={`nkyel-sidebar-container flex flex-col shrink-0 select-none ${
-          isSidebarMobile 
-            ? 'fixed inset-y-0 start-0 z-[100] h-[100dvh] transition-transform duration-300 ease-[var(--ease-apple)]' 
-            : 'relative h-full transition-[width] duration-300 ease-[var(--ease-apple)]'
-        } ${isSidebarMobile && !isOpen ? '-translate-x-full' : 'translate-x-0'}`}
-        style={{
-          width: isCollapsed && !isSidebarMobile ? 'var(--sidebar-collapsed)' : (isSidebarMobile ? 'min(85vw, 340px)' : 'var(--sidebar-width)'),
-          background: 'var(--sidebar-bg)',
-          borderRight: '1px solid var(--sidebar-border)',
-          zIndex: isSidebarMobile ? 'var(--z-max)' : 'var(--z-sidebar)',
-        }}
-        aria-label="Navigation principale Ñkyel"
-      >
+    return (
+      <div className="flex flex-col h-full w-full overflow-hidden">
         {/* ═══════════════════════════════════════════════════
            ZONE 1: Header — Wordmark + Iboga Navigation Signature
            ═══════════════════════════════════════════════════ */}
@@ -360,11 +360,11 @@ export default function NkyelSidebar() {
                 </button>
                 <IbogaNavigationTrigger
                   open={true}
-                  onToggle={isSidebarMobile ? closeMobileSidebar : toggleSidebar}
-                  glyphSize={isSidebarMobile ? 17 : 18}
-                  variant={isSidebarMobile ? 'mobile' : 'desktop'}
-                  title={isSidebarMobile ? "Close navigation" : "Collapse navigation"}
-                  label={isSidebarMobile ? "Close navigation" : "Collapse navigation"}
+                  onToggle={isDrawer ? closeMobileSidebar : toggleSidebar}
+                  glyphSize={isDrawer ? 20 : 18}
+                  variant={isDrawer ? 'mobile' : 'desktop'}
+                  title={isDrawer ? (isFr ? "Fermer la navigation" : "Close navigation") : (isFr ? "Réduire la navigation" : "Collapse navigation")}
+                  label={isDrawer ? (isFr ? "Fermer la navigation" : "Close navigation") : (isFr ? "Réduire la navigation" : "Collapse navigation")}
                 />
               </div>
             </>
@@ -1027,7 +1027,56 @@ export default function NkyelSidebar() {
             )}
           </div>
         </div>
+      </div>
+    );
+  };
+
+  /* ─── Render ─── */
+  return (
+    <>
+      {/* ─── 1. DESKTOP PERMANENT SIDEBAR (>= 768px ONLY) ─── */}
+      <aside
+        className="nkyel-sidebar-container hidden md:flex flex-col shrink-0 select-none relative h-full transition-[width] duration-300 ease-[var(--ease-apple)] z-30"
+        style={{
+          width: isCollapsed ? 'var(--sidebar-collapsed)' : 'var(--sidebar-width)',
+          background: 'var(--sidebar-bg)',
+          borderRight: '1px solid var(--sidebar-border)',
+        }}
+        aria-label="Navigation principale Ñkyel"
+      >
+        {renderSidebarContent(false)}
       </aside>
+
+      {/* ─── 2. MOBILE OVERLAY DRAWER (< 768px ONLY, triggered by Iboga) ─── */}
+      {isOpen && (
+        <div className="md:hidden" role="dialog" aria-modal="true" aria-label="Navigation mobile Ñkyel">
+          {/* Backdrop Scrim */}
+          <div
+            className="fixed inset-0 z-[9998] transition-opacity duration-300"
+            style={{
+              background: 'rgba(0, 0, 0, 0.70)',
+              backdropFilter: 'blur(4px)',
+              WebkitBackdropFilter: 'blur(4px)',
+            }}
+            onClick={closeMobileSidebar}
+            aria-hidden="true"
+          />
+
+          {/* Mobile Drawer Panel */}
+          <aside
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
+            className="fixed inset-y-0 start-0 z-[9999] h-[100dvh] w-[min(85vw,340px)] max-w-[calc(100vw-36px)] flex flex-col select-none shadow-2xl transition-transform duration-300 ease-out"
+            style={{
+              background: 'var(--sidebar-bg, #0D0E12)',
+              borderRight: '1px solid var(--sidebar-border, rgba(255, 255, 255, 0.08))',
+            }}
+          >
+            {renderSidebarContent(true)}
+          </aside>
+        </div>
+      )}
     </>
   );
 }

@@ -342,7 +342,7 @@ export default function AdaptiveChatWorkspace({
       {/* ─── CENTRE : ESPACE CENTRAL DE L'INTELLIGENCE ─── */}
       <section className="flex flex-1 flex-col min-w-0 h-full relative overflow-hidden">
         {/* ── Top Bar Minimale (Apple × Geist) ── */}
-        <header className="h-10 px-4 border-b border-[var(--border-subtle)] bg-[var(--material-canvas)] flex items-center justify-between shrink-0 z-[100] relative">
+        <header className="h-10 px-4 border-b border-[var(--border-subtle)] bg-[var(--material-canvas)] flex items-center justify-between shrink-0 z-10 relative">
           <div className="flex items-center gap-2 min-w-0">
             <span className="font-semibold text-xs text-[var(--text-primary)] truncate max-w-[220px] sm:max-w-xs md:max-w-sm font-sans">
               {missionTitle}

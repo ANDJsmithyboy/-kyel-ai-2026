@@ -48,6 +48,10 @@ export const useSidebar = create<SidebarState>((set, get) => ({
     }),
 
   toggleSidebar: () => {
+    if (typeof window !== 'undefined' && window.innerWidth < 768) {
+      set((s) => ({ isOpen: !s.isOpen }));
+      return;
+    }
     const state = get();
     if (state.isMobile) {
       set({ isOpen: !state.isOpen });

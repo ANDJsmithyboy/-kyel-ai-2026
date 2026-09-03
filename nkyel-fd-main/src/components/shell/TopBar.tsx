@@ -30,7 +30,7 @@ export default function TopBar({ onOpenCapabilities }: TopBarProps) {
   const { user } = useUser();
   const engineId = useNkyelModel((state: any) => state.engineId);
   const setEngineId = useNkyelModel((state: any) => state.setEngineId);
-  const { isOpen, toggleSidebar } = useSidebar();
+  const { isOpen, toggleSidebar, openMobileSidebar, closeMobileSidebar } = useSidebar();
   const { currentWorkspace, isLoading: wsLoading } = useWorkspaceStore();
   const { availableProfiles, isProfilesLoading, fetchProfiles } = useChatStore();
 
@@ -110,36 +110,40 @@ export default function TopBar({ onOpenCapabilities }: TopBarProps) {
         }}
       />
 
-      <header className="relative h-[56px] flex items-center justify-between px-3 sm:px-4 border-b border-[var(--border-subtle)] bg-[var(--material-glass-regular)] backdrop-blur-md select-none z-50">
+      <header className="sticky top-0 w-full h-[56px] flex items-center justify-between px-2.5 sm:px-4 border-b border-[var(--border-subtle)] bg-[var(--material-glass-regular)] backdrop-blur-md select-none z-50">
         {/* Leading: Iboga Navigation Trigger (Mobile) + Wordmark (Desktop) + Model Selector */}
-        <div className="flex items-center gap-2 sm:gap-3">
-          {/* Mobile Iboga Navigation Trigger Button (No logo/wordmark on mobile) */}
-          <div className="md:hidden flex items-center">
+        <div className="flex items-center gap-1.5 sm:gap-3 min-w-0">
+          {/* Mobile Iboga Navigation Trigger Button (High-contrast, 44px touch target) */}
+          <div className="md:hidden flex items-center shrink-0">
             <IbogaNavigationTrigger
               open={isOpen}
-              onToggle={toggleSidebar}
-              glyphSize={17}
+              onToggle={() => {
+                if (isOpen) {
+                  closeMobileSidebar();
+                } else {
+                  openMobileSidebar();
+                }
+              }}
+              glyphSize={20}
               variant="mobile"
-              title="Ouvrir la navigation"
-              label="Ouvrir la navigation"
+              title={isOpen ? (isFr ? "Fermer la navigation" : "Close navigation") : (isFr ? "Ouvrir la navigation" : "Open navigation")}
+              label={isOpen ? (isFr ? "Fermer la navigation" : "Close navigation") : (isFr ? "Ouvrir la navigation" : "Open navigation")}
             />
           </div>
 
-
-
           {/* Canonical Intelligence Mode Selector — Visible on all viewports (Section 16) */}
-          <div className="relative flex items-center" ref={dropdownRef}>
+          <div className="relative flex items-center min-w-0" ref={dropdownRef}>
             <button
               type="button"
               onClick={() => setModelDropdown((prev) => !prev)}
               aria-expanded={modelDropdown}
               aria-label={isFr ? "Choisir le mode d'intelligence" : "Select intelligence mode"}
-              className="flex h-[32px] items-center gap-1.5 rounded-lg bg-transparent px-2 text-[14px] sm:text-[13.5px] font-semibold text-[var(--text-primary)] transition-colors hover:bg-[var(--hover)] active:scale-[0.98]"
+              className="flex h-[32px] items-center gap-1.5 rounded-lg bg-transparent px-1.5 sm:px-2 text-[13.5px] sm:text-[14px] font-semibold text-[var(--text-primary)] transition-colors hover:bg-[var(--hover)] active:scale-[0.98] min-w-0"
             >
-              <span className="truncate max-w-[140px] sm:max-w-none tracking-tight">
+              <span className="truncate max-w-[100px] xs:max-w-[130px] sm:max-w-none tracking-tight">
                 {isFr ? currentEngine.labelFr : currentEngine.labelEn}
               </span>
-              <CaretDown size={12} className="opacity-60" />
+              <CaretDown size={12} className="opacity-60 shrink-0" />
             </button>
 
             {modelDropdown && (
@@ -211,16 +215,16 @@ export default function TopBar({ onOpenCapabilities }: TopBarProps) {
         </div>
 
         {/* Trailing: Clean Actions (Commands, Upgrade, Share, Mission Intelligence) */}
-        <div className="flex items-center gap-1.5 sm:gap-2">
+        <div className="flex items-center gap-1 sm:gap-2 shrink-0">
           {/* Universal Search / Command Palette Trigger */}
           <button
             type="button"
             onClick={handleOpenCommands}
-            className="flex h-8 items-center gap-1.5 rounded-xl border border-[var(--border)] bg-[var(--surface-raised)] px-2.5 text-xs text-[var(--text-secondary)] transition-colors hover:border-[var(--accent-muted)] hover:text-[var(--text-primary)]"
+            className="flex h-8 items-center gap-1.5 rounded-xl border border-[var(--border)] bg-[var(--surface-raised)] px-2 sm:px-2.5 text-xs text-[var(--text-secondary)] transition-colors hover:border-[var(--accent-muted)] hover:text-[var(--text-primary)] shrink-0"
             title="Commands (⌘K / Ctrl+K)"
             aria-label="Commands"
           >
-            <MagnifyingGlass size={14} className="text-[var(--accent)]" />
+            <MagnifyingGlass size={14} className="text-[var(--accent)] shrink-0" />
             <span className="hidden sm:inline text-[11px] font-medium">{isFr ? "Commandes" : "Commands"}</span>
             <kbd className="hidden sm:inline-block px-1.5 py-0.5 rounded bg-white/10 text-[9px] font-mono text-[var(--text-tertiary)]">
               ⌘K
@@ -229,12 +233,12 @@ export default function TopBar({ onOpenCapabilities }: TopBarProps) {
 
           {/* Plan Badge or Super Admin Sovereign Badge */}
           {isSuperAdmin ? (
-            <div className="hidden sm:flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-xs shadow-xs" title="Founder & Super Admin · Unlimited Internal Access">
+            <div className="hidden md:flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-xs shadow-xs" title="Founder & Super Admin · Unlimited Internal Access">
               <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
               <span className="text-[11px] font-bold text-amber-400 tracking-wider">FOUNDER • SUPER ADMIN</span>
             </div>
           ) : (
-            <div className="hidden sm:flex items-center gap-1.5 px-3 py-1 rounded-full bg-[var(--surface-raised)] border border-[var(--border)] text-xs text-[var(--text-secondary)]">
+            <div className="hidden md:flex items-center gap-1.5 px-3 py-1 rounded-full bg-[var(--surface-raised)] border border-[var(--border)] text-xs text-[var(--text-secondary)]">
               {wsLoading ? (
                 <span className="w-16 h-3 bg-[var(--border)] rounded animate-pulse" />
               ) : (
@@ -255,14 +259,14 @@ export default function TopBar({ onOpenCapabilities }: TopBarProps) {
           <button
             type="button"
             onClick={() => setIsUpgradeOpen(true)}
-            className="flex items-center gap-1.5 h-8 px-3 rounded-full bg-[var(--surface-raised)] hover:bg-[var(--hover)] border border-[var(--border)] text-xs font-semibold text-[var(--text-primary)] transition-all shadow-xs"
+            className="flex items-center gap-1 sm:gap-1.5 h-8 px-2 sm:px-3 rounded-full bg-[var(--surface-raised)] hover:bg-[var(--hover)] border border-[var(--border)] text-xs font-semibold text-[var(--text-primary)] transition-all shadow-xs shrink-0"
             title={isFr ? "Crédits disponibles" : "Credits available"}
           >
-            <Sparkle size={14} weight="fill" className="text-[var(--accent)]" />
+            <Sparkle size={13} weight="fill" className="text-[var(--accent)] shrink-0" />
             {wsLoading ? (
-              <span className="w-6 h-3 bg-[var(--border)] rounded animate-pulse" />
+              <span className="w-5 h-3 bg-[var(--border)] rounded animate-pulse" />
             ) : (
-              <span className="font-mono">{currentWorkspace?.credits ?? '—'}</span>
+              <span className="font-mono text-[11.5px] sm:text-xs">{currentWorkspace?.credits ?? '—'}</span>
             )}
           </button>
         </div>
