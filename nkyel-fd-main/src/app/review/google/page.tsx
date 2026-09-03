@@ -11,6 +11,7 @@
  * - Clean browser & incognito support
  * - Automatically initializes restricted Google review session
  * - Mounts the REAL sovereign Ñkyel application shell and chat workspace
+ * - Hardened with 8s maximum spinner safety net and 5s fetch timeouts
  */
 
 'use client';
@@ -30,17 +31,34 @@ export default function GoogleReviewPage({ initialToken }: { initialToken?: stri
 
   useEffect(() => {
     let active = true;
+    let settled = false;
+
+    const markReady = () => {
+      if (active && !settled) {
+        settled = true;
+        setIsReady(true);
+      }
+    };
+
+    // Filet de sécurité absolu : jamais plus de 8s de spinner, quoi qu'il arrive
+    const hardTimeout = setTimeout(markReady, 8000);
+
+    const withTimeout = (url: string, opts: RequestInit, ms = 5000) => {
+      const controller = new AbortController();
+      const t = setTimeout(() => controller.abort(), ms);
+      return fetch(url, { ...opts, signal: controller.signal }).finally(() => clearTimeout(t));
+    };
 
     async function initializeGoogleReview() {
-      const baseUrl = getApiBaseUrl();
-
       try {
+        const baseUrl = getApiBaseUrl(); // Maintenant DANS le try
+
         // 1. Authenticate with the canonical Google review token
-        const res = await fetch(`${baseUrl}/api/v1/review/auth/${effectiveToken}`, {
+        const res = await withTimeout(`${baseUrl}/api/v1/review/auth/${effectiveToken}`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           credentials: 'include',
-        });
+        }, 5000);
 
         if (res.ok) {
           const data = await res.json();
@@ -53,16 +71,15 @@ export default function GoogleReviewPage({ initialToken }: { initialToken?: stri
               window.__nkyel_workspace_id = data.workspace_id;
             }
           }
-          if (active) setIsReady(true);
-          return;
+          return markReady();
         }
 
         // 2. Fallback to /google/session
-        const sessionRes = await fetch(`${baseUrl}/api/v1/review/google/session`, {
+        const sessionRes = await withTimeout(`${baseUrl}/api/v1/review/google/session`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           credentials: 'include',
-        });
+        }, 5000);
 
         if (sessionRes.ok) {
           const data = await sessionRes.json();
@@ -75,31 +92,26 @@ export default function GoogleReviewPage({ initialToken }: { initialToken?: stri
               window.__nkyel_workspace_id = data.workspace_id;
             }
           }
-          if (active) setIsReady(true);
-          return;
+          return markReady();
         }
 
         // 3. Fallback: check status
-        const statusRes = await fetch(`${baseUrl}/api/v1/review/status`, {
+        const statusRes = await withTimeout(`${baseUrl}/api/v1/review/status`, {
           method: 'GET',
           headers: { 'Content-Type': 'application/json' },
           credentials: 'include',
-        });
+        }, 5000);
 
         if (statusRes.ok) {
           const statusData = await statusRes.json();
           if (statusData.active) {
-            if (active) setIsReady(true);
-            return;
+            return markReady();
           }
         }
-
-        // 4. Gracefully allow entry so Google reviewer NEVER gets blocked
-        if (active) setIsReady(true);
       } catch (err) {
         console.warn('[Google Review] Auth notice:', err);
-        // Gracefully allow entry so Google reviewer NEVER sees an error screen
-        if (active) setIsReady(true);
+      } finally {
+        markReady(); // Toujours atteint — timeout, succès ou erreur
       }
     }
 
@@ -107,6 +119,7 @@ export default function GoogleReviewPage({ initialToken }: { initialToken?: stri
 
     return () => {
       active = false;
+      clearTimeout(hardTimeout);
     };
   }, [effectiveToken]);
 

@@ -3,6 +3,8 @@
 SmartANDJ AI Technologies
 """
 
+import os
+import hmac
 import uuid
 import secrets
 from datetime import datetime, timedelta, timezone
@@ -29,7 +31,8 @@ async def create_invitation(
     db: AsyncSession = Depends(get_db)
 ):
     """(Usage interne) Créer un lien privé pour Google Review."""
-    if req.admin_secret != "NKYEL_ADMIN_1337_SECURE":
+    expected_secret = os.getenv("REVIEW_ADMIN_SECRET", "NKYEL_ADMIN_1337_SECURE")
+    if not hmac.compare_digest(req.admin_secret, expected_secret):
         raise HTTPException(status_code=403, detail="Forbidden")
 
     token_raw = f"g_rev_{secrets.token_urlsafe(32)}"
