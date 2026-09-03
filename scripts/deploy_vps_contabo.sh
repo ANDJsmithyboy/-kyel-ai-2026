@@ -45,8 +45,8 @@ echo "🔍 5. VÉRIFICATION DU STATUT ET DES PROBES"
 echo "=========================================================="
 docker compose -f docker-compose.production.yml ps
 
-echo "--- VÉRIFICATION READINESS FASTAPI ---"
-curl -s http://localhost:8000/readiness || true
+echo "--- VÉRIFICATION HEALTH FASTAPI ---"
+curl -s http://localhost:8000/health || true
 echo ""
 
 echo "--- VÉRIFICATION DEERFLOW GATEWAY ---"
