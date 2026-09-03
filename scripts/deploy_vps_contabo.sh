@@ -12,10 +12,16 @@ echo "=========================================================="
 git fetch origin main
 git reset --hard origin/main
 
-# Garantir que .env existe et est synchronisé à la racine pour Docker Compose
-if [ -f backend/.env ]; then
-    echo "[*] Synchronisation de backend/.env vers .env à la racine..."
+# Garantir la synchronisation bidirectionnelle du .env entre la racine et backend
+if [ -f backend/.env ] && [ ! -f .env ]; then
+    echo "[*] Copie de backend/.env vers la racine .env..."
     cp backend/.env .env
+elif [ -f .env ] && [ ! -f backend/.env ]; then
+    echo "[*] Copie de .env racine vers backend/.env..."
+    cp .env backend/.env
+elif [ -f backend/.env ] && [ -f .env ]; then
+    cp -u backend/.env .env 2>/dev/null || cp backend/.env .env
+    cp -u .env backend/.env 2>/dev/null || cp .env backend/.env
 fi
 
 # Arrêt préventif des anciens conteneurs orphelins ou conflictuels et libération du port 8000
