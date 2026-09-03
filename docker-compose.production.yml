@@ -80,6 +80,8 @@ services:
         max-file: "5"
 
   frontend:
+    profiles:
+      - frontend
     build:
       context: ./nkyel-fd-main
       dockerfile: Dockerfile

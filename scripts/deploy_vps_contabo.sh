@@ -12,15 +12,21 @@ echo "=========================================================="
 git fetch origin main
 git reset --hard origin/main
 
+# Garantir que .env existe à la racine pour Docker Compose
+if [ ! -f .env ] && [ -f backend/.env ]; then
+    echo "[*] Synchronisation de backend/.env vers .env à la racine..."
+    cp backend/.env .env
+fi
+
 echo "=========================================================="
 echo "🏗️ 2. REBUILD DES CONTENEURS (BACKEND + DEERFLOW 2.0)"
 echo "=========================================================="
-docker compose -f docker-compose.production.yml build
+docker compose -f docker-compose.production.yml build backend deerflow
 
 echo "=========================================================="
 echo "⚡ 3. DÉMARRAGE & MISE À JOUR SÉCURISÉE EN PRODUCTION"
 echo "=========================================================="
-docker compose -f docker-compose.production.yml up -d --remove-orphans
+docker compose -f docker-compose.production.yml up -d --remove-orphans backend deerflow
 
 echo "=========================================================="
 echo "⏳ 4. ATTENTE DU HEALTHCHECK INITIAL (15s)..."
