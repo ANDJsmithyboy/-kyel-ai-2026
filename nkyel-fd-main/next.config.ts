@@ -1,7 +1,11 @@
 /* Nkyel AI - next.config.ts - SmartANDJ AI Technologies */
 const nextConfig = {
   output: process.env.STANDALONE === 'true' ? 'standalone' : undefined,
-  productionBrowserSourceMaps: true,
+  productionBrowserSourceMaps: false,
+  experimental: {
+    cpus: 1,
+    workerThreads: false,
+  },
   images: {
     remotePatterns: [
       { protocol: 'http', hostname: 'localhost' },

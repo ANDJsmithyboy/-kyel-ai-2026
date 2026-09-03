@@ -232,3 +232,28 @@ async def list_events(
     )
     result = await db.execute(stmt)
     return result.scalars().all()
+
+
+@router.post("/runs/{run_id}/cancel", response_model=RunResp)
+async def cancel_run(
+    run_id: str,
+    user_id: str = Depends(get_current_user_id),
+    db: AsyncSession = Depends(get_db),
+):
+    """Annule immédiatement l'exécution d'un run."""
+    try:
+        run_uuid = uuid.UUID(run_id)
+    except ValueError:
+        raise HTTPException(status_code=400, detail="ID invalide")
+
+    stmt = select(Run).where(Run.id == run_uuid)
+    result = await db.execute(stmt)
+    run = result.scalar_one_or_none()
+    if not run:
+        raise HTTPException(status_code=404, detail="Run introuvable")
+
+    run.status = "CANCELLED"
+    run.completed_at = datetime.now(timezone.utc)
+    await db.flush()
+    return run
+

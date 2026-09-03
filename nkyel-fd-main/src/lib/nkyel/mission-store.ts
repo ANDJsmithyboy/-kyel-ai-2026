@@ -1,18 +1,11 @@
 import { create } from 'zustand';
+import { missionsApi, type Mission } from '@/lib/api';
 
-export interface Mission {
-  id: string;
-  workspace_id: string;
-  title: string;
-  objective: string;
-  status: string;
-  priority: string;
-  autonomy_level: string;
-  created_at: string;
-}
+export type { Mission };
 
 interface MissionState {
   missions: Mission[];
+  currentMission: Mission | null;
   isLoading: boolean;
   error: string | null;
 
@@ -21,30 +14,17 @@ interface MissionState {
   getMission: (missionId: string) => Promise<Mission | null>;
 }
 
-const getApiUrl = () => (process.env.NEXT_PUBLIC_API_BASE_URL || process.env.NEXT_PUBLIC_API_URL) || 'https://api.nkyel.smartandjai.com/api/v1';
-
-const getHeaders = () => {
-  const token = typeof window !== 'undefined' ? localStorage.getItem('token') || localStorage.getItem('nkyel_access_token') : null;
-  return {
-    'Content-Type': 'application/json',
-    ...(token ? { Authorization: `Bearer ${token}` } : {}),
-  };
-};
-
 export const useMissionStore = create<MissionState>((set) => ({
   missions: [],
+  currentMission: null,
   isLoading: false,
   error: null,
 
   fetchMissions: async (workspaceId: string) => {
     set({ isLoading: true, error: null });
     try {
-      const res = await fetch(`${getApiUrl()}/missions?workspace_id=${workspaceId}`, {
-        headers: getHeaders(),
-      });
-      if (!res.ok) throw new Error('Failed to fetch missions');
-      const data = await res.json();
-      set({ missions: data, isLoading: false });
+      const missions = await missionsApi.list(workspaceId);
+      set({ missions, isLoading: false });
     } catch (err: any) {
       set({ error: err.message, isLoading: false });
     }
@@ -53,21 +33,10 @@ export const useMissionStore = create<MissionState>((set) => ({
   createMission: async (workspaceId, title, objective, priority = 'normal', autonomyLevel = 'semi_autonomous') => {
     set({ isLoading: true, error: null });
     try {
-      const res = await fetch(`${getApiUrl()}/missions`, {
-        method: 'POST',
-        headers: getHeaders(),
-        body: JSON.stringify({
-          workspace_id: workspaceId,
-          title,
-          objective,
-          priority,
-          autonomy_level: autonomyLevel,
-        }),
-      });
-      if (!res.ok) throw new Error('Failed to create mission');
-      const data = await res.json();
+      const data = await missionsApi.create(workspaceId, title, objective, priority, autonomyLevel);
       set((state) => ({
         missions: [data, ...state.missions],
+        currentMission: data,
         isLoading: false,
       }));
       return data;
@@ -79,13 +48,11 @@ export const useMissionStore = create<MissionState>((set) => ({
 
   getMission: async (missionId: string) => {
     try {
-      const res = await fetch(`${getApiUrl()}/missions/${missionId}`, {
-        headers: getHeaders(),
-      });
-      if (!res.ok) throw new Error('Failed to fetch mission');
-      return await res.json();
+      const mission = await missionsApi.get(missionId);
+      set({ currentMission: mission });
+      return mission;
     } catch (err: any) {
-      console.error(err);
+      console.error('[Mission Store] getMission error:', err);
       return null;
     }
   },

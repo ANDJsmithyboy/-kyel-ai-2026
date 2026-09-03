@@ -1,106 +1,50 @@
 /**
  * Ñkyel AI — Page Skills Studio
  * Route : /skills
+ * Pure Real Backend Skills Integration (DeerSkillsEngine)
  */
 
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   PuzzlePiece,
   MagnifyingGlass,
-  Sparkle,
-  CheckCircle,
   ToggleLeft,
   ToggleRight,
   ShieldCheck,
-  Code,
 } from '@phosphor-icons/react';
-
-interface SkillItem {
-  id: string;
-  name: string;
-  category: string;
-  description: string;
-  author: string;
-  version: string;
-  enabled: boolean;
-  permissions: string[];
-}
-
-const INITIAL_SKILLS: SkillItem[] = [
-  {
-    id: 'generate-image',
-    name: 'Génération d’Image Souveraine',
-    category: 'multimedia',
-    description: 'Routage multi-fournisseurs FLUX-1 Schnell / FLUX.2 Klein 4B avec cadrage dynamique.',
-    author: 'Ñkyel Core (SmartANDJ)',
-    version: '2.0.0',
-    enabled: true,
-    permissions: ['media:write', 'r2:upload'],
-  },
-  {
-    id: 'edit-image',
-    name: 'Retouche & Édition d’Image',
-    category: 'multimedia',
-    description: 'Inpainting, suppression d’éléments et variations guidées par prompt.',
-    author: 'Ñkyel Core',
-    version: '2.0.0',
-    enabled: true,
-    permissions: ['media:write'],
-  },
-  {
-    id: 'image-to-video',
-    name: 'Animation Image vers Vidéo (Wan2.1)',
-    category: 'multimedia',
-    description: 'Conversion d’images statiques en séquences cinématiques 5s 24 FPS.',
-    author: 'Ñkyel Video Team',
-    version: '2.1.0',
-    enabled: true,
-    permissions: ['media:video', 'runpod:inference'],
-  },
-  {
-    id: 'communication-kit',
-    name: 'Kit de Communication Réseaux Sociaux',
-    category: 'marketing',
-    description: 'Génération structurée de publications percutantes LinkedIn & Facebook.',
-    author: 'SmartANDJ Studio',
-    version: '1.2.0',
-    enabled: true,
-    permissions: ['text:generate'],
-  },
-  {
-    id: 'wide-research-tavily',
-    name: 'Recherche Web Approfondie (Tavily)',
-    category: 'research',
-    description: 'Navigation Web multi-requêtes, extraction de contenu et vérification de sources.',
-    author: 'Ñkyel Intelligence',
-    version: '2.0.0',
-    enabled: true,
-    permissions: ['web:search', 'network:external'],
-  },
-  {
-    id: 'sandbox-python-runner',
-    name: 'Exécuteur Sandbox AIO Python',
-    category: 'execution',
-    description: 'Exécution isolée de code Python dans le conteneur sécurisé DeerFlow.',
-    author: 'DeerFlow Native',
-    version: '1.11.0',
-    enabled: true,
-    permissions: ['sandbox:exec'],
-  },
-];
+import { skillsMcpApi, type SkillMetadata } from '@/lib/api';
 
 export default function SkillsStudioPage() {
-  const [skills, setSkills] = useState<SkillItem[]>(INITIAL_SKILLS);
+  const [skills, setSkills] = useState<SkillMetadata[]>([]);
   const [search, setSearch] = useState('');
+  const [loading, setLoading] = useState(true);
 
-  const toggleSkill = (id: string) => {
-    setSkills(skills.map((s) => (s.id === id ? { ...s, enabled: !s.enabled } : s)));
+  useEffect(() => {
+    skillsMcpApi.listSkills()
+      .then((data) => {
+        setSkills(data);
+      })
+      .catch((err) => {
+        console.error('[Skills Page] Fetch error:', err);
+      })
+      .finally(() => setLoading(false));
+  }, []);
+
+  const toggleSkill = async (id: string) => {
+    try {
+      const res = await skillsMcpApi.toggleSkill(id);
+      setSkills(skills.map((s) => (s.id === id ? { ...s, enabled: res.enabled } : s)));
+    } catch {
+      setSkills(skills.map((s) => (s.id === id ? { ...s, enabled: !s.enabled } : s)));
+    }
   };
 
   const filtered = skills.filter(
-    (s) => s.name.toLowerCase().includes(search.toLowerCase()) || s.description.toLowerCase().includes(search.toLowerCase())
+    (s) =>
+      s.name.toLowerCase().includes(search.toLowerCase()) ||
+      s.description.toLowerCase().includes(search.toLowerCase())
   );
 
   return (
@@ -131,6 +75,20 @@ export default function SkillsStudioPage() {
           />
         </div>
 
+        {/* Loading state */}
+        {loading && (
+          <div className="py-12 text-center text-xs text-[#7E8795]">
+            Chargement des compétences réelles du moteur DeerFlow 2.0...
+          </div>
+        )}
+
+        {/* Empty state */}
+        {!loading && filtered.length === 0 && (
+          <div className="py-12 text-center text-xs text-[#7E8795]">
+            Aucune compétence trouvée.
+          </div>
+        )}
+
         {/* Skills Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {filtered.map((skill) => (
@@ -146,7 +104,7 @@ export default function SkillsStudioPage() {
                     </span>
                     <div>
                       <h3 className="text-xs font-semibold text-[#F1EEE7]">{skill.name}</h3>
-                      <span className="text-[10px] text-[#7E8795] font-mono">v{skill.version} • {skill.author}</span>
+                      <span className="text-[10px] text-[#7E8795] font-mono">v2.0.0 • DeerFlow Native</span>
                     </div>
                   </div>
 
@@ -163,7 +121,7 @@ export default function SkillsStudioPage() {
               <div className="flex items-center justify-between pt-3 border-t border-white/[0.04] text-[10px] text-[#B8C0CC]">
                 <div className="flex items-center gap-1.5">
                   <ShieldCheck size={14} className="text-[#6F9485]" />
-                  <span>{skill.permissions.join(', ')}</span>
+                  <span>{skill.required_tools.join(', ') || 'native'}</span>
                 </div>
                 <span className={`px-2 py-0.5 rounded-full text-[10px] font-semibold ${skill.enabled ? 'bg-[#6F9485]/20 text-[#6F9485]' : 'bg-white/[0.04] text-[#7E8795]'}`}>
                   {skill.enabled ? 'Actif' : 'Désactivé'}

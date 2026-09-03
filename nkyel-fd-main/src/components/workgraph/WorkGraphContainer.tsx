@@ -8,6 +8,7 @@ import WorkGraphInspector from './WorkGraphInspector';
 import WorkGraphZoomRail from './WorkGraphZoomRail';
 import { useWorkGraphStore } from '@/lib/nkyel/work-graph-store';
 import { useParams } from 'next/navigation';
+import { workspacesApi } from '@/lib/api';
 
 export default function WorkGraphContainer() {
   const { 
@@ -22,16 +23,21 @@ export default function WorkGraphContainer() {
   } = useWorkGraphStore();
   
   const [isLocked, setIsLocked] = useState(false);
+  const [workspaceId, setWorkspaceId] = useState<string>('');
   const params = useParams();
   const threadId = (params?.id as string) || 'active-thread';
-  
-  // Need a generic workspaceId, for now assuming it's available or we pass a dummy one if auth not hooked up here
-  const workspaceId = 'default-workspace'; 
 
   useEffect(() => {
-    // Fetch initial graph state
-    fetchWorkGraph(workspaceId, threadId).catch(console.error);
-  }, [threadId, fetchWorkGraph, workspaceId]);
+    workspacesApi.current()
+      .then((ws) => {
+        setWorkspaceId(ws.id);
+        fetchWorkGraph(ws.id, threadId);
+      })
+      .catch(() => {
+        fetchWorkGraph('default', threadId);
+      });
+  }, [threadId, fetchWorkGraph]);
+
 
   const nodesArray = useMemo(() => Array.from(nodes.values()) as import('@/lib/nkyel/work-graph.types').WorkNode[], [nodes]);
   const edgesArray = useMemo(() => Array.from(edges.values()) as import('@/lib/nkyel/work-graph.types').WorkEdge[], [edges]);

@@ -34,6 +34,7 @@ import {
 } from '@phosphor-icons/react';
 import { useRenduPanel } from '@/hooks/useRenduPanel';
 import { useLanguageStore } from '@/stores/language.store';
+import { artifactsApi, api } from '@/lib/api';
 
 export type ArtifactType =
   | 'slide'
@@ -59,15 +60,15 @@ export interface LibraryArtifact {
   duration?: string;
 }
 
-const CANONICAL_ARTIFACTS: LibraryArtifact[] = [];
-
-const fetcher = (url: string) => fetch(url).then(res => res.json());
-
 export default function LibraryPage() {
   const { t, uiLocale } = useLanguageStore();
   const isFr = !uiLocale || uiLocale.startsWith('fr');
 
-  const { data: backendArtifacts, error, isLoading } = useSWR<any[]>('/api/artifacts', fetcher);
+  const { data: backendArtifacts, error, isLoading, mutate } = useSWR(
+    'artifacts',
+    () => artifactsApi.list()
+  );
+
 
   const artifacts = useMemo<LibraryArtifact[]>(() => {
     if (!backendArtifacts || !Array.isArray(backendArtifacts)) return [];

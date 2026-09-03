@@ -4,13 +4,14 @@
  * Central state management for the Canonical Work Graph.
  * Connects the Event Store to the React UI layer.
  * 
- * @version 1.0.0
+ * @version 2.0.0 — Pure Real Backend Integration (No Mocks)
  */
 
 import { create } from 'zustand';
 import type { WorkNode, WorkEdge, NkyelEvent, NkyelEventType } from './work-graph.types';
 import { eventStore } from './event-store';
 import { AgUiStreamAdapter } from './ag-ui-adapter';
+import { workgraphApi, sourcesEvidenceApi, missionsApi, getApiBaseUrl } from '@/lib/api';
 
 // --- Store State ----------------------------------------
 
@@ -34,7 +35,7 @@ interface WorkGraphState {
 
   // -- Actions -----------------------------------------
   /** Start a new mission/run */
-  startRun: (goalTitle: string, goalSummary?: string) => string;
+  startRun: (goalTitle: string, goalSummary?: string, existingRunId?: string) => string;
   /** Emit an event and update the graph */
   emitEvent: (event: Omit<NkyelEvent, 'sequenceNumber' | 'timestamp'>) => void;
   /** Select a node */
@@ -66,16 +67,6 @@ function generateId(prefix: string): string {
 
 // --- Store ----------------------------------------------
 
-const getApiUrl = () => (process.env.NEXT_PUBLIC_API_BASE_URL || process.env.NEXT_PUBLIC_API_URL) || 'https://api.nkyel.smartandjai.com/api/v1';
-
-const getHeaders = () => {
-  const token = typeof window !== 'undefined' ? localStorage.getItem('token') || localStorage.getItem('nkyel_access_token') : null;
-  return {
-    'Content-Type': 'application/json',
-    ...(token ? { Authorization: `Bearer ${token}` } : {}),
-  };
-};
-
 export const useWorkGraphStore = create<WorkGraphState>((set, get) => {
   // Subscribe to all events from the event store
   eventStore.subscribe('*', (event: NkyelEvent) => {
@@ -101,8 +92,8 @@ export const useWorkGraphStore = create<WorkGraphState>((set, get) => {
     replayPosition: 0,
     selectedNodeId: null,
 
-    startRun: (goalTitle: string, goalSummary?: string) => {
-      const runId = generateId('run');
+    startRun: (goalTitle: string, goalSummary?: string, existingRunId?: string) => {
+      const runId = existingRunId || generateId('run');
       const goalId = generateId('goal');
 
       set({ runId, isRunning: true, nodes: new Map(), edges: new Map(), eventLog: [] });
@@ -168,9 +159,9 @@ export const useWorkGraphStore = create<WorkGraphState>((set, get) => {
           runId: state.runId,
           payload: { reason: 'user_edit', editedNodeId: nodeId, updates },
         });
-        
+
         // Trigger the backend via the adapter to process SSE
-        const backendBase = (process.env.NEXT_PUBLIC_API_BASE_URL || process.env.NEXT_PUBLIC_API_URL) || 'https://api.nkyel.smartandjai.com';
+        const backendBase = getApiBaseUrl();
         const adapter = new AgUiStreamAdapter(state.runId);
         adapter.connect(`${backendBase}/api/v1/nkyel/replan`, {
           run_id: state.runId,
@@ -178,7 +169,6 @@ export const useWorkGraphStore = create<WorkGraphState>((set, get) => {
           reason: 'user_edit',
           updates
         }).catch(err => console.error('[WorkGraph Store] Replan stream failed:', err));
-
       }
     },
 
@@ -232,6 +222,11 @@ export const useWorkGraphStore = create<WorkGraphState>((set, get) => {
     stopRun: () => {
       const state = get();
       if (!state.runId) return;
+
+      // Notify backend cancellation
+      missionsApi.cancelRun(state.runId).catch(err => {
+        console.warn('[WorkGraph Store] Backend cancellation note:', err.message);
+      });
 
       eventStore.append({
         id: generateId('evt'),
@@ -303,24 +298,17 @@ export const useWorkGraphStore = create<WorkGraphState>((set, get) => {
 
     fetchWorkGraph: async (workspaceId: string, missionId?: string) => {
       try {
-        let url = `${getApiUrl()}/workgraph/nodes?workspace_id=${workspaceId}`;
-        if (missionId) {
-          url += `&mission_id=${missionId}`;
-        }
-        
-        const [nodesRes, edgesRes] = await Promise.all([
-          fetch(url, { headers: getHeaders() }),
-          fetch(`${getApiUrl()}/workgraph/edges?workspace_id=${workspaceId}`, { headers: getHeaders() })
+        const [nodesData, edgesData, sourcesData, evidenceData] = await Promise.all([
+          workgraphApi.listNodes(workspaceId, missionId).catch(() => []),
+          workgraphApi.listEdges(workspaceId).catch(() => []),
+          sourcesEvidenceApi.listSources(missionId, workspaceId).catch(() => []),
+          sourcesEvidenceApi.listEvidence(missionId).catch(() => []),
         ]);
-
-        if (!nodesRes.ok || !edgesRes.ok) throw new Error('Failed to fetch WorkGraph from backend');
-
-        const nodesData = await nodesRes.json();
-        const edgesData = await edgesRes.json();
 
         const nodesMap = new Map<string, WorkNode>();
         const edgesMap = new Map<string, WorkEdge>();
 
+        // 1. Graph nodes
         nodesData.forEach((n: any) => {
           nodesMap.set(n.id, {
             id: n.id,
@@ -331,10 +319,67 @@ export const useWorkGraphStore = create<WorkGraphState>((set, get) => {
             provenance: 'retrieved',
             createdAt: n.created_at,
             updatedAt: n.updated_at,
-            ...(n.payload || {})
+            ...(n.payload || {}),
           });
         });
 
+        // 2. Real Sources from Neon
+        sourcesData.forEach((s: any) => {
+          if (!nodesMap.has(s.id)) {
+            nodesMap.set(s.id, {
+              id: s.id,
+              type: 'source',
+              version: '1.0.0',
+              title: s.title || s.domain || 'Source Web',
+              summary: s.excerpt || s.url,
+              status: 'completed',
+              provenance: 'retrieved',
+              createdAt: s.created_at,
+              updatedAt: s.created_at,
+              metadata: {
+                url: s.url,
+                domain: s.domain,
+                source_type: s.source_type,
+                author: s.author,
+                search_provider: s.search_provider,
+              },
+            });
+          }
+        });
+
+        // 3. Real Evidence from Neon
+        evidenceData.forEach((e: any) => {
+          if (!nodesMap.has(e.id)) {
+            nodesMap.set(e.id, {
+              id: e.id,
+              type: 'evidence' as any,
+              version: '1.0.0',
+              title: e.claim || 'Preuve factuelle vérifiée',
+              summary: e.evidence_text,
+              status: 'completed',
+              confidence: parseFloat(e.confidence || '0.95'),
+              provenance: 'verified',
+              createdAt: e.created_at,
+              updatedAt: e.created_at,
+              metadata: {
+                relationship: e.relationship,
+                source_id: e.source_id,
+              },
+            });
+
+            if (e.source_id && nodesMap.has(e.source_id)) {
+              edgesMap.set(`edge_${e.id}`, {
+                id: `edge_${e.id}`,
+                type: 'supports' as any,
+                sourceId: e.source_id,
+                targetId: e.id,
+                createdAt: e.created_at,
+              });
+            }
+          }
+        });
+
+        // 4. Edges
         edgesData.forEach((e: any) => {
           edgesMap.set(e.id, {
             id: e.id,

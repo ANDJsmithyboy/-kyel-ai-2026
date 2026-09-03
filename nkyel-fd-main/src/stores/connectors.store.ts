@@ -4,11 +4,12 @@
  *
  * Canonical Registry for:
  * 1. CONNECTORS (OAuth, Google Workspace, MCP, REST)
- * 2. SKILLS (Executable capabilities, DeerFlow, Native)
+ * 2. SKILLS (Executable capabilities, DeerFlow 2.0, Native)
  * 3. DATA SOURCES (Read-only data feeds)
  */
 
 import { create } from 'zustand';
+import { connectorsApi, skillsMcpApi, type ConnectorItem as ApiConnectorItem } from '@/lib/api';
 
 export type ConnectorStatus =
   | 'AVAILABLE'
@@ -46,7 +47,7 @@ export interface ConnectorItem {
   name: string;
   description: string;
   category: ConnectorCategory;
-  icon: string; // phosphor icon name or image url
+  icon: string;
   status: ConnectorStatus;
   isGoogle: boolean;
   connectedAccount?: string;
@@ -102,12 +103,10 @@ interface ConnectorsState {
   toggleSkill: (id: string) => void;
   addCustomSkill: (skill: Omit<SkillItem, 'id' | 'version' | 'author' | 'verified'>) => void;
   fetchConnectors: () => Promise<void>;
+  fetchSkills: () => Promise<void>;
 }
 
-// Data fetch functions rely purely on real backend.
-// No fake 'INITIAL_CONNECTORS' or 'INITIAL_DATA_SOURCES' exist in this codebase.
-
-export const useConnectorsStore = create<ConnectorsState>((set: any, get: any) => ({
+export const useConnectorsStore = create<ConnectorsState>((set, get) => ({
   connectors: [],
   skills: [],
   dataSources: [],
@@ -116,50 +115,37 @@ export const useConnectorsStore = create<ConnectorsState>((set: any, get: any) =
   searchQuery: '',
   selectedCategory: 'All',
 
-  setActiveTab: (tab: 'connectors' | 'skills' | 'data_sources') => set({ activeTab: tab }),
-  setSearchQuery: (searchQuery: string) => set({ searchQuery }),
-  setSelectedCategory: (selectedCategory: string) => set({ selectedCategory }),
-  setSelectedConnectorId: (id: string | null) => set({ selectedConnectorId: id }),
+  setActiveTab: (tab) => set({ activeTab: tab }),
+  setSearchQuery: (searchQuery) => set({ searchQuery }),
+  setSelectedCategory: (selectedCategory) => set({ selectedCategory }),
+  setSelectedConnectorId: (id) => set({ selectedConnectorId: id }),
 
-  connectConnector: async (id: string, account: string = 'user@example.com') => {
+  connectConnector: async (id: string) => {
     // Optimistic UI state transition
-    set((state: ConnectorsState) => ({
-      connectors: state.connectors.map((c: ConnectorItem) =>
+    set((state) => ({
+      connectors: state.connectors.map((c) =>
         c.id === id ? { ...c, status: 'CONNECTING' as ConnectorStatus } : c
       ),
     }));
 
     try {
-      const res = await fetch(`/api/connectors/oauth/start?providerId=${id}`, {
-        method: 'POST'
-      });
-
-      if (!res.ok) {
-        throw new Error('OAuth flow failed to start');
-      }
-
-      // If we get an OAuth URL, we would normally redirect the user here.
-      // const data = await res.json();
-      // if (data.url) window.location.href = data.url;
-
-      // For now, simulate the eventual callback success from the real backend
-      set((state: ConnectorsState) => ({
-        connectors: state.connectors.map((c: ConnectorItem) =>
+      const res = await connectorsApi.connect(id);
+      set((state) => ({
+        connectors: state.connectors.map((c) =>
           c.id === id
             ? {
                 ...c,
                 status: 'CONNECTED' as ConnectorStatus,
-                connectedAccount: account,
+                connectedAccount: res.connector?.connectedAccount || 'Connecté',
                 lastUsedAt: 'À l’instant',
               }
             : c
         ),
       }));
     } catch (err) {
-      console.error('Connection failed:', err);
-      // Revert state if failed
-      set((state: ConnectorsState) => ({
-        connectors: state.connectors.map((c: ConnectorItem) =>
+      console.error('[Connectors Store] Connection failed:', err);
+      set((state) => ({
+        connectors: state.connectors.map((c) =>
           c.id === id ? { ...c, status: 'ERROR' as ConnectorStatus } : c
         ),
       }));
@@ -167,27 +153,40 @@ export const useConnectorsStore = create<ConnectorsState>((set: any, get: any) =
   },
 
   disconnectConnector: async (id: string) => {
-    set((state: ConnectorsState) => ({
-      connectors: state.connectors.map((c: ConnectorItem) =>
-        c.id === id
-          ? {
-              ...c,
-              status: 'AVAILABLE' as ConnectorStatus,
-              connectedAccount: undefined,
-              lastUsedAt: undefined,
-            }
-          : c
-      ),
-    }));
+    try {
+      await connectorsApi.disconnect(id);
+      set((state) => ({
+        connectors: state.connectors.map((c) =>
+          c.id === id
+            ? {
+                ...c,
+                status: 'AVAILABLE' as ConnectorStatus,
+                connectedAccount: undefined,
+                lastUsedAt: undefined,
+              }
+            : c
+        ),
+      }));
+    } catch (err) {
+      console.error('[Connectors Store] Disconnect failed:', err);
+    }
   },
 
-  toggleSkill: (id: string) => {
-    set((state: ConnectorsState) => ({
-      skills: state.skills.map((s: SkillItem) => (s.id === id ? { ...s, enabled: !s.enabled } : s)),
-    }));
+  toggleSkill: async (id: string) => {
+    try {
+      await skillsMcpApi.toggleSkill(id);
+      set((state) => ({
+        skills: state.skills.map((s) => (s.id === id ? { ...s, enabled: !s.enabled } : s)),
+      }));
+    } catch {
+      // Fallback local toggle
+      set((state) => ({
+        skills: state.skills.map((s) => (s.id === id ? { ...s, enabled: !s.enabled } : s)),
+      }));
+    }
   },
 
-  addCustomSkill: (skillData: Omit<SkillItem, 'id' | 'version' | 'author' | 'verified'>) => {
+  addCustomSkill: (skillData) => {
     const newSkill: SkillItem = {
       ...skillData,
       id: `sk_custom_${Date.now()}`,
@@ -195,41 +194,61 @@ export const useConnectorsStore = create<ConnectorsState>((set: any, get: any) =
       author: 'Personnalisé',
       verified: true,
     };
-    set((state: ConnectorsState) => ({
+    set((state) => ({
       skills: [newSkill, ...state.skills],
     }));
   },
 
   fetchConnectors: async () => {
     try {
-      const res = await fetch('/api/connectors/providers');
-      if (!res.ok) {
-        throw new Error(`Failed to fetch connectors registry: ${res.status}`);
-      }
-      
-      const providers = await res.json();
-      set(() => {
-        // We do NOT use INITIAL_CONNECTORS fallback anymore.
-        // We only render what the real API returns.
-        const loadedConnectors: ConnectorItem[] = providers.map((prov: any) => ({
-          id: prov.id,
-          slug: prov.name.toLowerCase().replace(/\s+/g, '-'),
-          name: prov.name,
-          description: prov.notes || 'Fournisseur d\'intelligence et de calcul.',
-          category: prov.category || 'Developer',
-          icon: prov.icon || prov.logo || 'PlugsConnected',
-          status: prov.connection?.status ?? prov.status ?? 'AVAILABLE',
-          isGoogle: prov.isGoogle || false,
-          capabilities: prov.capabilities || [],
-          permissions: prov.permissions || []
-        }));
+      const rawConnectors = await connectorsApi.list();
+      const mapped: ConnectorItem[] = rawConnectors.map((prov) => ({
+        id: prov.id,
+        slug: prov.slug || prov.id,
+        name: prov.name,
+        description: prov.description,
+        category: (prov.category as ConnectorCategory) || 'Developer',
+        icon: prov.icon || 'PlugsConnected',
+        status: (prov.status as ConnectorStatus) || 'AVAILABLE',
+        isGoogle: prov.isGoogle || false,
+        connectedAccount: prov.connectedAccount,
+        capabilities: prov.capabilities || [],
+        permissions: (prov.permissions || []).map((p: any) => ({
+          id: p.id,
+          scope: p.scope,
+          humanLabel: p.humanLabel,
+          requiresApproval: p.requiresApproval ?? false,
+        })),
+      }));
 
-        return { connectors: loadedConnectors };
-      });
+      set({ connectors: mapped });
     } catch (err) {
-      console.error('Failed to fetch real connector registry', err);
-      // Ensure we don't fall back to fake data on error
-      set(() => ({ connectors: [] }));
+      console.error('[Connectors Store] Failed to fetch real connector registry:', err);
+    }
+  },
+
+  fetchSkills: async () => {
+    try {
+      const rawSkills = await skillsMcpApi.listSkills();
+      const mapped: SkillItem[] = rawSkills.map((sk) => ({
+        id: sk.id,
+        slug: sk.id,
+        name: sk.name,
+        description: sk.description,
+        category: sk.category,
+        icon: 'Brain',
+        enabled: sk.enabled,
+        verified: true,
+        version: '2.0.0',
+        author: 'DeerFlow 2.0 (SmartANDJ)',
+        inputs: ['context', 'parameters'],
+        outputs: ['analysis', 'artifact'],
+        requiredConnectors: sk.required_tools,
+      }));
+
+      set({ skills: mapped });
+    } catch (err) {
+      console.error('[Connectors Store] Failed to fetch real skills:', err);
     }
   },
 }));

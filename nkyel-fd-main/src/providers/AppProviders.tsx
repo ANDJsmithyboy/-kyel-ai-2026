@@ -1,19 +1,21 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useAuth } from '@clerk/nextjs';
+import { setGlobalTokenGetter } from '@/lib/api/client';
 import { ThemeProvider } from './ThemeProvider';
 import { AccentProvider } from './AccentProvider';
 import { LocaleProvider } from './LocaleProvider';
 import { TypographyPreferenceProvider } from './TypographyPreferenceProvider';
 import { DensityProvider } from './DensityProvider';
 
-/**
- * Ñkyel AI — AppProviders
- * SmartANDJ AI Technologies · Founder: Daniel Jonathan ANDJ
- *
- * Bilingual Clerk: EN-US default, FR-FR when browser is French.
- * Clerk localization syncs with useLanguageStore.uiLocale.
- */
+function AuthTokenSync() {
+  const { getToken } = useAuth();
+  useEffect(() => {
+    setGlobalTokenGetter(getToken);
+  }, [getToken]);
+  return null;
+}
 
 export function AppProviders({ children }: { children: React.ReactNode }) {
   return (
@@ -22,6 +24,7 @@ export function AppProviders({ children }: { children: React.ReactNode }) {
         <LocaleProvider>
           <TypographyPreferenceProvider>
             <DensityProvider>
+              <AuthTokenSync />
               {children}
             </DensityProvider>
           </TypographyPreferenceProvider>
@@ -30,3 +33,4 @@ export function AppProviders({ children }: { children: React.ReactNode }) {
     </ThemeProvider>
   );
 }
+

@@ -1,37 +1,54 @@
 /**
  * Ñkyel AI · Programmes (Workflows)
- * SmartANDJ AI Technologies
+ * SmartANDJ AI Technologies · Founder: Daniel Jonathan ANDJ
  * 
- * Directory of AI workflows, agents, and routines.
+ * Real automated workflows, agents, and routines backed by backend API.
  */
 
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { 
   MagnifyingGlass, Plus, Play, Copy, ChartBar, Globe, 
   Code, Users, Briefcase, FileText 
 } from '@phosphor-icons/react';
+import { programsApi, type ProgramItem } from '@/lib/api';
 
 const CATEGORIES = ['Tout', 'Business', 'Contenu', 'Dev', 'Analyse', 'Équipe'];
 
-const PROGRAMMES = [
-  { id: '1', title: 'Génération de rapport', category: 'Business', icon: ChartBar, desc: 'Agrège les données et génère un rapport de synthèse hebdomadaire.' },
-  { id: '2', title: 'Audit site web', category: 'Analyse', icon: Globe, desc: 'Analyse SEO, performance et accessibilité d\'une URL cible.' },
-  { id: '3', title: 'Pipeline RAG', category: 'Dev', icon: Code, desc: 'Ingestion de documents et recherche sémantique avec vectorisation.' },
-  { id: '4', title: 'Veille marché', category: 'Business', icon: Briefcase, desc: 'Scraping quotidien des tendances et résumé exécutif.' },
-  { id: '5', title: 'Plan marketing', category: 'Contenu', icon: FileText, desc: 'Création d\'un calendrier éditorial multi-canal sur 30 jours.' },
-  { id: '6', title: 'Assistant support', category: 'Équipe', icon: Users, desc: 'Agent conversationnel pour le triage de tickets de niveau 1.' },
-];
+function getCategoryIcon(cat: string) {
+  switch (cat?.toLowerCase()) {
+    case 'business': return ChartBar;
+    case 'analyse': return Globe;
+    case 'dev': return Code;
+    case 'équipe': return Users;
+    case 'contenu': return FileText;
+    default: return Briefcase;
+  }
+}
 
 export default function ProgrammesPage() {
+  const [programmes, setProgrammes] = useState<ProgramItem[]>([]);
   const [activeCategory, setActiveCategory] = useState('Tout');
   const [searchQuery, setSearchQuery] = useState('');
+  const [loading, setLoading] = useState(true);
 
-  const filteredProgrammes = PROGRAMMES.filter(p => {
+  useEffect(() => {
+    programsApi.list()
+      .then((data) => {
+        setProgrammes(data);
+      })
+      .catch((err) => {
+        console.error('[Programmes Page] Fetch error:', err);
+      })
+      .finally(() => setLoading(false));
+  }, []);
+
+  const filteredProgrammes = programmes.filter(p => {
     const matchCategory = activeCategory === 'Tout' || p.category === activeCategory;
-    const matchSearch = p.title.toLowerCase().includes(searchQuery.toLowerCase()) || p.desc.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchSearch = p.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
+      (p.description || '').toLowerCase().includes(searchQuery.toLowerCase());
     return matchCategory && matchSearch;
   });
 
@@ -46,10 +63,19 @@ export default function ProgrammesPage() {
               Programmes
             </h1>
             <p className="text-[var(--text-secondary)]">
-              Découvrez, clonez et lancez des workflows d'intelligence artificielle.
+              Workflows et routines d'intelligence artificielle connectés au moteur backend.
             </p>
           </div>
-          <button className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[var(--text-primary)] text-[var(--bg)] hover:opacity-90 transition-all font-semibold text-[14px] shadow-sm">
+          <button 
+            onClick={async () => {
+              const title = prompt('Titre du nouveau programme :');
+              if (title) {
+                const created = await programsApi.create(title, 'Business', 'Routine automatisée', 'Sur demande');
+                setProgrammes([created, ...programmes]);
+              }
+            }}
+            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[var(--text-primary)] text-[var(--bg)] hover:opacity-90 transition-all font-semibold text-[14px] shadow-sm cursor-pointer"
+          >
             <Plus size={16} weight="bold" />
             Nouveau programme
           </button>
@@ -87,10 +113,17 @@ export default function ProgrammesPage() {
           </div>
         </div>
 
+        {/* Loading state */}
+        {loading && (
+          <div className="py-12 text-center text-sm text-[var(--text-secondary)]">
+            Chargement des programmes actifs...
+          </div>
+        )}
+
         {/* Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
           {filteredProgrammes.map((prog) => {
-            const Icon = prog.icon;
+            const Icon = getCategoryIcon(prog.category);
             return (
               <motion.div
                 key={prog.id}
@@ -111,15 +144,15 @@ export default function ProgrammesPage() {
                   {prog.title}
                 </h3>
                 <p className="text-[13.5px] text-[var(--text-secondary)] leading-relaxed mb-6 flex-1">
-                  {prog.desc}
+                  {prog.description}
                 </p>
 
                 <div className="flex items-center gap-2 mt-auto pt-4 border-t border-[var(--border-subtle)]">
-                  <button className="flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-lg bg-[var(--bg)] border border-[var(--border)] hover:border-[var(--text-primary)] text-[var(--text-primary)] transition-colors text-[13px] font-semibold">
+                  <button className="flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-lg bg-[var(--bg)] border border-[var(--border)] hover:border-[var(--text-primary)] text-[var(--text-primary)] transition-colors text-[13px] font-semibold cursor-pointer">
                     <Play size={14} weight="fill" />
                     Lancer
                   </button>
-                  <button className="flex items-center justify-center w-9 h-9 rounded-lg bg-[var(--bg)] border border-[var(--border-subtle)] hover:bg-[var(--hover)] hover:text-[var(--text-primary)] text-[var(--text-secondary)] transition-colors" title="Cloner">
+                  <button className="flex items-center justify-center w-9 h-9 rounded-lg bg-[var(--bg)] border border-[var(--border-subtle)] hover:bg-[var(--hover)] hover:text-[var(--text-primary)] text-[var(--text-secondary)] transition-colors cursor-pointer" title="Cloner">
                     <Copy size={16} />
                   </button>
                 </div>
@@ -128,7 +161,7 @@ export default function ProgrammesPage() {
           })}
         </div>
 
-        {filteredProgrammes.length === 0 && (
+        {!loading && filteredProgrammes.length === 0 && (
           <div className="flex flex-col items-center justify-center py-20 text-center">
             <MagnifyingGlass size={48} className="text-[var(--text-tertiary)] mb-4" />
             <h3 className="text-lg font-medium text-[var(--text-primary)]">Aucun programme trouvé</h3>

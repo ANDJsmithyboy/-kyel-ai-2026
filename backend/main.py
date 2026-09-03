@@ -38,6 +38,7 @@ from api.v1.artifacts import router as artifacts_router
 from api.v1.review import router as review_router
 from api.v1.wide_research import router as wide_research_router
 from api.v1.memory import router as memory_router
+from api.v1.capabilities import router as capabilities_router
 from services.language_registry_service import language_service
 
 logger = logging.getLogger(__name__)
@@ -180,6 +181,7 @@ app.include_router(artifacts_router, prefix="/api/v1")
 app.include_router(review_router, prefix="/api/v1")
 app.include_router(wide_research_router, prefix="/api/v1")
 app.include_router(memory_router, prefix="/api/v1")
+app.include_router(capabilities_router, prefix="/api/v1")
 
 
 

@@ -1,6 +1,8 @@
 'use client';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useVIEProjection } from '@/lib/nkyel/vie-projection';
+import { useWorkGraphStore } from '@/lib/nkyel/work-graph-store';
+import { workspacesApi } from '@/lib/api';
 import { VIEHero } from './VIEHero';
 import { VIEPerception } from './sections/VIEPerception';
 import { VIEInterpretation } from './sections/VIEInterpretation';
@@ -13,9 +15,18 @@ interface VIEScreenProps {
 }
 
 export default function VIEScreen({ missionId }: VIEScreenProps) {
-  // We use the actual projection. For a real environment, we'd also pass threadId.
-  // Assuming 'default-thread' for the visual prototype if not provided.
+  const { fetchWorkGraph } = useWorkGraphStore();
+
+  useEffect(() => {
+    workspacesApi.current().then(ws => {
+      fetchWorkGraph(ws.id, missionId);
+    }).catch(() => {
+      fetchWorkGraph('default', missionId);
+    });
+  }, [missionId, fetchWorkGraph]);
+
   const projection = useVIEProjection(missionId, 'default-thread');
+
 
   return (
     <div className="min-h-screen bg-[var(--bg,var(--graph-canvas,#0A0A0A))] text-[var(--text-primary)] flex flex-col items-center selection:bg-[var(--accent)] selection:text-white">
