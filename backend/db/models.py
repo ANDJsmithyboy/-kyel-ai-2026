@@ -9,7 +9,7 @@ Fondateur : Daniel Jonathan ANDJ
 
 import uuid
 from datetime import datetime, timezone
-from typing import Optional, List
+from typing import Optional, List, Any, Dict
 import enum
 
 from sqlalchemy import (
@@ -22,6 +22,7 @@ from sqlalchemy import (
     ForeignKey,
     Enum as SAEnum,
     Index,
+    JSON,
 )
 from sqlalchemy.orm import (
     DeclarativeBase,
@@ -87,6 +88,490 @@ def generate_uuid() -> uuid.UUID:
     return uuid.uuid4()
 
 
+# ── Workspace & Mission Models ───────────────────────────────
+
+class Workspace(Base):
+    __tablename__ = "workspaces"
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), primary_key=True, default=generate_uuid
+    )
+    name: Mapped[str] = mapped_column(String(255), nullable=False)
+    slug: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
+    workspace_type: Mapped[str] = mapped_column(String(64), default="BUSINESS", nullable=False)
+    owner_user_id: Mapped[Optional[uuid.UUID]] = mapped_column(UUID(as_uuid=True), nullable=True)
+    tier: Mapped[str] = mapped_column(String(64), default="free", nullable=False)
+    status: Mapped[str] = mapped_column(String(32), default="ACTIVE", nullable=False)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=lambda: datetime.now(timezone.utc)
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        default=lambda: datetime.now(timezone.utc),
+        onupdate=lambda: datetime.now(timezone.utc),
+    )
+
+    members: Mapped[List["WorkspaceMember"]] = relationship(
+        back_populates="workspace", cascade="all, delete-orphan"
+    )
+    missions: Mapped[List["Mission"]] = relationship(
+        back_populates="workspace", cascade="all, delete-orphan"
+    )
+
+
+class WorkspaceMember(Base):
+    __tablename__ = "workspace_members"
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), primary_key=True, default=generate_uuid
+    )
+    workspace_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("workspaces.id", ondelete="CASCADE"), nullable=False
+    )
+    user_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), nullable=False
+    )
+    role: Mapped[str] = mapped_column(String(64), default="owner", nullable=False)
+    status: Mapped[str] = mapped_column(String(32), default="ACTIVE", nullable=False)
+    joined_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=lambda: datetime.now(timezone.utc)
+    )
+
+    workspace: Mapped["Workspace"] = relationship(back_populates="members")
+
+    __table_args__ = (
+        Index("ix_ws_members_ws_user", "workspace_id", "user_id", unique=True),
+    )
+
+
+class WorkspaceSettings(Base):
+    __tablename__ = "workspace_settings"
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=generate_uuid)
+    workspace_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("workspaces.id", ondelete="CASCADE"), nullable=False, unique=True)
+    default_model_profile: Mapped[Optional[str]] = mapped_column(String(64), default="NKYEL_RESEARCH", nullable=True)
+    default_approval_policy: Mapped[Optional[Any]] = mapped_column(JSON, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
+
+
+class UserSettings(Base):
+    __tablename__ = "user_settings"
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=generate_uuid)
+    user_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), nullable=False, unique=True)
+    theme: Mapped[Optional[str]] = mapped_column(String(32), default="DARK", nullable=True)
+    accent: Mapped[Optional[str]] = mapped_column(String(32), default="GOLD", nullable=True)
+    text_size: Mapped[Optional[str]] = mapped_column(String(32), default="MEDIUM", nullable=True)
+    density: Mapped[Optional[str]] = mapped_column(String(32), default="COMFORTABLE", nullable=True)
+    language: Mapped[Optional[str]] = mapped_column(String(32), default="fr-FR", nullable=True)
+    default_model_profile: Mapped[Optional[str]] = mapped_column(String(64), default="NKYEL_RESEARCH", nullable=True)
+    reduced_motion: Mapped[bool] = mapped_column(Boolean, default=False)
+    sidebar_collapsed: Mapped[bool] = mapped_column(Boolean, default=False)
+    show_sources: Mapped[bool] = mapped_column(Boolean, default=True)
+    show_artifacts: Mapped[bool] = mapped_column(Boolean, default=True)
+    show_reasoning: Mapped[bool] = mapped_column(Boolean, default=False)
+    developer_mode: Mapped[bool] = mapped_column(Boolean, default=False)
+    keyboard_shortcuts: Mapped[bool] = mapped_column(Boolean, default=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
+
+
+class Project(Base):
+    __tablename__ = "projects"
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=generate_uuid)
+    workspace_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("workspaces.id", ondelete="CASCADE"), nullable=False)
+    created_by_user_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    name: Mapped[str] = mapped_column(String(255), nullable=False)
+    description: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    status: Mapped[str] = mapped_column(String(32), default="ACTIVE", nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
+
+
+class MissionStatus(str, enum.Enum):
+    draft = "draft"
+    queued = "queued"
+    running = "running"
+    waiting_for_approval = "waiting_for_approval"
+    completed = "completed"
+    failed = "failed"
+    cancelled = "cancelled"
+
+
+class Mission(Base):
+    __tablename__ = "missions"
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), primary_key=True, default=generate_uuid
+    )
+    workspace_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("workspaces.id", ondelete="CASCADE"), nullable=False
+    )
+    created_by_user_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), nullable=False
+    )
+    project_id: Mapped[Optional[uuid.UUID]] = mapped_column(UUID(as_uuid=True), nullable=True)
+    conversation_id: Mapped[Optional[uuid.UUID]] = mapped_column(UUID(as_uuid=True), nullable=True)
+    title: Mapped[str] = mapped_column(String(512), nullable=False)
+    objective: Mapped[str] = mapped_column(Text, nullable=False)
+    status: Mapped[str] = mapped_column(
+        String(64), default="draft", nullable=False
+    )
+    priority: Mapped[str] = mapped_column(String(32), default="normal", nullable=False)
+    autonomy_level: Mapped[str] = mapped_column(String(64), default="semi_autonomous", nullable=False)
+    complexity: Mapped[str] = mapped_column(String(32), default="MEDIUM", nullable=False)
+    selected_model_profile: Mapped[Optional[str]] = mapped_column(String(64), default="NKYEL_RESEARCH", nullable=True)
+    current_phase: Mapped[str] = mapped_column(String(64), default="PLANNING", nullable=False)
+    current_run_id: Mapped[Optional[uuid.UUID]] = mapped_column(UUID(as_uuid=True), nullable=True)
+    runtime_type: Mapped[Optional[str]] = mapped_column(String(64), nullable=True)
+    run_id: Mapped[Optional[str]] = mapped_column(String(128), nullable=True)
+    error_message: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    metadata_json: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=lambda: datetime.now(timezone.utc)
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        default=lambda: datetime.now(timezone.utc),
+        onupdate=lambda: datetime.now(timezone.utc),
+    )
+    started_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+    completed_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+
+    workspace: Mapped["Workspace"] = relationship(back_populates="missions")
+
+    __table_args__ = (
+        Index("ix_missions_workspace", "workspace_id"),
+        Index("ix_missions_user", "created_by_user_id"),
+        Index("ix_missions_status", "status"),
+    )
+
+
+class Run(Base):
+    __tablename__ = "runs"
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=generate_uuid)
+    mission_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("missions.id", ondelete="CASCADE"), nullable=False)
+    workspace_id: Mapped[Optional[uuid.UUID]] = mapped_column(UUID(as_uuid=True), ForeignKey("workspaces.id", ondelete="CASCADE"), nullable=True)
+    attempt_number: Mapped[int] = mapped_column(Integer, default=1, nullable=False)
+    run_type: Mapped[str] = mapped_column(String(32), default="FULL", nullable=False)
+    status: Mapped[str] = mapped_column(String(32), default="QUEUED", nullable=False)
+    selected_model_profile: Mapped[Optional[str]] = mapped_column(String(64), default="NKYEL_RESEARCH", nullable=True)
+    started_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+    completed_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
+
+
+class MissionEvent(Base):
+    __tablename__ = "mission_events"
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=generate_uuid)
+    workspace_id: Mapped[Optional[uuid.UUID]] = mapped_column(UUID(as_uuid=True), nullable=True)
+    mission_id: Mapped[Optional[uuid.UUID]] = mapped_column(UUID(as_uuid=True), nullable=True)
+    run_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("runs.id", ondelete="CASCADE"), nullable=False)
+    event_type: Mapped[str] = mapped_column(String(128), nullable=False)
+    version: Mapped[str] = mapped_column(String(32), default="1.0.0", nullable=False)
+    sequence: Mapped[int] = mapped_column(Integer, default=1, nullable=False)
+    payload: Mapped[Optional[Any]] = mapped_column(JSON, nullable=True)
+    node_id: Mapped[Optional[str]] = mapped_column(String(128), nullable=True)
+    idempotency_key: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
+    safe_metadata: Mapped[Optional[Any]] = mapped_column(JSON, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+
+
+class WorkgraphNode(Base):
+    __tablename__ = "workgraph_nodes"
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=generate_uuid)
+    workspace_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("workspaces.id", ondelete="CASCADE"), nullable=False)
+    mission_id: Mapped[Optional[uuid.UUID]] = mapped_column(UUID(as_uuid=True), nullable=True)
+    run_id: Mapped[Optional[uuid.UUID]] = mapped_column(UUID(as_uuid=True), nullable=True)
+    node_type: Mapped[str] = mapped_column(String(64), nullable=False)
+    label: Mapped[str] = mapped_column(String(512), nullable=False)
+    status: Mapped[str] = mapped_column(String(32), default="PENDING", nullable=False)
+    payload: Mapped[Optional[Any]] = mapped_column(JSON, nullable=True)
+    data: Mapped[Optional[Any]] = mapped_column(JSON, nullable=True)
+    position_x: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
+    position_y: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
+
+
+class WorkgraphEdge(Base):
+    __tablename__ = "workgraph_edges"
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=generate_uuid)
+    workspace_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("workspaces.id", ondelete="CASCADE"), nullable=False)
+    mission_id: Mapped[Optional[uuid.UUID]] = mapped_column(UUID(as_uuid=True), nullable=True)
+    run_id: Mapped[Optional[uuid.UUID]] = mapped_column(UUID(as_uuid=True), nullable=True)
+    source_node_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), nullable=False)
+    target_node_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), nullable=False)
+    relation_type: Mapped[str] = mapped_column(String(64), default="DEPENDENCY", nullable=False)
+    label: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
+    data: Mapped[Optional[Any]] = mapped_column(JSON, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+
+
+class Task(Base):
+    __tablename__ = "tasks"
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=generate_uuid)
+    mission_id: Mapped[Optional[uuid.UUID]] = mapped_column(UUID(as_uuid=True), nullable=True)
+    run_id: Mapped[Optional[uuid.UUID]] = mapped_column(UUID(as_uuid=True), nullable=True)
+    title: Mapped[str] = mapped_column(String(512), nullable=False)
+    status: Mapped[str] = mapped_column(String(32), default="PENDING", nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
+
+
+class Checkpoint(Base):
+    __tablename__ = "checkpoints"
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=generate_uuid)
+    thread_id: Mapped[Optional[str]] = mapped_column(String(128), nullable=True)
+    mission_id: Mapped[Optional[uuid.UUID]] = mapped_column(UUID(as_uuid=True), nullable=True)
+    run_id: Mapped[Optional[uuid.UUID]] = mapped_column(UUID(as_uuid=True), nullable=True)
+    checkpoint_id: Mapped[Optional[str]] = mapped_column(String(128), nullable=True)
+    data: Mapped[Optional[Any]] = mapped_column(JSON, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+
+
+class IdempotencyKey(Base):
+    __tablename__ = "idempotency_keys"
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=generate_uuid)
+    key: Mapped[str] = mapped_column(String(255), unique=True, nullable=False)
+    locked_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+    expires_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+
+
+class Simulation(Base):
+    __tablename__ = "simulations"
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=generate_uuid)
+    mission_id: Mapped[Optional[uuid.UUID]] = mapped_column(UUID(as_uuid=True), nullable=True)
+    run_id: Mapped[Optional[uuid.UUID]] = mapped_column(UUID(as_uuid=True), nullable=True)
+    version: Mapped[int] = mapped_column(Integer, default=1, nullable=False)
+    status: Mapped[str] = mapped_column(String(32), default="PENDING", nullable=False)
+    estimated_duration_min_seconds: Mapped[int] = mapped_column(Integer, default=0)
+    estimated_duration_max_seconds: Mapped[int] = mapped_column(Integer, default=0)
+    estimated_cost_low: Mapped[float] = mapped_column(Float, default=0.0)
+    estimated_cost_high: Mapped[float] = mapped_column(Float, default=0.0)
+    risk_level: Mapped[str] = mapped_column(String(32), default="LOW")
+    confidence: Mapped[str] = mapped_column(String(32), default="0.9")
+    summary: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    plan: Mapped[Optional[Any]] = mapped_column(JSON, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+
+
+class Prediction(Base):
+    __tablename__ = "predictions"
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=generate_uuid)
+    mission_id: Mapped[Optional[uuid.UUID]] = mapped_column(UUID(as_uuid=True), nullable=True)
+    run_id: Mapped[Optional[uuid.UUID]] = mapped_column(UUID(as_uuid=True), nullable=True)
+    prediction_type: Mapped[str] = mapped_column(String(64), nullable=False)
+    value_json: Mapped[Optional[Any]] = mapped_column(JSON, nullable=True)
+    confidence: Mapped[str] = mapped_column(String(32), default="MEDIUM")
+    basis: Mapped[Optional[Any]] = mapped_column(JSON, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+
+
+class Source(Base):
+    __tablename__ = "sources"
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=generate_uuid)
+    workspace_id: Mapped[Optional[uuid.UUID]] = mapped_column(UUID(as_uuid=True), nullable=True)
+    mission_id: Mapped[Optional[uuid.UUID]] = mapped_column(UUID(as_uuid=True), nullable=True)
+    run_id: Mapped[Optional[uuid.UUID]] = mapped_column(UUID(as_uuid=True), nullable=True)
+    source_type: Mapped[str] = mapped_column(String(64), default="WEB")
+    url: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    title: Mapped[Optional[str]] = mapped_column(String(512), nullable=True)
+    domain: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
+    excerpt: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    metadata_json: Mapped[Optional[Any]] = mapped_column(JSON, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+
+
+class Evidence(Base):
+    __tablename__ = "evidence"
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=generate_uuid)
+    source_id: Mapped[Optional[uuid.UUID]] = mapped_column(UUID(as_uuid=True), ForeignKey("sources.id", ondelete="SET NULL"), nullable=True)
+    mission_id: Mapped[Optional[uuid.UUID]] = mapped_column(UUID(as_uuid=True), nullable=True)
+    claim: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    relation: Mapped[str] = mapped_column(String(32), default="supports")
+    fact_excerpt: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    confidence: Mapped[float] = mapped_column(Float, default=0.5)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+
+
+class Hypothesis(Base):
+    __tablename__ = "hypotheses"
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=generate_uuid)
+    mission_id: Mapped[Optional[uuid.UUID]] = mapped_column(UUID(as_uuid=True), nullable=True)
+    statement: Mapped[str] = mapped_column(Text, nullable=False)
+    confidence: Mapped[float] = mapped_column(Float, default=0.5)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+
+
+class HypothesisEvidence(Base):
+    __tablename__ = "hypothesis_evidence"
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=generate_uuid)
+    hypothesis_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("hypotheses.id", ondelete="CASCADE"), nullable=False)
+    evidence_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("evidence.id", ondelete="CASCADE"), nullable=False)
+
+
+class Decision(Base):
+    __tablename__ = "decisions"
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=generate_uuid)
+    mission_id: Mapped[Optional[uuid.UUID]] = mapped_column(UUID(as_uuid=True), nullable=True)
+    title: Mapped[str] = mapped_column(String(512), nullable=False)
+    rationale: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+
+
+class DecisionEvidence(Base):
+    __tablename__ = "decision_evidence"
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=generate_uuid)
+    decision_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("decisions.id", ondelete="CASCADE"), nullable=False)
+    evidence_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("evidence.id", ondelete="CASCADE"), nullable=False)
+
+
+class ApprovalRequest(Base):
+    __tablename__ = "approval_requests"
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=generate_uuid)
+    mission_id: Mapped[Optional[uuid.UUID]] = mapped_column(UUID(as_uuid=True), nullable=True)
+    action_type: Mapped[str] = mapped_column(String(64), nullable=False)
+    payload: Mapped[Optional[Any]] = mapped_column(JSON, nullable=True)
+    status: Mapped[str] = mapped_column(String(32), default="PENDING")
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+
+
+class ApprovalDecision(Base):
+    __tablename__ = "approval_decisions"
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=generate_uuid)
+    request_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("approval_requests.id", ondelete="CASCADE"), nullable=False)
+    decided_by_user_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), nullable=False)
+    approved: Mapped[bool] = mapped_column(Boolean, nullable=False)
+    comments: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+
+
+class Agent(Base):
+    __tablename__ = "agents"
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=generate_uuid)
+    name: Mapped[str] = mapped_column(String(255), nullable=False)
+    slug: Mapped[str] = mapped_column(String(128), unique=True, nullable=False)
+    description: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+
+
+class AgentVersion(Base):
+    __tablename__ = "agent_versions"
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=generate_uuid)
+    agent_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("agents.id", ondelete="CASCADE"), nullable=False)
+    version: Mapped[str] = mapped_column(String(32), default="1.0.0", nullable=False)
+    prompt_template: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+
+
+class AgentCapability(Base):
+    __tablename__ = "agent_capabilities"
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=generate_uuid)
+    agent_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("agents.id", ondelete="CASCADE"), nullable=False)
+    capability: Mapped[str] = mapped_column(String(128), nullable=False)
+
+
+class Skill(Base):
+    __tablename__ = "skills"
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=generate_uuid)
+    name: Mapped[str] = mapped_column(String(255), nullable=False)
+    code: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+
+
+class AgentSkill(Base):
+    __tablename__ = "agent_skills"
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=generate_uuid)
+    agent_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("agents.id", ondelete="CASCADE"), nullable=False)
+    skill_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("skills.id", ondelete="CASCADE"), nullable=False)
+
+
+class Tool(Base):
+    __tablename__ = "tools"
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=generate_uuid)
+    name: Mapped[str] = mapped_column(String(255), unique=True, nullable=False)
+    description: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+
+
+class ToolExecution(Base):
+    __tablename__ = "tool_executions"
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=generate_uuid)
+    tool_id: Mapped[Optional[uuid.UUID]] = mapped_column(UUID(as_uuid=True), ForeignKey("tools.id", ondelete="SET NULL"), nullable=True)
+    run_id: Mapped[Optional[uuid.UUID]] = mapped_column(UUID(as_uuid=True), nullable=True)
+    status: Mapped[str] = mapped_column(String(32), default="SUCCESS")
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+
+
+class MessageArtifact(Base):
+    __tablename__ = "message_artifacts"
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=generate_uuid)
+    message_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("messages.id", ondelete="CASCADE"), nullable=False)
+    artifact_id: Mapped[Optional[str]] = mapped_column(String(128), nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+
+
+class UsageEvent(Base):
+    __tablename__ = "usage_events"
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=generate_uuid)
+    user_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    event_type: Mapped[str] = mapped_column(String(64), nullable=False)
+    cost: Mapped[float] = mapped_column(Float, default=0.0)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+
+
+class QuotaCounter(Base):
+    __tablename__ = "quota_counters"
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=generate_uuid)
+    user_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    counter_name: Mapped[str] = mapped_column(String(64), nullable=False)
+    current_val: Mapped[int] = mapped_column(Integer, default=0)
+    max_val: Mapped[int] = mapped_column(Integer, default=100)
+    reset_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+
+
+class AuditLog(Base):
+    __tablename__ = "audit_logs"
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=generate_uuid)
+    user_id: Mapped[Optional[uuid.UUID]] = mapped_column(UUID(as_uuid=True), nullable=True)
+    action: Mapped[str] = mapped_column(String(128), nullable=False)
+    metadata_json: Mapped[Optional[Any]] = mapped_column(JSON, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+
+
+
 # ── 1. Modèle User (app_users / users) ───────────────────────
 class User(Base):
     __tablename__ = "users"
@@ -97,10 +582,22 @@ class User(Base):
     clerk_sub: Mapped[Optional[str]] = mapped_column(
         String(255), unique=True, nullable=True, index=True
     )
+    clerk_user_id: Mapped[Optional[str]] = mapped_column(
+        String(255), nullable=True, index=True
+    )
     email: Mapped[str] = mapped_column(
         String(255), unique=True, nullable=False, index=True
     )
+    primary_email: Mapped[Optional[str]] = mapped_column(
+        String(255), nullable=True, index=True
+    )
     name: Mapped[str] = mapped_column(String(255), nullable=False)
+    display_name: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
+    avatar_url: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    locale: Mapped[Optional[str]] = mapped_column(String(32), default="fr", nullable=True)
+    timezone: Mapped[Optional[str]] = mapped_column(String(64), default="Africa/Libreville", nullable=True)
+    status: Mapped[Optional[str]] = mapped_column(String(32), default="ACTIVE", nullable=True)
+    last_seen_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
     hashed_password: Mapped[str] = mapped_column(String(512), nullable=False, default="")
     role: Mapped[UserRole] = mapped_column(
         SAEnum(UserRole), default=UserRole.free, nullable=False

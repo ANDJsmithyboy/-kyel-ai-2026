@@ -276,9 +276,9 @@ class ArtifactService:
         storage_key = f"artifacts/{actual_filename}"
 
         # ── Persistance Cloudflare R2 Souveraine (si configuré) ──
-        if settings.cloudflare_account_id and settings.cloudflare_api_token:
-            try:
-                from services.r2_storage_service import R2StorageService
+        try:
+            from services.r2_storage_service import R2StorageService
+            if R2StorageService.is_configured():
                 user_id = metadata.get("user_id", "default_user") if metadata else "default_user"
                 r2_res = await R2StorageService.upload_bytes(
                     data=raw_bytes,
@@ -290,8 +290,8 @@ class ArtifactService:
                 if r2_res and r2_res.get("url"):
                     storage_url = r2_res["url"]
                     storage_key = r2_res.get("object_key", storage_key)
-            except Exception as e:
-                logger.warning(f"R2 storage background upload note: {e}")
+        except Exception as e:
+            logger.warning(f"R2 storage background upload note: {e}")
 
         # Déterminer exports et actions disponibles
         export_formats = cls._get_supported_exports(type)
@@ -499,6 +499,12 @@ class ArtifactService:
         elif fmt == "json":
             json_bytes = json.dumps(artifact.metadata or {}, indent=2).encode("utf-8")
             return json_bytes, "application/json; charset=utf-8", f"{stem}.json"
+
+        # 11. Export HTML / Website
+        elif fmt in ("html", "htm"):
+            raw_text = cls._get_raw_text(artifact)
+            html_content = f"<!DOCTYPE html><html><head><meta charset='utf-8'><title>{artifact.title}</title></head><body>{raw_text}</body></html>"
+            return html_content.encode("utf-8"), "text/html; charset=utf-8", f"{stem}.html"
 
         else:
             raise ValueError(f"Format d'export non supporté : {target_format}")

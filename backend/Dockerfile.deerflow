@@ -1,0 +1,29 @@
+# Ñkyel AI — DeerFlow 2.0 Complete Gateway Container · SmartANDJ AI Technologies
+FROM python:3.11-slim
+
+WORKDIR /app
+
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PORT=8080 \
+    HOST=0.0.0.0
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    curl \
+    git \
+    build-essential \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY . /app/backend
+
+WORKDIR /app/backend
+
+EXPOSE 8080
+
+HEALTHCHECK --interval=20s --timeout=5s --retries=3 --start-period=10s \
+    CMD curl -f http://localhost:8080/health || exit 1
+
+CMD ["python", "deerflow_core/run_gateway.py"]

@@ -175,6 +175,15 @@ class MissionCancellationManager:
             token = self._tokens.get(mission_id)
             return token.is_cancelled if token else False
 
+    def register_mission(self, mission_id: str, run_id: str = "") -> CancellationToken:
+        """Enregistre une mission avec son jeton d'annulation."""
+        return self.create_token(mission_id, run_id or mission_id)
+
+    def unregister_mission(self, mission_id: str) -> None:
+        """Désenregistre une mission terminée."""
+        with self._lock:
+            self._tokens.pop(mission_id, None)
+
     def cleanup_completed(self, max_age_seconds: float = 3600) -> int:
         """
         Nettoie les jetons annulés ou anciens.

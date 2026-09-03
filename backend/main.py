@@ -19,13 +19,13 @@ from core.cancellation import cancellation_manager
 from db.session import init_db, close_db
 
 # Imports des routeurs v1 — PRODUCTION
-# from api.v1.workspaces import router as workspaces_router
-# from api.v1.missions import router as missions_router
-# from api.v1.workgraph import router as workgraph_router
-# from api.v1.conversations import router as conversations_router
-# from api.v1.events import router as events_router
-# from api.v1.user_settings import router as settings_router
-# from api.v1.artifacts_v2 import router as artifacts_v2_router
+from api.v1.workspaces import router as workspaces_router
+from api.v1.missions import router as missions_router
+from api.v1.workgraph import router as workgraph_router
+from api.v1.conversations import router as conversations_router
+from api.v1.events import router as events_router
+from api.v1.user_settings import router as settings_router
+from api.v1.artifacts_v2 import router as artifacts_v2_router
 from api.auth import router as auth_router
 from api.v1.clerk_webhook import router as clerk_webhook_router
 
@@ -33,9 +33,11 @@ from api.v1.clerk_webhook import router as clerk_webhook_router
 from api.v1.chat import router as chat_router
 from api.v1.agent import router as agent_router
 from api.v1.feedback import router as feedback_router
-# from api.v1.media import router as media_router
+from api.v1.media import router as media_router
 from api.v1.artifacts import router as artifacts_router
 from api.v1.review import router as review_router
+from api.v1.wide_research import router as wide_research_router
+from api.v1.memory import router as memory_router
 from services.language_registry_service import language_service
 
 logger = logging.getLogger(__name__)
@@ -160,22 +162,24 @@ async def global_exception_handler(request, exc):
 
 # ── Montage des routeurs ─────────────────────────────────────
 app.include_router(auth_router)
-# app.include_router(workspaces_router, prefix="/api/v1")
-# app.include_router(missions_router, prefix="/api/v1")
-# app.include_router(workgraph_router, prefix="/api/v1")
-# app.include_router(conversations_router, prefix="/api/v1")
-# app.include_router(events_router, prefix="/api/v1")
-# app.include_router(settings_router, prefix="/api/v1")
-# app.include_router(artifacts_v2_router, prefix="/api/v1")
+app.include_router(workspaces_router, prefix="/api/v1")
+app.include_router(missions_router, prefix="/api/v1")
+app.include_router(workgraph_router, prefix="/api/v1")
+app.include_router(conversations_router, prefix="/api/v1")
+app.include_router(events_router, prefix="/api/v1")
+app.include_router(settings_router, prefix="/api/v1")
+app.include_router(artifacts_v2_router, prefix="/api/v1")
 app.include_router(clerk_webhook_router)
 
 # Routeurs existants réactivés
 app.include_router(chat_router, prefix="/api/v1")
 app.include_router(agent_router, prefix="/api/v1")
 app.include_router(feedback_router, prefix="/api/v1")
-# app.include_router(media_router, prefix="/api/v1")
+app.include_router(media_router, prefix="/api/v1")
 app.include_router(artifacts_router, prefix="/api/v1")
 app.include_router(review_router, prefix="/api/v1")
+app.include_router(wide_research_router, prefix="/api/v1")
+app.include_router(memory_router, prefix="/api/v1")
 
 
 
@@ -240,6 +244,25 @@ async def health_readiness():
     except Exception as e:
         checks["database"] = f"error: {type(e).__name__}"
         all_ok = False
+
+    # Check R2
+    try:
+        from services.r2_storage_service import R2StorageService
+        if R2StorageService.is_configured():
+            checks["r2"] = "ok"
+        else:
+            checks["r2"] = "not_configured"
+    except Exception as e:
+        checks["r2"] = f"error: {type(e).__name__}"
+
+    # Check DeerFlow
+    try:
+        from core.runtime.deerflow_runtime import DeerFlowRuntime
+        df = DeerFlowRuntime()
+        df_health = await df.health()
+        checks["deerflow"] = df_health.get("status", "unknown")
+    except Exception as e:
+        checks["deerflow"] = f"error: {type(e).__name__}"
 
     # Check Model Gateway circuits
     try:
