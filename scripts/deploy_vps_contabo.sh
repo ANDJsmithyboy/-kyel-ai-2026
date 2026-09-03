@@ -12,11 +12,17 @@ echo "=========================================================="
 git fetch origin main
 git reset --hard origin/main
 
-# Garantir que .env existe à la racine pour Docker Compose
-if [ ! -f .env ] && [ -f backend/.env ]; then
+# Garantir que .env existe et est synchronisé à la racine pour Docker Compose
+if [ -f backend/.env ]; then
     echo "[*] Synchronisation de backend/.env vers .env à la racine..."
     cp backend/.env .env
 fi
+
+# Arrêt préventif des anciens conteneurs orphelins ou conflictuels (ex: ancien nkyel-api sur le port 8000)
+echo "[*] Libération du port 8000 et nettoyage des anciens conteneurs..."
+docker compose -f docker-compose.yml down 2>/dev/null || true
+docker stop nkyel-api 2>/dev/null || true
+docker rm nkyel-api 2>/dev/null || true
 
 echo "=========================================================="
 echo "🏗️ 2. REBUILD DES CONTENEURS (BACKEND + DEERFLOW 2.0)"
