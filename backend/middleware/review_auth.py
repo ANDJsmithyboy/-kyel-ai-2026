@@ -15,9 +15,17 @@ logger = logging.getLogger(__name__)
 
 async def get_current_review_session(request: Request) -> Optional[ReviewSession]:
     """
-    Vérifie si la requête possède un cookie 'nkyel_review_session' valide.
+    Vérifie si la requête possède un cookie 'nkyel_review_session' ou un header Bearer rev_sess_ valide.
     """
+    if not request:
+        return None
+
     session_token = request.cookies.get("nkyel_review_session")
+    if not session_token:
+        auth_header = request.headers.get("authorization", "")
+        if auth_header.startswith("Bearer rev_sess_"):
+            session_token = auth_header.replace("Bearer ", "").strip()
+
     if not session_token:
         return None
 

@@ -110,7 +110,7 @@ class AgentRuntime(ABC):
         **kwargs: Any,
     ) -> AsyncGenerator[RuntimeEvent, None]:
         """Streams real-time events through the unified event spine."""
-        ...
+        yield ... # type: ignore
 
     @abstractmethod
     async def cancel(self, run_id: str) -> bool:
@@ -120,7 +120,7 @@ class AgentRuntime(ABC):
     @abstractmethod
     async def resume(self, run_id: str, checkpoint_id: str) -> AsyncGenerator[RuntimeEvent, None]:
         """Resumes an execution from a stored checkpoint."""
-        ...
+        yield ... # type: ignore
 
     @abstractmethod
     async def get_state(self, run_id: str) -> Dict[str, Any]:

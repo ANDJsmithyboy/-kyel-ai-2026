@@ -49,9 +49,16 @@ class NkyelReplanRequest(BaseModel):
     reason: str = Field(default="user_intervention", description="Reason for replanification")
 
 
-def _sse_event(event_type: str, data: dict) -> str:
-    """Format an SSE event line."""
-    payload = {"type": event_type, "data": data}
+def _sse_event(event_type: str, data: dict, ag_ui_type: str | None = None) -> str:
+    """Format an SSE event line with official AG-UI protocol and legacy aliases."""
+    canonical_type = ag_ui_type or event_type
+    payload = {
+        "type": canonical_type,
+        "event_type": event_type,
+        "ag_ui_type": canonical_type,
+        "data": data,
+        **data,
+    }
     return f"data: {json.dumps(payload, ensure_ascii=False)}\n\n"
 
 
@@ -67,16 +74,17 @@ async def _run_nkyel_agent(request: NkyelRunRequest) -> AsyncGenerator[str, None
     # Register cancellation token for this run
     cancel_token = cancellation_manager.create_token(mission_id=run_id, run_id=run_id)
 
-    # Emit run_started
+    # Emit RUN_STARTED (official AG-UI)
     yield _sse_event("run_started", {
         "run_id": run_id,
         "status": "started",
         "message": request.message,
-    })
+    }, ag_ui_type="RUN_STARTED")
 
-    # Decide runtime via engine / goal intent
+    # Decide runtime via engine / goal intent — DeerFlow 2.0 is primary canonical runtime
     use_deerflow = (
-        (request.engine and request.engine.upper() in ("DEERFLOW", "DEER_FLOW"))
+        (request.engine is None or request.engine.upper() not in ("NATIVE", "LANGGRAPH_ONLY"))
+        or (request.engine and request.engine.upper() in ("DEERFLOW", "DEER_FLOW"))
         or (request.features and (request.features.get("deepResearch") or request.features.get("executiveArtifacts")))
         or any(w in request.message.lower() for w in ["deerflow", "rapport", "report", "présentation", "pptx", "xlsx", "tableur", "swot", "marché"])
     )
@@ -94,58 +102,75 @@ async def _run_nkyel_agent(request: NkyelRunRequest) -> AsyncGenerator[str, None
                 user_id=request.user_id,
             ):
                 if cancel_token.is_cancelled:
-                    yield _sse_event("run_cancelled", {"run_id": run_id, "status": "cancelled", "reason": "user_requested"})
+                    yield _sse_event("run_cancelled", {"run_id": run_id, "status": "cancelled", "reason": "user_requested"}, ag_ui_type="RUN_ERROR")
                     break
 
                 if rt_event.type == RuntimeEventType.STEP_STARTED:
                     step_name = rt_event.payload.get("step", "Étape")
+                    task_id = rt_event.task_id or f"task_{uuid.uuid4().hex[:6]}"
                     yield _sse_event("agent_step", {
                         "run_id": run_id,
-                        "node": {"id": rt_event.task_id or f"task_{uuid.uuid4().hex[:6]}", "label": step_name},
-                        "payload": {"label": step_name},
-                    })
+                        "task_id": task_id,
+                        "node": {"id": task_id, "label": step_name, "status": "running"},
+                        "payload": {"label": step_name, "step": step_name, "status": "running"},
+                    }, ag_ui_type="STEP_STARTED")
                 elif rt_event.type == RuntimeEventType.STATE_DELTA:
                     if rt_event.payload.get("source"):
                         s = rt_event.payload["source"]
-                        yield _sse_event("source_found", {"run_id": run_id, "source": s, "payload": s})
+                        yield _sse_event("source_found", {
+                            "run_id": run_id,
+                            "source": s,
+                            "source_id": s.get("id") or s.get("source_id"),
+                            "url": s.get("url"),
+                            "title": s.get("title"),
+                            "domain": s.get("domain"),
+                            "favicon": s.get("favicon"),
+                            "snippet": s.get("snippet"),
+                            "payload": s,
+                        }, ag_ui_type="STATE_DELTA")
                     elif rt_event.payload.get("evidence"):
                         ev = rt_event.payload["evidence"]
-                        yield _sse_event("evidence_recorded", {"run_id": run_id, "evidence": ev, "payload": ev})
+                        yield _sse_event("evidence_recorded", {"run_id": run_id, "evidence": ev, "payload": ev}, ag_ui_type="STATE_DELTA")
                     elif rt_event.payload.get("artifact_id"):
                         art = rt_event.payload
-                        yield _sse_event("artifact_created", {"run_id": run_id, "payload": art, "artifact": art})
+                        yield _sse_event("artifact_created", {"run_id": run_id, "payload": art, "artifact": art}, ag_ui_type="STATE_DELTA")
                     elif rt_event.payload.get("selected_skill"):
+                        skill_name = rt_event.payload['selected_skill']
                         yield _sse_event("agent_step", {
                             "run_id": run_id,
-                            "node": {"id": rt_event.task_id or "skill", "label": f"Compétence : {rt_event.payload['selected_skill']}"},
-                            "payload": {"label": f"Compétence : {rt_event.payload['selected_skill']}"},
-                        })
+                            "task_id": rt_event.task_id or "skill",
+                            "node": {"id": rt_event.task_id or "skill", "label": f"Compétence : {skill_name}", "status": "active"},
+                            "payload": {"label": f"Compétence : {skill_name}", "skill": skill_name},
+                        }, ag_ui_type="STEP_STARTED")
                 elif rt_event.type == RuntimeEventType.TOOL_CALL_START:
-                    yield _sse_event("tool.started", {"run_id": run_id, "payload": rt_event.payload})
+                    yield _sse_event("tool.started", {"run_id": run_id, "payload": rt_event.payload, **rt_event.payload}, ag_ui_type="TOOL_CALL_START")
                 elif rt_event.type == RuntimeEventType.TOOL_CALL_RESULT:
-                    yield _sse_event("tool.completed", {"run_id": run_id, "payload": rt_event.payload})
+                    yield _sse_event("tool.completed", {"run_id": run_id, "payload": rt_event.payload, **rt_event.payload}, ag_ui_type="TOOL_CALL_RESULT")
                 elif rt_event.type == RuntimeEventType.STEP_FINISHED:
+                    step_name = rt_event.payload.get("step", "Étape terminée")
+                    task_id = rt_event.task_id or "step"
                     yield _sse_event("node_completed", {
                         "run_id": run_id,
-                        "node": {"id": rt_event.task_id or "step", "label": rt_event.payload.get("step", "Étape terminée")},
+                        "task_id": task_id,
+                        "node": {"id": task_id, "label": step_name, "status": "completed"},
                         "payload": rt_event.payload,
-                    })
+                    }, ag_ui_type="STEP_FINISHED")
                 elif rt_event.type == RuntimeEventType.RUN_FINISHED:
                     yield _sse_event("run_completed", {
                         "run_id": run_id,
                         "status": "completed",
                         "steps": ["SKILL_DISCOVERY", "MCP_TOOL_DISCOVERY", "SUBAGENT_DELEGATION", "WEB_RESEARCH_TAVILY", "DELIVERABLE_COMPILATION"],
-                    })
+                    }, ag_ui_type="RUN_FINISHED")
                     if rt_event.payload.get("content"):
                         yield _sse_event("messages-tuple", {
                             "type": "ai",
                             "content": rt_event.payload["content"],
-                        })
+                        }, ag_ui_type="TEXT_MESSAGE_CONTENT")
                 elif rt_event.type == RuntimeEventType.RUN_ERROR:
-                    yield _sse_event("error", {"run_id": run_id, "message": rt_event.payload.get("error", "Execution error")})
+                    yield _sse_event("error", {"run_id": run_id, "message": rt_event.payload.get("error", "Execution error")}, ag_ui_type="RUN_ERROR")
 
         except Exception as e:
-            yield _sse_event("error", {"run_id": run_id, "message": str(e)})
+            yield _sse_event("error", {"run_id": run_id, "message": str(e)}, ag_ui_type="RUN_ERROR")
 
         yield "data: [DONE]\n\n"
         return
@@ -153,6 +178,18 @@ async def _run_nkyel_agent(request: NkyelRunRequest) -> AsyncGenerator[str, None
     # Default: Native LangGraph Runtime
     try:
         from agents.nkyel_graph import nkyel_graph
+        from services.persistence_service import PersistenceService
+
+        try:
+            await PersistenceService.record_mission_start(
+                mission_id=request.mission_id or run_id,
+                run_id=run_id,
+                user_identifier=request.user_id,
+                title=request.message[:120],
+                goal=request.message,
+            )
+        except Exception as pe:
+            pass
 
         # Prepare initial state
         initial_state = {
@@ -188,6 +225,14 @@ async def _run_nkyel_agent(request: NkyelRunRequest) -> AsyncGenerator[str, None
                     "status": "cancelled",
                     "reason": cancel_token.cancel_reason or "user_requested",
                 })
+                try:
+                    await PersistenceService.record_mission_completion(
+                        mission_id=request.mission_id or run_id,
+                        run_id=run_id,
+                        status="cancelled",
+                    )
+                except Exception:
+                    pass
                 break
 
             events = state.get("events", [])
@@ -204,10 +249,40 @@ async def _run_nkyel_agent(request: NkyelRunRequest) -> AsyncGenerator[str, None
                 }
                 if node:
                     data["node"] = node
+                    if node.get("id"):
+                        try:
+                            await PersistenceService.record_workgraph_node(
+                                mission_id=request.mission_id or run_id,
+                                run_id=run_id,
+                                node_id=str(node["id"]),
+                                node_type=node.get("type", "step"),
+                                label=node.get("label") or node.get("title") or "Étape",
+                                status=node.get("status", "completed"),
+                                payload=node.get("payload") or evt.get("payload"),
+                            )
+                        except Exception:
+                            pass
+
                 if edge:
                     data["edge"] = edge
+
                 if evt.get("payload"):
                     data["payload"] = evt["payload"]
+
+                if evt.get("source"):
+                    s = evt["source"]
+                    try:
+                        await PersistenceService.record_source(
+                            mission_id=request.mission_id or run_id,
+                            run_id=run_id,
+                            source_id=s.get("id") or s.get("source_id") or f"src_{uuid.uuid4().hex[:8]}",
+                            url=s.get("url", ""),
+                            title=s.get("title", ""),
+                            domain=s.get("domain", ""),
+                            snippet=s.get("snippet", ""),
+                        )
+                    except Exception:
+                        pass
 
                 yield _sse_event(event_type, data)
             
@@ -223,6 +298,16 @@ async def _run_nkyel_agent(request: NkyelRunRequest) -> AsyncGenerator[str, None
                 "total_latency_ms": final_state.get("total_latency_ms", 0),
             })
 
+            try:
+                await PersistenceService.record_mission_completion(
+                    mission_id=request.mission_id or run_id,
+                    run_id=run_id,
+                    status="completed",
+                    summary=final_state.get("final_response"),
+                )
+            except Exception:
+                pass
+
             # Emit the final response as a text message
             if final_state.get("final_response"):
                 yield _sse_event("messages-tuple", {
@@ -235,6 +320,14 @@ async def _run_nkyel_agent(request: NkyelRunRequest) -> AsyncGenerator[str, None
             "run_id": run_id,
             "message": str(e),
         })
+        try:
+            await PersistenceService.record_mission_completion(
+                mission_id=request.mission_id or run_id,
+                run_id=run_id,
+                status="failed",
+            )
+        except Exception:
+            pass
 
     yield "data: [DONE]\n\n"
 
@@ -426,3 +519,21 @@ async def nkyel_health():
         "agent": "nkyel",
         "version": "1.0.0",
     }
+
+
+@router.get("/mission/{mission_id}/restore")
+async def restore_mission_endpoint(
+    mission_id: str,
+    user: dict = Depends(get_current_user),
+):
+    """
+    Restaure l'intégralité d'une mission passée depuis Neon (P0 Release Rule).
+    Survit au refresh navigateur, à une nouvelle session ou au reboot conteneur.
+    """
+    user_id = user.get("id") if user else None
+    from services.persistence_service import PersistenceService
+    data = await PersistenceService.restore_mission_state(mission_id=mission_id, user_identifier=user_id)
+    if not data.get("found"):
+        raise HTTPException(status_code=404, detail=data.get("error", "Mission introuvable"))
+    return data
+

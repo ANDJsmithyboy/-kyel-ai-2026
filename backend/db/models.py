@@ -8,6 +8,7 @@ Fondateur : Daniel Jonathan ANDJ
 """
 
 import uuid
+import json
 from datetime import datetime, timezone
 from typing import Optional, List, Any, Dict
 import enum
@@ -469,9 +470,9 @@ class Source(Base):
 
     @excerpt.setter
     def excerpt(self, val: Optional[str]):
-        if not isinstance(self.metadata_obj, dict):
-            self.metadata_obj = {}
-        self.metadata_obj["excerpt"] = val
+        d = dict(self.metadata_obj) if isinstance(self.metadata_obj, dict) else {}
+        d["excerpt"] = val
+        self.metadata_obj = d
 
     @property
     def metadata_json(self) -> Optional[str]:
@@ -935,12 +936,16 @@ class Artifact(Base):
     """Métadonnées permanentes des artefacts générés (Images, Vidéos, Audio, HTML, Code)."""
     __tablename__ = "artifacts"
 
-    id: Mapped[str] = mapped_column(String(128), primary_key=True)
+    id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), primary_key=True, default=generate_uuid
+    )
+    workspace_id: Mapped[Optional[uuid.UUID]] = mapped_column(UUID(as_uuid=True), nullable=True)
     user_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True
     )
     title: Mapped[str] = mapped_column(String(255), nullable=False)
     artifact_type: Mapped[str] = mapped_column(String(64), nullable=False)  # image, video, audio, code, html, document
+    status: Mapped[str] = mapped_column(String(32), default="completed", nullable=True)
     url: Mapped[Optional[str]] = mapped_column(Text, nullable=True)  # Cloudflare R2 / CDN URL
     r2_key: Mapped[Optional[str]] = mapped_column(String(512), nullable=True)
     content: Mapped[Optional[str]] = mapped_column(Text, nullable=True)

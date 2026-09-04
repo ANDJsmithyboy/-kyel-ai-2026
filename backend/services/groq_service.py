@@ -263,76 +263,12 @@ async def stream_groq(
     if loxo_context:
         system_content += f"\n\n--- CONTEXTE LOXO (sources web) ---\n{loxo_context}\n--- FIN CONTEXTE ---"
 
-    final_messages = [{"role": "system", "content": system_content}]
-    for m in messages:
-        if m["role"] != "system":
-            final_messages.append(m)
-
-    max_retries = 3
-    for attempt in range(max_retries):
-        active_key = get_next_groq_key()
-        tokens_in = 0
-        tokens_out = 0
-        full_content = ""
-
-        async with httpx.AsyncClient(timeout=90.0) as client:
-            try:
-                response = await client.post(
-                    "https://api.groq.com/openai/v1/chat/completions",
-                    headers={
-                        "Authorization": f"Bearer {active_key}",
-                        "Content-Type": "application/json",
-                    },
-                    json={
-                        "model": groq_model,
-                        "messages": final_messages,
-                        "temperature": temperature,
-                        "max_tokens": max_tokens,
-                        "stream": True,
-                    },
-                    timeout=90.0,
-                )
-                
-                if response.status_code == 429:
-                    # Rate limit, rotate and retry
-                    continue
-                    
-                response.raise_for_status()
-
-                async for line in response.aiter_lines():
-                    if not line or not line.startswith("data: "):
-                        continue
-                    data = line[6:]
-                    if data == "[DONE]":
-                        break
-
-                    try:
-                        chunk = json.loads(data)
-                        delta = chunk.get("choices", [{}])[0].get("delta", {})
-                        content = delta.get("content", "")
-                        if content:
-                            full_content += content
-                            tokens_out += 1
-                            yield {"type": "token", "text": content}
-
-                        usage = chunk.get("usage") or chunk.get("x_groq", {}).get("usage")
-                        if usage:
-                            tokens_in = usage.get("prompt_tokens", 0)
-                            tokens_out = usage.get("completion_tokens", tokens_out)
-                    except json.JSONDecodeError:
-                        continue
-
-                yield {"type": "usage", "tokens_in": tokens_in, "tokens_out": tokens_out}
-                yield {"type": "done", "content": full_content}
-                return # Succès complet
-
-            except (httpx.HTTPStatusError, httpx.ConnectError) as e:
-                # Erreur réseau ou 500, rotate and retry
-                if attempt == max_retries - 1:
-                    break # On basculera vers le fallback
-                continue
-
-    # Si on arrive ici, c'est que toutes les tentatives Groq ont échoué.
-    # Fallback transparent vers Gemini
-    async for event in stream_gemini_fallback(messages, system_content, max_tokens, temperature):
+    from core.routing.inference_router import inference_router
+    async for event in inference_router.stream_chat(
+        messages=messages,
+        system_content=system_content,
+        temperature=temperature,
+        max_tokens=max_tokens,
+    ):
         yield event
+

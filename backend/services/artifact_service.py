@@ -354,6 +354,32 @@ class ArtifactService:
             cls._STORE[parent_artifact_id].derived_artifact_ids.append(artifact_id)
 
         cls._STORE[artifact_id] = artifact
+
+        # Persistance souveraine dans Neon PostgreSQL (P0 Release Rule)
+        try:
+            from services.persistence_service import PersistenceService
+            user_id = metadata.get("user_id", "default_user") if metadata else "default_user"
+            await PersistenceService.record_artifact(
+                artifact_id=artifact_id,
+                mission_id=mission_id,
+                run_id=run_id,
+                user_identifier=user_id,
+                title=title,
+                artifact_type=type.value if hasattr(type, "value") else str(type),
+                url=storage_url,
+                r2_key=storage_key,
+                content=content if isinstance(content, str) else f"[binary {size_bytes} bytes]",
+                metadata={
+                    "filename": actual_filename,
+                    "mime_type": mime_type,
+                    "sha256": sha256_hash,
+                    "size_bytes": size_bytes,
+                    **(metadata or {}),
+                }
+            )
+        except Exception as p_err:
+            logger.warning(f"PersistenceService.record_artifact notice: {p_err}")
+
         return artifact
 
     @classmethod
@@ -361,7 +387,116 @@ class ArtifactService:
         return cls._STORE.get(artifact_id)
 
     @classmethod
+    async def get_artifact_async(cls, artifact_id: str) -> Optional[CanonicalArtifact]:
+        if artifact_id in cls._STORE:
+            return cls._STORE[artifact_id]
+        try:
+            from db.session import async_session
+            from db.models import Artifact as DBArtifact
+            import uuid
+            try:
+                art_uuid = uuid.UUID(str(artifact_id))
+            except ValueError:
+                art_uuid = uuid.uuid5(uuid.NAMESPACE_DNS, f"nkyel.art.{artifact_id}")
+            async with async_session() as s:
+                stmt = select(DBArtifact).where(DBArtifact.id == art_uuid)
+                res = await s.execute(stmt)
+                db_art = res.scalar_one_or_none()
+                if db_art:
+                    meta = json.loads(db_art.metadata_json) if db_art.metadata_json else {}
+                    t_val = db_art.artifact_type
+                    art_type = ArtifactType(t_val) if t_val in [x.value for x in ArtifactType] else ArtifactType.OTHER
+                    art = CanonicalArtifact(
+                        id=str(db_art.id),
+                        mission_id=meta.get("mission_id", ""),
+                        run_id=meta.get("run_id", ""),
+                        title=db_art.title,
+                        description=meta.get("description", ""),
+                        type=art_type,
+                        mime_type=meta.get("mime_type", "application/octet-stream"),
+                        extension=meta.get("filename", "").split(".")[-1] if "." in meta.get("filename", "") else "",
+                        filename=meta.get("filename", f"{db_art.id}"),
+                        storage_key=db_art.r2_key or f"artifacts/{db_art.id}",
+                        storage_url=db_art.url or f"/static/artifacts/{db_art.id}",
+                        file_path=str(cls.get_storage_path() / meta.get("filename", f"{db_art.id}")),
+                        size_bytes=meta.get("size_bytes", 0),
+                        sha256=meta.get("sha256", ""),
+                        checksum_sha256=meta.get("sha256", ""),
+                        version=db_art.version,
+                        metadata=meta,
+                        preview_url=db_art.url,
+                        created_at=db_art.created_at.timestamp() if db_art.created_at else time.time(),
+                        updated_at=db_art.updated_at.timestamp() if db_art.updated_at else time.time(),
+                    )
+                    cls._STORE[db_art.id] = art
+                    return art
+        except Exception as e:
+            logger.warning(f"get_artifact_async DB fallback note: {e}")
+        return None
+
+    @classmethod
     def list_artifacts(cls, mission_id: Optional[str] = None) -> List[CanonicalArtifact]:
+        if mission_id:
+            return [a for a in cls._STORE.values() if a.mission_id == mission_id]
+        return list(cls._STORE.values())
+
+    @classmethod
+    async def list_artifacts_async(
+        cls,
+        mission_id: Optional[str] = None,
+        user_identifier: Optional[str] = None,
+    ) -> List[CanonicalArtifact]:
+        try:
+            from db.session import async_session
+            from db.models import Artifact as DBArtifact, User
+            from sqlalchemy import select
+            async with async_session() as s:
+                stmt = select(DBArtifact).order_by(desc(DBArtifact.created_at))
+                if user_identifier and user_identifier != "anonymous":
+                    u_stmt = select(User.id).where(User.clerk_user_id == user_identifier)
+                    u_res = await s.execute(u_stmt)
+                    uid = u_res.scalar_one_or_none()
+                    if uid:
+                        stmt = stmt.where(DBArtifact.user_id == uid)
+
+                res = await s.execute(stmt)
+                db_arts = res.scalars().all()
+                results = []
+                for db_art in db_arts:
+                    meta = json.loads(db_art.metadata_json) if db_art.metadata_json else {}
+                    if mission_id and meta.get("mission_id") != mission_id:
+                        continue
+                    t_val = db_art.artifact_type
+                    art_type = ArtifactType(t_val) if t_val in [x.value for x in ArtifactType] else ArtifactType.OTHER
+                    art = CanonicalArtifact(
+                        id=db_art.id,
+                        mission_id=meta.get("mission_id", ""),
+                        run_id=meta.get("run_id", ""),
+                        title=db_art.title,
+                        description=meta.get("description", ""),
+                        type=art_type,
+                        mime_type=meta.get("mime_type", "application/octet-stream"),
+                        extension=meta.get("filename", "").split(".")[-1] if "." in meta.get("filename", "") else "",
+                        filename=meta.get("filename", f"{db_art.id}"),
+                        storage_key=db_art.r2_key or f"artifacts/{db_art.id}",
+                        storage_url=db_art.url or f"/static/artifacts/{db_art.id}",
+                        file_path=str(cls.get_storage_path() / meta.get("filename", f"{db_art.id}")),
+                        size_bytes=meta.get("size_bytes", 0),
+                        sha256=meta.get("sha256", ""),
+                        checksum_sha256=meta.get("sha256", ""),
+                        version=db_art.version,
+                        metadata=meta,
+                        preview_url=db_art.url,
+                        created_at=db_art.created_at.timestamp() if db_art.created_at else time.time(),
+                        updated_at=db_art.updated_at.timestamp() if db_art.updated_at else time.time(),
+                    )
+                    cls._STORE[db_art.id] = art
+                    results.append(art)
+                if results:
+                    return results
+        except Exception as e:
+            logger.warning(f"list_artifacts_async DB error: {e}")
+
         if mission_id:
             return [a for a in cls._STORE.values() if a.mission_id == mission_id]
         return list(cls._STORE.values())

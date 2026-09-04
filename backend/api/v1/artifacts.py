@@ -12,12 +12,21 @@ Fondateur : Daniel Jonathan ANDJ
 
 from __future__ import annotations
 
+import os
+import uuid
 import logging
 from typing import Optional, List, Dict, Any
-from fastapi import APIRouter, HTTPException, Query, Response, status
+from fastapi import APIRouter, HTTPException, Query, Response, Depends, status
 from fastapi.responses import Response as RawResponse
 from pydantic import BaseModel, Field
+from sqlalchemy import select, and_
 
+from core.config import settings
+from core.security import get_current_user
+from db.session import async_session
+from db.models import Artifact as DBArtifact, WorkspaceMember
+from services.r2_storage_service import R2StorageService
+from services.persistence_service import PersistenceService
 from services.artifact_service import (
     ArtifactService,
     ArtifactType,
@@ -30,10 +39,26 @@ from services.artifact_service import (
 
 logger = logging.getLogger(__name__)
 
-router = APIRouter(prefix="/api/v1/artifacts", tags=["Artefacts Universels"])
+router = APIRouter(prefix="/artifacts", tags=["Artefacts Universels"])
 
 
 # ── Modèles de Requête ───────────────────────────────────────
+
+class PresignUploadRequest(BaseModel):
+    filename: str = Field(..., description="Nom du fichier avec extension")
+    content_type: str = Field("application/octet-stream", description="Type MIME du fichier")
+    category: Optional[str] = Field("artifacts", description="Catégorie (artifacts, documents, media)")
+
+
+class ConfirmUploadRequest(BaseModel):
+    object_key: str = Field(..., description="Clé d'objet R2 issue de /presign-upload")
+    title: str = Field(..., description="Titre de l'artefact")
+    artifact_type: str = Field("document", description="Type d'artefact (image, document, report, etc.)")
+    mission_id: Optional[str] = None
+    run_id: Optional[str] = None
+    content: Optional[str] = None
+    metadata: Optional[Dict[str, Any]] = None
+
 
 class CreateArtifactRequest(BaseModel):
     title: str = Field(..., description="Titre de l'artefact")
@@ -88,9 +113,12 @@ class NewVersionRequest(BaseModel):
 # ── Routes API ───────────────────────────────────────────────
 
 @router.get("", response_model=List[Dict[str, Any]])
-async def list_artifacts(mission_id: Optional[str] = Query(None)):
-    """Liste tous les artefacts créés, filtrables par mission."""
-    arts = ArtifactService.list_artifacts(mission_id)
+async def list_artifacts(
+    mission_id: Optional[str] = Query(None),
+    user_id: Optional[str] = Query(None),
+):
+    """Liste tous les artefacts créés, restaurables depuis Neon et R2."""
+    arts = await ArtifactService.list_artifacts_async(mission_id=mission_id, user_identifier=user_id)
     return [a.to_dict() for a in arts]
 
 
@@ -145,13 +173,170 @@ async def select_concept_endpoint(artifact_id: str, req: SelectConceptRequest):
     return final_art.to_dict()
 
 
+@router.post("/presign-upload")
+async def presign_upload_endpoint(
+    req: PresignUploadRequest,
+    current_user: dict = Depends(get_current_user),
+):
+    """
+    Génère une URL pré-signée Cloudflare R2 (PUT) pour téléversement direct côté client.
+    Cloisonné strictement sous users/{user_id}/artifacts/.
+    """
+    user_id = str(current_user.get("id") or "")
+    if not user_id:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Utilisateur non identifié.")
+
+    clean_filename = os.path.basename(req.filename).replace(" ", "_")
+    unique_name = f"{uuid.uuid4().hex[:8]}_{clean_filename}"
+    object_key = R2StorageService.get_object_key(
+        user_id=user_id,
+        category=req.category or "artifacts",
+        file_name=unique_name,
+    )
+
+    upload_url = R2StorageService.get_presigned_upload_url(
+        object_key=object_key,
+        content_type=req.content_type,
+        expires_in=3600,
+    )
+
+    return {
+        "success": True,
+        "upload_url": upload_url,
+        "object_key": object_key,
+        "user_id": user_id,
+        "filename": unique_name,
+        "expires_in": 3600,
+    }
+
+
+@router.post("/confirm-upload", status_code=status.HTTP_201_CREATED)
+async def confirm_upload_endpoint(
+    req: ConfirmUploadRequest,
+    current_user: dict = Depends(get_current_user),
+):
+    """
+    Confirme et indexe dans Neon un artefact téléversé directement sur Cloudflare R2.
+    Vérifie que la clé R2 appartient bien à l'utilisateur appelant (Anti-IDOR).
+    """
+    user_id = str(current_user.get("id") or "")
+    is_admin = bool(current_user.get("is_admin", False))
+
+    expected_prefix = f"users/{user_id}/"
+    if not is_admin and not req.object_key.startswith(expected_prefix):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Sécurité IDOR : Clé d'objet invalide pour cet utilisateur.",
+        )
+
+    bucket = settings.r2_bucket_name or settings.cloudflare_r2_bucket
+    r2_domain = settings.r2_public_url or settings.cloudflare_r2_public_domain or f"https://{bucket}.r2.dev"
+    public_url = f"{r2_domain}/{req.object_key}"
+
+    art_id = f"art_{uuid.uuid4().hex[:12]}"
+    clerk_sub = str(current_user.get("clerk_id") or user_id)
+
+    ok = await PersistenceService.record_artifact(
+        artifact_id=art_id,
+        mission_id=req.mission_id or f"mission_{uuid.uuid4().hex[:8]}",
+        run_id=req.run_id or f"run_{uuid.uuid4().hex[:8]}",
+        user_identifier=clerk_sub,
+        title=req.title,
+        artifact_type=req.artifact_type,
+        url=public_url,
+        r2_key=req.object_key,
+        content=req.content,
+        metadata=req.metadata,
+    )
+
+    if not ok:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Échec de l'indexation de l'artefact dans Neon.",
+        )
+
+    return {
+        "success": True,
+        "artifact_id": art_id,
+        "title": req.title,
+        "type": req.artifact_type,
+        "url": public_url,
+        "r2_key": req.object_key,
+    }
+
+
 @router.get("/{artifact_id}")
 async def get_artifact_endpoint(artifact_id: str):
-    """Récupère les détails, statut et métadonnées d'un artefact."""
-    art = ArtifactService.get_artifact(artifact_id)
+    """Récupère les détails, statut et métadonnées d'un artefact depuis Neon ou cache."""
+    art = await ArtifactService.get_artifact_async(artifact_id)
     if not art:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Artefact introuvable.")
     return art.to_dict()
+
+
+@router.get("/{artifact_id}/download-url")
+async def get_artifact_download_url(
+    artifact_id: str,
+    current_user: dict = Depends(get_current_user),
+):
+    """
+    Génère une URL de téléchargement pré-signée Cloudflare R2 avec contrôle IDOR strict.
+    Seul le propriétaire ou un membre du workspace peut accéder au lien.
+    """
+    try:
+        art_uuid = uuid.UUID(str(artifact_id))
+    except ValueError:
+        art_uuid = uuid.uuid5(uuid.NAMESPACE_DNS, f"nkyel.art.{artifact_id}")
+
+    async with async_session() as s:
+        stmt = select(DBArtifact).where(DBArtifact.id == art_uuid)
+        res = await s.execute(stmt)
+        db_art = res.scalar_one_or_none()
+
+    if not db_art:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Artefact introuvable.")
+
+    user_id_str = str(current_user.get("id") or "")
+    is_admin = bool(current_user.get("is_admin", False))
+
+    # IDOR check: match owner or check workspace membership
+    if not is_admin and str(db_art.user_id) != user_id_str:
+        allowed = False
+        if db_art.workspace_id and user_id_str:
+            try:
+                u_uuid = uuid.UUID(user_id_str)
+                async with async_session() as s:
+                    ws_mem = await s.execute(
+                        select(WorkspaceMember).where(
+                            and_(
+                                WorkspaceMember.workspace_id == db_art.workspace_id,
+                                WorkspaceMember.user_id == u_uuid,
+                            )
+                        )
+                    )
+                    if ws_mem.scalar_one_or_none():
+                        allowed = True
+            except Exception:
+                pass
+        if not allowed:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Accès non autorisé : Vous ne pouvez pas télécharger l'artefact d'un autre utilisateur.",
+            )
+
+    r2_key = db_art.r2_key or f"users/{db_art.user_id}/artifacts/{db_art.id}"
+    presigned_url = R2StorageService.get_presigned_download_url(r2_key, expires_in=3600)
+    if not presigned_url:
+        presigned_url = db_art.url or f"/static/artifacts/{r2_key}"
+
+    return {
+        "success": True,
+        "artifact_id": str(db_art.id),
+        "title": db_art.title,
+        "download_url": presigned_url,
+        "expires_in": 3600,
+        "r2_key": r2_key,
+    }
 
 
 @router.get("/{artifact_id}/lineage")

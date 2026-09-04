@@ -55,6 +55,15 @@ class Settings(BaseSettings):
     aurata_model: str = "llama-3.3-70b-versatile"
     sonar_model: str = "llama-3.1-8b-instant"
 
+    # ── RunPod Public Endpoints (Primary & Secondary Sovereign) ──
+    runpod_api_key: str = ""
+    runpod_gpt_oss_base_url: str = "https://api.runpod.ai/v2/gpt-oss-120b/openai/v1"
+    runpod_gpt_oss_model: str = "openai/gpt-oss-120b"
+    runpod_qwen_base_url: str = "https://api.runpod.ai/v2/qwen3-32b-awq/openai/v1"
+    runpod_qwen_model: str = "Qwen/Qwen3-32B-AWQ"
+    primary_inference_provider: str = "runpod_gpt_oss"
+    secondary_inference_provider: str = "runpod_qwen"
+
     # ── DeerFlow Agent (ONYX / BLACK_PANTHER) ───────────────
     deerflow_url: str = "http://localhost:8080"
 

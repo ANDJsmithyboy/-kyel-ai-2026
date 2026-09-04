@@ -36,6 +36,7 @@ from deerflow_core.mcp_engine import deer_mcp_engine
 from deerflow_core.sandbox_engine import deer_sandbox_engine
 from deerflow_core.subagents_engine import deer_subagents_engine
 from services.artifact_service import ArtifactService, ArtifactType
+from services.persistence_service import PersistenceService
 
 logger = logging.getLogger(__name__)
 
@@ -136,7 +137,19 @@ class DeerFlowRuntime(AgentRuntime):
             "cancelled": False,
         }
 
-        # 1. RUN_STARTED
+        # 1. RUN_STARTED & Persistance P0 absolue dans Neon
+        try:
+            await PersistenceService.record_mission_start(
+                mission_id=mission_id,
+                run_id=run_id,
+                user_identifier=user_id or "anonymous",
+                title=goal[:120],
+                goal=goal,
+                model_profile=model or "ONYXGRIS",
+            )
+        except Exception as p_err:
+            logger.warning(f"DeerFlow mission start persistence notice: {p_err}")
+
         yield RuntimeEvent(
             type=RuntimeEventType.RUN_STARTED,
             mission_id=mission_id,
@@ -176,6 +189,19 @@ class DeerFlowRuntime(AgentRuntime):
                 task_id=task_skill,
                 payload={"step": "SKILL_DISCOVERY", "status": "completed"},
             )
+
+            try:
+                await PersistenceService.record_workgraph_node(
+                    mission_id=mission_id,
+                    run_id=run_id,
+                    node_id=task_skill,
+                    node_type="skill",
+                    label=f"Compétence : {skill_name}",
+                    status="completed",
+                    payload={"selected_skill": skill_name, "category": matched_skill.category if matched_skill else "general"},
+                )
+            except Exception as e:
+                logger.warning(f"Node skill persistence notice: {e}")
 
             # Check cancellation
             if self._active_runs[run_id].get("cancelled") or cancellation_manager.is_cancelled(mission_id):
@@ -227,6 +253,19 @@ class DeerFlowRuntime(AgentRuntime):
                 payload={"step": "MCP_TOOL_DISCOVERY", "status": "completed"},
             )
 
+            try:
+                await PersistenceService.record_workgraph_node(
+                    mission_id=mission_id,
+                    run_id=run_id,
+                    node_id=task_mcp,
+                    node_type="mcp",
+                    label="Découverte Outils MCP",
+                    status="completed",
+                    payload={"tools_count": len(discovered_tools)},
+                )
+            except Exception as e:
+                logger.warning(f"Node mcp persistence notice: {e}")
+
             # 4. STEP: Subagent Delegation
             task_subagent = f"task_subagent_{uuid.uuid4().hex[:6]}"
             yield RuntimeEvent(
@@ -266,6 +305,19 @@ class DeerFlowRuntime(AgentRuntime):
                 task_id=task_subagent,
                 payload={"step": "SUBAGENT_DELEGATION", "status": "completed"},
             )
+
+            try:
+                await PersistenceService.record_workgraph_node(
+                    mission_id=mission_id,
+                    run_id=run_id,
+                    node_id=task_subagent,
+                    node_type="subagent",
+                    label=f"Sous-agent : {subagent.role}",
+                    status="completed",
+                    payload={"role": subagent.role, "agent_id": subagent.agent_id},
+                )
+            except Exception as e:
+                logger.warning(f"Node subagent persistence notice: {e}")
 
             # 5. STEP: Sandbox Execution where applicable (e.g. data or web)
             if matched_skill and matched_skill.category in ("data", "development"):
@@ -314,17 +366,32 @@ class DeerFlowRuntime(AgentRuntime):
                 logger.warning(f"Tavily search notice: {e}")
                 raw_results = []
 
+            from urllib.parse import urlparse
             if raw_results:
-                for r in raw_results:
+                for idx, r in enumerate(raw_results, 1):
                     src_id = f"src_{uuid.uuid4().hex[:8]}"
                     s_url = r.get("url") or f"https://sources.nkyel.ai/{src_id}"
                     s_title = r.get("title") or "Source Web Vérifiée"
                     s_content = r.get("content") or ""
+                    try:
+                        parsed_netloc = urlparse(s_url).netloc.lower()
+                        domain = parsed_netloc[4:] if parsed_netloc.startswith("www.") else (parsed_netloc or "web")
+                    except Exception:
+                        domain = "web"
+                    favicon = f"https://www.google.com/s2/favicons?domain={domain}&sz=32"
+                    snippet = s_content[:300].strip()
+
                     source_item = {
+                        "id": src_id,
                         "source_id": src_id,
                         "title": s_title,
                         "url": s_url,
+                        "domain": domain,
+                        "favicon": favicon,
+                        "snippet": snippet,
                         "content": s_content[:500],
+                        "index": idx,
+                        "score": r.get("score", 0.95),
                     }
                     sources.append(source_item)
                     yield RuntimeEvent(
@@ -334,6 +401,21 @@ class DeerFlowRuntime(AgentRuntime):
                         source_id=src_id,
                         payload={"source": source_item},
                     )
+
+                    try:
+                        await PersistenceService.record_source(
+                            mission_id=mission_id,
+                            run_id=run_id,
+                            source_id=src_id,
+                            url=s_url,
+                            title=s_title,
+                            domain=domain,
+                            snippet=snippet,
+                            content=s_content[:1000],
+                            score=r.get("score", 0.95),
+                        )
+                    except Exception as e:
+                        logger.warning(f"Source persistence notice: {e}")
 
                     ev_id = f"evi_{uuid.uuid4().hex[:8]}"
                     claim_text = s_content[:180].strip() or f"Preuve corroborée par {s_title}"
@@ -350,13 +432,30 @@ class DeerFlowRuntime(AgentRuntime):
                         run_id=run_id,
                         payload={"evidence": ev_item, "source_id": src_id},
                     )
+
+                    try:
+                        await PersistenceService.record_evidence(
+                            mission_id=mission_id,
+                            run_id=run_id,
+                            source_id=src_id,
+                            claim=claim_text,
+                            evidence_text=s_content[:300],
+                        )
+                    except Exception as e:
+                        logger.warning(f"Evidence persistence notice: {e}")
             else:
                 src_id = f"src_{uuid.uuid4().hex[:8]}"
                 source_item = {
+                    "id": src_id,
                     "source_id": src_id,
                     "title": "Recherche Web Factuelle & État de l'Art",
                     "url": "https://nkyel.smartandjai.com/research/state-of-the-art",
+                    "domain": "nkyel.smartandjai.com",
+                    "favicon": "https://nkyel.smartandjai.com/favicon.ico",
+                    "snippet": f"Analyse approfondie et synthèse factuelle pour la mission : {goal}",
                     "content": f"Analyse approfondie et synthèse factuelle pour la mission : {goal}",
+                    "index": 1,
+                    "score": 1.0,
                 }
                 sources.append(source_item)
                 yield RuntimeEvent(
@@ -366,6 +465,20 @@ class DeerFlowRuntime(AgentRuntime):
                     source_id=src_id,
                     payload={"source": source_item},
                 )
+                try:
+                    await PersistenceService.record_source(
+                        mission_id=mission_id,
+                        run_id=run_id,
+                        source_id=src_id,
+                        url=source_item["url"],
+                        title=source_item["title"],
+                        domain=source_item["domain"],
+                        snippet=source_item["snippet"],
+                        content=source_item["content"],
+                        score=1.0,
+                    )
+                except Exception as e:
+                    logger.warning(f"Fallback source persistence notice: {e}")
 
             yield RuntimeEvent(
                 type=RuntimeEventType.STEP_FINISHED,
@@ -375,9 +488,23 @@ class DeerFlowRuntime(AgentRuntime):
                 payload={"step": "WEB_RESEARCH_TAVILY", "status": "completed"},
             )
 
-            # Synthesis Markdown Deliverable
+            try:
+                await PersistenceService.record_workgraph_node(
+                    mission_id=mission_id,
+                    run_id=run_id,
+                    node_id=task_search,
+                    node_type="search",
+                    label="Recherche Web Factuelle & État de l'Art",
+                    status="completed",
+                    payload={"sources_count": len(sources), "evidence_count": len(evidence)},
+                )
+            except Exception as e:
+                logger.warning(f"Node search persistence notice: {e}")
+
+            # Synthesis Markdown Deliverable via Sovereign InferenceRouter
             sources_md = "\n".join([f"- [{s['title']}]({s['url']})" for s in sources])
             evidence_md = "\n".join([f"- « {e.get('claim', '')} »" for e in evidence]) if evidence else "- Analyse factuelle et synthèse validée."
+
             full_content = (
                 f"# Rapport d'Exécution DeerFlow 2.0\n\n"
                 f"**Mission** : {goal}\n\n"
@@ -391,6 +518,40 @@ class DeerFlowRuntime(AgentRuntime):
                 f"Exécution conforme et isolée par le moteur DeerFlow 2.0.\n"
                 f"Artefacts synchronisés avec Neon PostgreSQL et Cloudflare R2 souverain.\n"
             )
+
+            try:
+                from core.routing.inference_router import inference_router
+                synth_messages = [
+                    {
+                        "role": "system",
+                        "content": (
+                            "Tu es l'agent d'exécution souverain de Ñkyel AI propulsé par DeerFlow 2.0. "
+                            "Rédige un rapport clair, factuel, professionnel, structuré en Markdown avec des sections nettes. "
+                            "Cite explicitement les sources trouvées. "
+                            "Si l'utilisateur demande une réponse exacte ou spécifique (ex: 'Reply exactly: ...'), respecte STRICTEMENT la consigne demandée."
+                        ),
+                    },
+                    {
+                        "role": "user",
+                        "content": (
+                            f"Objectif : {goal}\n\n"
+                            f"Sources vérifiées :\n{sources_md}\n\n"
+                            f"Preuves extraites :\n{evidence_md}\n\n"
+                            f"Synthétise le résultat final pour l'utilisateur."
+                        ),
+                    },
+                ]
+                router_res = await inference_router.complete_chat(
+                    messages=synth_messages,
+                    mission_id=mission_id,
+                    run_id=run_id,
+                    max_tokens=4096,
+                )
+                generated_synth = router_res.get("content", "").strip()
+                if generated_synth:
+                    full_content = generated_synth
+            except Exception as e_synth:
+                logger.warning(f"DeerFlow synthesis router notice: {e_synth}")
 
             # 7. STEP: Deliverable Creation & R2 Persistence
             task_deliver = f"task_deliver_{uuid.uuid4().hex[:6]}"
@@ -505,6 +666,47 @@ class DeerFlowRuntime(AgentRuntime):
                 except Exception as ex:
                     logger.warning(f"XLSX creation note: {ex}")
 
+            if any(w in lower_g for w in ["image", "visuel", "logo", "illustration", "photo", "dessin", "graphique"]):
+                try:
+                    from services.media_provider_router import MediaProviderRouter
+                    media_res = await MediaProviderRouter.generate_image(
+                        prompt=goal,
+                        mission_id=mission_id,
+                    )
+                    image_url = media_res.get("url") or media_res.get("media_url")
+                    if image_url:
+                        img_art = await ArtifactService.create_artifact(
+                            title=f"Visuel Généré : {goal[:30]}",
+                            content=image_url,
+                            type=ArtifactType.IMAGE,
+                            mission_id=mission_id,
+                            run_id=run_id,
+                            parent_artifact_id=artifact.id,
+                            metadata={
+                                "user_id": user_id or "default_user",
+                                "runtime": "DeerFlowRuntime",
+                                "provider": media_res.get("provider", "google"),
+                                "model": media_res.get("model", "imagen-3"),
+                                "url": image_url,
+                            },
+                        )
+                        yield RuntimeEvent(
+                            type=RuntimeEventType.STATE_DELTA,
+                            mission_id=mission_id,
+                            run_id=run_id,
+                            artifact_id=img_art.id,
+                            payload={
+                                "artifact_id": img_art.id,
+                                "title": img_art.title,
+                                "type": "image",
+                                "storage_url": img_art.storage_url,
+                                "storage_key": img_art.storage_key,
+                                "preview_url": image_url,
+                            },
+                        )
+                except Exception as ex:
+                    logger.warning(f"Image generation note: {ex}")
+
             yield RuntimeEvent(
                 type=RuntimeEventType.STEP_FINISHED,
                 mission_id=mission_id,
@@ -513,7 +715,20 @@ class DeerFlowRuntime(AgentRuntime):
                 payload={"step": "DELIVERABLE_COMPILATION", "status": "completed"},
             )
 
-            # 8. RUN_FINISHED
+            try:
+                await PersistenceService.record_workgraph_node(
+                    mission_id=mission_id,
+                    run_id=run_id,
+                    node_id=task_deliver,
+                    node_type="deliverable",
+                    label=f"Livrable : {goal[:35]}",
+                    status="completed",
+                    payload={"artifact_id": artifact.id, "storage_url": artifact.storage_url},
+                )
+            except Exception as e:
+                logger.warning(f"Node deliverable persistence notice: {e}")
+
+            # 8. RUN_FINISHED & Clôture Persistante Neon
             duration_ms = int((time.time() - start_time) * 1000)
             yield RuntimeEvent(
                 type=RuntimeEventType.RUN_FINISHED,
@@ -530,6 +745,17 @@ class DeerFlowRuntime(AgentRuntime):
             )
             self._active_runs[run_id]["status"] = "completed"
 
+            try:
+                await PersistenceService.record_mission_completion(
+                    mission_id=mission_id,
+                    run_id=run_id,
+                    status="completed",
+                    summary=full_content[:500],
+                    duration_ms=duration_ms,
+                )
+            except Exception as e:
+                logger.warning(f"Mission completion persistence notice: {e}")
+
         except Exception as e:
             logger.error(f"DeerFlowRuntime execution error: {e}", exc_info=True)
             yield RuntimeEvent(
@@ -539,6 +765,16 @@ class DeerFlowRuntime(AgentRuntime):
                 payload={"error": str(e)},
             )
             self._active_runs[run_id]["status"] = "error"
+
+            try:
+                is_canc = self._active_runs[run_id].get("cancelled") or cancellation_manager.is_cancelled(mission_id)
+                await PersistenceService.record_mission_completion(
+                    mission_id=mission_id,
+                    run_id=run_id,
+                    status="cancelled" if is_canc else "failed",
+                )
+            except Exception as pe:
+                logger.warning(f"Mission failure persistence notice: {pe}")
         finally:
             cancellation_manager.unregister_mission(mission_id)
 

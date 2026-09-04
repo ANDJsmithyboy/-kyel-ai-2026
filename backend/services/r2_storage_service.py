@@ -64,8 +64,8 @@ class R2StorageService:
     @classmethod
     def get_object_key(cls, user_id: str, category: str, file_name: str) -> str:
         """Génère une clé d'objet cloisonnée par utilisateur."""
-        clean_user = str(user_id).strip()
-        clean_cat = str(category).strip()
+        clean_user = user_id.strip()
+        clean_cat = category.strip()
         return f"users/{clean_user}/{clean_cat}/{file_name}"
 
     @classmethod
@@ -88,7 +88,7 @@ class R2StorageService:
         object_key = cls.get_object_key(user_id=user_id, category=category, file_name=file_name)
 
         # 1. Sauvegarde locale persistante d'abord (cache P0)
-        local_dir = Path(settings.artifacts_storage_path) / "users" / str(user_id) / category
+        local_dir = Path(settings.artifacts_storage_path) / "users" / user_id / category
         local_dir.mkdir(parents=True, exist_ok=True)
         local_path = local_dir / file_name
         with open(local_path, "wb") as f:
@@ -197,6 +197,36 @@ class R2StorageService:
                 )
             except Exception as e:
                 logger.warning(f"Presigned URL generation error for {object_key}: {e}")
+        return None
+
+    @classmethod
+    def get_presigned_download_url(cls, object_key: str, expires_in: int = 3600) -> Optional[str]:
+        """Génère une URL signée temporaire pour téléchargement sécurisé (GET)."""
+        return cls.get_presigned_url(object_key=object_key, expires_in=expires_in)
+
+    @classmethod
+    def get_presigned_upload_url(
+        cls,
+        object_key: str,
+        content_type: str = "application/octet-stream",
+        expires_in: int = 3600,
+    ) -> Optional[str]:
+        """Génère une URL signée temporaire pour téléversement direct (PUT) vers Cloudflare R2."""
+        s3 = cls.get_client()
+        bucket = settings.r2_bucket_name or settings.cloudflare_r2_bucket
+        if s3 and bucket:
+            try:
+                return s3.generate_presigned_url(
+                    "put_object",
+                    Params={
+                        "Bucket": bucket,
+                        "Key": object_key,
+                        "ContentType": content_type,
+                    },
+                    ExpiresIn=expires_in,
+                )
+            except Exception as e:
+                logger.warning(f"Presigned upload URL generation error for {object_key}: {e}")
         return None
 
     @classmethod

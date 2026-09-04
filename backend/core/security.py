@@ -102,25 +102,62 @@ async def _upsert_user_from_clerk(clerk_user_id: str, email: str, name: str = ""
         async with async_session() as session:
             result = await session.execute(
                 text("""
-                    INSERT INTO users (clerk_id, email, full_name, tier, credits, is_admin, created_at)
-                    VALUES (:clerk_id, :email, :name, :tier, :credits, :is_admin, NOW())
-                    ON CONFLICT (clerk_id) DO UPDATE SET email = EXCLUDED.email
+                    INSERT INTO users (clerk_user_id, primary_email, display_name, created_at, updated_at)
+                    VALUES (:clerk_user_id, :primary_email, :display_name, NOW(), NOW())
+                    ON CONFLICT (clerk_user_id) DO UPDATE SET primary_email = EXCLUDED.primary_email, updated_at = NOW()
                     RETURNING *
                 """),
                 {
-                    "clerk_id": clerk_user_id,
-                    "email": email or "",
-                    "name": name or "",
-                    "tier": "admin" if is_super else "free",
-                    "credits": 999999999 if is_super else 100,
-                    "is_admin": is_super,
+                    "clerk_user_id": clerk_user_id,
+                    "primary_email": email or "",
+                    "display_name": name or "",
                 },
             )
             await session.commit()
             row = result.mappings().first()
             if row:
-                logger.info(f"✅ Nouvel utilisateur créé dans Neon: {clerk_user_id} ({email})")
-                return dict(row)
+                internal_user_id = row["id"]
+                # Ensure personal workspace exists
+                await session.execute(
+                    text("""
+                        INSERT INTO workspaces (id, name, slug, workspace_type, owner_user_id, status, created_at, updated_at)
+                        VALUES (gen_random_uuid(), :ws_name, :ws_slug, 'PERSONAL', :owner_id, 'ACTIVE', NOW(), NOW())
+                        ON CONFLICT (slug) DO NOTHING
+                    """),
+                    {
+                        "ws_name": f"{name or 'User'}'s Workspace",
+                        "ws_slug": f"personal-{internal_user_id}",
+                        "owner_id": internal_user_id
+                    }
+                )
+                
+                # Fetch the workspace ID to ensure we add the user as a member
+                ws_res = await session.execute(
+                    text("SELECT id FROM workspaces WHERE owner_user_id = :owner_id AND workspace_type = 'PERSONAL' LIMIT 1"),
+                    {"owner_id": internal_user_id}
+                )
+                ws_row = ws_res.mappings().first()
+                if ws_row:
+                    ws_id = ws_row["id"]
+                    await session.execute(
+                        text("""
+                            INSERT INTO workspace_members (id, workspace_id, user_id, role, status, joined_at, created_at, updated_at)
+                            VALUES (gen_random_uuid(), :ws_id, :user_id, 'OWNER', 'ACTIVE', NOW(), NOW(), NOW())
+                            ON CONFLICT (workspace_id, user_id) DO NOTHING
+                        """),
+                        {"ws_id": ws_id, "user_id": internal_user_id}
+                    )
+                await session.commit()
+                
+                logger.info(f"✅ Nouvel utilisateur créé/mis à jour dans Neon: {clerk_user_id} ({email})")
+                d = dict(row)
+                d["clerk_id"] = d.get("clerk_user_id")
+                d["email"] = d.get("primary_email")
+                d["name"] = d.get("display_name")
+                d["is_admin"] = is_super
+                d["role"] = "admin" if is_super else "member"
+                d["credits"] = 999999999 if is_super else 100
+                return d
     except Exception as e:
         logger.warning(f"⚠️ Impossible d'insérer l'utilisateur {clerk_user_id}: {e}")
 
@@ -298,14 +335,44 @@ async def _verify_clerk_token(token: str) -> dict:
 # ══════════════════════════════════════════════════════════════
 
 async def get_current_user(
+    request: Request = None,  # type: ignore[assignment]
     credentials: Optional[HTTPAuthorizationCredentials] = Depends(security_scheme),
 ) -> dict:
     """
-    Dépendance FastAPI : vérifie le JWT Clerk RS256 ou JWT local.
+    Dépendance FastAPI : vérifie le JWT Clerk RS256 ou JWT local,
+    ou session d'évaluation Google Review isolée.
     Attribue automatiquement les droits illimités aux superadmins.
     """
+    token = credentials.credentials if credentials else ""
+
+    # ── Vérification session Google Review isolée ─────────────
+    if (not token or token.startswith("rev_sess_")) and request:
+        try:
+            from middleware.review_auth import get_current_review_session
+            review_session = await get_current_review_session(request)
+            if review_session:
+                from db.session import async_session
+                from sqlalchemy import text
+                async with async_session() as db:
+                    res = await db.execute(text("SELECT id, clerk_user_id, primary_email, display_name FROM users WHERE clerk_user_id = 'user_google_reviewer'"))
+                    user_row = res.fetchone()
+                    if user_row:
+                        return {
+                            "id": str(user_row[0]),
+                            "clerk_id": str(user_row[1]),
+                            "email": str(user_row[2] or "google-reviewer@nkyel.smartandjai.com"),
+                            "name": str(user_row[3] or "Google Reviewer"),
+                            "credits": 500000,
+                            "is_admin": False,
+                            "role": "reviewer",
+                            "is_review": True,
+                            "review_session_id": str(review_session.id),
+                        }
+        except Exception as e:
+            logger.warning(f"Review session resolution notice: {e}")
+
     # ── Pas de token ──────────────────────────────────────────
-    if not credentials or not credentials.credentials:
+    if not token:
         if _is_development():
             return _DEMO_USER
         raise HTTPException(
@@ -313,8 +380,6 @@ async def get_current_user(
             detail="Authentification requise. Fournissez un token Bearer valide.",
             headers={"WWW-Authenticate": "Bearer"},
         )
-
-    token = credentials.credentials
 
     # ── Token démo (development uniquement) ───────────────────
     if token in _DEMO_TOKENS:
@@ -412,7 +477,7 @@ async def get_current_user_optional(
     if not credentials or not credentials.credentials:
         return None
     try:
-        return await get_current_user(credentials)
+        return await get_current_user(request=None, credentials=credentials)
     except HTTPException:
         return None
 
@@ -432,7 +497,7 @@ async def require_current_user(
 ADMIN_ROLES = frozenset({"OWNER", "SUPER_ADMIN", "AI_ADMIN", "SUPPORT", "OBSERVER", "admin"})
 
 async def require_admin(
-    request: Request,
+    request: Request = None,  # type: ignore[assignment]
     user: dict = Depends(get_current_user),
 ) -> dict:
     """Dépendance qui vérifie que l'utilisateur possède un rôle administratif valide."""

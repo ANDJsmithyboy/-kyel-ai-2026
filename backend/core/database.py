@@ -18,11 +18,17 @@ from db.session import async_session
 async def get_user_by_clerk_id(clerk_id: str) -> Optional[dict]:
     async with async_session() as session:
         result = await session.execute(
-            text("SELECT * FROM users WHERE clerk_id = :cid LIMIT 1"),
+            text("SELECT * FROM users WHERE clerk_user_id = :cid LIMIT 1"),
             {"cid": clerk_id},
         )
         row = result.mappings().first()
-        return dict(row) if row else None
+        if not row:
+            return None
+        d = dict(row)
+        d["clerk_id"] = d.get("clerk_user_id")
+        d["email"] = d.get("primary_email")
+        d["name"] = d.get("display_name")
+        return d
 
 
 async def get_user_by_id(user_id: str) -> Optional[dict]:
@@ -32,7 +38,13 @@ async def get_user_by_id(user_id: str) -> Optional[dict]:
             {"uid": user_id},
         )
         row = result.mappings().first()
-        return dict(row) if row else None
+        if not row:
+            return None
+        d = dict(row)
+        d["clerk_id"] = d.get("clerk_user_id")
+        d["email"] = d.get("primary_email")
+        d["name"] = d.get("display_name")
+        return d
 
 
 # ── Conversations ────────────────────────────────────────────
@@ -249,8 +261,7 @@ async def list_all_users(limit: int = 100, offset: int = 0) -> list[dict]:
     async with async_session() as session:
         result = await session.execute(
             text("""
-                SELECT id, clerk_id, email, full_name, tier, credits, credits_used,
-                       is_admin, is_banned, beta_pioneer, pioneer_number, created_at
+                SELECT id, clerk_user_id as clerk_id, primary_email as email, display_name as full_name, created_at
                 FROM users ORDER BY created_at DESC
                 LIMIT :lim OFFSET :off
             """),

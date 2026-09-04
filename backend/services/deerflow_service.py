@@ -44,17 +44,17 @@ async def stream_deerflow(
                 # DeerFlow non disponible — fallback direct
                 yield {"type": "agent_step", "step": {"type": "fallback", "label": "Mode direct activé", "status": "warning"}}
 
-                from services.groq_service import stream_groq
+                from core.routing.inference_router import inference_router
                 agent_messages = [
                     {"role": "user", "content": f"[MODE AGENT]\nObjectif: {goal}\n\nContexte: {context or 'Aucun'}\n\nAnalyse en profondeur, structure ta réponse avec des sections claires."},
                 ]
                 full_content = ""
-                async for event in stream_groq(agent_messages, model="WANDANA", temperature=0.3, max_tokens=8192):
+                async for event in inference_router.stream_chat(agent_messages, temperature=0.3, max_tokens=8192):
                     if event["type"] == "token":
                         full_content += event["text"]
                         yield event
                     elif event["type"] == "done":
-                        yield {"type": "done", "content": full_content, "fallback": True}
+                        yield {"type": "done", "content": full_content, "fallback": True, "provider": event.get("provider"), "model": event.get("model")}
                 return
 
             thread_data = thread_resp.json()
@@ -109,17 +109,17 @@ async def stream_deerflow(
     except (httpx.ConnectError, httpx.ReadTimeout) as e:
         yield {"type": "agent_step", "step": {"type": "fallback", "label": "DeerFlow hors ligne — mode direct", "status": "warning"}}
 
-        from services.groq_service import stream_groq
+        from core.routing.inference_router import inference_router
         agent_messages = [
             {"role": "user", "content": f"[MODE AGENT FALLBACK]\nObjectif: {goal}\n\nContexte: {context or 'Aucun'}"},
         ]
         full_content = ""
-        async for event in stream_groq(agent_messages, model="WANDANA", temperature=0.3, max_tokens=8192):
+        async for event in inference_router.stream_chat(agent_messages, temperature=0.3, max_tokens=8192):
             if event["type"] == "token":
                 full_content += event["text"]
                 yield event
             elif event["type"] == "done":
-                yield {"type": "done", "content": full_content, "fallback": True}
+                yield {"type": "done", "content": full_content, "fallback": True, "provider": event.get("provider"), "model": event.get("model")}
 
     except Exception as e:
         duration_ms = int((time.time() - start_time) * 1000)
