@@ -64,4 +64,15 @@ export const missionsApi = {
 
   listEvents: (runId: string, afterSequence = 0, limit = 200) =>
     api.get<MissionEventItem[]>(`/api/v1/events?run_id=${runId}&after_sequence=${afterSequence}&limit=${limit}`),
+
+  restoreMission: (missionId: string) =>
+    api.get<{
+      found: boolean;
+      mission: any;
+      nodes: any[];
+      sources: any[];
+      evidence: any[];
+      artifacts: any[];
+      error?: string;
+    }>(`/api/v1/nkyel/mission/${missionId}/restore`),
 };

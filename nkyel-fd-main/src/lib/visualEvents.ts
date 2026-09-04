@@ -52,14 +52,35 @@ interface NormalizeContext {
 }
 
 const eventMap: Record<string, NkyelVisualEventType> = {
+  // Official AG-UI protocol events
+  RUN_STARTED: 'mission.started',
+  RUN_FINISHED: 'mission.completed',
+  RUN_ERROR: 'mission.failed',
+  STEP_STARTED: 'task.started',
+  STEP_FINISHED: 'tool.completed',
+  TOOL_CALL_START: 'tool.started',
+  TOOL_CALL_RESULT: 'tool.completed',
+  TEXT_MESSAGE_CONTENT: 'message.delta',
+  TEXT_MESSAGE_START: 'message.delta',
+  TEXT_MESSAGE_END: 'message.delta',
+
+  // Existing & deerflow aliases
   token: 'message.delta',
   message: 'message.delta',
+  'messages-tuple': 'message.delta',
   source: 'source.found',
+  source_found: 'source.found',
   rendu: 'artifact.created',
+  artifact_created: 'artifact.created',
   'tool.started': 'tool.started',
   'tool.completed': 'tool.completed',
   'task.started': 'task.started',
+  agent_step: 'task.started',
+  node_completed: 'tool.completed',
   'plan.created': 'plan.created',
+  run_started: 'mission.started',
+  run_completed: 'mission.completed',
+  run_cancelled: 'mission.failed',
   done: 'mission.completed',
   completed: 'mission.completed',
   error: 'mission.failed',
@@ -74,16 +95,30 @@ function stringValue(value: unknown, fallback: string | null = null): string | n
 }
 
 export function normalizeSseEvent(raw: Record<string, unknown>, context: NormalizeContext): NkyelVisualEvent | null {
-  const rawType = stringValue(raw.type);
+  const rawType = stringValue(raw.ag_ui_type ?? raw.type);
   if (!rawType) return null;
 
-  const type = eventMap[rawType];
+  const payload = asRecord(raw.payload ?? raw.data ?? raw.artifact ?? raw);
+  let type = eventMap[rawType];
+
+  // Resolve STATE_DELTA according to payload contents
+  if (rawType === 'STATE_DELTA' || raw.type === 'STATE_DELTA') {
+    if (payload.source || raw.source) {
+      type = 'source.found';
+    } else if (payload.artifact || payload.artifact_id || raw.artifact) {
+      type = 'artifact.created';
+    } else {
+      type = 'task.started';
+    }
+  }
+
   if (!type) return null;
 
-  const payload = asRecord(raw.payload ?? raw.artifact ?? raw);
   const agentRecord = asRecord(raw.agent);
   const agentId = stringValue(raw.agent_id ?? agentRecord.id);
   const agentLabel = stringValue(raw.agent_label ?? agentRecord.label);
+
+  const isAgUi = rawType.startsWith('RUN_') || rawType.startsWith('STEP_') || rawType.startsWith('TOOL_CALL_') || rawType.startsWith('STATE_') || rawType.startsWith('TEXT_');
 
   return {
     id: stringValue(raw.id ?? raw.event_id, `${context.runId}:${rawType}:${Date.now()}`) as string,
@@ -93,7 +128,7 @@ export function normalizeSseEvent(raw: Record<string, unknown>, context: Normali
     run_id: stringValue(raw.run_id, context.runId) as string,
     request_id: stringValue(raw.request_id, context.requestId ?? null),
     task_id: stringValue(raw.task_id),
-    source_protocol: raw.source_protocol === 'ag-ui' || raw.source_protocol === 'a2a' || raw.source_protocol === 'mcp' ? raw.source_protocol : 'deerflow',
+    source_protocol: isAgUi ? 'ag-ui' : (raw.source_protocol === 'a2a' || raw.source_protocol === 'mcp' ? raw.source_protocol : 'deerflow'),
     source_event_type: stringValue(raw.source_event_type, rawType),
     agent: agentId && agentLabel ? { id: agentId, label: agentLabel } : null,
     payload,

@@ -62,27 +62,34 @@ export default function HumanInterventionBar({
           <span>Contrôle Humain</span>
         </div>
 
-        {/* Suspendre / Reprendre */}
-        {isRunning ? (
-          <button
-            type="button"
-            onClick={stopRun}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[var(--error-subtle)] text-[var(--error)] border border-[var(--error)] hover:opacity-90 transition-colors"
-            title="Suspendre l'exécution de la mission"
-          >
-            <Pause size={14} weight="fill" />
-            <span>Suspendre</span>
-          </button>
-        ) : (
-          <button
-            type="button"
-            onClick={resumeRun}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[var(--success-subtle)] text-[var(--success)] border border-[var(--success)] hover:opacity-90 transition-colors"
-            title="Reprendre l'exécution"
-          >
-            <Play size={14} weight="fill" />
-            <span>Reprendre</span>
-          </button>
+        {/* Suspendre / Annuler */}
+        {isRunning && (
+          <>
+            <button
+              type="button"
+              onClick={() => {
+                protocolEventBus.emit('agui.state.updated', 'agui', 'Suspension temporaire demandée');
+                stopRun();
+              }}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[var(--warning-subtle)] text-[var(--warning)] border border-[var(--warning)] hover:opacity-90 transition-colors"
+              title="Suspendre l'exécution"
+            >
+              <Pause size={14} weight="fill" />
+              <span>Suspendre</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                protocolEventBus.emit('agui.state.updated', 'agui', 'Annulation totale de la mission');
+                stopRun();
+              }}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[var(--error-subtle)] text-[var(--error)] border border-[var(--error)] hover:opacity-90 transition-colors"
+              title="Annuler l'exécution"
+            >
+              <XCircle size={14} weight="fill" />
+              <span>Annuler</span>
+            </button>
+          </>
         )}
 
         {/* Modifier une contrainte */}

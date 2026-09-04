@@ -82,15 +82,16 @@ function mapAgUiEventToNkyelEvent(raw: AgUiRawEvent, runId: string): NkyelEvent 
       };
 
     // -- Run Lifecycle --
+    case 'RUN_STARTED':
     case 'run_started':
     case 'lifecycle':
-      if (raw.data?.status === 'started' || raw.data?.phase === 'start') {
+      if (raw.data?.status === 'started' || raw.data?.phase === 'start' || raw.status === 'started' || raw.type === 'RUN_STARTED') {
         return {
           ...baseEvent,
           type: 'run.created',
           sequenceNumber: 0,
-          timestamp: '',
-          payload: raw.data,
+          timestamp: new Date().toISOString(),
+          payload: (raw.data || raw) as Record<string, unknown>,
         };
       }
       return null;
@@ -102,7 +103,7 @@ function mapAgUiEventToNkyelEvent(raw: AgUiRawEvent, runId: string): NkyelEvent 
         ...baseEvent,
         type: 'plan.created',
         sequenceNumber: 0,
-        timestamp: '',
+        timestamp: new Date().toISOString(),
         node: {
           id: genId('plan'),
           type: 'plan',
@@ -116,60 +117,156 @@ function mapAgUiEventToNkyelEvent(raw: AgUiRawEvent, runId: string): NkyelEvent 
         },
       };
 
-    // -- Task Events --
+    // -- Task / Step Events --
+    case 'STEP_STARTED':
     case 'task_started':
-    case 'agent_step':
+    case 'task.started':
+    case 'agent_step': {
+      const stepData = (raw.data || raw) as Record<string, unknown>;
+      const stepNode = (raw.node || stepData.node || {}) as Record<string, unknown>;
+      const label = (stepNode.label as string) || (stepData.task_name as string) || (stepData.step as string) || (raw.step?.type as string) || 'Étape';
+      const taskId = (stepData.task_id as string) || (stepNode.id as string) || genId('task');
       return {
         ...baseEvent,
         type: 'task.started',
         sequenceNumber: 0,
-        timestamp: '',
+        timestamp: new Date().toISOString(),
         node: {
-          id: genId('task'),
+          id: taskId,
           type: 'task',
           version: '1.0.0',
-          title: (raw.step?.type as string) || (raw.data?.task_name as string) || 'Task',
-          summary: raw.step?.description as string,
+          title: label,
+          summary: (raw.step?.description as string) || (stepData.summary as string) || label,
           status: 'active',
           provenance: 'generated',
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
         },
       };
+    }
+
+    case 'STEP_FINISHED':
+    case 'node_completed': {
+      const stepData = (raw.data || raw) as Record<string, unknown>;
+      const taskId = (stepData.task_id as string) || genId('task');
+      return {
+        ...baseEvent,
+        type: 'task.completed',
+        sequenceNumber: 0,
+        timestamp: new Date().toISOString(),
+        node: {
+          id: taskId,
+          type: 'task',
+          version: '1.0.0',
+          title: (stepData.step as string) || 'Étape terminée',
+          status: 'completed',
+          provenance: 'generated',
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        },
+      };
+    }
 
     // -- Tool Calls --
+    case 'TOOL_CALL_START':
     case 'tool_call':
-    case 'tool_started':
+    case 'tool.started': {
+      const toolData = (raw.data || raw) as Record<string, unknown>;
+      const toolCallId = (toolData.tool_call_id as string) || (toolData.toolCallId as string) || genId('tool');
+      const toolName = (toolData.tool_name as string) || (toolData.tool as string) || (toolData.toolName as string) || 'Tool';
       return {
         ...baseEvent,
         type: 'tool.started',
         sequenceNumber: 0,
-        timestamp: '',
-        toolCallId: raw.data?.toolCallId as string,
+        timestamp: new Date().toISOString(),
+        toolCallId,
         node: {
-          id: genId('tool'),
+          id: toolCallId,
           type: 'tool_call',
           version: '1.0.0',
-          title: (raw.data?.toolName as string) || 'Tool',
+          title: toolName,
+          summary: JSON.stringify(toolData.tool_input || toolData.input || toolData.query || {}),
           status: 'active',
           provenance: 'generated',
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
         },
+        payload: toolData,
       };
+    }
 
+    case 'TOOL_CALL_RESULT':
     case 'tool_result':
-    case 'tool_completed':
+    case 'tool.completed': {
+      const toolData = (raw.data || raw) as Record<string, unknown>;
+      const toolCallId = (toolData.tool_call_id as string) || (toolData.toolCallId as string) || genId('tool');
       return {
         ...baseEvent,
         type: 'tool.completed',
         sequenceNumber: 0,
-        timestamp: '',
-        toolCallId: raw.data?.toolCallId as string,
-        payload: { result: raw.data?.result },
+        timestamp: new Date().toISOString(),
+        toolCallId,
+        payload: toolData,
       };
+    }
 
-    // -- Web Search / Source --
+    // -- State Delta (AG-UI State Sync) --
+    case 'STATE_DELTA':
+    case 'source':
+    case 'source_found': {
+      const deltaData = (raw.data || raw) as Record<string, unknown>;
+      const src = (deltaData.source || deltaData) as Record<string, unknown>;
+      if (src.url || deltaData.url) {
+        const sourceUrl = (src.url || deltaData.url) as string;
+        const sourceTitle = (src.title || deltaData.title || sourceUrl) as string;
+        const sourceSnippet = (src.snippet || src.content || deltaData.snippet || '') as string;
+        const sourceId = (src.id || src.source_id || deltaData.source_id || genId('src')) as string;
+        return {
+          ...baseEvent,
+          type: 'source.added',
+          sequenceNumber: 0,
+          timestamp: new Date().toISOString(),
+          node: {
+            id: sourceId,
+            type: 'source',
+            version: '1.0.0',
+            title: sourceTitle,
+            summary: sourceSnippet,
+            sourceRef: sourceUrl,
+            status: 'completed',
+            provenance: 'retrieved',
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+          },
+          payload: src,
+        };
+      }
+      if (deltaData.artifact || deltaData.artifact_id) {
+        const art = (deltaData.artifact || deltaData) as Record<string, unknown>;
+        const artId = (art.id || art.artifact_id || genId('art')) as string;
+        return {
+          ...baseEvent,
+          type: 'artifact.created',
+          sequenceNumber: 0,
+          timestamp: new Date().toISOString(),
+          node: {
+            id: artId,
+            type: 'artifact',
+            version: '1.0.0',
+            title: (art.title as string) || 'Deliverable',
+            summary: (art.content as string)?.slice(0, 200) || '',
+            status: 'completed',
+            provenance: 'generated',
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+          },
+          payload: art,
+        };
+      }
+      return null;
+    }
+
+    // -- Web Search / Source legacy --
     case 'wandana_search':
     case 'web_search':
     case 'tavily_search':
@@ -177,7 +274,7 @@ function mapAgUiEventToNkyelEvent(raw: AgUiRawEvent, runId: string): NkyelEvent 
         ...baseEvent,
         type: 'source.added',
         sequenceNumber: 0,
-        timestamp: '',
+        timestamp: new Date().toISOString(),
         node: {
           id: genId('source'),
           type: 'source',
@@ -192,29 +289,58 @@ function mapAgUiEventToNkyelEvent(raw: AgUiRawEvent, runId: string): NkyelEvent 
         },
       };
 
-    // -- Text Message (AI Response) --
+    // -- Text Message / AI Response --
+    case 'TEXT_MESSAGE_CONTENT':
     case 'messages-tuple':
     case 'text_message':
-      if (raw.data?.type === 'ai' && raw.data?.content) {
-        return {
-          ...baseEvent,
-          type: 'artifact.created',
-          sequenceNumber: 0,
-          timestamp: '',
-          node: {
-            id: genId('artifact'),
-            type: 'artifact',
-            version: '1.0.0',
-            title: 'Response',
-            summary: (raw.data.content as string).substring(0, 200),
-            status: 'completed',
-            provenance: 'generated',
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString(),
-          },
-        };
+      if ((raw.data?.type === 'ai' || raw.type === 'TEXT_MESSAGE_CONTENT') && (raw.data?.content || raw.content)) {
+        const textContent = (raw.data?.content || raw.content || '') as string;
+        if (textContent.length > 300) {
+          return {
+            ...baseEvent,
+            type: 'artifact.created',
+            sequenceNumber: 0,
+            timestamp: new Date().toISOString(),
+            node: {
+              id: genId('artifact'),
+              type: 'artifact',
+              version: '1.0.0',
+              title: 'Synthèse Réponse',
+              summary: textContent.substring(0, 200),
+              status: 'completed',
+              provenance: 'generated',
+              createdAt: new Date().toISOString(),
+              updatedAt: new Date().toISOString(),
+            },
+          };
+        }
       }
       return null;
+
+    // -- Artifact Created --
+    case 'artifact_created':
+    case 'rendu': {
+      const artData = (raw.artifact || raw.data || raw) as Record<string, unknown>;
+      const artId = (artData.id || genId('art')) as string;
+      return {
+        ...baseEvent,
+        type: 'artifact.created',
+        sequenceNumber: 0,
+        timestamp: new Date().toISOString(),
+        node: {
+          id: artId,
+          type: 'artifact',
+          version: '1.0.0',
+          title: (artData.title as string) || 'Livrable',
+          summary: (artData.content as string)?.slice(0, 200) || '',
+          status: 'completed',
+          provenance: 'generated',
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        },
+        payload: artData,
+      };
+    }
 
     // -- Approval Requests --
     case 'approval_request':
@@ -222,7 +348,7 @@ function mapAgUiEventToNkyelEvent(raw: AgUiRawEvent, runId: string): NkyelEvent 
         ...baseEvent,
         type: 'approval.requested',
         sequenceNumber: 0,
-        timestamp: '',
+        timestamp: new Date().toISOString(),
         node: {
           id: genId('approval'),
           type: 'approval',
@@ -237,18 +363,19 @@ function mapAgUiEventToNkyelEvent(raw: AgUiRawEvent, runId: string): NkyelEvent 
       };
 
     // -- Errors --
+    case 'RUN_ERROR':
     case 'error':
       return {
         ...baseEvent,
         type: 'task.failed',
         sequenceNumber: 0,
-        timestamp: '',
+        timestamp: new Date().toISOString(),
         node: {
           id: genId('error'),
           type: 'error',
           version: '1.0.0',
-          title: 'Error',
-          summary: (raw.data?.message as string) || 'Unknown error',
+          title: 'Erreur d\'exécution',
+          summary: (raw.data?.message as string) || (raw.message as string) || 'Unknown error',
           status: 'failed',
           provenance: 'generated',
           createdAt: new Date().toISOString(),
@@ -257,19 +384,19 @@ function mapAgUiEventToNkyelEvent(raw: AgUiRawEvent, runId: string): NkyelEvent 
       };
 
     // -- Run End --
+    case 'RUN_FINISHED':
     case 'run_completed':
+    case 'done':
     case 'final':
       return {
         ...baseEvent,
         type: 'final.delivered',
         sequenceNumber: 0,
-        timestamp: '',
-        payload: raw.data,
+        timestamp: new Date().toISOString(),
+        payload: (raw.data || raw) as Record<string, unknown>,
       };
 
     default:
-      // Unknown event types are logged but not emitted
-      console.debug(`[AG-UI Adapter] Unknown event type: ${raw.type}`, raw);
       return null;
   }
 }

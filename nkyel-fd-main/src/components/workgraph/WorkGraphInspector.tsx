@@ -44,23 +44,8 @@ export default function WorkGraphInspector({
 
   if (!node) return null;
 
-  const isDirty = 
-    node.title !== editedTitle || 
-    (node.summary || '') !== editedDescription || 
-    (node.status || 'planned') !== editedStatus;
-
   const handleSave = async () => {
-    if (!isDirty) return;
-    setIsSaving(true);
-    try {
-      await onSave(node.id, {
-        title: editedTitle,
-        summary: editedDescription,
-        status: editedStatus as WorkNode['status']
-      });
-    } finally {
-      setIsSaving(false);
-    }
+    // Read-only evidence inspector - save is mostly disabled
   };
 
   const getRelativeTime = (dateStr?: string) => {
@@ -101,123 +86,96 @@ export default function WorkGraphInspector({
             </div>
           </div>
 
-          <div className="flex items-center gap-2 shrink-0">
+            {/* Actions (Read-only view) */}
             <button 
-              onClick={() => onDuplicate?.(node.id)}
+              onClick={() => onFocusNode?.(node.id)}
               className="p-2 rounded-xl border border-white/[0.08] text-white/70 hover:text-white hover:bg-white/5 transition-colors"
-              title="Dupliquer"
+              title="Centrer"
             >
-              <Copy size={18} />
-            </button>
-            <button 
-              onClick={() => onDelete?.(node.id)}
-              className="p-2 rounded-xl border border-red-500/20 text-red-400 hover:bg-red-500/10 transition-colors"
-              title="Supprimer"
-            >
-              <Trash size={18} />
-            </button>
-            <button 
-              onClick={handleSave}
-              disabled={!isDirty || isSaving}
-              className="ml-2 px-4 py-2 rounded-xl bg-[var(--accent)] text-white font-medium hover:brightness-110 disabled:opacity-50 disabled:hover:brightness-100 transition-all"
-            >
-              {isSaving ? 'Enregistrement...' : 'enregistrer'}
+              <LinkIcon size={18} />
             </button>
           </div>
-        </div>
 
-        {/* Form Fields */}
+        {/* Observable Evidence Fields */}
         <div className="flex flex-col gap-4">
           
-          {/* Name Field */}
-          <div className="relative group">
-            <label className="absolute -top-2 left-3 bg-[#0E121A] px-1 text-[10px] uppercase tracking-wider font-semibold text-white/50 z-10">
-              Nom
-            </label>
-            <input 
-              type="text" 
-              value={editedTitle}
-              onChange={(e) => setEditedTitle(e.target.value)}
-              className="w-full bg-transparent border border-white/[0.08] rounded-xl px-4 py-3 text-sm text-white placeholder-white/30 focus:border-[var(--accent)] focus:outline-none transition-colors"
-            />
+          {/* Status Row */}
+          <div className="flex items-center gap-3 p-3 rounded-xl bg-white/5 border border-white/[0.08]">
+            <div className={`w-2 h-2 rounded-full ${
+              node.status === 'completed' ? 'bg-[var(--success)]' :
+              node.status === 'active' ? 'bg-[var(--accent)]' :
+              node.status === 'failed' ? 'bg-[var(--error)]' : 'bg-white/40'
+            }`} />
+            <span className="text-sm text-white/80 capitalize font-medium">{node.status}</span>
+            {node.latencyMs && (
+              <span className="ml-auto text-xs font-mono text-white/50">{node.latencyMs}ms</span>
+            )}
+            {node.provider && (
+              <span className="text-xs font-mono text-[var(--accent)] bg-[var(--accent)]/10 px-2 py-0.5 rounded-full border border-[var(--accent)]/20">
+                {node.provider}
+              </span>
+            )}
           </div>
 
-          {/* Description Field */}
-          <div className="relative group">
-            <label className="absolute -top-2 left-3 bg-[#0E121A] px-1 text-[10px] uppercase tracking-wider font-semibold text-white/50 z-10">
-              Description
-            </label>
-            <textarea 
-              value={editedDescription}
-              onChange={(e) => setEditedDescription(e.target.value)}
-              rows={2}
-              className="w-full bg-transparent border border-white/[0.08] rounded-xl px-4 py-3 text-sm text-white placeholder-white/30 focus:border-[var(--accent)] focus:outline-none transition-colors resize-none"
-            />
-          </div>
+          {/* Type-specific Evidence */}
+          {(node.type === 'tool_call' || node.type === 'mcp_tool') && (
+            <>
+              <div className="space-y-2">
+                <h3 className="text-xs font-semibold text-white/50 uppercase tracking-wider">Entrée (Input)</h3>
+                <pre className="p-3 rounded-xl bg-black/40 border border-white/[0.08] text-[11px] font-mono text-emerald-400/90 whitespace-pre-wrap break-words">
+                  {node.metadata?.tool_input ? JSON.stringify(node.metadata.tool_input, null, 2) : 'Aucune donnée d\'entrée'}
+                </pre>
+              </div>
+              {node.status === 'completed' && (
+                <div className="space-y-2">
+                  <h3 className="text-xs font-semibold text-white/50 uppercase tracking-wider">Sortie (Output)</h3>
+                  <pre className="p-3 rounded-xl bg-black/40 border border-white/[0.08] text-[11px] font-mono text-white/80 whitespace-pre-wrap break-words max-h-48 overflow-y-auto">
+                    {node.metadata?.tool_output ? JSON.stringify(node.metadata.tool_output, null, 2) : 'Résultat vide'}
+                  </pre>
+                </div>
+              )}
+            </>
+          )}
 
-          {/* Status & Owner row */}
-          <div className="grid grid-cols-2 gap-4">
-            <div className="relative group">
-              <label className="absolute -top-2 left-3 bg-[#0E121A] px-1 text-[10px] uppercase tracking-wider font-semibold text-white/50 z-10">
-                Statut
-              </label>
-              <div className="relative">
-                <select 
-                  value={editedStatus}
-                  onChange={(e) => setEditedStatus(e.target.value)}
-                  className="w-full bg-transparent border border-white/[0.08] rounded-xl px-4 py-3 text-sm text-white appearance-none focus:border-[var(--accent)] focus:outline-none transition-colors"
-                >
-                  <option value="planned" className="bg-[#1A1D24]">à faire</option>
-                  <option value="running" className="bg-[#1A1D24]">en cours</option>
-                  <option value="waiting" className="bg-[#1A1D24]">en attente</option>
-                  <option value="completed" className="bg-[#1A1D24]">terminé</option>
-                  <option value="failed" className="bg-[#1A1D24]">échoué</option>
-                </select>
-                <CaretDown className="absolute right-4 top-1/2 -translate-y-1/2 text-white/50 pointer-events-none" size={14} />
-                {/* Visual Status Indicator Dot */}
-                <div className={`absolute left-4 top-1/2 -translate-y-1/2 w-2 h-2 rounded-full pointer-events-none ${
-                  editedStatus === 'completed' ? 'bg-[var(--success)]' :
-                  editedStatus === 'running' ? 'bg-[var(--accent)]' :
-                  editedStatus === 'failed' ? 'bg-[var(--error)]' :
-                  editedStatus === 'waiting' ? 'bg-[var(--warning)]' : 'bg-[var(--text-tertiary)]'
-                }`} />
-                {/* Adjust select padding so text doesn't overlap the dot */}
-                <style jsx>{`select { padding-left: 2.25rem; }`}</style>
+          {node.type === 'source' && (
+            <>
+              <div className="space-y-2">
+                <h3 className="text-xs font-semibold text-white/50 uppercase tracking-wider">URL / Domaine</h3>
+                <div className="p-3 rounded-xl bg-white/5 border border-white/[0.08] flex flex-col gap-1">
+                  <span className="text-sm font-medium text-white/90">{node.metadata?.domain as string || 'Source Externe'}</span>
+                  <a href={node.sourceRef || node.metadata?.url as string || '#'} target="_blank" rel="noopener noreferrer" className="text-[11px] font-mono text-[var(--accent)] hover:underline truncate">
+                    {node.sourceRef || node.metadata?.url as string || 'URL non disponible'}
+                  </a>
+                </div>
+              </div>
+              <div className="space-y-2">
+                <h3 className="text-xs font-semibold text-white/50 uppercase tracking-wider">Extrait (Snippet)</h3>
+                <p className="p-3 rounded-xl bg-white/5 border border-white/[0.08] text-sm text-white/80 leading-relaxed italic">
+                  "{node.metadata?.snippet as string || node.summary || 'Aucun extrait mémorisé'}"
+                </p>
+              </div>
+            </>
+          )}
+
+          {(node.type === 'task' || node.type === 'goal' || node.type === 'plan') && (
+            <div className="space-y-2">
+              <h3 className="text-xs font-semibold text-white/50 uppercase tracking-wider">Description</h3>
+              <p className="p-3 rounded-xl bg-white/5 border border-white/[0.08] text-sm text-white/90 leading-relaxed">
+                {node.summary || 'Aucune description'}
+              </p>
+            </div>
+          )}
+
+          {node.type === 'artifact' && (
+            <div className="space-y-2">
+              <h3 className="text-xs font-semibold text-white/50 uppercase tracking-wider">Livrable</h3>
+              <div className="p-4 rounded-xl bg-[var(--accent)]/5 border border-[var(--accent)]/20">
+                <h4 className="text-sm font-semibold text-[var(--text-primary)] mb-2">{node.title}</h4>
+                <p className="text-xs text-[var(--text-secondary)] line-clamp-3">{node.summary}</p>
               </div>
             </div>
-
-            <div className="relative group">
-              <label className="absolute -top-2 left-3 bg-[#0E121A] px-1 text-[10px] uppercase tracking-wider font-semibold text-white/50 z-10">
-                Propriétaire
-              </label>
-              <div className="relative">
-                <select 
-                  disabled
-                  className="w-full bg-transparent border border-white/[0.08] rounded-xl px-4 py-3 text-sm text-white appearance-none opacity-80"
-                >
-                  <option>Vous</option>
-                </select>
-                <CaretDown className="absolute right-4 top-1/2 -translate-y-1/2 text-white/50 pointer-events-none" size={14} />
-              </div>
-            </div>
-          </div>
-
-          {/* Relations / Links */}
-          <div className="relative group mt-2">
-            <label className="absolute -top-2 left-3 bg-[#0E121A] px-1 text-[10px] uppercase tracking-wider font-semibold text-white/50 z-10">
-              Lié à
-            </label>
-            <div className="w-full border border-white/[0.08] rounded-xl p-3 min-h-[60px] flex flex-wrap gap-2 items-center">
-              {/* Dummy related chips for visual matching - ideally derived from real graph edges */}
-              {/* This is a visual scaffold, a fully connected one would map through graph edges where node.id is source or target */}
-              
-              <button onClick={() => onAddLink?.(node.id)} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-white/[0.08] bg-white/5 hover:bg-white/10 text-xs text-white/70 transition-colors">
-                <Plus size={12} />
-                <span>ajouter un lien</span>
-              </button>
-            </div>
-          </div>
-
+          )}
+          
         </div>
       </div>
     </div>

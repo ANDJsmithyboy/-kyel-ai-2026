@@ -31,6 +31,7 @@ import {
 } from '@phosphor-icons/react';
 import NkyelMarkdownRenderer from './NkyelMarkdownRenderer';
 import MissionStatusCard from './MissionStatusCard';
+import NkyelSourceList from './NkyelSourceList';
 import type { NkyelVisualEvent } from '@/lib/visualEvents';
 import { useLanguageStore } from '@/stores/language.store';
 
@@ -253,6 +254,11 @@ export default function NkyelMessageItem({
             </button>
           </div>
         </div>
+      )}
+
+      {/* Verified Sources Grid */}
+      {sources && sources.length > 0 && (
+        <NkyelSourceList sources={sources as any} />
       )}
 
       {/* Response Action Bar (Only shown on completed responses) */}

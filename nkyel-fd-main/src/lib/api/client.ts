@@ -72,6 +72,13 @@ export async function apiRequest<T = any>(
     }
   }
 
+  if (!token && typeof window !== 'undefined') {
+    const reviewToken = localStorage.getItem('nkyel_review_token');
+    if (reviewToken && reviewToken.startsWith('rev_sess_')) {
+      token = reviewToken;
+    }
+  }
+
   const headers = new Headers(options.headers);
   if (token) {
     headers.set('Authorization', `Bearer ${token}`);
@@ -94,6 +101,7 @@ export async function apiRequest<T = any>(
 
   try {
     const res = await fetch(url, {
+      credentials: options.credentials || 'include',
       ...options,
       headers,
       signal: controller.signal,

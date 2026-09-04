@@ -223,7 +223,7 @@ export const useWorkGraphStore = create<WorkGraphState>((set, get) => {
       const state = get();
       if (!state.runId) return;
 
-      // Notify backend cancellation
+      // Notify backend cancellation using the authenticated api client
       missionsApi.cancelRun(state.runId).catch(err => {
         console.warn('[WorkGraph Store] Backend cancellation note:', err.message);
       });

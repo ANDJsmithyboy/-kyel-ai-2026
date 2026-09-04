@@ -17,10 +17,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background-image: url('/images/nkyel-ai-interface.png');
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
+  /* Panther bg in ::before */
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   position: relative;
   padding: 24px 16px;
@@ -29,6 +26,27 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+.nkyel-auth-page::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100dvh;
+  z-index: 0;
+  pointer-events: none;
+  background-image: url('/images/nkyel-ai-interface.png');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center center;
+}
+@media (max-width: 1024px) {
+  .nkyel-auth-page::before { background-position: 15% 20%; }
+}
+@media (max-width: 768px) {
+  .nkyel-auth-page::before { background-position: 8% 18%; }
+}
+
 
 /* ═══════════════════════════════════════════════════════
    LANGUAGE SWITCHER (top-right)

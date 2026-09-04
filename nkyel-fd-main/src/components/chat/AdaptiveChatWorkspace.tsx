@@ -59,6 +59,7 @@ import { useNkyelModel, getIntelligenceMode, type IntelligenceModeId } from '@/h
 import { useLanguageStore } from '@/stores/language.store';
 import { PantherMissionGlyph } from '@/components/icons';
 import RightContextInspector from '@/components/inspector/RightContextInspector';
+import { useWorkGraphStore } from '@/lib/nkyel/work-graph-store';
 import Surface from '@/components/ui/Surface';
 import PlusLauncherMenu from '@/components/chat/PlusLauncherMenu';
 import TierPicker from '@/components/chat/TierPicker';
@@ -121,6 +122,8 @@ export default function AdaptiveChatWorkspace({
     toggleFocusMode,
     rightWidth,
   } = useWorkspaceLayout();
+
+  const { nodes, isRunning } = useWorkGraphStore();
 
   const chatContainerRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -722,7 +725,27 @@ export default function AdaptiveChatWorkspace({
       </section>
 
       {/* ─── DROITE : INSPECTEUR CONTEXTUEL (DÉDIÉ & RÉTRACTABLE) ─── */}
-      <RightContextInspector isStreaming={isStreaming} />
+      <RightContextInspector 
+        isStreaming={isStreaming || isRunning} 
+        missionTitle={missionTitle}
+        activePhase={nodes.size > 10 ? 4 : nodes.size > 5 ? 3 : nodes.size > 2 ? 2 : 1}
+        sources={Array.from(nodes.values() as Iterable<any>).filter((n: any) => n.type === 'source').map((n: any) => ({
+          id: n.id,
+          title: n.title,
+          url: n.sourceRef || n.metadata?.url || '',
+          domain: n.metadata?.domain || new URL(n.metadata?.url || 'https://unknown').hostname.replace(/^www\./, ''),
+          snippet: n.metadata?.snippet || n.summary || '',
+          relevance: n.metadata?.score || 100,
+        }))}
+        tools={Array.from(nodes.values() as Iterable<any>).filter((n: any) => n.type === 'tool_call' || n.type === 'mcp_tool').map((n: any) => ({
+          id: n.id,
+          name: n.title,
+          description: n.summary || '',
+          status: n.status === 'active' ? 'active' : n.status === 'completed' ? 'available' : 'disabled',
+          latencyMs: n.latencyMs,
+          category: 'mcp' as const,
+        }))}
+      />
     </div>
   );
 }

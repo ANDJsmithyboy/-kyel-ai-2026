@@ -1,5 +1,5 @@
 /**
- * Ñkyel AI · Service Worker (Production PWA Hardened v3)
+ * Ñkyel AI · Service Worker (Production PWA Hardened v4)
  * SmartANDJ AI Technologies · Founder: Daniel Jonathan ANDJ
  *
  * Production Caching Rules:
@@ -7,11 +7,12 @@
  * - Navigation requests are strictly Network-First with offline fallback
  * - NEVER caches API routes (/api/*), SSE streams (/stream*), or auth tokens
  * - Only caches immutable versioned static assets (fonts, images)
+ * - Supports controlled update flow via SKIP_WAITING message
  */
 
-const CACHE_NAME = 'nkyel-pwa-v3';
+const CACHE_NAME = 'nkyel-pwa-v4';
 const STATIC_ASSETS = [
-  '/manifest.webmanifest',
+  '/manifest.json',
   '/offline.html',
   '/favicon.png',
 ];
@@ -24,7 +25,7 @@ self.addEventListener('install', (event) => {
   self.skipWaiting();
 });
 
-// Activate — purge ALL old cache versions immediately
+// Activate — purge ALL old cache versions immediately, claim clients
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((keys) =>
@@ -33,9 +34,15 @@ self.addEventListener('activate', (event) => {
           .filter((key) => key !== CACHE_NAME)
           .map((key) => caches.delete(key))
       )
-    )
+    ).then(() => self.clients.claim())
   );
-  self.clients.claim();
+});
+
+// Message handler — allow controlled SKIP_WAITING from client
+self.addEventListener('message', (event) => {
+  if (event.data && event.data.type === 'SKIP_WAITING') {
+    self.skipWaiting();
+  }
 });
 
 // Fetch — strict network-first for navigation, bypass for APIs
@@ -85,7 +92,9 @@ self.addEventListener('fetch', (event) => {
             (url.pathname.startsWith('/_next/static/') ||
               url.pathname.endsWith('.png') ||
               url.pathname.endsWith('.svg') ||
-              url.pathname.endsWith('.woff2'))
+              url.pathname.endsWith('.woff2') ||
+              url.pathname.endsWith('.jpeg') ||
+              url.pathname.endsWith('.jpg'))
           ) {
             const clone = networkResponse.clone();
             caches.open(CACHE_NAME).then((cache) => cache.put(request, clone));

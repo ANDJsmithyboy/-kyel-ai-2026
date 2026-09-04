@@ -12,10 +12,14 @@ import { useRenduPanel } from '@/hooks/useRenduPanel';
 import {
   createMissionStartedEvent,
   initialVisualState,
-  normalizeSseEvent,
   reduceVisualState,
+  normalizeSseEvent,
   type NkyelVisualState,
 } from '@/lib/visualEvents';
+import { useWorkGraphStore } from '@/lib/nkyel/work-graph-store';
+import { mapAgUiEventToNkyelEvent } from '@/lib/nkyel/ag-ui-adapter';
+import { getApiBaseUrl } from '@/lib/api/client';
+import { useAuth } from '@clerk/nextjs';
 
 interface UseChatParams {
   conversationId: string | null;
@@ -48,6 +52,7 @@ export function useChat({ conversationId, model, loxoEnabled, loxoRAGEnabled }: 
   const readerRef = useRef<ReadableStreamDefaultReader<Uint8Array> | null>(null);
   const abortRef = useRef<AbortController | null>(null);
   const renduPanel = useRenduPanel();
+  const { getToken, isSignedIn } = useAuth();
 
   const clearError = useCallback(() => setError(null), []);
 
@@ -61,6 +66,11 @@ export function useChat({ conversationId, model, loxoEnabled, loxoRAGEnabled }: 
 
   const sendMessage = useCallback(async (content: string, attachments?: File[]) => {
     if (!content.trim()) return;
+
+    if (!isSignedIn) {
+      setError("Vous devez être connecté pour lancer une mission.");
+      return;
+    }
 
     setError(null);
     setSources([]);
@@ -98,13 +108,12 @@ export function useChat({ conversationId, model, loxoEnabled, loxoRAGEnabled }: 
         abortRef.current = controller;
 
         const body: Record<string, unknown> = {
-          conversationId,
-          model,
-          content: content.trim(),
+          mission_id: conversationId,
+          run_id: runId,
           message: content.trim(),
-          history: messages.map((m) => ({ role: m.role, content: m.content })),
-          loxoEnabled,
-          loxoRAGEnabled,
+          engine: 'DEERFLOW',
+          features: { deepResearch: true, executiveArtifacts: true },
+          language: 'fr',
         };
 
         if (attachments && attachments.length > 0) {
@@ -113,10 +122,28 @@ export function useChat({ conversationId, model, loxoEnabled, loxoRAGEnabled }: 
           attachments.forEach((f) => formData.append('files', f));
         }
 
-        const res = await fetch('/api/chat/stream', {
+        // Extract clerk token properly via Next.js hook
+        let token: string | null = null;
+        try {
+          token = await getToken();
+        } catch (e) {
+          console.warn('[useChat] Failed to get Clerk token', e);
+        }
+        
+        if (!token) {
+          throw new Error("Erreur d'authentification : Token manquant. Veuillez vous reconnecter.");
+        }
+
+        const headers: Record<string, string> = { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        };
+
+        const baseUrl = getApiBaseUrl();
+        const res = await fetch(`${baseUrl}/api/v1/nkyel/run`, {
           method: 'POST',
           signal: controller.signal,
-          headers: { 'Content-Type': 'application/json' },
+          headers,
           body: JSON.stringify(body),
         });
 
@@ -147,74 +174,123 @@ export function useChat({ conversationId, model, loxoEnabled, loxoRAGEnabled }: 
 
             try {
               const event = JSON.parse(jsonStr) as Record<string, unknown>;
+              
+              // Local visual state for backwards compatibility
               const visualEvent = normalizeSseEvent(event, { runId, threadId: conversationId, requestId });
               if (visualEvent) setVisualState((previous) => reduceVisualState(previous, visualEvent));
 
-              switch (event.type) {
-                case 'token':
-                  setMessages((prev) => {
-                    const updated = [...prev];
-                    const last = updated[updated.length - 1];
-                    if (last && last.role === 'assistant') {
-                      updated[updated.length - 1] = {
-                        ...last,
-                        content: last.content + (event.content as string),
-                      };
-                    }
-                    return updated;
-                  });
-                  break;
+              // 1. Sync real events to WorkGraph
+              const nkyelEvent = mapAgUiEventToNkyelEvent(event as any, runId);
+              if (nkyelEvent) {
+                useWorkGraphStore.getState().emitEvent(nkyelEvent);
+              }
 
-                case 'source': {
-                  const src: NkyelSource = {
-                    url: event.url as string,
-                    title: event.title as string,
-                    snippet: event.snippet as string | undefined,
-                    favicon: event.favicon as string | undefined,
-                    type: (event.source_type as NkyelSource['type']) ?? 'loxo_web',
-                  };
-                  setSources((prev) => [...prev, src]);
-                  setMessages((prev) => {
-                    const updated = [...prev];
-                    const last = updated[updated.length - 1];
-                    if (last && last.role === 'assistant') {
-                      updated[updated.length - 1] = {
-                        ...last,
-                        sources: [...(last.sources ?? []), src],
-                      };
-                    }
-                    return updated;
-                  });
+              const evtType = (event.event_type || event.type || event.ag_ui_type || '') as string;
+
+              switch (evtType) {
+                case 'token':
+                case 'TEXT_MESSAGE_CHUNK': {
+                  const tokenText = (event.content || (event.data as any)?.content || (event.delta as any)?.text || '') as string;
+                  if (tokenText) {
+                    setMessages((prev) => {
+                      const updated = [...prev];
+                      const last = updated[updated.length - 1];
+                      if (last && last.role === 'assistant') {
+                        updated[updated.length - 1] = {
+                          ...last,
+                          content: last.content + tokenText,
+                        };
+                      }
+                      return updated;
+                    });
+                  }
+                  break;
+                }
+
+                case 'messages-tuple':
+                case 'TEXT_MESSAGE_CONTENT': {
+                  const fullText = (event.content || (event.data as any)?.content || '') as string;
+                  if (fullText) {
+                    setMessages((prev) => {
+                      const updated = [...prev];
+                      const last = updated[updated.length - 1];
+                      if (last && last.role === 'assistant') {
+                        updated[updated.length - 1] = {
+                          ...last,
+                          content: fullText,
+                        };
+                      }
+                      return updated;
+                    });
+                  }
+                  break;
+                }
+
+                case 'source':
+                case 'source_found': {
+                  const rawSrc = (event.source || (event.data as any)?.source || event.payload || event) as any;
+                  if (rawSrc && (rawSrc.url || rawSrc.title)) {
+                    const src: NkyelSource = {
+                      url: rawSrc.url || '',
+                      title: rawSrc.title || rawSrc.domain || 'Source Web',
+                      snippet: rawSrc.snippet || rawSrc.excerpt || undefined,
+                      favicon: rawSrc.favicon || undefined,
+                      type: (rawSrc.source_type as NkyelSource['type']) ?? 'loxo_web',
+                    };
+                    setSources((prev) => {
+                      if (prev.some((s) => s.url === src.url)) return prev;
+                      return [...prev, src];
+                    });
+                    setMessages((prev) => {
+                      const updated = [...prev];
+                      const last = updated[updated.length - 1];
+                      if (last && last.role === 'assistant') {
+                        const existing = last.sources ?? [];
+                        if (!existing.some((s) => s.url === src.url)) {
+                          updated[updated.length - 1] = {
+                            ...last,
+                            sources: [...existing, src],
+                          };
+                        }
+                      }
+                      return updated;
+                    });
+                  }
                   break;
                 }
 
                 case 'rendu':
-                  if (event.artifact) {
-                    const rendu = event.artifact as {
-                      id: string;
-                      type: string;
-                      title: string;
-                      content?: string;
-                      url?: string;
-                    };
+                case 'artifact_created': {
+                  const rawArt = (event.artifact || (event.data as any)?.artifact || event.payload || event) as any;
+                  if (rawArt && (rawArt.id || rawArt.artifact_id)) {
                     const nkyelRendu = {
-                      id: rendu.id,
-                      type: rendu.type as NkyelSource['type'] extends string ? string : never,
-                      title: rendu.title,
-                      content: rendu.content,
-                      url: rendu.url,
+                      id: rawArt.artifact_id || rawArt.id,
+                      type: (rawArt.type || rawArt.artifact_type || 'document') as NkyelSource['type'] extends string ? string : never,
+                      title: rawArt.title || 'Livrable Souverain',
+                      content: rawArt.content,
+                      url: rawArt.storage_url || rawArt.url,
                       created_at: Date.now(),
                     };
-                    renduPanel.openRendu(nkyelRendu as never);
+                    try {
+                      renduPanel.openRendu(nkyelRendu as never);
+                    } catch {}
                   }
                   break;
+                }
 
                 case 'done':
+                case 'run_completed':
+                case 'RUN_FINISHED':
+                  setIsStreaming(false);
+                  break;
+
+                case 'run_cancelled':
                   setIsStreaming(false);
                   break;
 
                 case 'error':
-                  setError(event.message as string);
+                case 'RUN_ERROR':
+                  setError((event.message || (event.data as any)?.message || 'Erreur d’exécution') as string);
                   setIsStreaming(false);
                   break;
               }

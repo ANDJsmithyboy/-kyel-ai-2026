@@ -17,7 +17,6 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { cacheSet, cacheGet } from '@/lib/redis';
-import { auth } from '@clerk/nextjs/server';
 import { NKYEL_PRODUCTION_SYSTEM_PROMPT } from '@/lib/systemPrompt';
 import { randomUUID } from 'crypto';
 
@@ -363,6 +362,7 @@ export async function POST(req: NextRequest) {
 
         try {
           // ── PHASE 0: Mission started ────────────────────
+          emit('RUN_STARTED', { provider: 'nkyel', research_mode: isResearchQuery });
           emit('reflection_start', { provider: 'nkyel', research_mode: isResearchQuery });
 
           let searchContext = '';
@@ -379,40 +379,46 @@ export async function POST(req: NextRequest) {
               const toolCallId = `tc_${randomUUID().replace(/-/g, '').slice(0, 8)}`;
 
               // Emit: tool.started
-              emit('tool.started', {
+              const toolPayload = {
                 tool_call_id: toolCallId,
                 tool_name: 'tavily_web_search',
                 tool_input: { query, max_results: 5 },
                 agent_id: 'research_agent',
                 agent_label: 'Ñkyel Research',
                 source_protocol: 'mcp',
-              });
+              };
+              emit('TOOL_CALL_START', toolPayload);
+              emit('tool.started', toolPayload);
 
               // Execute REAL Tavily search
               const { results, error } = await executeTavilySearch(query, 5);
 
               if (error) {
                 // Emit: tool UNAVAILABLE — never hallucinate
-                emit('tool.completed', {
+                const toolErrPayload = {
                   tool_call_id: toolCallId,
                   tool_name: 'tavily_web_search',
                   tool_output: { error, status: 'TOOL_UNAVAILABLE' },
                   agent_id: 'research_agent',
                   agent_label: 'Ñkyel Research',
                   source_protocol: 'mcp',
-                });
+                };
+                emit('TOOL_CALL_RESULT', toolErrPayload);
+                emit('tool.completed', toolErrPayload);
                 continue;
               }
 
               // Emit: tool.completed with result count
-              emit('tool.completed', {
+              const toolOkPayload = {
                 tool_call_id: toolCallId,
                 tool_name: 'tavily_web_search',
                 tool_output: { result_count: results.length, query },
                 agent_id: 'research_agent',
                 agent_label: 'Ñkyel Research',
                 source_protocol: 'mcp',
-              });
+              };
+              emit('TOOL_CALL_RESULT', toolOkPayload);
+              emit('tool.completed', toolOkPayload);
 
               // Emit individual source events
               for (const result of results) {
@@ -425,18 +431,23 @@ export async function POST(req: NextRequest) {
 
                 allSources.push(result);
 
-                emit('source', {
+                const domain = new URL(result.url).hostname.replace(/^www\./, '');
+                const sourcePayload = {
+                  id: sourceId,
                   source_id: sourceId,
                   url: result.url,
-                  title: result.title,
+                  title: result.title || domain,
+                  domain,
                   snippet: result.content.slice(0, 300),
                   score: result.score,
                   source_type: 'tavily_web',
-                  favicon: `https://www.google.com/s2/favicons?domain=${new URL(result.url).hostname}&sz=32`,
+                  favicon: `https://www.google.com/s2/favicons?domain=${domain}&sz=32`,
                   agent_id: 'research_agent',
                   agent_label: 'Ñkyel Research',
                   source_protocol: 'mcp',
-                });
+                };
+                emit('source', sourcePayload);
+                emit('STATE_DELTA', { delta_type: 'source', source: sourcePayload, data: sourcePayload });
               }
             }
 
@@ -466,13 +477,15 @@ export async function POST(req: NextRequest) {
 
           // If research mode, emit task.started for synthesis
           if (isResearchQuery) {
-            emit('task.started', {
+            const taskPayload = {
               task_id: `task_${randomUUID().replace(/-/g, '').slice(0, 8)}`,
               task_label: 'Synthesizing research from verified sources',
               agent_id: 'synthesis_agent',
               agent_label: 'Ñkyel Synthesis',
               source_protocol: 'deerflow',
-            });
+            };
+            emit('STEP_STARTED', taskPayload);
+            emit('task.started', taskPayload);
           }
 
           // Build messages with injected search context
@@ -503,7 +516,6 @@ export async function POST(req: NextRequest) {
               message: 'Tous les fournisseurs LLM sont temporairement indisponibles. Réessayez dans un instant.',
               code: 'ALL_PROVIDERS_UNAVAILABLE',
             });
-            controller.close();
             return;
           }
 
@@ -539,6 +551,7 @@ export async function POST(req: NextRequest) {
 
                 if (token) {
                   fullContent += token;
+                  emit('TEXT_MESSAGE_CONTENT', { content: token, delta: token, text: token });
                   emit('token', { content: token });
                 }
               } catch {
@@ -581,19 +594,26 @@ export async function POST(req: NextRequest) {
           }
 
           // ── Final done event ──────────────────────────────
-          emit('done', {
+          const finalPayload = {
+            run_id: runId,
+            status: 'completed',
             content: fullContent,
             sources_count: allSources.length,
             provider,
             conversation_id: conversationId,
-          });
+          };
+          emit('RUN_FINISHED', finalPayload);
+          emit('done', finalPayload);
 
         } catch (streamErr) {
           console.error('Stream error:', streamErr);
-          controller.enqueue(encoder.encode(sseEvent('error', {
+          const errPayload = {
             message: 'Erreur de flux',
             run_id: runId,
-          })));
+            error: (streamErr as Error).message,
+          };
+          controller.enqueue(encoder.encode(sseEvent('RUN_ERROR', errPayload)));
+          controller.enqueue(encoder.encode(sseEvent('error', errPayload)));
         } finally {
           controller.close();
         }

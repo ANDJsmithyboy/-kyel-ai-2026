@@ -10,6 +10,8 @@ import SplashScreen from '@/components/SplashScreen';
 import GlobalShortcuts from '@/components/shortcuts/GlobalShortcuts';
 import CommandPalette from '@/components/palette/CommandPalette';
 import LocaleFontLoader from '@/components/LocaleFontLoader';
+import RegisterSW from '@/components/pwa/RegisterSW';
+import PWAInstallPrompt from '@/components/pwa/PWAInstallPrompt';
 import { ClerkProvider } from '@clerk/nextjs';
 import { AppProviders } from '@/providers/AppProviders';
 import './globals.css';
@@ -33,10 +35,13 @@ export const metadata: Metadata = {
   manifest: '/manifest.json',
   icons: {
     icon: [
-      { url: '/brand/nkyel-ai-android.png', type: 'image/png' },
+      { url: '/android-chrome-192x192.png', sizes: '192x192', type: 'image/png' },
+      { url: '/android-chrome-512x512.png', sizes: '512x512', type: 'image/png' },
+      { url: '/brand/nkyel-ai-android.png', sizes: '1024x1024', type: 'image/png' },
     ],
     apple: [
-      { url: '/brand/nkyel-ai-ios.png', type: 'image/png' },
+      { url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' },
+      { url: '/brand/nkyel-ai-ios.png', sizes: '1024x1024', type: 'image/png' },
     ],
   },
   appleWebApp: {
@@ -87,10 +92,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <body className={`antialiased overflow-hidden ${geist.variable} ${geistMono.variable}`} suppressHydrationWarning>
           <AppProviders>
             {enableSplash && <SplashScreen />}
+            <RegisterSW />
             <LocaleFontLoader />
             <GlobalShortcuts />
             <CommandPalette />
             {children}
+            <PWAInstallPrompt />
             <Toaster
               position="bottom-right"
               toastOptions={{
