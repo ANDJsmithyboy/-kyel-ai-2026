@@ -58,6 +58,15 @@ class InferenceRouter:
         """
         Définit l'ordre séquentiel des fournisseurs d'inférence.
         """
+        # Résolution des modèles Groq vers les endpoints actifs de Groq
+        groq_a = settings.aurata_model or "groq/compound"
+        if groq_a in ("llama-3.3-70b-versatile", "aurata", "AURATA"):
+            groq_a = "groq/compound"
+
+        groq_b = settings.sonar_model or "groq/compound-mini"
+        if groq_b in ("llama-3.1-8b-instant", "sonar", "SONAR"):
+            groq_b = "groq/compound-mini"
+
         chain = [
             {
                 "name": "runpod_gpt_oss",
@@ -66,7 +75,7 @@ class InferenceRouter:
                 "model": self._gpt_oss_model,
                 "api_key": self._runpod_api_key,
                 "type": "openai_compatible",
-                "timeout": 60.0,
+                "timeout": 90.0,
             },
             {
                 "name": "runpod_qwen",
@@ -75,13 +84,13 @@ class InferenceRouter:
                 "model": self._qwen_model,
                 "api_key": self._runpod_api_key,
                 "type": "openai_compatible",
-                "timeout": 45.0,
+                "timeout": 60.0,
             },
             {
                 "name": "groq_model_a",
                 "tier": "FALLBACK_1",
                 "base_url": "https://api.groq.com/openai/v1",
-                "model": settings.aurata_model or "llama-3.3-70b-versatile",
+                "model": groq_a,
                 "api_key": _get_next_groq_key(),
                 "type": "groq",
                 "timeout": 45.0,
@@ -90,7 +99,7 @@ class InferenceRouter:
                 "name": "groq_model_b",
                 "tier": "FALLBACK_2",
                 "base_url": "https://api.groq.com/openai/v1",
-                "model": settings.sonar_model or "llama-3.1-8b-instant",
+                "model": groq_b,
                 "api_key": _get_next_groq_key(),
                 "type": "groq",
                 "timeout": 30.0,
