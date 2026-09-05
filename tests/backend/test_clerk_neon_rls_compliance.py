@@ -52,21 +52,22 @@ class TestClerkNeonRLSCompliance:
             }
         }
 
+        import base64, datetime
         payload_str = json.dumps(payload)
-        webhook_secret = getattr(settings, "clerk_webhook_secret", None) or "whsec_test_secret_nkyel"
-        
-        # S'assurer que le backend lit le secret pendant le test
+        webhook_secret = getattr(settings, "clerk_webhook_secret", None) or os.getenv("CLERK_WEBHOOK_SECRET")
+        if not webhook_secret or not webhook_secret.startswith("whsec_"):
+            webhook_secret = "whsec_" + base64.b64encode(b"01234567890123456789012345678901").decode()
+            settings.clerk_webhook_secret = webhook_secret
         os.environ["CLERK_WEBHOOK_SECRET"] = webhook_secret
-        
-        try:
-            wh = Webhook(webhook_secret)
-            headers = wh.sign(payload_str)
-        except Exception:
-            headers = {
-                "svix-id": event_id,
-                "svix-timestamp": "1234567890",
-                "svix-signature": "v1,dummy"
-            }
+
+        ts = datetime.datetime.now(datetime.timezone.utc)
+        wh = Webhook(webhook_secret)
+        sig = wh.sign(event_id, ts, payload_str)
+        headers = {
+            "svix-id": event_id,
+            "svix-timestamp": str(int(ts.timestamp())),
+            "svix-signature": sig,
+        }
 
         transport = ASGITransport(app=app)
         async with AsyncClient(transport=transport, base_url="http://test") as ac:

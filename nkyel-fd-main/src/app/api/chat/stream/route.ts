@@ -1,18 +1,12 @@
 /**
- * Ñkyel AI · Chat Stream API Route — PRODUCTION (REAL RUNTIME)
+ * Ñkyel AI · Chat Stream API Route (LEGACY COMPATIBILITY FALLBACK)
  * SmartANDJ AI Technologies · Founder: Daniel Jonathan ANDJ
  *
- * ARCHITECTURE:
- * 1. Detect if the user's query requires research (web search)
- * 2. If YES → Execute REAL Tavily search → Emit real SSE source/tool events
- *    → Inject results into LLM context → Stream LLM synthesis
- * 3. If NO → Direct Groq/Gemini streaming (simple chat)
- *
- * RULES:
- * - ALL runtime IDs (run_id, request_id, source_id) are crypto.randomUUID()
- * - The LLM NEVER generates IDs
- * - Sources come from REAL Tavily API results
- * - If Tavily fails, emit TOOL_UNAVAILABLE — never hallucinate research
+ * NOTE: Production chat execution is 100% owned by FastAPI:
+ * - DEERFLOW / AGENT: POST https://api.nkyel.smartandjai.com/api/v1/nkyel/run
+ * - COMPLETIONS: POST https://api.nkyel.smartandjai.com/api/v1/chat/completions
+ * - PERSISTENCE: Neon PostgreSQL (public.conversations, public.messages)
+ * This route is retained solely as a graceful fallback.
  */
 
 import { NextRequest, NextResponse } from 'next/server';

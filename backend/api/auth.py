@@ -100,6 +100,15 @@ async def sync_clerk_user(
             user.clerk_sub = body.clerk_id
         await db.flush()
 
+    ws_id = None
+    try:
+        from services.persistence_service import PersistenceService
+        ws = await PersistenceService.get_or_create_default_workspace(user, session=db)
+        if ws:
+            ws_id = str(ws.id)
+    except Exception:
+        pass
+
     return {
         "status": "synchronized",
         "user_id": str(user.id),
@@ -109,6 +118,7 @@ async def sync_clerk_user(
         "is_admin": is_super,
         "plan": "internal_unlimited" if is_super else "free",
         "billing_exempt": is_super,
+        "workspace_id": ws_id,
     }
 
 

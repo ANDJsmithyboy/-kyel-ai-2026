@@ -21,7 +21,7 @@ import logging
 from datetime import datetime, timezone
 from typing import Dict, Any, List, Optional, Union
 
-from sqlalchemy import select, update, and_, desc
+from sqlalchemy import select, update, and_, desc, func
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from db.session import async_session
@@ -37,6 +37,8 @@ from db.models import (
     Evidence,
     Artifact as DBArtifact,
     MissionEvent,
+    Conversation,
+    Message,
 )
 
 logger = logging.getLogger(__name__)
@@ -679,3 +681,121 @@ class PersistenceService:
             except Exception as e:
                 logger.error(f"[Persistence] restore_mission_state error: {e}", exc_info=True)
                 return {"found": False, "error": str(e)}
+
+    @classmethod
+    async def record_chat_message(
+        cls,
+        conversation_id: str,
+        role: str,
+        content: str,
+        user_identifier: Optional[str] = None,
+        mission_id: Optional[str] = None,
+        run_id: Optional[str] = None,
+        model_profile: Optional[str] = None,
+        content_json: Optional[Dict[str, Any]] = None,
+        workspace_id: Optional[str] = None,
+        title: Optional[str] = None,
+        session: Optional[AsyncSession] = None,
+    ) -> Optional[Message]:
+        """
+        Enregistre de manière immuable un message de chat dans Neon (public.messages).
+        Garantit que la Conversation existe dans public.conversations.
+        Incrémente la séquence chronologique et met à jour last_message_at.
+        """
+        async def _execute(s: AsyncSession) -> Optional[Message]:
+            try:
+                # 1. UUID de la conversation
+                try:
+                    c_uuid = uuid.UUID(str(conversation_id))
+                except (ValueError, AttributeError):
+                    c_uuid = uuid.uuid5(uuid.NAMESPACE_DNS, f"nkyel.conv.{conversation_id}")
+
+                # 2. Vérifier si la conversation existe déjà
+                conv_stmt = select(Conversation).where(Conversation.id == c_uuid)
+                conv_res = await s.execute(conv_stmt)
+                conv = conv_res.scalar_one_or_none()
+
+                if not conv:
+                    # Résoudre l'utilisateur
+                    user = await cls.get_or_create_user(user_identifier or "anonymous", session=s)
+
+                    # Résoudre le workspace
+                    ws = None
+                    if workspace_id:
+                        try:
+                            ws_uuid = uuid.UUID(str(workspace_id))
+                            ws_stmt = select(Workspace).where(Workspace.id == ws_uuid)
+                            ws_res = await s.execute(ws_stmt)
+                            ws = ws_res.scalar_one_or_none()
+                        except (ValueError, AttributeError):
+                            pass
+                    if not ws:
+                        ws = await cls.get_or_create_default_workspace(user, session=s)
+
+                    conv_title = title or (content[:60] if content else "Nouvelle conversation")
+                    conv = Conversation(
+                        id=c_uuid,
+                        workspace_id=ws.id,
+                        created_by_user_id=user.id,
+                        title=conv_title[:512],
+                        conversation_type="CHAT",
+                        status="ACTIVE",
+                        last_message_at=datetime.now(timezone.utc),
+                    )
+                    s.add(conv)
+                    await s.flush()
+                else:
+                    conv.last_message_at = datetime.now(timezone.utc)
+                    if title and (not conv.title or conv.title == "Nouvelle conversation"):
+                        conv.title = title[:512]
+
+                # 3. Calcul de la séquence suivante
+                seq_stmt = (
+                    select(func.coalesce(func.max(Message.sequence), 0))
+                    .where(Message.conversation_id == c_uuid)
+                )
+                seq_res = await s.execute(seq_stmt)
+                next_seq = (seq_res.scalar() or 0) + 1
+
+                # 4. Mission UUID & Run UUID optionnels
+                m_uuid = None
+                if mission_id:
+                    try:
+                        m_uuid = uuid.UUID(str(mission_id))
+                    except (ValueError, AttributeError):
+                        m_uuid = uuid.uuid5(uuid.NAMESPACE_DNS, f"nkyel.mission.{mission_id}")
+
+                r_uuid = None
+                if run_id:
+                    try:
+                        r_uuid = uuid.UUID(str(run_id))
+                    except (ValueError, AttributeError):
+                        r_uuid = uuid.uuid5(uuid.NAMESPACE_DNS, f"nkyel.run.{run_id}")
+
+                # 5. Créer et persister le message
+                msg = Message(
+                    id=uuid.uuid4(),
+                    conversation_id=c_uuid,
+                    mission_id=m_uuid,
+                    run_id=r_uuid,
+                    role=role,
+                    content_text=content,
+                    content_json=content_json,
+                    model_profile=model_profile or "openai/gpt-oss-120b",
+                    sequence=next_seq,
+                    status="COMPLETED",
+                    created_at=datetime.now(timezone.utc),
+                )
+                s.add(msg)
+                await s.commit()
+                return msg
+            except Exception as e:
+                logger.error(f"[Persistence] record_chat_message error: {e}", exc_info=True)
+                await s.rollback()
+                return None
+
+        if session:
+            return await _execute(session)
+        async with async_session() as s:
+            return await _execute(s)
+

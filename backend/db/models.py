@@ -17,6 +17,7 @@ from sqlalchemy import (
     String,
     Text,
     Integer,
+    BigInteger,
     Float,
     Numeric,
     Boolean,
@@ -774,16 +775,27 @@ class Conversation(Base):
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=generate_uuid
     )
-    user_id: Mapped[uuid.UUID] = mapped_column(
+    workspace_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("workspaces.id", ondelete="CASCADE"), nullable=False
+    )
+    created_by_user_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), nullable=False
     )
-    title: Mapped[str] = mapped_column(
-        String(512), default="Nouvelle conversation"
+    project_id: Mapped[Optional[uuid.UUID]] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("projects.id", ondelete="SET NULL"), nullable=True
     )
-    mode: Mapped[NkyelMode] = mapped_column(
-        SAEnum(NkyelMode), default=NkyelMode.flash, nullable=False
+    title: Mapped[Optional[str]] = mapped_column(
+        String(512), default="Nouvelle conversation", nullable=True
     )
-    is_archived: Mapped[bool] = mapped_column(Boolean, default=False)
+    conversation_type: Mapped[str] = mapped_column(
+        String(64), default="CHAT", nullable=False
+    )
+    status: Mapped[str] = mapped_column(
+        String(32), default="ACTIVE", nullable=False
+    )
+    last_message_at: Mapped[Optional[datetime]] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), default=lambda: datetime.now(timezone.utc)
     )
@@ -792,49 +804,50 @@ class Conversation(Base):
         default=lambda: datetime.now(timezone.utc),
         onupdate=lambda: datetime.now(timezone.utc),
     )
+    archived_at: Mapped[Optional[datetime]] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
+    deleted_at: Mapped[Optional[datetime]] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
+
+    # Backward compatibility properties
+    @property
+    def user_id(self) -> uuid.UUID:
+        return self.created_by_user_id
+
+    @user_id.setter
+    def user_id(self, val: uuid.UUID):
+        self.created_by_user_id = val
+
+    @property
+    def is_archived(self) -> bool:
+        return self.archived_at is not None
+
+    @property
+    def message_count(self) -> int:
+        return len(self.messages) if self.messages else 0
+
+    @property
+    def model_profile(self) -> Optional[str]:
+        return "openai/gpt-oss-120b"
 
     # Relations
-    user: Mapped["User"] = relationship(back_populates="conversations")
+    user: Mapped["User"] = relationship(back_populates="conversations", foreign_keys=[created_by_user_id])
+    workspace: Mapped["Workspace"] = relationship(foreign_keys=[workspace_id])
     messages: Mapped[List["Message"]] = relationship(
         back_populates="conversation", cascade="all, delete-orphan",
         order_by="Message.created_at"
     )
-    thread_metadata: Mapped[Optional["ThreadMetadata"]] = relationship(
-        back_populates="conversation", cascade="all, delete-orphan", uselist=False
-    )
 
     __table_args__ = (
-        Index("ix_conversations_user_id", "user_id"),
+        Index("ix_conversations_workspace_id", "workspace_id"),
+        Index("ix_conversations_user_id", "created_by_user_id"),
         Index("ix_conversations_updated_at", "updated_at"),
     )
 
 
-# ── 3. Modèle ThreadMetadata (Branches & Checkpoints LangGraph) 
-class ThreadMetadata(Base):
-    __tablename__ = "thread_metadata"
-
-    id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), primary_key=True, default=generate_uuid
-    )
-    conversation_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("conversations.id", ondelete="CASCADE"), nullable=False, unique=True, index=True
-    )
-    user_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True
-    )
-    active_branch: Mapped[str] = mapped_column(String(128), default="main")
-    checkpoint_id: Mapped[Optional[str]] = mapped_column(String(128), nullable=True)
-    extra_state: Mapped[Optional[str]] = mapped_column(Text, nullable=True)  # JSON
-    updated_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True),
-        default=lambda: datetime.now(timezone.utc),
-        onupdate=lambda: datetime.now(timezone.utc),
-    )
-
-    conversation: Mapped["Conversation"] = relationship(back_populates="thread_metadata")
-
-
-# ── 4. Modèle Message ────────────────────────────────────────
+# ── 3. Modèle Message ────────────────────────────────────────
 class Message(Base):
     __tablename__ = "messages"
 
@@ -846,21 +859,68 @@ class Message(Base):
         ForeignKey("conversations.id", ondelete="CASCADE"),
         nullable=False,
     )
-    role: Mapped[MessageRole] = mapped_column(
-        SAEnum(MessageRole), nullable=False
+    mission_id: Mapped[Optional[uuid.UUID]] = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey("missions.id", ondelete="SET NULL"),
+        nullable=True,
     )
-    content: Mapped[str] = mapped_column(Text, nullable=False)
-    mode: Mapped[NkyelMode] = mapped_column(
-        SAEnum(NkyelMode), nullable=False
+    run_id: Mapped[Optional[uuid.UUID]] = mapped_column(
+        UUID(as_uuid=True),
+        nullable=True,
     )
-    language: Mapped[Optional[Language]] = mapped_column(
-        SAEnum(Language), nullable=True
+    parent_message_id: Mapped[Optional[uuid.UUID]] = mapped_column(
+        UUID(as_uuid=True),
+        nullable=True,
     )
-    tokens: Mapped[int] = mapped_column(Integer, default=0)
-    web_search_used: Mapped[bool] = mapped_column(Boolean, default=False)
+    role: Mapped[str] = mapped_column(
+        String(32), nullable=False
+    )
+    content_text: Mapped[Optional[str]] = mapped_column(
+        Text, nullable=True
+    )
+    content_json: Mapped[Optional[Any]] = mapped_column(
+        JSON, nullable=True
+    )
+    model_profile: Mapped[Optional[str]] = mapped_column(
+        String(64), nullable=True
+    )
+    sequence: Mapped[Optional[int]] = mapped_column(
+        BigInteger, default=1, nullable=True
+    )
+    status: Mapped[str] = mapped_column(
+        String(32), default="COMPLETED", nullable=False
+    )
+    edited_at: Mapped[Optional[datetime]] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), default=lambda: datetime.now(timezone.utc)
     )
+    updated_at: Mapped[Optional[datetime]] = mapped_column(
+        DateTime(timezone=True),
+        default=lambda: datetime.now(timezone.utc),
+        onupdate=lambda: datetime.now(timezone.utc),
+    )
+    deleted_at: Mapped[Optional[datetime]] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
+
+    # Backward compatibility properties
+    @property
+    def content(self) -> str:
+        return self.content_text or ""
+
+    @content.setter
+    def content(self, val: str):
+        self.content_text = val
+
+    @property
+    def model_id(self) -> Optional[str]:
+        return self.model_profile
+
+    @property
+    def token_count(self) -> Optional[int]:
+        return len(self.content_text.split()) * 2 if self.content_text else 0
 
     # Relations
     conversation: Mapped["Conversation"] = relationship(back_populates="messages")

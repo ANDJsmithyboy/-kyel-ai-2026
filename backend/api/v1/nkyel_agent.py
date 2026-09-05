@@ -81,6 +81,22 @@ async def _run_nkyel_agent(request: NkyelRunRequest) -> AsyncGenerator[str, None
         "message": request.message,
     }, ag_ui_type="RUN_STARTED")
 
+    # Persist initial user message in Neon (P0 absolute)
+    conv_id = request.mission_id or run_id
+    try:
+        from services.persistence_service import PersistenceService
+        await PersistenceService.record_chat_message(
+            conversation_id=conv_id,
+            role="user",
+            content=request.message,
+            user_identifier=request.user_id,
+            mission_id=request.mission_id or run_id,
+            run_id=run_id,
+            workspace_id=request.workspace_id,
+        )
+    except Exception:
+        pass
+
     # Decide runtime via engine / goal intent — DeerFlow 2.0 is primary canonical runtime
     use_deerflow = (
         (request.engine is None or request.engine.upper() not in ("NATIVE", "LANGGRAPH_ONLY"))
@@ -166,6 +182,21 @@ async def _run_nkyel_agent(request: NkyelRunRequest) -> AsyncGenerator[str, None
                             "type": "ai",
                             "content": rt_event.payload["content"],
                         }, ag_ui_type="TEXT_MESSAGE_CONTENT")
+                        try:
+                            from services.persistence_service import PersistenceService
+                            await PersistenceService.record_chat_message(
+                                conversation_id=conv_id,
+                                role="assistant",
+                                content=rt_event.payload["content"],
+                                user_identifier=request.user_id,
+                                mission_id=request.mission_id or run_id,
+                                run_id=run_id,
+                                model_profile=rt_event.payload.get("model", "openai/gpt-oss-120b"),
+                                content_json=rt_event.payload,
+                                workspace_id=request.workspace_id,
+                            )
+                        except Exception:
+                            pass
                 elif rt_event.type == RuntimeEventType.RUN_ERROR:
                     yield _sse_event("error", {"run_id": run_id, "message": rt_event.payload.get("error", "Execution error")}, ag_ui_type="RUN_ERROR")
 
@@ -314,6 +345,20 @@ async def _run_nkyel_agent(request: NkyelRunRequest) -> AsyncGenerator[str, None
                     "type": "ai",
                     "content": final_state["final_response"],
                 })
+                try:
+                    from services.persistence_service import PersistenceService
+                    await PersistenceService.record_chat_message(
+                        conversation_id=conv_id,
+                        role="assistant",
+                        content=final_state["final_response"],
+                        user_identifier=request.user_id,
+                        mission_id=request.mission_id or run_id,
+                        run_id=run_id,
+                        model_profile="openai/gpt-oss-120b",
+                        workspace_id=request.workspace_id,
+                    )
+                except Exception:
+                    pass
 
     except Exception as e:
         yield _sse_event("error", {

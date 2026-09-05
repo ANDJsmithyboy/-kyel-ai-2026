@@ -2,7 +2,9 @@
    Service de communication avec le backend FastAPI Nkyel AI v1
    Fondateur : Daniel Jonathan ANDJ */
 
-const BASE = process.env.NEXT_PUBLIC_API_BASE_URL || process.env.NEXT_PUBLIC_API_URL || (typeof window !== 'undefined' ? '' : 'https://api.nkyel.smartandjai.com');
+import { getApiBaseUrl } from '@/lib/api/client';
+
+const BASE = getApiBaseUrl();
 
 /* -- Types ------------------------------------------ */
 
@@ -144,15 +146,15 @@ export async function streamChat(
   signal?: AbortSignal,
 ) {
   try {
-    const res = await fetch(`/api/chat/stream`, {
+    const res = await fetch(`${BASE}/api/v1/chat/completions`, {
       method: 'POST',
       headers: getHeaders(token),
       body: JSON.stringify({
         message,
         history,
         model,
-        conversationId,
-        loxoEnabled: true,
+        conversation_id: conversationId,
+        loxo_enabled: true,
       }),
       signal,
     });

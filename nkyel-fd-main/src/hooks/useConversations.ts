@@ -57,15 +57,14 @@ export function useConversations() {
   // ── Load conversation list ──────────────────────────────
   const fetchConversations = useCallback(async () => {
     const wsId = getWorkspaceId();
-    if (!wsId) return;
 
     try {
       setIsLoading(true);
       const h = await headers();
-      const res = await fetch(
-        `${API_BASE}/api/v1/conversations?workspace_id=${wsId}`,
-        { headers: h }
-      );
+      const url = wsId
+        ? `${API_BASE}/api/v1/conversations?workspace_id=${wsId}`
+        : `${API_BASE}/api/v1/conversations`;
+      const res = await fetch(url, { headers: h });
       if (res.ok) {
         const data = await res.json();
         setConversations(data);
@@ -84,22 +83,27 @@ export function useConversations() {
     modelProfile?: string,
   ): Promise<NeonConversation | null> => {
     const wsId = getWorkspaceId();
-    if (!wsId) return null;
 
     try {
       const h = await headers();
+      const bodyPayload: Record<string, any> = {
+        title,
+        conversation_type: type,
+        model_profile: modelProfile,
+      };
+      if (wsId) {
+        bodyPayload.workspace_id = wsId;
+      }
       const res = await fetch(`${API_BASE}/api/v1/conversations`, {
         method: 'POST',
         headers: h,
-        body: JSON.stringify({
-          workspace_id: wsId,
-          title,
-          conversation_type: type,
-          model_profile: modelProfile,
-        }),
+        body: JSON.stringify(bodyPayload),
       });
       if (res.ok) {
         const conv = await res.json();
+        if (conv.workspace_id && typeof window !== 'undefined' && !window.__nkyel_workspace_id) {
+          window.__nkyel_workspace_id = conv.workspace_id;
+        }
         setConversations(prev => [conv, ...prev]);
         setCurrentConversationId(conv.id);
         setMessages([]);

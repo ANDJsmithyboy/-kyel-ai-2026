@@ -20,6 +20,7 @@ interface SyncResult {
   email: string;
   role: string;
   is_admin: boolean;
+  workspace_id?: string;
 }
 
 /**
@@ -52,14 +53,17 @@ export function useNeonSync() {
         if (syncRes.ok) {
           const data: SyncResult = await syncRes.json();
 
-          // Store user_id for other stores to use
+          // Store user_id and workspace_id for other stores to use
           if (typeof window !== 'undefined') {
             window.__nkyel_user_id = data.user_id;
+            if (data.workspace_id) {
+              window.__nkyel_workspace_id = data.workspace_id;
+            }
           }
 
           console.log(
             `[NeonSync] Utilisateur synchronisé: ${data.status}`,
-            { userId: data.user_id, role: data.role, isAdmin: data.is_admin }
+            { userId: data.user_id, role: data.role, isAdmin: data.is_admin, workspaceId: data.workspace_id }
           );
         } else {
           const errBody = await syncRes.json().catch(() => ({}));

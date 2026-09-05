@@ -8,14 +8,14 @@ No localStorage. No in-memory-only state.
 
 import uuid
 from typing import List, Optional
-from datetime import datetime
+from datetime import datetime, timezone
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from pydantic import BaseModel
 from sqlalchemy import select, func
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from core.security import get_current_user_id
-from db.models import Conversation, Message, WorkspaceMember
+from db.models import Conversation, Message, WorkspaceMember, User
 from db.session import get_db
 
 router = APIRouter(prefix="/conversations", tags=["Conversations"])
@@ -24,7 +24,7 @@ router = APIRouter(prefix="/conversations", tags=["Conversations"])
 # ── Request / Response schemas ─────────────────────────────
 
 class ConversationCreateReq(BaseModel):
-    workspace_id: str
+    workspace_id: Optional[str] = None
     title: Optional[str] = None
     conversation_type: str = "CHAT"
     model_profile: Optional[str] = None
@@ -78,22 +78,38 @@ class MessageResp(BaseModel):
 
 # ── Helpers ─────────────────────────────────────────────────
 
-async def _check_ws_access(db: AsyncSession, user_id: str, workspace_id: str):
-    """Verify user has access to workspace. Raises 403 if not."""
+async def _check_ws_access(db: AsyncSession, user_id: str, workspace_id: Optional[str] = None):
+    """Verify user has access to workspace. If workspace_id is None, finds or creates default workspace."""
     try:
         user_uuid = uuid.UUID(user_id)
-        ws_uuid = uuid.UUID(workspace_id)
     except ValueError:
-        raise HTTPException(status_code=400, detail="ID invalide")
+        raise HTTPException(status_code=400, detail="User ID invalide")
 
-    stmt = select(WorkspaceMember).where(
-        WorkspaceMember.workspace_id == ws_uuid,
-        WorkspaceMember.user_id == user_uuid
-    )
-    result = await db.execute(stmt)
-    if not result.scalar_one_or_none():
-        raise HTTPException(status_code=403, detail="Accès refusé au workspace")
-    return user_uuid, ws_uuid
+    if workspace_id:
+        try:
+            ws_uuid = uuid.UUID(workspace_id)
+        except ValueError:
+            raise HTTPException(status_code=400, detail="Workspace ID invalide")
+
+        stmt = select(WorkspaceMember).where(
+            WorkspaceMember.workspace_id == ws_uuid,
+            WorkspaceMember.user_id == user_uuid
+        )
+        result = await db.execute(stmt)
+        if not result.scalar_one_or_none():
+            raise HTTPException(status_code=403, detail="Accès refusé au workspace")
+        return user_uuid, ws_uuid
+
+    # Auto-resolve or create user's workspace
+    from services.persistence_service import PersistenceService
+    user_stmt = select(User).where(User.id == user_uuid)
+    u_res = await db.execute(user_stmt)
+    user_obj = u_res.scalar_one_or_none()
+    if not user_obj:
+        user_obj = await PersistenceService.get_or_create_user(user_id, session=db)
+
+    ws = await PersistenceService.get_or_create_default_workspace(user_obj, session=db)
+    return user_uuid, ws.id
 
 
 # ══════════════════════════════════════════════════════════════
@@ -110,12 +126,10 @@ async def create_conversation(
 
     conv = Conversation(
         workspace_id=ws_uuid,
-        started_by_user_id=user_uuid,
+        created_by_user_id=user_uuid,
         title=req.title or "Nouvelle conversation",
         conversation_type=req.conversation_type,
-        model_profile=req.model_profile,
         status="ACTIVE",
-        message_count=0,
     )
     db.add(conv)
     await db.flush()
@@ -125,21 +139,33 @@ async def create_conversation(
 
 @router.get("", response_model=List[ConversationResp])
 async def list_conversations(
-    workspace_id: str = Query(...),
+    workspace_id: Optional[str] = Query(None),
     limit: int = Query(50, le=200),
     offset: int = Query(0),
     user_id: str = Depends(get_current_user_id),
     db: AsyncSession = Depends(get_db),
 ):
-    _, ws_uuid = await _check_ws_access(db, user_id, workspace_id)
-
-    stmt = (
-        select(Conversation)
-        .where(Conversation.workspace_id == ws_uuid, Conversation.deleted_at.is_(None))
-        .order_by(Conversation.updated_at.desc())
-        .limit(limit)
-        .offset(offset)
-    )
+    if workspace_id:
+        _, ws_uuid = await _check_ws_access(db, user_id, workspace_id)
+        stmt = (
+            select(Conversation)
+            .where(Conversation.workspace_id == ws_uuid, Conversation.deleted_at.is_(None))
+            .order_by(Conversation.updated_at.desc())
+            .limit(limit)
+            .offset(offset)
+        )
+    else:
+        try:
+            user_uuid = uuid.UUID(user_id)
+        except ValueError:
+            raise HTTPException(status_code=400, detail="User ID invalide")
+        stmt = (
+            select(Conversation)
+            .where(Conversation.created_by_user_id == user_uuid, Conversation.deleted_at.is_(None))
+            .order_by(Conversation.updated_at.desc())
+            .limit(limit)
+            .offset(offset)
+        )
     result = await db.execute(stmt)
     return result.scalars().all()
 
@@ -254,25 +280,36 @@ async def create_message(
         except ValueError:
             pass
 
-    # Compute rough token count
-    token_count = len(req.content.split()) * 2  # rough estimate
+    # Compute next sequence
+    seq_stmt = (
+        select(func.coalesce(func.max(Message.sequence), 0))
+        .where(Message.conversation_id == conv_uuid)
+    )
+    seq_res = await db.execute(seq_stmt)
+    next_seq = (seq_res.scalar() or 0) + 1
+
+    content_json = {}
+    if req.tool_calls_json:
+        content_json["tool_calls"] = req.tool_calls_json
+    if req.sources_json:
+        content_json["sources"] = req.sources_json
+    if req.artifacts_json:
+        content_json["artifacts"] = req.artifacts_json
 
     msg = Message(
         conversation_id=conv_uuid,
         role=req.role,
-        content=req.content,
-        model_id=req.model_id,
-        token_count=token_count,
+        content_text=req.content,
+        content_json=content_json if content_json else None,
+        model_profile=req.model_id or "openai/gpt-oss-120b",
+        sequence=next_seq,
+        status="COMPLETED",
         parent_message_id=parent_uuid,
-        tool_calls_json=req.tool_calls_json,
-        sources_json=req.sources_json,
-        artifacts_json=req.artifacts_json,
     )
     db.add(msg)
 
-    # Update conversation counters
-    conv.message_count = (conv.message_count or 0) + 1
-    conv.last_message_at = datetime.now()
+    # Update conversation last_message_at
+    conv.last_message_at = datetime.now(timezone.utc)
 
     await db.flush()
     await db.refresh(msg)
