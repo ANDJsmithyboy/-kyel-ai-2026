@@ -315,9 +315,9 @@ async def _verify_clerk_token(token: str) -> dict:
     payload = jwt.decode(token, signing_key, **decode_kwargs)
 
     # 4. Validation explicite et stricte de l'authorized party (azp)
-    authorized_parties = settings.clerk_authorized_parties_list
+    authorized_parties = [p.rstrip("/") for p in settings.clerk_authorized_parties_list]
     if authorized_parties:
-        azp = payload.get("azp")
+        azp = str(payload.get("azp") or "").rstrip("/")
         if not azp:
             raise jwt.InvalidTokenError(
                 "Token Clerk rejeté: claim 'azp' (authorized party) absent."
@@ -455,6 +455,7 @@ async def get_current_user(
             headers={"WWW-Authenticate": "Bearer"},
         )
     except jwt.InvalidTokenError as e:
+        logger.warning(f"⚠️ Clerk JWT rejeté: {type(e).__name__}: {e}")
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail=f"Token JWT invalide : {type(e).__name__}",

@@ -40,6 +40,7 @@ from api.v1.wide_research import router as wide_research_router
 from api.v1.memory import router as memory_router
 from api.v1.capabilities import router as capabilities_router
 from api.v1.nkyel_agent import router as nkyel_agent_router
+from api.v1.beta import router as beta_router
 from services.language_registry_service import language_service
 
 logger = logging.getLogger(__name__)
@@ -134,13 +135,34 @@ app = FastAPI(
 # ── Middleware: Context Tracing (DOIT être avant CORS) ───────
 app.add_middleware(NkyelContextMiddleware)
 
+
+# ── Middleware: Unhandled errors (inside CORS so headers survive) ──
+@app.middleware("http")
+async def catch_unhandled_errors(request, call_next):
+    try:
+        return await call_next(request)
+    except Exception as exc:  # noqa: BLE001
+        logger.error(f"❌ Erreur non gérée: {exc}", exc_info=True)
+        return JSONResponse(
+            status_code=500,
+            content={
+                "error": True,
+                "code": "INTERNAL_ERROR",
+                "message": "Une erreur interne du serveur est survenue.",
+            },
+        )
+
+
 # ── Configuration CORS ───────────────────────────────────────
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.cors_origins_list,
+    allow_origin_regex=r"https://.*\.vercel\.app",
     allow_credentials=True,
-    allow_methods=["*"],
+    allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS", "HEAD"],
     allow_headers=["*"],
+    expose_headers=["X-Nkyel-Request-Id", "Content-Disposition"],
+    max_age=600,
 )
 
 
@@ -185,6 +207,7 @@ app.include_router(wide_research_router, prefix="/api/v1")
 app.include_router(memory_router, prefix="/api/v1")
 app.include_router(capabilities_router, prefix="/api/v1")
 app.include_router(nkyel_agent_router)
+app.include_router(beta_router)
 
 
 

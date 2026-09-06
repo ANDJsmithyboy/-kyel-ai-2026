@@ -176,7 +176,19 @@ class Settings(BaseSettings):
 
     @property
     def cors_origins_list(self) -> List[str]:
-        return [origin.strip() for origin in self.cors_origins.split(",") if origin.strip()]
+        raw = (self.cors_origins or "").strip()
+        # Tolerate malformed env values such as: ["https://a","https://b"]
+        raw = raw.strip("[]")
+        origins = [
+            origin.strip().strip('"').strip("'").rstrip("/")
+            for origin in raw.split(",")
+            if origin.strip().strip('"').strip("'")
+        ]
+        # The canonical production frontend must always be allowed
+        for mandatory in ("https://nkyel.smartandjai.com",):
+            if mandatory not in origins:
+                origins.append(mandatory)
+        return origins
 
     @property
     def is_production(self) -> bool:
@@ -194,7 +206,12 @@ class Settings(BaseSettings):
         """Parse CLERK_AUTHORIZED_PARTIES comma-separated string into list[str]."""
         if not self.clerk_authorized_parties:
             return []
-        return [p.strip() for p in self.clerk_authorized_parties.split(",") if p.strip()]
+        raw = self.clerk_authorized_parties.strip().strip("[]")
+        return [
+            p.strip().strip('"').strip("'").rstrip("/")
+            for p in raw.split(",")
+            if p.strip().strip('"').strip("'")
+        ]
 
     @property
     def google_keys_pool(self) -> List[str]:
