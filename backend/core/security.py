@@ -391,8 +391,10 @@ async def get_current_user(
             headers={"WWW-Authenticate": "Bearer"},
         )
 
-    # ── Vérification token local HS256 si applicable ──────────
+    # ── Vérification token local HS256 (development uniquement) ──
     try:
+        if not _is_development():
+            raise jwt.InvalidTokenError("HS256 local tokens are development-only.")
         secret = getattr(settings, "jwt_secret", None) or "nkyel-super-secret-key-2026"
         payload = jwt.decode(token, secret, algorithms=["HS256"], options={"verify_aud": False})
         user_id = payload.get("sub")

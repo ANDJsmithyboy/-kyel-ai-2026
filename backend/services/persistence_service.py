@@ -63,7 +63,19 @@ class PersistenceService:
         if not clean_clerk_id or clean_clerk_id == "anonymous":
             clean_clerk_id = "user_anonymous_default"
 
+        neon_user_id: Optional[uuid.UUID] = None
+        try:
+            neon_user_id = uuid.UUID(clean_clerk_id)
+        except ValueError:
+            pass
+
         async def _execute(s: AsyncSession) -> User:
+            if neon_user_id is not None:
+                res = await s.execute(select(User).where(User.id == neon_user_id))
+                user = res.scalar_one_or_none()
+                if user:
+                    return user
+
             stmt = select(User).where(User.clerk_user_id == clean_clerk_id)
             res = await s.execute(stmt)
             user = res.scalar_one_or_none()

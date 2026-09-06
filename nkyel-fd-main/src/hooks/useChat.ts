@@ -33,7 +33,7 @@ interface UseChatReturn {
   isStreaming: boolean;
   sources: NkyelSource[];
   error: string | null;
-  sendMessage: (content: string, attachments?: File[]) => Promise<void>;
+  sendMessage: (content: string, attachments?: File[], options?: { conversationId?: string | null }) => Promise<void>;
   stop: () => void;
   clearError: () => void;
   setMessages: React.Dispatch<React.SetStateAction<NkyelMessage[]>>;
@@ -51,21 +51,41 @@ export function useChat({ conversationId, model, loxoEnabled, loxoRAGEnabled }: 
   const [visualState, setVisualState] = useState<NkyelVisualState>(initialVisualState);
   const readerRef = useRef<ReadableStreamDefaultReader<Uint8Array> | null>(null);
   const abortRef = useRef<AbortController | null>(null);
+  const activeRunIdRef = useRef<string | null>(null);
   const renduPanel = useRenduPanel();
   const { getToken, isSignedIn } = useAuth();
 
   const clearError = useCallback(() => setError(null), []);
 
   const stop = useCallback(() => {
+    const runId = activeRunIdRef.current;
+    activeRunIdRef.current = null;
     readerRef.current?.cancel();
     readerRef.current = null;
     abortRef.current?.abort();
     abortRef.current = null;
     setIsStreaming(false);
-  }, []);
+    if (runId) {
+      void (async () => {
+        try {
+          const token = await getToken();
+          if (!token) return;
+          await fetch(`${getApiBaseUrl()}/api/v1/nkyel/cancel`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+            body: JSON.stringify({ run_id: runId, reason: 'user_requested' }),
+            keepalive: true,
+          });
+        } catch {
+          // best-effort backend cancellation
+        }
+      })();
+    }
+  }, [getToken]);
 
-  const sendMessage = useCallback(async (content: string, attachments?: File[]) => {
+  const sendMessage = useCallback(async (content: string, attachments?: File[], options?: { conversationId?: string | null }) => {
     if (!content.trim()) return;
+    const activeConversationId = options?.conversationId ?? conversationId;
 
     if (!isSignedIn) {
       setError("Vous devez être connecté pour lancer une mission.");
@@ -77,7 +97,8 @@ export function useChat({ conversationId, model, loxoEnabled, loxoRAGEnabled }: 
 
     const runId = `run-${Date.now()}`;
     const requestId = `req-${Date.now()}`;
-    const started = createMissionStartedEvent(runId, conversationId, requestId);
+    activeRunIdRef.current = runId;
+    const started = createMissionStartedEvent(runId, activeConversationId, requestId);
     setVisualState({ ...initialVisualState, status: 'submitting', events: [started], lastEventAt: started.timestamp });
 
     const userMsg: NkyelMessage = {
@@ -108,7 +129,7 @@ export function useChat({ conversationId, model, loxoEnabled, loxoRAGEnabled }: 
         abortRef.current = controller;
 
         const body: Record<string, unknown> = {
-          mission_id: conversationId,
+          mission_id: activeConversationId,
           run_id: runId,
           message: content.trim(),
           engine: 'DEERFLOW',
@@ -176,7 +197,7 @@ export function useChat({ conversationId, model, loxoEnabled, loxoRAGEnabled }: 
               const event = JSON.parse(jsonStr) as Record<string, unknown>;
               
               // Local visual state for backwards compatibility
-              const visualEvent = normalizeSseEvent(event, { runId, threadId: conversationId, requestId });
+              const visualEvent = normalizeSseEvent(event, { runId, threadId: activeConversationId, requestId });
               if (visualEvent) setVisualState((previous) => reduceVisualState(previous, visualEvent));
 
               // 1. Sync real events to WorkGraph
@@ -301,6 +322,7 @@ export function useChat({ conversationId, model, loxoEnabled, loxoRAGEnabled }: 
         }
 
         success = true;
+        activeRunIdRef.current = null;
         setIsStreaming(false);
       } catch (err: unknown) {
         if (err instanceof Error && err.name === 'AbortError') {

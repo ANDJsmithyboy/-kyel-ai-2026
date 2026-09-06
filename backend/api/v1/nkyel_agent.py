@@ -72,7 +72,7 @@ async def _run_nkyel_agent(request: NkyelRunRequest) -> AsyncGenerator[str, None
     run_id = request.run_id or f"run_{uuid.uuid4().hex[:8]}"
 
     # Register cancellation token for this run
-    cancel_token = cancellation_manager.create_token(mission_id=run_id, run_id=run_id)
+    cancel_token = cancellation_manager.create_token(mission_id=run_id, run_id=run_id, owner_id=request.user_id)
 
     # Emit RUN_STARTED (official AG-UI)
     yield _sse_event("run_started", {
@@ -111,6 +111,7 @@ async def _run_nkyel_agent(request: NkyelRunRequest) -> AsyncGenerator[str, None
             from core.runtime.deerflow_runtime import DeerFlowRuntime
 
             df_runtime = DeerFlowRuntime()
+            completed_steps: list[str] = []
             async for rt_event in df_runtime.stream(
                 mission_id=request.mission_id or run_id,
                 goal=request.message,
@@ -164,6 +165,7 @@ async def _run_nkyel_agent(request: NkyelRunRequest) -> AsyncGenerator[str, None
                     yield _sse_event("tool.completed", {"run_id": run_id, "payload": rt_event.payload, **rt_event.payload}, ag_ui_type="TOOL_CALL_RESULT")
                 elif rt_event.type == RuntimeEventType.STEP_FINISHED:
                     step_name = rt_event.payload.get("step", "Étape terminée")
+                    completed_steps.append(step_name)
                     task_id = rt_event.task_id or "step"
                     yield _sse_event("node_completed", {
                         "run_id": run_id,
@@ -175,7 +177,7 @@ async def _run_nkyel_agent(request: NkyelRunRequest) -> AsyncGenerator[str, None
                     yield _sse_event("run_completed", {
                         "run_id": run_id,
                         "status": "completed",
-                        "steps": ["SKILL_DISCOVERY", "MCP_TOOL_DISCOVERY", "SUBAGENT_DELEGATION", "WEB_RESEARCH_TAVILY", "DELIVERABLE_COMPILATION"],
+                        "steps": completed_steps,
                     }, ag_ui_type="RUN_FINISHED")
                     if rt_event.payload.get("content"):
                         yield _sse_event("messages-tuple", {
@@ -448,12 +450,14 @@ async def cancel_run(
     """
     from core.cancellation import cancellation_manager
 
+    owner_id = str(user.get("id") or user.get("clerk_id") or "") or None
     cancelled = cancellation_manager.cancel_mission(
         mission_id=request.run_id,
         reason=request.reason,
+        owner_id=owner_id,
     )
     return {
-        "success": True,
+        "success": cancelled,
         "run_id": request.run_id,
         "cancelled": cancelled,
         "reason": request.reason,

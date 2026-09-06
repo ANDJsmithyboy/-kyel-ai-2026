@@ -27,9 +27,10 @@ class CancellationToken:
     et les tool calls asynchrones.
     """
 
-    def __init__(self, mission_id: str, run_id: str):
+    def __init__(self, mission_id: str, run_id: str, owner_id: Optional[str] = None):
         self.mission_id = mission_id
         self.run_id = run_id
+        self.owner_id = owner_id
         self._cancelled = threading.Event()
         self._cancel_reason: Optional[str] = None
         self._cancelled_at: Optional[float] = None
@@ -134,7 +135,7 @@ class MissionCancellationManager:
         self._tokens: dict[str, CancellationToken] = {}
         self._lock = threading.Lock()
 
-    def create_token(self, mission_id: str, run_id: str) -> CancellationToken:
+    def create_token(self, mission_id: str, run_id: str, owner_id: Optional[str] = None) -> CancellationToken:
         """Crée un nouveau jeton d'annulation pour une mission."""
         with self._lock:
             # Annuler tout jeton existant pour cette mission
@@ -142,7 +143,7 @@ class MissionCancellationManager:
             if existing and not existing.is_cancelled:
                 existing.cancel(reason="superseded_by_new_run")
 
-            token = CancellationToken(mission_id=mission_id, run_id=run_id)
+            token = CancellationToken(mission_id=mission_id, run_id=run_id, owner_id=owner_id)
             self._tokens[mission_id] = token
 
             logger.debug(
@@ -151,14 +152,17 @@ class MissionCancellationManager:
             return token
 
     def cancel_mission(
-        self, mission_id: str, reason: str = "user_requested"
+        self, mission_id: str, reason: str = "user_requested", owner_id: Optional[str] = None
     ) -> bool:
         """
         Annule une mission en cours. Appelé par l'endpoint /stop.
         Retourne True si un jeton actif a été trouvé et annulé.
+        Si owner_id est fourni, seul le propriétaire du jeton peut l'annuler.
         """
         with self._lock:
             token = self._tokens.get(mission_id)
+            if token and owner_id and token.owner_id and token.owner_id != owner_id:
+                return False
             if token and not token.is_cancelled:
                 token.cancel(reason=reason)
                 return True

@@ -34,10 +34,12 @@ export default function ChatPage() {
   const handleSendMessage = useCallback(
     async (content: string) => {
       // Créer une conversation persistée si nouveau thread
-      if (!conversationId) {
+      let activeConversationId = conversationId;
+      if (!activeConversationId) {
         try {
           const conv = await createConversation(content.slice(0, 60), 'CHAT', engineId);
           if (conv) {
+            activeConversationId = conv.id;
             setConversationId(conv.id);
             window.history.replaceState(null, '', `/chat/${conv.id}`);
           }
@@ -46,7 +48,7 @@ export default function ChatPage() {
         }
       }
 
-      chat.sendMessage(content);
+      chat.sendMessage(content, undefined, { conversationId: activeConversationId });
     },
     [conversationId, chat, engineId, createConversation]
   );

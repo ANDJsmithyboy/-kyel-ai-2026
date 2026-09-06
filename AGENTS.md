@@ -404,3 +404,11 @@ Do NOT place fallback logic separately inside `useChat.ts`, agents, tools, API r
 - Track: provider, model, input tokens, output tokens, latency, status, fallback reason.
 - Zero token waste: no infinite retries, no duplicate prompts, no unbounded subagents.
 
+---
+
+## 11. ÑKYEL PRODUCT DOCTRINE & PRODUCTION CONSTRAINTS
+
+Mandatory companion memory: **`.agents/rules/nkyel_product_doctrine.md`**. Read it before touching chat, persistence, runtime, auth or UI code. It records: what Ñkyel is (Visual Agentic Intelligence, not a Manus clone), the proprietary layer responsibilities (Habakkuk = WHY, WorkGraph = WHAT IS HAPPENING, runtime = WHAT MUST BE DONE, VIFLOW = WHAT DESERVES ATTENTION, VIE = WHAT THE HUMAN SEES/CONTROLS/VERIFIES), the final ownership model (Clerk / Neon / R2 / FastAPI / Next.js / Redis), the verified production chat path (`POST /api/v1/nkyel/run` on FastAPI), the honest runtime classification ("DeerFlowRuntime adapter", AG-UI ADAPTER — not native), the Google review constraints, and the root causes already fixed that must never be reintroduced.
+
+Absolute law: **THE FRONTEND PRESENTS. FASTAPI ORCHESTRATES. CLERK IDENTIFIES. NEON REMEMBERS. R2 PRESERVES ARTIFACTS. NO THEATER. IF ÑKYEL SHOWS IT, ÑKYEL CAN PROVE IT.**
+
