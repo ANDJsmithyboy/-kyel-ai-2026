@@ -70,30 +70,44 @@ class PersistenceService:
             pass
 
         async def _execute(s: AsyncSession) -> User:
+            from sqlalchemy.dialects.postgresql import insert
+
             if neon_user_id is not None:
                 res = await s.execute(select(User).where(User.id == neon_user_id))
                 user = res.scalar_one_or_none()
                 if user:
                     return user
 
-            stmt = select(User).where(User.clerk_user_id == clean_clerk_id)
-            res = await s.execute(stmt)
-            user = res.scalar_one_or_none()
-            if user:
-                return user
+            # Atomic upsert: INSERT ... ON CONFLICT DO UPDATE
+            user_id = neon_user_id or uuid.uuid4()
+            values = {
+                "id": user_id,
+                "clerk_user_id": clean_clerk_id,
+                "display_name": display_name or f"User {clean_clerk_id[:8]}",
+                "primary_email": email or f"{clean_clerk_id}@nkyel.ai",
+                "status": "active",
+                "last_seen_at": datetime.now(timezone.utc),
+            }
 
-            # Création automatique de l'utilisateur
-            new_user = User(
-                id=uuid.uuid4(),
-                clerk_user_id=clean_clerk_id,
-                display_name=display_name or f"User {clean_clerk_id[:8]}",
-                primary_email=email or f"{clean_clerk_id}@nkyel.ai",
-                status="active",
+            upsert_stmt = (
+                insert(User)
+                .values(**values)
+                .on_conflict_do_update(
+                    index_elements=["clerk_user_id"],
+                    set_={
+                        "primary_email": values["primary_email"],
+                        "display_name": values["display_name"],
+                        "avatar_url": values.get("avatar_url"),
+                        "last_seen_at": values["last_seen_at"],
+                        "updated_at": datetime.now(timezone.utc),
+                    },
+                )
+                .returning(User)
             )
-            s.add(new_user)
+            result = await s.execute(upsert_stmt)
+            user = result.scalar_one()
             await s.commit()
-            await s.refresh(new_user)
-            return new_user
+            return user
 
         if session:
             return await _execute(session)

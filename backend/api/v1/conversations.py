@@ -21,6 +21,24 @@ from db.session import get_db
 router = APIRouter(prefix="/conversations", tags=["Conversations"])
 
 
+def _conversation_to_dict(conv: Conversation, message_count: int) -> dict:
+    return {
+        "id": str(conv.id),
+        "workspace_id": str(conv.workspace_id) if conv.workspace_id else None,
+        "created_by_user_id": str(conv.created_by_user_id) if conv.created_by_user_id else None,
+        "title": conv.title,
+        "conversation_type": conv.conversation_type,
+        "model_profile": conv.model_profile,
+        "status": conv.status,
+        "message_count": message_count,
+        "last_message_at": conv.last_message_at,
+        "created_at": conv.created_at,
+        "updated_at": conv.updated_at,
+        "archived_at": conv.archived_at,
+        "deleted_at": conv.deleted_at,
+    }
+
+
 # ── Request / Response schemas ─────────────────────────────
 
 class ConversationCreateReq(BaseModel):
@@ -134,7 +152,7 @@ async def create_conversation(
     db.add(conv)
     await db.flush()
     await db.refresh(conv)
-    return conv
+    return _conversation_to_dict(conv, 0)
 
 
 @router.get("", response_model=List[ConversationResp])
@@ -167,7 +185,20 @@ async def list_conversations(
             .offset(offset)
         )
     result = await db.execute(stmt)
-    return result.scalars().all()
+    conversations = result.scalars().all()
+
+    counts = {}
+    if conversations:
+        conv_ids = [conv.id for conv in conversations]
+        count_stmt = (
+            select(Message.conversation_id, func.count(Message.id))
+            .where(Message.conversation_id.in_(conv_ids), Message.deleted_at.is_(None))
+            .group_by(Message.conversation_id)
+        )
+        count_res = await db.execute(count_stmt)
+        counts = {row[0]: row[1] for row in count_res.all()}
+
+    return [_conversation_to_dict(c, counts.get(c.id, 0)) for c in conversations]
 
 
 @router.get("/{conversation_id}", response_model=ConversationResp)
@@ -188,7 +219,15 @@ async def get_conversation(
         raise HTTPException(status_code=404, detail="Conversation introuvable")
 
     await _check_ws_access(db, user_id, str(conv.workspace_id))
-    return conv
+
+    count_stmt = (
+        select(func.count(Message.id))
+        .where(Message.conversation_id == conv.id, Message.deleted_at.is_(None))
+    )
+    count_res = await db.execute(count_stmt)
+    message_count = count_res.scalar() or 0
+
+    return _conversation_to_dict(conv, message_count)
 
 
 @router.patch("/{conversation_id}", response_model=ConversationResp)
@@ -213,8 +252,6 @@ async def update_conversation(
 
     if req.title is not None:
         conv.title = req.title
-    if req.pinned is not None:
-        conv.pinned = req.pinned
     if req.archived is not None:
         if req.archived:
             conv.archived_at = datetime.now()
@@ -223,7 +260,15 @@ async def update_conversation(
 
     await db.flush()
     await db.refresh(conv)
-    return conv
+
+    count_stmt = (
+        select(func.count(Message.id))
+        .where(Message.conversation_id == conv.id, Message.deleted_at.is_(None))
+    )
+    count_res = await db.execute(count_stmt)
+    message_count = count_res.scalar() or 0
+
+    return _conversation_to_dict(conv, message_count)
 
 
 @router.delete("/{conversation_id}", status_code=204)

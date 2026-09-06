@@ -1,11 +1,15 @@
 -- ======================================================================
--- Ñkyel AI · Migration 002 : Campagnes Bêta, Inscriptions Atomiques & Démo Google
+-- Ñkyel AI · Migration 005 : Schéma Bêta Souverain (tables beta_* avec FK users)
 -- SmartANDJ AI Technologies · Fondateur : Daniel Jonathan ANDJ
+-- ======================================================================
+--
+-- Objectif : créer les tables beta_* qui manquent en production.
+-- Aucun DROP, aucune destruction. Tout est IF NOT EXISTS et idempotent.
+-- Les FK pointent vers la table canonique users (modèle SQLAlchemy).
 -- ======================================================================
 
 BEGIN;
 
--- 1. Table des campagnes de bêta
 CREATE TABLE IF NOT EXISTS beta_campaigns (
     id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
     slug text NOT NULL UNIQUE,
@@ -21,7 +25,6 @@ CREATE TABLE IF NOT EXISTS beta_campaigns (
     updated_at timestamptz NOT NULL DEFAULT now()
 );
 
--- 2. Table des inscriptions avec contrainte stricte de 100 places max
 CREATE TABLE IF NOT EXISTS beta_enrollments (
     id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
     campaign_id uuid NOT NULL REFERENCES beta_campaigns(id) ON DELETE CASCADE,
@@ -46,7 +49,6 @@ CREATE INDEX IF NOT EXISTS idx_beta_enrollments_user ON beta_enrollments(user_id
 CREATE INDEX IF NOT EXISTS idx_beta_enrollments_clerk ON beta_enrollments(clerk_user_id);
 CREATE INDEX IF NOT EXISTS idx_beta_enrollments_seat ON beta_enrollments(campaign_id, seat_number);
 
--- 3. Table des événements de télémétrie de la bêta
 CREATE TABLE IF NOT EXISTS beta_events (
     id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
     idempotency_key text NOT NULL UNIQUE,
@@ -65,7 +67,6 @@ CREATE INDEX IF NOT EXISTS idx_beta_events_user ON beta_events(user_id);
 CREATE INDEX IF NOT EXISTS idx_beta_events_run ON beta_events(run_id);
 CREATE INDEX IF NOT EXISTS idx_beta_events_time ON beta_events(occurred_at DESC);
 
--- 4. Table des retours d'expérience structurés
 CREATE TABLE IF NOT EXISTS beta_feedback_records (
     id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
     campaign_id uuid REFERENCES beta_campaigns(id) ON DELETE CASCADE,
@@ -92,7 +93,7 @@ CREATE INDEX IF NOT EXISTS idx_beta_feedback_user ON beta_feedback_records(user_
 CREATE INDEX IF NOT EXISTS idx_beta_feedback_rating ON beta_feedback_records(overall_rating);
 CREATE INDEX IF NOT EXISTS idx_beta_feedback_nps ON beta_feedback_records(nps_score);
 
--- 5. Insertion de la campagne officielle Bêta 42 heures
+-- Idempotent seed : campagne officielle Bêta (créée ou mise à jour)
 INSERT INTO beta_campaigns (
     slug,
     name,
@@ -114,6 +115,7 @@ INSERT INTO beta_campaigns (
 ) ON CONFLICT (slug) DO UPDATE SET
     starts_at = EXCLUDED.starts_at,
     public_ends_at = EXCLUDED.public_ends_at,
-    max_seats = EXCLUDED.max_seats;
+    max_seats = EXCLUDED.max_seats,
+    updated_at = now();
 
 COMMIT;
