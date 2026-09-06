@@ -7,6 +7,7 @@ After refresh: theme, language, model, density — all restored.
 """
 
 import uuid
+from datetime import datetime, timezone
 from typing import Optional
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
@@ -16,6 +17,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from core.security import get_current_user, get_current_user_id
 from db.models import User, UserSettings, WorkspaceSettings, Workspace, WorkspaceMember
 from db.session import get_db
+from services.persistence_service import PersistenceService
 
 router = APIRouter(prefix="/settings", tags=["Settings"])
 
@@ -192,35 +194,21 @@ async def sync_user(
     Called after Clerk login. Ensures user + default workspace exist in Neon.
     Idempotent: safe to call on every login.
     """
-    stmt = select(User).where(User.clerk_user_id == req.clerk_user_id)
-    result = await db.execute(stmt)
-    user = result.scalar_one_or_none()
-    is_new = False
+    user = await PersistenceService.get_or_create_user(
+        clerk_user_id=req.clerk_user_id,
+        display_name=req.display_name or "Utilisateur Ñkyel",
+        email=req.email,
+        avatar_url=req.avatar_url,
+        session=db,
+    )
 
-    if not user:
-        user = User(
-            clerk_user_id=req.clerk_user_id,
-            primary_email=req.email,
-            display_name=req.display_name or "Utilisateur Ñkyel",
-            avatar_url=req.avatar_url,
-            status="ACTIVE",
-        )
-        db.add(user)
+    # Update avatar if provided and changed
+    if req.avatar_url and req.avatar_url != (user.avatar_url or ""):
+        user.avatar_url = req.avatar_url
         await db.flush()
-        await db.refresh(user)
-        is_new = True
 
-    else:
-        # Update fields that may have changed in Clerk
-        if req.email and req.email != user.primary_email:
-            user.primary_email = req.email
-        if req.display_name and req.display_name != user.display_name:
-            user.display_name = req.display_name
-        if req.avatar_url and req.avatar_url != user.avatar_url:
-            user.avatar_url = req.avatar_url
-        from datetime import datetime, timezone
-        user.last_seen_at = datetime.now(timezone.utc)
-        await db.flush()
+    # Determine if this is a newly created user for response semantics
+    is_new = user.created_at is not None and (datetime.now(timezone.utc) - user.created_at).total_seconds() < 5
 
     # Ensure default workspace exists
     stmt = select(Workspace).where(Workspace.owner_user_id == user.id)

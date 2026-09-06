@@ -27,6 +27,7 @@ from core.security import (
 )
 from db.models import User
 from db.session import get_db
+from services.persistence_service import PersistenceService
 from services.quota_service import QuotaService
 
 router = APIRouter(prefix="/api/auth", tags=["Authentification & Profils"])
@@ -67,42 +68,30 @@ async def sync_clerk_user(
     email_lower = body.email.lower()
     is_super = email_lower in SUPERADMIN_EMAILS
 
-    # 1. Vérifier si l'utilisateur existe déjà par clerk_sub ou email
-    stmt = select(User).where((User.clerk_sub == body.clerk_id) | (User.email == body.email))
-    result = await db.execute(stmt)
-    user = result.scalar_one_or_none()
+    # Canonical idempotent atomic user resolver
+    user = await PersistenceService.get_or_create_user(
+        clerk_user_id=body.clerk_id,
+        display_name=body.name or "Pionnier Ñkyel",
+        email=body.email,
+        avatar_url=body.avatar_url,
+        session=db,
+    )
 
-    if not user:
-        # Création du nouvel utilisateur
-        user = User(
-            clerk_sub=body.clerk_id,
-            email=body.email,
-            name=body.name or "Pionnier Ñkyel",
+    # Initialiser les préférences par défaut (non-bloquant)
+    try:
+        await db.execute(
+            text("""
+                INSERT INTO user_preferences (user_id, theme, ui_locale, agent_language)
+                VALUES (:uid, 'black-panther', 'fr-FR', 'auto')
+                ON CONFLICT (user_id) DO NOTHING
+            """),
+            {"uid": str(user.id)},
         )
-        db.add(user)
-        await db.flush()
-
-        # Initialiser les préférences par défaut dans user_preferences
-        try:
-            await db.execute(
-                text("""
-                    INSERT INTO user_preferences (user_id, theme, ui_locale, agent_language)
-                    VALUES (:uid, 'black-panther', 'fr-FR', 'auto')
-                    ON CONFLICT (user_id) DO NOTHING
-                """),
-                {"uid": str(user.id)},
-            )
-        except Exception:
-            pass  # Non-blocking
-    else:
-        # Mise à jour idempotente des champs manquants
-        if not user.clerk_sub:
-            user.clerk_sub = body.clerk_id
-        await db.flush()
+    except Exception:
+        pass
 
     ws_id = None
     try:
-        from services.persistence_service import PersistenceService
         ws = await PersistenceService.get_or_create_default_workspace(user, session=db)
         if ws:
             ws_id = str(ws.id)

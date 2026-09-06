@@ -85,84 +85,37 @@ def create_access_token(data: Dict[str, Any], expires_delta: Optional[timedelta]
 
 async def _upsert_user_from_clerk(clerk_user_id: str, email: str, name: str = "") -> dict:
     """
-    Vérifie si l'utilisateur existe dans Neon. Sinon, le crée (UPSERT).
+    Canonical idempotent user resolver: SELECT/UPSERT by clerk_user_id.
     Retourne toujours un dict utilisateur valide.
     """
-    from core.database import get_user_by_clerk_id
-    user = await get_user_by_clerk_id(clerk_user_id)
-    if user:
-        return user
+    from services.persistence_service import PersistenceService
+    from db.session import async_session
 
-    # L'utilisateur n'existe pas encore → INSERT
+    is_super = email.lower() in SUPERADMIN_EMAILS if email else False
+
     try:
-        from db.session import async_session
-        from sqlalchemy import text
-
-        is_super = email.lower() in SUPERADMIN_EMAILS if email else False
         async with async_session() as session:
-            result = await session.execute(
-                text("""
-                    INSERT INTO users (clerk_user_id, primary_email, display_name, created_at, updated_at)
-                    VALUES (:clerk_user_id, :primary_email, :display_name, NOW(), NOW())
-                    ON CONFLICT (clerk_user_id) DO UPDATE SET primary_email = EXCLUDED.primary_email, updated_at = NOW()
-                    RETURNING *
-                """),
-                {
-                    "clerk_user_id": clerk_user_id,
-                    "primary_email": email or "",
-                    "display_name": name or "",
-                },
+            user = await PersistenceService.get_or_create_user(
+                clerk_user_id=clerk_user_id,
+                display_name=name or ("Jonathan ANDJ" if is_super else "Pionnier Ñkyel"),
+                email=email,
+                session=session,
             )
-            await session.commit()
-            row = result.mappings().first()
-            if row:
-                internal_user_id = row["id"]
-                # Ensure personal workspace exists
-                await session.execute(
-                    text("""
-                        INSERT INTO workspaces (id, name, slug, workspace_type, owner_user_id, status, created_at, updated_at)
-                        VALUES (gen_random_uuid(), :ws_name, :ws_slug, 'PERSONAL', :owner_id, 'ACTIVE', NOW(), NOW())
-                        ON CONFLICT (slug) DO NOTHING
-                    """),
-                    {
-                        "ws_name": f"{name or 'User'}'s Workspace",
-                        "ws_slug": f"personal-{internal_user_id}",
-                        "owner_id": internal_user_id
-                    }
-                )
-                
-                # Fetch the workspace ID to ensure we add the user as a member
-                ws_res = await session.execute(
-                    text("SELECT id FROM workspaces WHERE owner_user_id = :owner_id AND workspace_type = 'PERSONAL' LIMIT 1"),
-                    {"owner_id": internal_user_id}
-                )
-                ws_row = ws_res.mappings().first()
-                if ws_row:
-                    ws_id = ws_row["id"]
-                    await session.execute(
-                        text("""
-                            INSERT INTO workspace_members (id, workspace_id, user_id, role, status, joined_at, created_at, updated_at)
-                            VALUES (gen_random_uuid(), :ws_id, :user_id, 'OWNER', 'ACTIVE', NOW(), NOW(), NOW())
-                            ON CONFLICT (workspace_id, user_id) DO NOTHING
-                        """),
-                        {"ws_id": ws_id, "user_id": internal_user_id}
-                    )
-                await session.commit()
-                
-                logger.info(f"✅ Nouvel utilisateur créé/mis à jour dans Neon: {clerk_user_id} ({email})")
-                d = dict(row)
-                d["clerk_id"] = d.get("clerk_user_id")
-                d["email"] = d.get("primary_email")
-                d["name"] = d.get("display_name")
-                d["is_admin"] = is_super
-                d["role"] = "admin" if is_super else "member"
-                d["credits"] = 999999999 if is_super else 100
-                return d
+            return {
+                "id": str(user.id),
+                "clerk_id": user.clerk_user_id,
+                "email": user.primary_email or "",
+                "name": user.display_name or "",
+                "avatar_url": user.avatar_url or "",
+                "is_admin": is_super,
+                "role": "super_admin" if is_super else "member",
+                "plan": "internal_unlimited" if is_super else "free",
+                "credits": 999999999 if is_super else 100,
+            }
     except Exception as e:
-        logger.warning(f"⚠️ Impossible d'insérer l'utilisateur {clerk_user_id}: {e}")
+        logger.warning(f"⚠️ Impossible de résoudre l'utilisateur {clerk_user_id}: {e}")
 
     # Fallback: retourner un dict minimal sans persistance
-    is_super = email.lower() in SUPERADMIN_EMAILS if email else False
     return {
         "id": clerk_user_id,
         "clerk_id": clerk_user_id,
@@ -170,7 +123,7 @@ async def _upsert_user_from_clerk(clerk_user_id: str, email: str, name: str = ""
         "email": email or "",
         "credits": 999999999 if is_super else 100,
         "is_admin": is_super,
-        "role": "admin" if is_super else "member",
+        "role": "super_admin" if is_super else "member",
     }
 
 

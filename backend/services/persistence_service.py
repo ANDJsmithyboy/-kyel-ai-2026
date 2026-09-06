@@ -53,11 +53,13 @@ class PersistenceService:
         clerk_user_id: str,
         display_name: Optional[str] = None,
         email: Optional[str] = None,
+        avatar_url: Optional[str] = None,
         session: Optional[AsyncSession] = None,
     ) -> User:
         """
         Assure qu'un utilisateur Neon existe pour ce `sub` Clerk.
         Idempotent et résistant aux collisions concurrentes.
+        Préserve role/ownership/created_at et ne réinitialise pas status.
         """
         clean_clerk_id = str(clerk_user_id).strip()
         if not clean_clerk_id or clean_clerk_id == "anonymous":
@@ -72,6 +74,8 @@ class PersistenceService:
         async def _execute(s: AsyncSession) -> User:
             from sqlalchemy.dialects.postgresql import insert
 
+            # If user_id was supplied as a Neon UUID, try to resolve by id first
+            # (legacy phantom users: id == clerk_user_id as UUID).
             if neon_user_id is not None:
                 res = await s.execute(select(User).where(User.id == neon_user_id))
                 user = res.scalar_one_or_none()
@@ -80,27 +84,33 @@ class PersistenceService:
 
             # Atomic upsert: INSERT ... ON CONFLICT DO UPDATE
             user_id = neon_user_id or uuid.uuid4()
+            now = datetime.now(timezone.utc)
             values = {
                 "id": user_id,
                 "clerk_user_id": clean_clerk_id,
                 "display_name": display_name or f"User {clean_clerk_id[:8]}",
                 "primary_email": email or f"{clean_clerk_id}@nkyel.ai",
+                "avatar_url": avatar_url,
                 "status": "active",
-                "last_seen_at": datetime.now(timezone.utc),
+                "last_seen_at": now,
             }
+
+            # Only update mutable profile fields; never touch role/created_at/status
+            update_values: Dict[str, Any] = {
+                "primary_email": values["primary_email"],
+                "display_name": values["display_name"],
+                "last_seen_at": now,
+                "updated_at": now,
+            }
+            if avatar_url:
+                update_values["avatar_url"] = avatar_url
 
             upsert_stmt = (
                 insert(User)
                 .values(**values)
                 .on_conflict_do_update(
                     index_elements=["clerk_user_id"],
-                    set_={
-                        "primary_email": values["primary_email"],
-                        "display_name": values["display_name"],
-                        "avatar_url": values.get("avatar_url"),
-                        "last_seen_at": values["last_seen_at"],
-                        "updated_at": datetime.now(timezone.utc),
-                    },
+                    set_=update_values,
                 )
                 .returning(User)
             )

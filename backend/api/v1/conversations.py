@@ -97,11 +97,12 @@ class MessageResp(BaseModel):
 # ── Helpers ─────────────────────────────────────────────────
 
 async def _check_ws_access(db: AsyncSession, user_id: str, workspace_id: Optional[str] = None):
-    """Verify user has access to workspace. If workspace_id is None, finds or creates default workspace."""
-    try:
-        user_uuid = uuid.UUID(user_id)
-    except ValueError:
-        raise HTTPException(status_code=400, detail="User ID invalide")
+    """Verify user has access to workspace. If workspace_id is None, finds or creates default workspace.
+    user_id may be a Neon UUID or a Clerk sub string."""
+    from services.persistence_service import PersistenceService
+
+    # Canonical user resolver: handles both clerk_user_id and Neon UUID
+    user_obj = await PersistenceService.get_or_create_user(user_id, session=db)
 
     if workspace_id:
         try:
@@ -111,23 +112,16 @@ async def _check_ws_access(db: AsyncSession, user_id: str, workspace_id: Optiona
 
         stmt = select(WorkspaceMember).where(
             WorkspaceMember.workspace_id == ws_uuid,
-            WorkspaceMember.user_id == user_uuid
+            WorkspaceMember.user_id == user_obj.id
         )
         result = await db.execute(stmt)
         if not result.scalar_one_or_none():
             raise HTTPException(status_code=403, detail="Accès refusé au workspace")
-        return user_uuid, ws_uuid
+        return user_obj.id, ws_uuid
 
-    # Auto-resolve or create user's workspace
-    from services.persistence_service import PersistenceService
-    user_stmt = select(User).where(User.id == user_uuid)
-    u_res = await db.execute(user_stmt)
-    user_obj = u_res.scalar_one_or_none()
-    if not user_obj:
-        user_obj = await PersistenceService.get_or_create_user(user_id, session=db)
-
+    # Auto-resolve or create user's default workspace
     ws = await PersistenceService.get_or_create_default_workspace(user_obj, session=db)
-    return user_uuid, ws.id
+    return user_obj.id, ws.id
 
 
 # ══════════════════════════════════════════════════════════════
