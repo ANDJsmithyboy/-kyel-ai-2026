@@ -51,8 +51,10 @@ async def _fingerprint_engine(label: str, db_url: str):
                         current_setting('search_path') as search_path,
                         to_regclass('public.beta_campaigns') as public_beta_campaigns,
                         to_regclass('beta_campaigns') as beta_campaigns,
+                        to_regclass('nkyel.beta_campaigns') as nkyel_beta_campaigns,
                         to_regclass('public.users') as public_users,
-                        to_regclass('users') as users
+                        to_regclass('users') as users,
+                        to_regclass('nkyel.users') as nkyel_users
                 """)
             )
             row = result.mappings().first()
@@ -64,8 +66,10 @@ async def _fingerprint_engine(label: str, db_url: str):
             print(f"[{label}] search_path={row['search_path']}")
             print(f"[{label}] public.beta_campaigns={row['public_beta_campaigns']}")
             print(f"[{label}] beta_campaigns={row['beta_campaigns']}")
+            print(f"[{label}] nkyel.beta_campaigns={row['nkyel_beta_campaigns']}")
             print(f"[{label}] public.users={row['public_users']}")
             print(f"[{label}] users={row['users']}")
+            print(f"[{label}] nkyel.users={row['nkyel_users']}")
             return row
     finally:
         await engine.dispose()
@@ -84,8 +88,10 @@ async def _apply_schema_fingerprint():
                     current_setting('search_path') as search_path,
                     to_regclass('public.beta_campaigns') as public_beta_campaigns,
                     to_regclass('beta_campaigns') as beta_campaigns,
+                    to_regclass('nkyel.beta_campaigns') as nkyel_beta_campaigns,
                     to_regclass('public.users') as public_users,
-                    to_regclass('users') as users
+                    to_regclass('users') as users,
+                    to_regclass('nkyel.users') as nkyel_users
             """)
         )
         row = result.mappings().first()
@@ -98,8 +104,10 @@ async def _apply_schema_fingerprint():
         print(f"[apply_schema] search_path={row['search_path']}")
         print(f"[apply_schema] public.beta_campaigns={row['public_beta_campaigns']}")
         print(f"[apply_schema] beta_campaigns={row['beta_campaigns']}")
+        print(f"[apply_schema] nkyel.beta_campaigns={row['nkyel_beta_campaigns']}")
         print(f"[apply_schema] public.users={row['public_users']}")
         print(f"[apply_schema] users={row['users']}")
+        print(f"[apply_schema] nkyel.users={row['nkyel_users']}")
         return row
 
 

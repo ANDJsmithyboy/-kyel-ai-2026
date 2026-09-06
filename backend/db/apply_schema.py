@@ -39,7 +39,15 @@ async def apply_sql_schema():
                 print(f"   [{idx}/{len(sql_files)}] {sql_file.name}: vide, ignoré")
                 continue
 
-            print(f"   [{idx}/{len(sql_files)}] Application de {sql_file.name}...")
+            # 001 gère son propre search_path (nkyel, public).
+            # Toutes les autres migrations DOIVENT cibler public pour être visibles
+            # par le runtime qui n'a pas nkyel dans son search_path.
+            if sql_file.name == "001_full_nkyel_schema.sql":
+                print(f"   [{idx}/{len(sql_files)}] Application de {sql_file.name} (search_path laissé au SQL)...")
+            else:
+                print(f"   [{idx}/{len(sql_files)}] Application de {sql_file.name}...")
+                await raw_conn.driver_connection.execute("SET search_path TO public, nkyel;")
+
             await raw_conn.driver_connection.execute(cleaned_sql)
 
         # Vérification immédiate au sein de la même transaction
