@@ -15,6 +15,8 @@ export type BetaState =
 
 export interface BetaStatusResponse {
   state: BetaState;
+  admitted?: boolean;
+  bypass_reason?: 'admin' | 'review' | 'enrollment' | null;
   campaign: {
     slug: string;
     name: string;
@@ -58,10 +60,26 @@ export interface BetaFeedbackPayload {
   quote_consent?: boolean;
 }
 
-export async function fetchBetaStatus(): Promise<BetaStatusResponse> {
-  const backendBase = (process.env.NEXT_PUBLIC_API_BASE_URL || process.env.NEXT_PUBLIC_API_URL) || '';
-  const res = await fetch(`${backendBase}/api/v1/beta/status`, {
+const API_BASE =
+  process.env.NEXT_PUBLIC_API_BASE_URL ||
+  process.env.NEXT_PUBLIC_API_URL ||
+  'https://api.nkyel.smartandjai.com';
+
+export async function fetchBetaStatus(
+  getToken?: () => Promise<string | null>
+): Promise<BetaStatusResponse> {
+  const headers: Record<string, string> = {};
+  if (getToken) {
+    const token = await getToken();
+    if (token) {
+      headers.Authorization = `Bearer ${token}`;
+    }
+  }
+
+  const res = await fetch(`${API_BASE}/api/v1/beta/status`, {
     cache: 'no-store',
+    credentials: 'include',
+    headers,
   });
   if (!res.ok) {
     throw new Error('Impossible de récupérer le statut de la Bêta.');

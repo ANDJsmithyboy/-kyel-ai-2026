@@ -13,8 +13,11 @@ import io
 import csv
 import json
 import uuid
+import logging
 from typing import Optional, Dict, Any, Tuple
-from fastapi import APIRouter, Depends, HTTPException, status, Header, Response
+from fastapi import APIRouter, Depends, HTTPException, status, Header, Response, Request
+
+logger = logging.getLogger(__name__)
 
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, Field
@@ -24,6 +27,7 @@ from db.session import get_db
 from db.models import User
 from services.beta_service import BetaService, BetaStateMachine
 from core.security import get_current_user_optional, require_current_user, require_admin
+from middleware.review_auth import get_current_review_session
 
 router = APIRouter(prefix="/api/v1/beta", tags=["Beta 2026"])
 
@@ -69,17 +73,65 @@ def _extract_user_info(user: Any) -> Tuple[uuid.UUID, str]:
 
 @router.get("/status")
 async def get_beta_status(
+    request: Request,
     db: AsyncSession = Depends(get_db),
     current_user: Optional[Any] = Depends(get_current_user_optional),
 ):
     """
     Retourne l'état complet du serveur pour la Bêta 42h.
     Non bloquant, ouvert au public pour afficher le countdown et la capacité.
+    Inclut `admitted` pour débloquer admin, super_admin et Google Review
+    sans rouvrir la bêta publique.
     """
     clerk_id = None
+    user_id: Optional[uuid.UUID] = None
     if current_user:
-        _, clerk_id = _extract_user_info(current_user)
-    return await BetaService.get_beta_status(db, user_clerk_id=clerk_id)
+        uid, csub = _extract_user_info(current_user)
+        user_id = uid
+        clerk_id = csub
+
+    response = await BetaService.get_beta_status(db, user_clerk_id=clerk_id)
+
+    admitted = False
+    bypass_reason: Optional[str] = None
+
+    # 1. Utilisateur authentifié Clerk : admin/super_admin
+    if current_user and not bypass_reason:
+        role = str(current_user.get("role", "")).lower()
+        if current_user.get("is_admin") and role in ("admin", "super_admin"):
+            admitted = True
+            bypass_reason = "admin"
+        # 2. Vérification DB canonique (workspace_members / user_entitlements)
+        elif user_id:
+            try:
+                if await BetaService.is_user_admin(db, user_id):
+                    admitted = True
+                    bypass_reason = "admin"
+            except Exception:
+                logger.exception("[beta/status] Échec vérification admin DB")
+
+    # 3. Session Google Review valide
+    if not bypass_reason:
+        if current_user and current_user.get("is_review"):
+            admitted = True
+            bypass_reason = "review"
+        else:
+            try:
+                review_session = await get_current_review_session(request)
+                if review_session:
+                    admitted = True
+                    bypass_reason = "review"
+            except Exception:
+                pass
+
+    # 4. Inscription Bêta normale
+    if not bypass_reason and response.get("user_enrollment", {}).get("enrolled"):
+        admitted = True
+        bypass_reason = "enrollment"
+
+    response["admitted"] = admitted
+    response["bypass_reason"] = bypass_reason
+    return response
 
 
 from fastapi.responses import JSONResponse

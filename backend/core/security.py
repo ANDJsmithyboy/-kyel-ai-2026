@@ -427,13 +427,20 @@ async def get_current_user(
 
 
 async def get_current_user_optional(
+    request: Request = None,  # type: ignore[assignment]
     credentials: Optional[HTTPAuthorizationCredentials] = Depends(security_scheme),
 ) -> Optional[dict]:
     """Retourne l'utilisateur connecté s'il existe, ou None si non authentifié."""
     if not credentials or not credentials.credentials:
-        return None
+        if not request:
+            return None
+        # Permet à une session Google Review de résoudre un utilisateur sans token
+        try:
+            return await get_current_user(request=request, credentials=None)
+        except HTTPException:
+            return None
     try:
-        return await get_current_user(request=None, credentials=credentials)
+        return await get_current_user(request=request, credentials=credentials)
     except HTTPException:
         return None
 

@@ -11,20 +11,23 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import dynamic from 'next/dynamic';
 import { useRouter } from 'next/navigation';
 import NkyelSidebar from './NkyelSidebar';
 import TopBar from './TopBar';
-import ArtifactStudio from '@/components/rendu/ArtifactStudio';
-import CapabilitiesDrawer from '@/components/capabilities/CapabilitiesDrawer';
 import type { WorkspaceViewMode } from './WorkspaceModeSwitcher';
-import BetaClosedScreen from '@/components/beta/BetaClosedScreen';
-import BetaFeedbackModal from '@/components/feedback/BetaFeedbackModal';
-import ProductionFeedbackModal, { FeedbackCategory } from '@/components/feedback/ProductionFeedbackModal';
+import type { FeedbackCategory } from '@/components/feedback/ProductionFeedbackModal';
 import DesktopSettingsModal from '@/components/settings/DesktopSettingsModal';
-import PWAInstallPrompt from '@/components/pwa/PWAInstallPrompt';
 import { fetchBetaStatus, type BetaStatusResponse } from '@/lib/betaStateMachine';
 import { useSafeUser } from '@/lib/auth-client';
 import { useNeonSync } from '@/hooks/useNeonSync';
+import { useAuth } from '@clerk/nextjs';
+
+const ArtifactStudio = dynamic(() => import('@/components/rendu/ArtifactStudio'), { ssr: false });
+const CapabilitiesDrawer = dynamic(() => import('@/components/capabilities/CapabilitiesDrawer'), { ssr: false });
+const ProductionFeedbackModal = dynamic(() => import('@/components/feedback/ProductionFeedbackModal'), { ssr: false });
+const PWAInstallPrompt = dynamic(() => import('@/components/pwa/PWAInstallPrompt'), { ssr: false });
+const BetaClosedScreen = dynamic(() => import('@/components/beta/BetaClosedScreen'), { ssr: false });
 
 interface NkyelAppShellProps {
   children?: React.ReactNode;
@@ -39,6 +42,7 @@ export default function NkyelAppShell({
 }: NkyelAppShellProps) {
   const router = useRouter();
   const { isSignedIn, isLoaded } = useSafeUser();
+  const { getToken } = useAuth();
 
   // PRODUCTION: Sync Clerk user → Neon on every login
   useNeonSync();
@@ -66,7 +70,7 @@ export default function NkyelAppShell({
   }, [isLoaded, isSignedIn, router]);
 
   useEffect(() => {
-    fetchBetaStatus()
+    fetchBetaStatus(getToken)
       .then((data) => setBetaStatus(data))
       .catch(() => {});
 
@@ -94,8 +98,8 @@ export default function NkyelAppShell({
     }
   };
 
-  const isPublicClosed = betaStatus?.state === 'PUBLIC_CLOSED' && !betaStatus?.user_enrollment?.enrolled;
-  const isCapacityReached = betaStatus?.state === 'CAPACITY_REACHED' && !betaStatus?.user_enrollment?.enrolled;
+  const isPublicClosed = betaStatus?.state === 'PUBLIC_CLOSED' && !betaStatus?.admitted;
+  const isCapacityReached = betaStatus?.state === 'CAPACITY_REACHED' && !betaStatus?.admitted;
 
   return (
     <div className="nkyel-shell nkyel-monochrome-shell antialiased">

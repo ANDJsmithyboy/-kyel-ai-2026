@@ -26,9 +26,13 @@ from db.models import (
     BetaEnrollment,
     BetaEvent,
     BetaFeedbackRecord,
-    User,
     Conversation,
     Message,
+    User,
+    Workspace,
+    WorkspaceMember,
+    EntitlementProfile,
+    UserEntitlement,
 )
 from db.session import get_db
 
@@ -120,6 +124,10 @@ class BetaStateMachine:
 
 
 
+# Rôles considérés comme administratifs pour le contrôle d'accès Bêta
+_ADMIN_WORKSPACE_ROLES = frozenset({"admin", "super_admin", "ai_admin", "support", "observer"})
+_ADMIN_TIER_NAMES = frozenset({"FOUNDER", "OWNER", "SUPER_ADMIN", "ADMIN"})
+
 # Verrou de sérialisation en mémoire pour garantir la concurrence absolue
 _enrollment_lock = asyncio.Lock()
 
@@ -150,6 +158,39 @@ class BetaService:
             await session.refresh(campaign)
 
         return campaign
+
+    @staticmethod
+    async def is_user_admin(session: AsyncSession, user_id: uuid.UUID) -> bool:
+        """Détermine si un utilisateur est admin/super_admin via le rôle DB (workspace ou entitlements)."""
+        # 1. Membership workspace avec rôle admin (exclut le rôle 'owner' du workspace personnel par défaut)
+        ws_stmt = (
+            select(WorkspaceMember)
+            .join(Workspace, Workspace.id == WorkspaceMember.workspace_id)
+            .where(
+                WorkspaceMember.user_id == user_id,
+                func.lower(WorkspaceMember.role).in_(_ADMIN_WORKSPACE_ROLES),
+            )
+        )
+        ws_res = await session.execute(ws_stmt)
+        if ws_res.scalar_one_or_none():
+            return True
+
+        # 2. Entitlement actif de type FOUNDER/OWNER/SUPER_ADMIN/ADMIN
+        ent_stmt = (
+            select(UserEntitlement)
+            .join(EntitlementProfile, EntitlementProfile.id == UserEntitlement.profile_id)
+            .where(
+                UserEntitlement.user_id == user_id,
+                UserEntitlement.is_active == True,
+                (UserEntitlement.ends_at == None) | (UserEntitlement.ends_at > datetime.now(timezone.utc)),
+                func.upper(EntitlementProfile.tier_name).in_([t.upper() for t in _ADMIN_TIER_NAMES]),
+            )
+        )
+        ent_res = await session.execute(ent_stmt)
+        if ent_res.scalar_one_or_none():
+            return True
+
+        return False
 
     @classmethod
     async def get_beta_status(
